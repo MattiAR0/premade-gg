@@ -17,6 +17,9 @@ dist/
 .vscode/
 .idea/
 
+# Docker
+mongo-data/
+
 # OS
 .DS_Store
 Thumbs.db
