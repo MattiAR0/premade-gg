@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment';
 import { User } from '../models/user.model';
 import { Reputation } from '../models/reputation.model';
 import { LfgPost, MatchmakingResult } from '../models/lfg-post.model';
+import { RiotAccountValidation, RiotRankData } from '../models/riot.model';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +14,23 @@ export class ApiService {
   private readonly baseUrl = environment.apiUrl;
 
   constructor(private readonly http: HttpClient) {}
+
+  // ── Riot API (Proxy) ────────────────────────────────
+  validateRiotId(gameName: string, tagLine: string): Observable<RiotAccountValidation> {
+    return this.http.get<RiotAccountValidation>(
+      `${this.baseUrl}/riot/validate/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`,
+    );
+  }
+
+  getRiotRank(
+    region: string,
+    gameName: string,
+    tagLine: string,
+  ): Observable<RiotRankData> {
+    return this.http.get<RiotRankData>(
+      `${this.baseUrl}/riot/rank/${region}/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`,
+    );
+  }
 
   // ── Users ───────────────────────────────────────────
   getUsers(filters?: { rank?: string; role?: string; minKarma?: number }): Observable<User[]> {

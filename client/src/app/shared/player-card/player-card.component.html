@@ -1,7 +1,16 @@
 <article class="c-card c-player-card">
   <header class="c-card__header">
-    <h3 class="c-card__title c-player-card__name">{{ player.riotId }}</h3>
-    <app-karma-badge [karma]="player.karma" />
+    @if (player.cardImage) {
+      <img
+        class="c-player-card__avatar"
+        [src]="player.cardImage"
+        [alt]="player.riotId + ' avatar'"
+      />
+    }
+    <div class="c-player-card__header-info">
+      <h3 class="c-card__title c-player-card__name">{{ player.riotId }}</h3>
+      <app-karma-badge [karma]="player.karma" />
+    </div>
   </header>
   <section class="c-card__body">
     <ul class="c-card__meta c-player-card__details">
@@ -11,7 +20,15 @@
       <li>
         <span class="c-badge c-badge--role">{{ player.role }}</span>
       </li>
+      @if (player.region) {
+        <li>
+          <span class="c-badge c-badge--region">{{ player.region | uppercase }}</span>
+        </li>
+      }
     </ul>
+    @if (player.accountLevel) {
+      <p class="c-player-card__level">Nivel {{ player.accountLevel }}</p>
+    }
   </section>
   <footer class="c-card__footer">
     <span class="c-player-card__schedule">{{ player.schedule }}</span>

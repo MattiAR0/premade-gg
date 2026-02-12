@@ -6,6 +6,16 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  puuid: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
+  region: {
+    type: String,
+    enum: ['eu', 'na', 'ap', 'kr'],
+    default: 'eu',
+  },
   rank: {
     type: String,
     enum: [
@@ -35,6 +45,18 @@ const userSchema = new mongoose.Schema({
     default: 5,
     min: 0,
     max: 5,
+  },
+  accountLevel: {
+    type: Number,
+    default: null,
+  },
+  cardImage: {
+    type: String,
+    default: null,
+  },
+  lastRankUpdate: {
+    type: Date,
+    default: null,
   },
   createdAt: {
     type: Date,

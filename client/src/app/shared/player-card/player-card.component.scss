@@ -1,6 +1,21 @@
 @use 'utilities/variables' as v;
 
 .c-player-card {
+  &__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid v.$color-text-muted;
+  }
+
+  &__header-info {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+    flex: 1;
+  }
+
   &__name {
     font-size: 1.1rem;
   }
@@ -9,6 +24,12 @@
     display: flex;
     gap: v.$spacing-sm;
     flex-wrap: wrap;
+  }
+
+  &__level {
+    font-size: 0.8rem;
+    color: v.$color-text-muted;
+    margin-top: v.$spacing-xs;
   }
 
   &__schedule {

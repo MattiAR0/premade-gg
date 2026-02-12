@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Reputation = require('../models/Reputation');
+const { validateAccount, getPlayerRank } = require('../services/riotService');
 
 /**
  * GET /api/users
@@ -40,10 +41,47 @@ const getUserById = async (req, res, next) => {
 /**
  * POST /api/users
  * Crea un nuevo usuario.
+ * Valida el Riot ID contra la API de Riot y obtiene el rango real de HenrikDev.
+ *
+ * Body esperado: { riotId: "Player#TAG", role, schedule, region? }
+ * - Si riotId contiene "#", se valida contra Riot API.
+ * - El rank se obtiene automáticamente de HenrikDev (no se pasa en el body).
  */
 const createUser = async (req, res, next) => {
   try {
-    const user = await User.create(req.body);
+    const { riotId, role, schedule, region = 'eu' } = req.body;
+
+    if (!riotId || !riotId.includes('#')) {
+      return res.status(400).json({ message: 'riotId must be in format "Name#Tag"' });
+    }
+
+    const [gameName, tagLine] = riotId.split('#');
+
+    // 1. Validar cuenta en Riot API
+    let riotAccount;
+    try {
+      riotAccount = await validateAccount(gameName, tagLine);
+    } catch (err) {
+      return res.status(err.statusCode || 502).json({ message: err.message });
+    }
+
+    // 2. Obtener rango real de HenrikDev
+    const rankData = await getPlayerRank(gameName, tagLine, region);
+    const rank = rankData.normalizedRank || 'Iron'; // Default a Iron si no tiene ranked
+
+    // 3. Crear usuario con datos verificados
+    const user = await User.create({
+      riotId: `${riotAccount.gameName}#${riotAccount.tagLine}`,
+      puuid: riotAccount.puuid,
+      region,
+      rank,
+      role,
+      schedule,
+      accountLevel: rankData.accountLevel,
+      cardImage: rankData.images?.large || null,
+      lastRankUpdate: new Date(),
+    });
+
     res.status(201).json(user);
   } catch (err) {
     if (err.code === 11000) {

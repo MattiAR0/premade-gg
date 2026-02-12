@@ -38,6 +38,7 @@ const VALORANT_RANKS = [
 ];
 const VALORANT_ROLES = ['Duelist', 'Controller', 'Initiator', 'Sentinel', 'Flex'];
 const SCHEDULES = ['Weekends', 'Evenings', 'Late Night', 'Mornings', 'Flexible'];
+const REGIONS = ['eu', 'na', 'ap', 'kr'];
 
 async function seed() {
   try {
@@ -59,10 +60,15 @@ async function seed() {
     for (let i = 0; i < USER_COUNT; i++) {
       usersData.push({
         riotId: faker.internet.userName() + '#' + faker.string.alphanumeric(4).toUpperCase(),
+        puuid: faker.string.uuid().replace(/-/g, '') + faker.string.alphanumeric(10),
+        region: faker.helpers.arrayElement(REGIONS),
         rank: faker.helpers.arrayElement(VALORANT_RANKS),
         role: faker.helpers.arrayElement(VALORANT_ROLES),
         schedule: faker.helpers.arrayElement(SCHEDULES),
         karma: faker.number.float({ min: 1, max: 5, multipleOf: 0.1 }),
+        accountLevel: faker.number.int({ min: 1, max: 500 }),
+        cardImage: null,
+        lastRankUpdate: faker.date.recent(),
       });
     }
 

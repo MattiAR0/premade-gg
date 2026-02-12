@@ -38,6 +38,8 @@ services:
       NODE_ENV: development
       MONGO_URI: mongodb://mongo:27017/premade-gg
       PORT: 4000
+      RIOT_API_KEY: ${RIOT_API_KEY}
+      HENRIK_API_KEY: ${HENRIK_API_KEY}
     depends_on:
       mongo:
         condition: service_healthy

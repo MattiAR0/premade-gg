@@ -18,6 +18,7 @@ require('dotenv').config();
 const userRoutes = require('./routes/userRoutes');
 const reputationRoutes = require('./routes/reputationRoutes');
 const lfgPostRoutes = require('./routes/lfgPostRoutes');
+const riotRoutes = require('./routes/riotRoutes');
 
 // Middlewares
 const errorHandler = require('./middlewares/errorHandler');
@@ -47,6 +48,7 @@ if (process.env.NODE_ENV === 'production') {
 app.use('/api/users', userRoutes);
 app.use('/api/reviews', reputationRoutes);
 app.use('/api/lfg', lfgPostRoutes);
+app.use('/api/riot', riotRoutes);
 
 // Ruta raíz (health check)
 app.get('/', (_req, res) => {
@@ -57,6 +59,7 @@ app.get('/', (_req, res) => {
       users: '/api/users',
       reviews: '/api/reviews',
       lfg: '/api/lfg',
+      riot: '/api/riot',
     },
   });
 });
