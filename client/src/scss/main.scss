@@ -1,3 +1,12 @@
-// Main Entry Point
-// @use 'utilities/variables';
-// @use 'global/reset';
+// ── PremadeGG - Main SCSS Entry Point ─────────────────
+// Arquitectura por capas (7-1 adaptado)
+// Regla de oro: Solo @use y @forward. Prohibido @import.
+
+// 1. Utilities (variables, mixins, functions)
+@use 'utilities';
+
+// 2. Global (reset, typography, grid)
+@use 'global';
+
+// 3. Components (BEM blocks)
+@use 'components';

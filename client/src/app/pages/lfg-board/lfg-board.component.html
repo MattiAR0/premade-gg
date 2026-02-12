@@ -1,0 +1,23 @@
+<main class="l-container l-section">
+  <header>
+    <h1>LFG Board</h1>
+    <p>Posts de jugadores buscando grupo. Solo jugadores con buen Karma pueden publicar.</p>
+  </header>
+
+  <section>
+    @if (loading) {
+      <p class="c-loading">Cargando posts...</p>
+    } @else if (posts.length === 0) {
+      <p class="c-empty">No hay posts LFG abiertos.</p>
+    } @else {
+      <p class="c-results-count">{{ posts.length }} posts abiertos</p>
+      <ul class="l-grid l-grid--2col">
+        @for (post of posts; track post._id) {
+          <li>
+            <app-lfg-card [post]="post" />
+          </li>
+        }
+      </ul>
+    }
+  </section>
+</main>

@@ -43,6 +43,23 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  # ── Angular Frontend ─────────────────────────────────
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: premadegg-client
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    environment:
+      NODE_ENV: development
+    depends_on:
+      - api
+    restart: unless-stopped
+
   # ── Mongo Express (UI para la BBDD) ─────────────────
   mongo-express:
     image: mongo-express:latest

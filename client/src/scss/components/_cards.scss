@@ -1,0 +1,49 @@
+@use '../utilities/variables' as v;
+@use '../utilities/mixins' as m;
+
+// ── Card base (BEM) ───────────────────────────────────
+.c-card {
+  @include m.glass-effect;
+  padding: v.$spacing-lg;
+  box-shadow: v.$shadow-card;
+  transition:
+    box-shadow v.$transition-base,
+    transform v.$transition-base,
+    border-color v.$transition-base;
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: v.$color-border-light;
+    box-shadow:
+      v.$shadow-card,
+      0 8px 32px rgba(0, 0, 0, 0.2);
+  }
+
+  &__header {
+    @include m.flex-between;
+    margin-bottom: v.$spacing-md;
+  }
+
+  &__title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: v.$color-text-heading;
+  }
+
+  &__body {
+    margin-bottom: v.$spacing-md;
+  }
+
+  &__footer {
+    @include m.flex-between;
+    padding-top: v.$spacing-md;
+    border-top: 1px solid v.$color-border;
+  }
+
+  &__meta {
+    display: flex;
+    gap: v.$spacing-sm;
+    flex-wrap: wrap;
+  }
+}

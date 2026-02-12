@@ -1,0 +1,52 @@
+@use 'variables' as v;
+
+// ── Responsive breakpoints ────────────────────────────
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == sm {
+    @media (min-width: v.$breakpoint-sm) { @content; }
+  } @else if $breakpoint == md {
+    @media (min-width: v.$breakpoint-md) { @content; }
+  } @else if $breakpoint == lg {
+    @media (min-width: v.$breakpoint-lg) { @content; }
+  } @else if $breakpoint == xl {
+    @media (min-width: v.$breakpoint-xl) { @content; }
+  }
+}
+
+// ── Layout helpers ────────────────────────────────────
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// ── Glassmorphism effect ──────────────────────────────
+@mixin glass-effect {
+  background: v.$color-glass-bg;
+  backdrop-filter: blur(12px);
+  border: 1px solid v.$color-glass-border;
+  border-radius: v.$radius-lg;
+}
+
+// ── Glow hover on interactive elements ────────────────
+@mixin glow-hover($color: v.$color-accent-red, $shadow: v.$shadow-glow-red) {
+  transition: box-shadow v.$transition-base, transform v.$transition-base;
+
+  &:hover {
+    box-shadow: $shadow;
+    transform: translateY(-2px);
+  }
+}
+
+// ── Truncate text ─────────────────────────────────────
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

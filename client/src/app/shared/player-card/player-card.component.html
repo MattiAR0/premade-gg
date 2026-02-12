@@ -1,0 +1,19 @@
+<article class="c-card c-player-card">
+  <header class="c-card__header">
+    <h3 class="c-card__title c-player-card__name">{{ player.riotId }}</h3>
+    <app-karma-badge [karma]="player.karma" />
+  </header>
+  <section class="c-card__body">
+    <ul class="c-card__meta c-player-card__details">
+      <li>
+        <app-rank-badge [rank]="player.rank" />
+      </li>
+      <li>
+        <span class="c-badge c-badge--role">{{ player.role }}</span>
+      </li>
+    </ul>
+  </section>
+  <footer class="c-card__footer">
+    <span class="c-player-card__schedule">{{ player.schedule }}</span>
+  </footer>
+</article>

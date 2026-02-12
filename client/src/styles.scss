@@ -1,0 +1,13 @@
+// ── Global Styles Entry Point ─────────────────────────
+// Este archivo es el que Angular usa como global stylesheet.
+// Importa la arquitectura SASS completa.
+@use 'scss/main';
+
+// ── Body base styling ─────────────────────────────────
+body {
+  background-color: #0f1923;
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(255, 70, 85, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(23, 236, 194, 0.03) 0%, transparent 50%);
+  min-height: 100vh;
+}

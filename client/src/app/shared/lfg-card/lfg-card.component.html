@@ -1,0 +1,26 @@
+<article class="c-card c-lfg-card">
+  <header class="c-card__header">
+    <h3 class="c-card__title c-lfg-card__title">{{ post.title }}</h3>
+    <span class="c-badge c-badge--rank">{{ post.maxPlayers }} players</span>
+  </header>
+  <section class="c-card__body">
+    <p class="c-lfg-card__description">{{ post.description }}</p>
+    <ul class="c-card__meta c-lfg-card__roles">
+      @for (role of post.requiredRoles; track role) {
+        <li>
+          <span class="c-badge c-badge--role">{{ role }}</span>
+        </li>
+      }
+    </ul>
+  </section>
+  <footer class="c-card__footer">
+    <span class="c-lfg-card__author">
+      {{ post.author.riotId }}
+      <app-karma-badge [karma]="post.author.karma" />
+    </span>
+    <span class="c-lfg-card__meta">
+      <app-rank-badge [rank]="post.minRank" />
+      <span class="c-lfg-card__schedule">{{ post.schedule }}</span>
+    </span>
+  </footer>
+</article>

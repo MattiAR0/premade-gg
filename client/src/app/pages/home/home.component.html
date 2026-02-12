@@ -1,0 +1,51 @@
+<main>
+  <!-- Hero Section -->
+  <section class="c-hero l-section">
+    <header class="c-hero__content l-container">
+      <h1 class="c-hero__title">
+        Find Your <span class="c-hero__accent">Premade</span>
+      </h1>
+      <p class="c-hero__subtitle">
+        Conecta con jugadores de Valorant basándote en reputación, no solo en rango.
+        Los jugadores tóxicos se quedan fuera.
+      </p>
+      <nav class="c-hero__actions">
+        <a class="c-btn c-btn--primary" routerLink="/players">Explorar Jugadores</a>
+        <a class="c-btn c-btn--secondary" routerLink="/lfg">LFG Board</a>
+      </nav>
+    </header>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="c-stats l-section l-container">
+    <h2 class="c-stats__title">La Comunidad</h2>
+    <ul class="c-stats__grid l-grid l-grid--3col">
+      <li class="c-stats__item">
+        <strong class="c-stats__number">{{ totalPlayers }}</strong>
+        <span class="c-stats__label">Jugadores Registrados</span>
+      </li>
+      <li class="c-stats__item">
+        <strong class="c-stats__number">Karma</strong>
+        <span class="c-stats__label">Sistema de Reputación</span>
+      </li>
+      <li class="c-stats__item">
+        <strong class="c-stats__number">0 Toxic</strong>
+        <span class="c-stats__label">Filtro Anti-Toxicidad</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Top Players Section -->
+  @if (topPlayers.length > 0) {
+    <section class="l-section l-container">
+      <h2>Top Players</h2>
+      <ul class="l-grid l-grid--3col">
+        @for (player of topPlayers; track player._id) {
+          <li>
+            <app-player-card [player]="player" />
+          </li>
+        }
+      </ul>
+    </section>
+  }
+</main>

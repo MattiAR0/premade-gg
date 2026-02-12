@@ -1,0 +1,70 @@
+<main class="l-container l-section">
+  <header>
+    <h1>Jugadores</h1>
+    <p>Encuentra jugadores por rango, rol o reputación.</p>
+  </header>
+
+  <!-- Filtros -->
+  <section class="c-filters">
+    <h2 class="c-filters__title">Filtros</h2>
+    <form class="c-filters__form" (ngSubmit)="loadPlayers()">
+      <label class="c-filters__field">
+        <span class="c-filters__label">Rango</span>
+        <select class="c-filters__select" [(ngModel)]="filterRank" name="rank">
+          <option value="">Todos</option>
+          @for (rank of ranks; track rank) {
+            <option [value]="rank">{{ rank }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="c-filters__field">
+        <span class="c-filters__label">Rol</span>
+        <select class="c-filters__select" [(ngModel)]="filterRole" name="role">
+          <option value="">Todos</option>
+          @for (role of roles; track role) {
+            <option [value]="role">{{ role }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="c-filters__field">
+        <span class="c-filters__label">Karma mínimo</span>
+        <input
+          class="c-filters__input"
+          type="number"
+          [(ngModel)]="filterMinKarma"
+          name="minKarma"
+          min="0"
+          max="5"
+          step="0.5"
+        />
+      </label>
+
+      <nav class="c-filters__actions">
+        <button class="c-btn c-btn--primary c-btn--sm" type="submit">Buscar</button>
+        <button class="c-btn c-btn--ghost c-btn--sm" type="button" (click)="clearFilters()">
+          Limpiar
+        </button>
+      </nav>
+    </form>
+  </section>
+
+  <!-- Resultados -->
+  <section>
+    @if (loading) {
+      <p class="c-loading">Cargando jugadores...</p>
+    } @else if (players.length === 0) {
+      <p class="c-empty">No se encontraron jugadores con esos filtros.</p>
+    } @else {
+      <p class="c-results-count">{{ players.length }} jugadores encontrados</p>
+      <ul class="l-grid l-grid--3col">
+        @for (player of players; track player._id) {
+          <li>
+            <app-player-card [player]="player" />
+          </li>
+        }
+      </ul>
+    }
+  </section>
+</main>

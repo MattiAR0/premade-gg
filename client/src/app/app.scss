@@ -1,0 +1,13 @@
+@use 'utilities/variables' as v;
+
+.c-footer {
+  text-align: center;
+  padding: v.$spacing-xl;
+  border-top: 1px solid v.$color-border;
+  margin-top: v.$spacing-3xl;
+
+  &__text {
+    font-size: 0.8rem;
+    color: v.$color-text-muted;
+  }
+}

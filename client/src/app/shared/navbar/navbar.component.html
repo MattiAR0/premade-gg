@@ -1,0 +1,29 @@
+<header class="c-navbar">
+  <a class="c-navbar__brand" routerLink="/">
+    Premade<span class="c-navbar__accent">GG</span>
+  </a>
+  <nav class="c-navbar__nav">
+    <a
+      class="c-navbar__link"
+      routerLink="/"
+      routerLinkActive="c-navbar__link--active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      Home
+    </a>
+    <a
+      class="c-navbar__link"
+      routerLink="/players"
+      routerLinkActive="c-navbar__link--active"
+    >
+      Players
+    </a>
+    <a
+      class="c-navbar__link"
+      routerLink="/lfg"
+      routerLinkActive="c-navbar__link--active"
+    >
+      LFG Board
+    </a>
+  </nav>
+</header>

@@ -1,0 +1,55 @@
+@use '../utilities/variables' as v;
+@use '../utilities/mixins' as m;
+
+// ── Navbar (BEM) ──────────────────────────────────────
+.c-navbar {
+  @include m.flex-between;
+  position: sticky;
+  top: 0;
+  z-index: v.$z-navbar;
+  padding: v.$spacing-md v.$spacing-xl;
+  background: rgba(15, 25, 35, 0.9);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid v.$color-border;
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: v.$color-text-heading;
+  }
+
+  &__accent {
+    color: v.$color-accent-red;
+  }
+
+  &__nav {
+    display: flex;
+    gap: v.$spacing-lg;
+  }
+
+  &__link {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: v.$color-text-muted;
+    padding: v.$spacing-xs v.$spacing-sm;
+    border-bottom: 2px solid transparent;
+    transition:
+      color v.$transition-fast,
+      border-color v.$transition-fast;
+
+    &:hover,
+    &--active {
+      color: v.$color-text-heading;
+      border-bottom-color: v.$color-accent-red;
+    }
+  }
+}

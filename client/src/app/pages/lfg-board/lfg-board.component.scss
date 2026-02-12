@@ -1,0 +1,15 @@
+@use 'utilities/variables' as v;
+
+.c-loading,
+.c-empty {
+  text-align: center;
+  padding: v.$spacing-3xl;
+  color: v.$color-text-muted;
+  font-size: 1.1rem;
+}
+
+.c-results-count {
+  font-size: 0.85rem;
+  color: v.$color-text-muted;
+  margin-bottom: v.$spacing-md;
+}

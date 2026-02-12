@@ -1,0 +1,25 @@
+@use 'variables' as v;
+
+// ── Spacing function ──────────────────────────────────
+// Usage: spacing(2) => 1rem, spacing(4) => 2rem
+@function spacing($multiplier: 1) {
+  @return $multiplier * 0.5rem;
+}
+
+// ── Z-index function ──────────────────────────────────
+// Keeps z-index values organized
+$z-layers: (
+  'base': 1,
+  'dropdown': 100,
+  'navbar': 200,
+  'modal': 300,
+  'toast': 400,
+);
+
+@function z($layer) {
+  @if map-has-key($z-layers, $layer) {
+    @return map-get($z-layers, $layer);
+  }
+  @warn 'Unknown z-index layer: #{$layer}';
+  @return 1;
+}

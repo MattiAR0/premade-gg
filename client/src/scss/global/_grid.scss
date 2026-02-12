@@ -1,0 +1,57 @@
+@use '../utilities/variables' as v;
+@use '../utilities/mixins' as m;
+
+// ── Container ─────────────────────────────────────────
+.l-container {
+  width: 100%;
+  max-width: v.$breakpoint-xl;
+  margin-inline: auto;
+  padding-inline: v.$spacing-md;
+
+  @include m.respond-to(md) {
+    padding-inline: v.$spacing-xl;
+  }
+}
+
+// ── Grid system ───────────────────────────────────────
+.l-grid {
+  display: grid;
+  gap: v.$spacing-lg;
+
+  &--2col {
+    grid-template-columns: 1fr;
+
+    @include m.respond-to(md) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  &--3col {
+    grid-template-columns: 1fr;
+
+    @include m.respond-to(md) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include m.respond-to(lg) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  &--4col {
+    grid-template-columns: 1fr;
+
+    @include m.respond-to(sm) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include m.respond-to(lg) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+}
+
+// ── Section spacing ───────────────────────────────────
+.l-section {
+  padding-block: v.$spacing-3xl;
+}

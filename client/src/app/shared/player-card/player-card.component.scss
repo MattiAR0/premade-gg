@@ -1,0 +1,18 @@
+@use 'utilities/variables' as v;
+
+.c-player-card {
+  &__name {
+    font-size: 1.1rem;
+  }
+
+  &__details {
+    display: flex;
+    gap: v.$spacing-sm;
+    flex-wrap: wrap;
+  }
+
+  &__schedule {
+    font-size: 0.85rem;
+    color: v.$color-text-muted;
+  }
+}

@@ -1,0 +1,73 @@
+@use 'utilities/variables' as v;
+@use 'utilities/mixins' as m;
+
+.c-hero {
+  text-align: center;
+  padding-block: v.$spacing-3xl;
+
+  &__content {
+    max-width: 700px;
+  }
+
+  &__title {
+    font-size: 3rem;
+    margin-bottom: v.$spacing-md;
+
+    @include m.respond-to(md) {
+      font-size: 4rem;
+    }
+  }
+
+  &__accent {
+    color: v.$color-accent-red;
+  }
+
+  &__subtitle {
+    font-size: 1.1rem;
+    color: v.$color-text-muted;
+    margin-bottom: v.$spacing-xl;
+    line-height: 1.7;
+  }
+
+  &__actions {
+    display: flex;
+    gap: v.$spacing-md;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+.c-stats {
+  text-align: center;
+
+  &__title {
+    margin-bottom: v.$spacing-xl;
+  }
+
+  &__grid {
+    max-width: 800px;
+    margin-inline: auto;
+  }
+
+  &__item {
+    @include m.glass-effect;
+    padding: v.$spacing-xl;
+    text-align: center;
+  }
+
+  &__number {
+    display: block;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: v.$color-accent-cyan;
+    margin-bottom: v.$spacing-xs;
+  }
+
+  &__label {
+    font-size: 0.85rem;
+    color: v.$color-text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}

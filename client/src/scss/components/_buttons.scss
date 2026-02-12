@@ -1,0 +1,60 @@
+@use '../utilities/variables' as v;
+@use '../utilities/mixins' as m;
+
+// ── Buttons (BEM) ─────────────────────────────────────
+.c-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: v.$spacing-sm;
+  padding: v.$spacing-sm v.$spacing-lg;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: v.$radius-md;
+  transition:
+    background-color v.$transition-fast,
+    box-shadow v.$transition-base,
+    transform v.$transition-fast;
+
+  &--primary {
+    background-color: v.$color-accent-red;
+    color: v.$color-text-heading;
+
+    &:hover {
+      background-color: v.$color-accent-red-hover;
+      box-shadow: v.$shadow-glow-red;
+      transform: translateY(-1px);
+    }
+  }
+
+  &--secondary {
+    background-color: v.$color-bg-elevated;
+    color: v.$color-text-primary;
+    border: 1px solid v.$color-border;
+
+    &:hover {
+      border-color: v.$color-accent-cyan;
+      box-shadow: v.$shadow-glow-cyan;
+      transform: translateY(-1px);
+    }
+  }
+
+  &--ghost {
+    background-color: transparent;
+    color: v.$color-text-muted;
+    border: 1px solid v.$color-border;
+
+    &:hover {
+      color: v.$color-text-primary;
+      border-color: v.$color-border-light;
+    }
+  }
+
+  &--sm {
+    padding: v.$spacing-xs v.$spacing-md;
+    font-size: 0.85rem;
+  }
+}

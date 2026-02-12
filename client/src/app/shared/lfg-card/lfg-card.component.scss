@@ -1,0 +1,39 @@
+@use 'utilities/variables' as v;
+
+.c-lfg-card {
+  &__title {
+    font-size: 1.05rem;
+  }
+
+  &__description {
+    font-size: 0.9rem;
+    color: v.$color-text-muted;
+    margin-bottom: v.$spacing-md;
+    line-height: 1.5;
+  }
+
+  &__roles {
+    display: flex;
+    gap: v.$spacing-xs;
+    flex-wrap: wrap;
+  }
+
+  &__author {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+    font-size: 0.85rem;
+    color: v.$color-text-primary;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+  }
+
+  &__schedule {
+    font-size: 0.8rem;
+    color: v.$color-text-muted;
+  }
+}
