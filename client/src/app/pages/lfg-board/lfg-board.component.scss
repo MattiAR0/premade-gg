@@ -1,4 +1,59 @@
 @use 'utilities/variables' as v;
+@use 'utilities/mixins' as m;
+
+.c-filters {
+  @include m.glass-effect;
+  padding: v.$spacing-lg;
+  margin-block: v.$spacing-xl;
+
+  &__title {
+    font-size: 1.1rem;
+    margin-bottom: v.$spacing-md;
+  }
+
+  &__form {
+    display: flex;
+    gap: v.$spacing-md;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-xs;
+    flex: 1;
+    min-width: 150px;
+  }
+
+  &__label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: v.$color-text-muted;
+  }
+
+  &__select {
+    padding: v.$spacing-sm v.$spacing-md;
+    background: v.$color-bg-input;
+    border: 1px solid v.$color-border;
+    border-radius: v.$radius-md;
+    color: v.$color-text-primary;
+    font-size: 0.9rem;
+    transition: border-color v.$transition-fast;
+
+    &:focus {
+      outline: none;
+      border-color: v.$color-accent-cyan;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: v.$spacing-sm;
+    align-self: flex-end;
+  }
+}
 
 .c-loading,
 .c-empty {
@@ -6,6 +61,23 @@
   padding: v.$spacing-3xl;
   color: v.$color-text-muted;
   font-size: 1.1rem;
+
+  &__hint {
+    font-size: 0.85rem;
+    margin-top: v.$spacing-sm;
+    opacity: 0.7;
+  }
+}
+
+.c-error {
+  text-align: center;
+  padding: v.$spacing-lg;
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.08);
+  border: 1px solid rgba(255, 107, 107, 0.25);
+  border-radius: v.$radius-md;
+  font-size: 1rem;
+  margin-block: v.$spacing-lg;
 }
 
 .c-results-count {

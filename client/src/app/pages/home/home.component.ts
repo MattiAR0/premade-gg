@@ -14,6 +14,7 @@ import { User } from '../../models/user.model';
 export class HomeComponent implements OnInit {
   topPlayers: User[] = [];
   totalPlayers = 0;
+  errorMessage = '';
 
   constructor(private readonly api: ApiService) {}
 
@@ -24,6 +25,10 @@ export class HomeComponent implements OnInit {
       next: (res) => {
         this.topPlayers = res.data;
         this.totalPlayers = res.total;
+      },
+      error: (err) => {
+        this.errorMessage = 'No se pudo conectar con el servidor.';
+        console.error('Error loading top players:', err);
       },
     });
   }

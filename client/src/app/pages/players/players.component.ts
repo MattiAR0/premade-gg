@@ -14,6 +14,7 @@ import { User } from '../../models/user.model';
 export class PlayersComponent implements OnInit {
   players: User[] = [];
   loading = true;
+  errorMessage = '';
 
   // Paginación
   currentPage = 1;
@@ -37,6 +38,7 @@ export class PlayersComponent implements OnInit {
 
   loadPlayers(): void {
     this.loading = true;
+    this.errorMessage = '';
     const filters: { rank?: string; role?: string; minKarma?: number; page?: number; limit?: number } = {
       page: this.currentPage,
       limit: this.pageSize,
@@ -52,7 +54,9 @@ export class PlayersComponent implements OnInit {
         this.totalPages = res.totalPages;
         this.loading = false;
       },
-      error: () => {
+      error: (err) => {
+        this.errorMessage = 'Error al cargar jugadores. Comprueba que el servidor está en marcha.';
+        console.error('Error loading players:', err);
         this.loading = false;
       },
     });

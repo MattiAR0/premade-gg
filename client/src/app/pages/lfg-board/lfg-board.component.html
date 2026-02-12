@@ -4,13 +4,51 @@
     <p>Posts de jugadores buscando grupo. Solo jugadores con buen Karma pueden publicar.</p>
   </header>
 
+  <!-- Filtros -->
+  <section class="c-filters">
+    <h2 class="c-filters__title">Filtros</h2>
+    <form class="c-filters__form" (ngSubmit)="loadPosts()">
+      <label class="c-filters__field">
+        <span class="c-filters__label">Estado</span>
+        <select class="c-filters__select" [(ngModel)]="filterStatus" name="status">
+          <option value="">Todos (por defecto: open)</option>
+          @for (status of statuses; track status) {
+            <option [value]="status">{{ status }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="c-filters__field">
+        <span class="c-filters__label">Rol buscado</span>
+        <select class="c-filters__select" [(ngModel)]="filterRole" name="role">
+          <option value="">Todos</option>
+          @for (role of roles; track role) {
+            <option [value]="role">{{ role }}</option>
+          }
+        </select>
+      </label>
+
+      <nav class="c-filters__actions">
+        <button class="c-btn c-btn--primary c-btn--sm" type="submit">Buscar</button>
+        <button class="c-btn c-btn--ghost c-btn--sm" type="button" (click)="clearFilters()">
+          Limpiar
+        </button>
+      </nav>
+    </form>
+  </section>
+
   <section>
     @if (loading) {
       <p class="c-loading">Cargando posts...</p>
+    } @else if (errorMessage) {
+      <p class="c-error">{{ errorMessage }}</p>
     } @else if (posts.length === 0) {
-      <p class="c-empty">No hay posts LFG abiertos.</p>
+      <div class="c-empty">
+        <p>No hay posts LFG abiertos.</p>
+        <p class="c-empty__hint">Puede que no haya posts con status "open" o que la base de datos esté vacía.</p>
+      </div>
     } @else {
-      <p class="c-results-count">{{ totalPosts }} posts abiertos</p>
+      <p class="c-results-count">{{ totalPosts }} posts encontrados</p>
       <ul class="l-grid l-grid--2col">
         @for (post of posts; track post._id) {
           <li>

@@ -36,7 +36,11 @@
   </section>
 
   <!-- Top Players Section -->
-  @if (topPlayers.length > 0) {
+  @if (errorMessage) {
+    <section class="l-section l-container">
+      <p class="c-error">{{ errorMessage }}</p>
+    </section>
+  } @else if (topPlayers.length > 0) {
     <section class="l-section l-container">
       <h2>Top Players</h2>
       <ul class="l-grid l-grid--3col">

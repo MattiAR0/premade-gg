@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Reputation = require('../models/Reputation');
+const LFGPost = require('../models/LFGPost');
 const { validateAccount, getPlayerRank } = require('../services/riotService');
 
 /**
@@ -144,7 +145,9 @@ const deleteUser = async (req, res, next) => {
     await Reputation.deleteMany({
       $or: [{ author: req.params.id }, { target: req.params.id }],
     });
-    res.json({ message: 'User and related reviews deleted' });
+    // Limpiar posts LFG creados por el usuario
+    await LFGPost.deleteMany({ author: req.params.id });
+    res.json({ message: 'User, related reviews and LFG posts deleted' });
   } catch (err) {
     next(err);
   }

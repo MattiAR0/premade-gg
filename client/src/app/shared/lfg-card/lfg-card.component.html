@@ -15,11 +15,17 @@
   </section>
   <footer class="c-card__footer">
     <span class="c-lfg-card__author">
-      {{ post.author.riotId }}
-      <app-karma-badge [karma]="post.author.karma" />
+      @if (post.author) {
+        {{ post.author.riotId }}
+        <app-karma-badge [karma]="post.author.karma" />
+      } @else {
+        <span class="c-lfg-card__deleted">[Usuario eliminado]</span>
+      }
     </span>
     <span class="c-lfg-card__meta">
-      <app-rank-badge [rank]="post.minRank" />
+      @if (post.minRank) {
+        <app-rank-badge [rank]="post.minRank" />
+      }
       <span class="c-lfg-card__schedule">{{ post.schedule }}</span>
     </span>
   </footer>

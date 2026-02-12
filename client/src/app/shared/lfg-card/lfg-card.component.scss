@@ -26,6 +26,12 @@
     color: v.$color-text-primary;
   }
 
+  &__deleted {
+    color: v.$color-text-muted;
+    font-style: italic;
+    opacity: 0.7;
+  }
+
   &__meta {
     display: flex;
     align-items: center;

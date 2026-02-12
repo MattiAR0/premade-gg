@@ -54,8 +54,15 @@
   <section>
     @if (loading) {
       <p class="c-loading">Cargando jugadores...</p>
+    } @else if (errorMessage) {
+      <p class="c-error">{{ errorMessage }}</p>
     } @else if (players.length === 0) {
-      <p class="c-empty">No se encontraron jugadores con esos filtros.</p>
+      <div class="c-empty">
+        <p>No se encontraron jugadores con esos filtros.</p>
+        @if (!filterRank && !filterRole && filterMinKarma === 0) {
+          <p class="c-empty__hint">Si la base de datos está vacía, ejecuta el seed para generar datos de prueba.</p>
+        }
+      </div>
     } @else {
       <p class="c-results-count">{{ totalPlayers }} jugadores encontrados</p>
       <ul class="l-grid l-grid--3col">
