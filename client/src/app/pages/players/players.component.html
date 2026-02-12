@@ -57,7 +57,7 @@
     } @else if (players.length === 0) {
       <p class="c-empty">No se encontraron jugadores con esos filtros.</p>
     } @else {
-      <p class="c-results-count">{{ players.length }} jugadores encontrados</p>
+      <p class="c-results-count">{{ totalPlayers }} jugadores encontrados</p>
       <ul class="l-grid l-grid--3col">
         @for (player of players; track player._id) {
           <li>
@@ -65,6 +65,29 @@
           </li>
         }
       </ul>
+
+      <!-- Paginación -->
+      @if (totalPages > 1) {
+        <nav class="c-pagination" aria-label="Paginación de jugadores">
+          <button
+            class="c-btn c-btn--ghost c-btn--sm"
+            [disabled]="currentPage === 1"
+            (click)="goToPage(currentPage - 1)"
+          >
+            Anterior
+          </button>
+          <span class="c-pagination__info">
+            Página {{ currentPage }} de {{ totalPages }}
+          </span>
+          <button
+            class="c-btn c-btn--ghost c-btn--sm"
+            [disabled]="currentPage === totalPages"
+            (click)="goToPage(currentPage + 1)"
+          >
+            Siguiente
+          </button>
+        </nav>
+      }
     }
   </section>
 </main>

@@ -3,26 +3,48 @@ const User = require('../models/User');
 
 /**
  * GET /api/lfg
- * Lista posts LFG abiertos. Soporta filtros por query params.
+ * Lista posts LFG con paginación. Soporta filtros por query params.
+ *
+ * Query params:
+ * - role, minRank, status: filtros
+ * - page (default 1): número de página
+ * - limit (default 12): resultados por página (max 100)
+ *
+ * Respuesta: { data: LFGPost[], total, page, limit, totalPages }
  */
 const getPosts = async (req, res, next) => {
   try {
     const { role, minRank, status } = req.query;
-    const filter = {};
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 12));
+    const skip = (page - 1) * limit;
 
+    const filter = {};
     if (status) {
       filter.status = status;
     } else {
-      filter.status = 'open'; // Por defecto solo posts abiertos
+      filter.status = 'open';
     }
     if (role) filter.requiredRoles = role;
     if (minRank) filter.minRank = minRank;
 
-    const posts = await LFGPost.find(filter)
-      .populate('author', 'riotId rank role karma')
-      .sort({ createdAt: -1 });
+    const [posts, total] = await Promise.all([
+      LFGPost.find(filter)
+        .populate('author', 'riotId rank role karma')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      LFGPost.countDocuments(filter),
+    ]);
 
-    res.json(posts);
+    res.json({
+      data: posts,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    });
   } catch (err) {
     next(err);
   }
@@ -34,7 +56,9 @@ const getPosts = async (req, res, next) => {
  */
 const getPostById = async (req, res, next) => {
   try {
-    const post = await LFGPost.findById(req.params.id).populate('author', 'riotId rank role karma');
+    const post = await LFGPost.findById(req.params.id)
+      .populate('author', 'riotId rank role karma')
+      .lean();
 
     if (!post) {
       return res.status(404).json({ message: 'LFG Post not found' });
@@ -151,7 +175,7 @@ const findCompatiblePlayers = async (req, res, next) => {
       filter.rank = { $in: validRanks };
     }
 
-    const players = await User.find(filter).sort({ karma: -1 });
+    const players = await User.find(filter).sort({ karma: -1 }).limit(50).lean();
 
     res.json({
       postId: post._id,

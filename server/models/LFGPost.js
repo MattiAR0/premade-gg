@@ -61,4 +61,10 @@ const lfgPostSchema = new mongoose.Schema({
   },
 });
 
+// ── Índices para rendimiento de consultas ──────────────────
+// Consulta principal: filtro por status + orden por createdAt desc
+lfgPostSchema.index({ status: 1, createdAt: -1 });
+// Populate de author (evita collection scan)
+lfgPostSchema.index({ author: 1 });
+
 module.exports = mongoose.model('LFGPost', lfgPostSchema);

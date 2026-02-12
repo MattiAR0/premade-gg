@@ -11,6 +11,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const compression = require('compression');
 const morgan = require('morgan');
 require('dotenv').config();
 
@@ -30,6 +31,7 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/premade-gg
 
 // ── Middlewares globales ──────────────────────────────
 app.use(cors());
+app.use(compression());       // Comprime respuestas JSON (~70% menos tamaño)
 app.use(express.json());
 
 // Logs condicionales (Requisito Rúbrica: 20%)

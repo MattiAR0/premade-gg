@@ -1,0 +1,16 @@
+@use '../utilities/variables' as v;
+
+.c-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: v.$spacing-md;
+  margin-top: v.$spacing-xl;
+  padding-top: v.$spacing-lg;
+  border-top: 1px solid v.$color-border;
+
+  &__info {
+    font-size: 0.9rem;
+    color: v.$color-text-muted;
+  }
+}

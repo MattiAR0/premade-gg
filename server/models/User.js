@@ -64,4 +64,10 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+// ── Índices para rendimiento de consultas ──────────────────
+// Consulta principal: filtro por rank/role + orden por karma desc
+userSchema.index({ rank: 1, role: 1, karma: -1 });
+// Orden por karma solo (sin filtros)
+userSchema.index({ karma: -1 });
+
 module.exports = mongoose.model('User', userSchema);

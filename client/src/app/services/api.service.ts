@@ -7,6 +7,15 @@ import { Reputation } from '../models/reputation.model';
 import { LfgPost, MatchmakingResult } from '../models/lfg-post.model';
 import { RiotAccountValidation, RiotRankData } from '../models/riot.model';
 
+/** Respuesta paginada genérica del backend */
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -33,12 +42,20 @@ export class ApiService {
   }
 
   // ── Users ───────────────────────────────────────────
-  getUsers(filters?: { rank?: string; role?: string; minKarma?: number }): Observable<User[]> {
+  getUsers(filters?: {
+    rank?: string;
+    role?: string;
+    minKarma?: number;
+    page?: number;
+    limit?: number;
+  }): Observable<PaginatedResponse<User>> {
     let params = new HttpParams();
     if (filters?.rank) params = params.set('rank', filters.rank);
     if (filters?.role) params = params.set('role', filters.role);
     if (filters?.minKarma) params = params.set('minKarma', filters.minKarma.toString());
-    return this.http.get<User[]>(`${this.baseUrl}/users`, { params });
+    if (filters?.page) params = params.set('page', filters.page.toString());
+    if (filters?.limit) params = params.set('limit', filters.limit.toString());
+    return this.http.get<PaginatedResponse<User>>(`${this.baseUrl}/users`, { params });
   }
 
   getUserById(id: string): Observable<User> {
@@ -54,11 +71,18 @@ export class ApiService {
   }
 
   // ── LFG Posts ───────────────────────────────────────
-  getLfgPosts(filters?: { role?: string; status?: string }): Observable<LfgPost[]> {
+  getLfgPosts(filters?: {
+    role?: string;
+    status?: string;
+    page?: number;
+    limit?: number;
+  }): Observable<PaginatedResponse<LfgPost>> {
     let params = new HttpParams();
     if (filters?.role) params = params.set('role', filters.role);
     if (filters?.status) params = params.set('status', filters.status);
-    return this.http.get<LfgPost[]>(`${this.baseUrl}/lfg`, { params });
+    if (filters?.page) params = params.set('page', filters.page.toString());
+    if (filters?.limit) params = params.set('limit', filters.limit.toString());
+    return this.http.get<PaginatedResponse<LfgPost>>(`${this.baseUrl}/lfg`, { params });
   }
 
   getLfgPostById(id: string): Observable<LfgPost> {

@@ -10,7 +10,7 @@
     } @else if (posts.length === 0) {
       <p class="c-empty">No hay posts LFG abiertos.</p>
     } @else {
-      <p class="c-results-count">{{ posts.length }} posts abiertos</p>
+      <p class="c-results-count">{{ totalPosts }} posts abiertos</p>
       <ul class="l-grid l-grid--2col">
         @for (post of posts; track post._id) {
           <li>
@@ -18,6 +18,29 @@
           </li>
         }
       </ul>
+
+      <!-- Paginación -->
+      @if (totalPages > 1) {
+        <nav class="c-pagination" aria-label="Paginación de posts">
+          <button
+            class="c-btn c-btn--ghost c-btn--sm"
+            [disabled]="currentPage === 1"
+            (click)="goToPage(currentPage - 1)"
+          >
+            Anterior
+          </button>
+          <span class="c-pagination__info">
+            Página {{ currentPage }} de {{ totalPages }}
+          </span>
+          <button
+            class="c-btn c-btn--ghost c-btn--sm"
+            [disabled]="currentPage === totalPages"
+            (click)="goToPage(currentPage + 1)"
+          >
+            Siguiente
+          </button>
+        </nav>
+      }
     }
   </section>
 </main>

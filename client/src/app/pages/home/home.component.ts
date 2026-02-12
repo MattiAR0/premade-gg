@@ -18,14 +18,12 @@ export class HomeComponent implements OnInit {
   constructor(private readonly api: ApiService) {}
 
   ngOnInit(): void {
-    this.api.getUsers({ minKarma: 4 }).subscribe({
-      next: (users) => {
-        this.topPlayers = users.slice(0, 3);
-      },
-    });
-    this.api.getUsers().subscribe({
-      next: (users) => {
-        this.totalPlayers = users.length;
+    // Top 3 jugadores (ya vienen ordenados por karma desc desde el backend).
+    // Una sola llamada: limit=3 trae solo 3 docs, y total nos da el conteo global.
+    this.api.getUsers({ limit: 3, page: 1 }).subscribe({
+      next: (res) => {
+        this.topPlayers = res.data;
+        this.totalPlayers = res.total;
       },
     });
   }

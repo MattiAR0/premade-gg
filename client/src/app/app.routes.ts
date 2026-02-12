@@ -1,11 +1,19 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './pages/home/home.component';
-import { PlayersComponent } from './pages/players/players.component';
-import { LfgBoardComponent } from './pages/lfg-board/lfg-board.component';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'players', component: PlayersComponent },
-  { path: 'lfg', component: LfgBoardComponent },
+  {
+    path: '',
+    loadComponent: () => import('./pages/home/home.component').then((m) => m.HomeComponent),
+  },
+  {
+    path: 'players',
+    loadComponent: () =>
+      import('./pages/players/players.component').then((m) => m.PlayersComponent),
+  },
+  {
+    path: 'lfg',
+    loadComponent: () =>
+      import('./pages/lfg-board/lfg-board.component').then((m) => m.LfgBoardComponent),
+  },
   { path: '**', redirectTo: '' },
 ];

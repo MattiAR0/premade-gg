@@ -4,19 +4,39 @@ const { validateAccount, getPlayerRank } = require('../services/riotService');
 
 /**
  * GET /api/users
- * Lista todos los usuarios. Soporta filtros por query params.
+ * Lista usuarios con paginación. Soporta filtros por query params.
+ *
+ * Query params:
+ * - rank, role, minKarma: filtros
+ * - page (default 1): número de página
+ * - limit (default 12): resultados por página (max 100)
+ *
+ * Respuesta: { data: User[], total, page, limit, totalPages }
  */
 const getUsers = async (req, res, next) => {
   try {
     const { rank, role, minKarma } = req.query;
-    const filter = {};
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 12));
+    const skip = (page - 1) * limit;
 
+    const filter = {};
     if (rank) filter.rank = rank;
     if (role) filter.role = role;
     if (minKarma) filter.karma = { $gte: Number(minKarma) };
 
-    const users = await User.find(filter).sort({ karma: -1 });
-    res.json(users);
+    const [users, total] = await Promise.all([
+      User.find(filter).sort({ karma: -1 }).skip(skip).limit(limit).lean(),
+      User.countDocuments(filter),
+    ]);
+
+    res.json({
+      data: users,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    });
   } catch (err) {
     next(err);
   }
@@ -28,7 +48,7 @@ const getUsers = async (req, res, next) => {
  */
 const getUserById = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id).lean();
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
