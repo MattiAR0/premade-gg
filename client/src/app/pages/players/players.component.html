@@ -52,10 +52,23 @@
 
   <!-- Resultados -->
   <section>
-    @if (loading) {
-      <p class="c-loading">Cargando jugadores...</p>
-    } @else if (errorMessage) {
+    @if (errorMessage) {
       <p class="c-error">{{ errorMessage }}</p>
+    } @else if (initialLoading) {
+      <!-- Skeleton loading -->
+      <ul class="l-grid l-grid--2col">
+        @for (i of [1, 2, 3]; track i) {
+          <li class="c-fade-in" [style.animation-delay]="(i - 1) * 0.1 + 's'">
+            <article class="c-card c-skeleton-card c-skeleton-card--lg" aria-hidden="true">
+              <div class="c-skeleton c-skeleton--avatar"></div>
+              <div class="c-skeleton c-skeleton--title"></div>
+              <div class="c-skeleton c-skeleton--text"></div>
+              <div class="c-skeleton c-skeleton--text c-skeleton--short"></div>
+              <div class="c-skeleton c-skeleton--badges"></div>
+            </article>
+          </li>
+        }
+      </ul>
     } @else if (players.length === 0) {
       <div class="c-empty">
         <p>No se encontraron jugadores con esos filtros.</p>
@@ -65,36 +78,25 @@
       </div>
     } @else {
       <p class="c-results-count">{{ totalPlayers }} jugadores encontrados</p>
-      <ul class="l-grid l-grid--3col">
-        @for (player of players; track player._id) {
-          <li>
+      <ul class="l-grid l-grid--2col">
+        @for (player of players; track player._id; let i = $index) {
+          <li class="c-fade-in" [style.animation-delay]="(i % 3) * 0.12 + 's'">
             <app-player-card [player]="player" />
           </li>
         }
       </ul>
 
-      <!-- Paginación -->
-      @if (totalPages > 1) {
-        <nav class="c-pagination" aria-label="Paginación de jugadores">
-          <button
-            class="c-btn c-btn--ghost c-btn--sm"
-            [disabled]="currentPage === 1"
-            (click)="goToPage(currentPage - 1)"
-          >
-            Anterior
-          </button>
-          <span class="c-pagination__info">
-            Página {{ currentPage }} de {{ totalPages }}
-          </span>
-          <button
-            class="c-btn c-btn--ghost c-btn--sm"
-            [disabled]="currentPage === totalPages"
-            (click)="goToPage(currentPage + 1)"
-          >
-            Siguiente
-          </button>
-        </nav>
+      <!-- Infinite scroll: indicador de carga -->
+      @if (loadingMore) {
+        <p class="c-loading-more">Cargando más jugadores...</p>
+      }
+
+      @if (!hasMore && players.length > 0) {
+        <p class="c-end-of-list">Has visto todos los jugadores</p>
       }
     }
+
+    <!-- Sentinel para IntersectionObserver -->
+    <div #scrollSentinel class="c-scroll-sentinel"></div>
   </section>
 </main>

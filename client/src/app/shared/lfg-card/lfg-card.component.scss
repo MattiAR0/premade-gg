@@ -2,14 +2,14 @@
 
 .c-lfg-card {
   &__title {
-    font-size: 1.05rem;
+    font-size: 1.25rem;
   }
 
   &__description {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: v.$color-text-muted;
-    margin-bottom: v.$spacing-md;
-    line-height: 1.5;
+    margin-bottom: v.$spacing-lg;
+    line-height: 1.6;
   }
 
   &__roles {

@@ -4,7 +4,7 @@
 // ── Card base (BEM) ───────────────────────────────────
 .c-card {
   @include m.glass-effect;
-  padding: v.$spacing-lg;
+  padding: v.$spacing-lg v.$spacing-xl;
   box-shadow: v.$shadow-card;
   transition:
     box-shadow v.$transition-base,

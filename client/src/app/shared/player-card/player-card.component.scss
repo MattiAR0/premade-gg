@@ -2,8 +2,8 @@
 
 .c-player-card {
   &__avatar {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid v.$color-text-muted;
@@ -12,12 +12,12 @@
   &__header-info {
     display: flex;
     align-items: center;
-    gap: v.$spacing-sm;
+    gap: v.$spacing-md;
     flex: 1;
   }
 
   &__name {
-    font-size: 1.1rem;
+    font-size: 1.25rem;
   }
 
   &__details {
@@ -27,13 +27,13 @@
   }
 
   &__level {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: v.$color-text-muted;
-    margin-top: v.$spacing-xs;
+    margin-top: v.$spacing-sm;
   }
 
   &__schedule {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: v.$color-text-muted;
   }
 }

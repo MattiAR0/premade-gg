@@ -18,6 +18,11 @@
   display: grid;
   gap: v.$spacing-lg;
 
+  &--1col {
+    grid-template-columns: 1fr;
+    max-width: 800px;
+  }
+
   &--2col {
     grid-template-columns: 1fr;
 

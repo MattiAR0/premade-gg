@@ -86,3 +86,93 @@
   color: v.$color-text-muted;
   margin-bottom: v.$spacing-md;
 }
+
+// ── Staggered fade-in animation ───────────────────────
+.c-fade-in {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fade-in-up 0.4s ease-out forwards;
+}
+
+@keyframes fade-in-up {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ── Skeleton Loading ──────────────────────────────────
+.c-skeleton-card {
+  @include m.glass-effect;
+  padding: v.$spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-md;
+
+  &--lg {
+    padding: v.$spacing-xl;
+    gap: v.$spacing-lg;
+  }
+}
+
+.c-skeleton {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 25%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0.04) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  border-radius: v.$radius-md;
+
+  &--avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+  }
+
+  &--title {
+    height: 1.4rem;
+    width: 60%;
+  }
+
+  &--text {
+    height: 1rem;
+    width: 100%;
+  }
+
+  &--short {
+    width: 40%;
+  }
+
+  &--badges {
+    height: 2rem;
+    width: 50%;
+  }
+}
+
+@keyframes skeleton-pulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+// ── Infinite Scroll ───────────────────────────────────
+.c-loading-more {
+  text-align: center;
+  padding: v.$spacing-lg;
+  color: v.$color-text-muted;
+  font-size: 0.9rem;
+}
+
+.c-end-of-list {
+  text-align: center;
+  padding: v.$spacing-lg;
+  color: v.$color-text-muted;
+  font-size: 0.8rem;
+  opacity: 0.5;
+}
+
+.c-scroll-sentinel {
+  height: 1px;
+  visibility: hidden;
+}
