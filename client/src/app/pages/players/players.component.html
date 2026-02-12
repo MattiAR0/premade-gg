@@ -1,45 +1,50 @@
-<main class="l-container l-section">
-  <header>
-    <h1>Jugadores</h1>
-    <p>Encuentra jugadores por rango, rol o reputación.</p>
+<main class="l-container l-container--medium l-section">
+  <!-- Page header (social style) -->
+  <header class="c-page-header">
+    <div class="c-page-header__text">
+      <h1 class="c-page-header__title">Jugadores</h1>
+      <p class="c-page-header__desc">Encuentra jugadores por rango, rol o reputacion</p>
+    </div>
   </header>
 
-  <!-- Filtros -->
+  <!-- Filtros modernos -->
   <section class="c-filters">
-    <h2 class="c-filters__title">Filtros</h2>
     <form class="c-filters__form" (ngSubmit)="loadPlayers()">
-      <label class="c-filters__field">
-        <span class="c-filters__label">Rango</span>
-        <select class="c-filters__select" [(ngModel)]="filterRank" name="rank">
-          <option value="">Todos</option>
-          @for (rank of ranks; track rank) {
-            <option [value]="rank">{{ rank }}</option>
-          }
-        </select>
-      </label>
+      <div class="c-filters__row">
+        <label class="c-filters__field">
+          <span class="c-filters__label">Rango</span>
+          <select class="c-filters__select" [(ngModel)]="filterRank" name="rank">
+            <option value="">Todos</option>
+            @for (rank of ranks; track rank) {
+              <option [value]="rank">{{ rank }}</option>
+            }
+          </select>
+        </label>
 
-      <label class="c-filters__field">
-        <span class="c-filters__label">Rol</span>
-        <select class="c-filters__select" [(ngModel)]="filterRole" name="role">
-          <option value="">Todos</option>
-          @for (role of roles; track role) {
-            <option [value]="role">{{ role }}</option>
-          }
-        </select>
-      </label>
+        <label class="c-filters__field">
+          <span class="c-filters__label">Rol</span>
+          <select class="c-filters__select" [(ngModel)]="filterRole" name="role">
+            <option value="">Todos</option>
+            @for (role of roles; track role) {
+              <option [value]="role">{{ role }}</option>
+            }
+          </select>
+        </label>
 
-      <label class="c-filters__field">
-        <span class="c-filters__label">Karma mínimo</span>
-        <input
-          class="c-filters__input"
-          type="number"
-          [(ngModel)]="filterMinKarma"
-          name="minKarma"
-          min="0"
-          max="5"
-          step="0.5"
-        />
-      </label>
+        <label class="c-filters__field">
+          <span class="c-filters__label">Karma minimo</span>
+          <input
+            class="c-filters__input"
+            type="number"
+            [(ngModel)]="filterMinKarma"
+            name="minKarma"
+            min="0"
+            max="5"
+            step="0.5"
+            placeholder="0"
+          />
+        </label>
+      </div>
 
       <nav class="c-filters__actions">
         <button class="c-btn c-btn--primary c-btn--sm" type="submit">Buscar</button>
@@ -55,40 +60,51 @@
     @if (errorMessage) {
       <p class="c-error">{{ errorMessage }}</p>
     } @else if (initialLoading) {
-      <!-- Skeleton loading -->
       <ul class="l-grid l-grid--2col">
-        @for (i of [1, 2, 3]; track i) {
-          <li class="c-fade-in" [style.animation-delay]="(i - 1) * 0.1 + 's'">
-            <article class="c-card c-skeleton-card c-skeleton-card--lg" aria-hidden="true">
-              <div class="c-skeleton c-skeleton--avatar"></div>
-              <div class="c-skeleton c-skeleton--title"></div>
+        @for (i of [1, 2, 3, 4]; track i) {
+          <li class="c-fade-in" [style.animation-delay]="(i - 1) * 0.08 + 's'">
+            <article class="c-skeleton-card" aria-hidden="true">
+              <div class="c-skeleton-card__header">
+                <div class="c-skeleton c-skeleton--avatar"></div>
+                <div class="c-skeleton-card__info">
+                  <div class="c-skeleton c-skeleton--title"></div>
+                  <div class="c-skeleton c-skeleton--badges"></div>
+                </div>
+              </div>
               <div class="c-skeleton c-skeleton--text"></div>
               <div class="c-skeleton c-skeleton--text c-skeleton--short"></div>
-              <div class="c-skeleton c-skeleton--badges"></div>
             </article>
           </li>
         }
       </ul>
     } @else if (players.length === 0) {
       <div class="c-empty">
-        <p>No se encontraron jugadores con esos filtros.</p>
+        <div class="c-empty__icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </div>
+        <p class="c-empty__title">No se encontraron jugadores</p>
+        <p class="c-empty__hint">Prueba a cambiar los filtros para encontrar mas resultados</p>
         @if (!filterRank && !filterRole && filterMinKarma === 0) {
-          <p class="c-empty__hint">Si la base de datos está vacía, ejecuta el seed para generar datos de prueba.</p>
+          <p class="c-empty__hint">Si la base de datos esta vacia, ejecuta el seed para generar datos de prueba.</p>
         }
       </div>
     } @else {
-      <p class="c-results-count">{{ totalPlayers }} jugadores encontrados</p>
+      <div class="c-results-bar">
+        <p class="c-results-bar__count">{{ totalPlayers }} jugadores encontrados</p>
+      </div>
       <ul class="l-grid l-grid--2col">
         @for (player of players; track player._id; let i = $index) {
-          <li class="c-fade-in" [style.animation-delay]="(i % 3) * 0.12 + 's'">
+          <li class="c-fade-in" [style.animation-delay]="(i % 4) * 0.06 + 's'">
             <app-player-card [player]="player" />
           </li>
         }
       </ul>
 
-      <!-- Infinite scroll: indicador de carga -->
       @if (loadingMore) {
-        <p class="c-loading-more">Cargando más jugadores...</p>
+        <div class="c-loading-more">
+          <div class="c-loading-more__spinner"></div>
+          <span>Cargando mas jugadores...</span>
+        </div>
       }
 
       @if (!hasMore && players.length > 0) {
@@ -96,7 +112,6 @@
       }
     }
 
-    <!-- Sentinel para IntersectionObserver -->
     <div #scrollSentinel class="c-scroll-sentinel"></div>
   </section>
 </main>

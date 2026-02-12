@@ -1,60 +1,71 @@
 @use '../utilities/variables' as v;
 @use '../utilities/mixins' as m;
 
-// ── Buttons (BEM) ─────────────────────────────────────
+// ── Buttons (Modern Social) ──────────────────────────
 .c-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: v.$spacing-sm;
-  padding: v.$spacing-sm v.$spacing-lg;
-  font-family: 'Rajdhani', sans-serif;
+  padding: v.$spacing-sm v.$spacing-xl;
+  font-family: 'Inter', sans-serif;
   font-weight: 600;
-  font-size: 0.95rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-radius: v.$radius-md;
+  font-size: 0.9rem;
+  letter-spacing: 0;
+  border-radius: v.$radius-full;
   transition:
-    background-color v.$transition-fast,
-    box-shadow v.$transition-base,
-    transform v.$transition-fast;
+    all v.$transition-base;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
 
   &--primary {
-    background-color: v.$color-accent-red;
-    color: v.$color-text-heading;
+    background: v.$gradient-primary;
+    color: #fff;
+    border: none;
 
     &:hover {
-      background-color: v.$color-accent-red-hover;
-      box-shadow: v.$shadow-glow-red;
-      transform: translateY(-1px);
+      filter: brightness(1.1);
+    }
+
+    &:active {
+      filter: brightness(0.95);
     }
   }
 
   &--secondary {
-    background-color: v.$color-bg-elevated;
+    background: transparent;
     color: v.$color-text-primary;
-    border: 1px solid v.$color-border;
+    border: 1.5px solid v.$color-border-light;
 
     &:hover {
-      border-color: v.$color-accent-cyan;
-      box-shadow: v.$shadow-glow-cyan;
-      transform: translateY(-1px);
+      border-color: v.$color-accent-red;
+      color: v.$color-accent-red;
+      background: rgba(220, 53, 69, 0.06);
     }
   }
 
   &--ghost {
-    background-color: transparent;
+    background: transparent;
     color: v.$color-text-muted;
     border: 1px solid v.$color-border;
 
     &:hover {
       color: v.$color-text-primary;
       border-color: v.$color-border-light;
+      background: rgba(255, 255, 255, 0.03);
     }
   }
 
   &--sm {
-    padding: v.$spacing-xs v.$spacing-md;
+    padding: v.$spacing-xs v.$spacing-lg;
     font-size: 0.85rem;
+  }
+
+  &--icon {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: v.$radius-lg;
   }
 }

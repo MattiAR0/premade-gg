@@ -1,7 +1,17 @@
 <app-navbar />
 <router-outlet />
 <footer class="c-footer">
-  <p class="c-footer__text">
-    PremadeGG &mdash; Proyecto Final de Grado &mdash; Valorant LFG Platform
-  </p>
+  <div class="c-footer__inner l-container">
+    <div class="c-footer__brand">
+      <span class="c-footer__logo">Premade<span class="c-footer__accent">GG</span></span>
+      <p class="c-footer__tagline">Conecta. Juega. Gana.</p>
+    </div>
+    <nav class="c-footer__links">
+      <a class="c-footer__link" routerLink="/players">Jugadores</a>
+      <a class="c-footer__link" routerLink="/lfg">LFG Board</a>
+    </nav>
+    <p class="c-footer__copy">
+      PremadeGG &mdash; Proyecto Final de Grado &mdash; Valorant LFG Platform
+    </p>
+  </div>
 </footer>

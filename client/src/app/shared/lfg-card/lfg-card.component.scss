@@ -1,45 +1,118 @@
 @use 'utilities/variables' as v;
+@use 'utilities/mixins' as m;
 
 .c-lfg-card {
-  &__title {
-    font-size: 1.25rem;
+  padding: 0;
+  overflow: hidden;
+
+  // ── Header (author row like a social post) ────────
+  &__header {
+    @include m.flex-between;
+    padding: v.$spacing-sm v.$spacing-lg;
+    border-bottom: 1px solid v.$color-border;
+
+    @include m.respond-below(md) {
+      padding: v.$spacing-sm v.$spacing-md;
+    }
   }
 
-  &__description {
-    font-size: 0.95rem;
-    color: v.$color-text-muted;
-    margin-bottom: v.$spacing-lg;
-    line-height: 1.6;
-  }
-
-  &__roles {
-    display: flex;
-    gap: v.$spacing-xs;
-    flex-wrap: wrap;
-  }
-
-  &__author {
+  &__author-row {
     display: flex;
     align-items: center;
     gap: v.$spacing-sm;
-    font-size: 0.85rem;
-    color: v.$color-text-primary;
+  }
+
+  &__author-avatar {
+    @include m.flex-center;
+    width: 32px;
+    height: 32px;
+    border-radius: v.$radius-sm;
+    background: v.$gradient-primary;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    text-transform: uppercase;
+
+    &--deleted {
+      background: v.$color-bg-elevated;
+      color: v.$color-text-muted;
+    }
+  }
+
+  &__author-info {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+    flex-wrap: wrap;
+  }
+
+  &__author-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: v.$color-text-heading;
   }
 
   &__deleted {
     color: v.$color-text-muted;
     font-style: italic;
-    opacity: 0.7;
+    font-size: 0.85rem;
   }
 
-  &__meta {
-    display: flex;
-    align-items: center;
+  // ── Body ──────────────────────────────────────────
+  &__body {
+    padding: v.$spacing-sm v.$spacing-lg;
+
+    @include m.respond-below(md) {
+      padding: v.$spacing-sm v.$spacing-md;
+    }
+  }
+
+  &__title {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: v.$color-text-heading;
+    margin-bottom: 0.2rem;
+    letter-spacing: -0.01em;
+  }
+
+  &__description {
+    font-size: 0.85rem;
+    color: v.$color-text-muted;
+    line-height: 1.6;
+    @include m.line-clamp(2);
+  }
+
+  // ── Footer ────────────────────────────────────────
+  &__footer {
+    @include m.flex-between;
+    padding: v.$spacing-sm v.$spacing-lg;
+    border-top: 1px solid v.$color-border;
     gap: v.$spacing-sm;
+    flex-wrap: wrap;
+
+    @include m.respond-below(md) {
+      padding: v.$spacing-sm v.$spacing-md;
+    }
+  }
+
+  &__tags {
+    display: flex;
+    gap: 0.2rem;
+    flex-wrap: wrap;
+    align-items: center;
   }
 
   &__schedule {
+    display: inline-flex;
+    align-items: center;
+    gap: v.$spacing-xs;
     font-size: 0.8rem;
     color: v.$color-text-muted;
+
+    svg {
+      opacity: 0.6;
+    }
   }
 }

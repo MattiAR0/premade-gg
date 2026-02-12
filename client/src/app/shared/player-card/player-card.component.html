@@ -1,22 +1,30 @@
 <article class="c-card c-player-card">
-  <header class="c-card__header">
-    @if (player.cardImage) {
-      <img
-        class="c-player-card__avatar"
-        [src]="player.cardImage"
-        [alt]="player.riotId + ' avatar'"
-      />
-    }
-    <div class="c-player-card__header-info">
-      <h3 class="c-card__title c-player-card__name">{{ player.riotId }}</h3>
-      <app-karma-badge [karma]="player.karma" />
+  <header class="c-player-card__header">
+    <div class="c-player-card__avatar-wrap">
+      @if (player.cardImage) {
+        <img
+          class="c-player-card__avatar"
+          [src]="player.cardImage"
+          [alt]="player.riotId + ' avatar'"
+        />
+      } @else {
+        <div class="c-player-card__avatar-placeholder">
+          {{ player.riotId.charAt(0) | uppercase }}
+        </div>
+      }
+      <div class="c-player-card__online-dot"></div>
+    </div>
+    <div class="c-player-card__info">
+      <h3 class="c-player-card__name">{{ player.riotId }}</h3>
+      <div class="c-player-card__meta-row">
+        <app-rank-badge [rank]="player.rank" />
+        <app-karma-badge [karma]="player.karma" />
+      </div>
     </div>
   </header>
-  <section class="c-card__body">
-    <ul class="c-card__meta c-player-card__details">
-      <li>
-        <app-rank-badge [rank]="player.rank" />
-      </li>
+
+  <section class="c-player-card__body">
+    <ul class="c-player-card__tags">
       <li>
         <span class="c-badge c-badge--role">{{ player.role }}</span>
       </li>
@@ -25,12 +33,18 @@
           <span class="c-badge c-badge--region">{{ player.region | uppercase }}</span>
         </li>
       }
+      @if (player.accountLevel) {
+        <li>
+          <span class="c-badge c-badge--count">Lv. {{ player.accountLevel }}</span>
+        </li>
+      }
     </ul>
-    @if (player.accountLevel) {
-      <p class="c-player-card__level">Nivel {{ player.accountLevel }}</p>
-    }
   </section>
-  <footer class="c-card__footer">
-    <span class="c-player-card__schedule">{{ player.schedule }}</span>
+
+  <footer class="c-player-card__footer">
+    <span class="c-player-card__schedule">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      {{ player.schedule }}
+    </span>
   </footer>
 </article>

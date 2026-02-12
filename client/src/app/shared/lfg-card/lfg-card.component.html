@@ -1,32 +1,43 @@
 <article class="c-card c-lfg-card">
-  <header class="c-card__header">
-    <h3 class="c-card__title c-lfg-card__title">{{ post.title }}</h3>
-    <span class="c-badge c-badge--rank">{{ post.maxPlayers }} players</span>
+  <header class="c-lfg-card__header">
+    <div class="c-lfg-card__author-row">
+      @if (post.author) {
+        <div class="c-lfg-card__author-avatar">
+          {{ post.author.riotId.charAt(0) }}
+        </div>
+        <div class="c-lfg-card__author-info">
+          <span class="c-lfg-card__author-name">{{ post.author.riotId }}</span>
+          <app-karma-badge [karma]="post.author.karma" />
+        </div>
+      } @else {
+        <div class="c-lfg-card__author-avatar c-lfg-card__author-avatar--deleted">?</div>
+        <span class="c-lfg-card__deleted">[Usuario eliminado]</span>
+      }
+    </div>
+    <span class="c-badge c-badge--count">{{ post.maxPlayers }} players</span>
   </header>
-  <section class="c-card__body">
+
+  <section class="c-lfg-card__body">
+    <h3 class="c-lfg-card__title">{{ post.title }}</h3>
     <p class="c-lfg-card__description">{{ post.description }}</p>
-    <ul class="c-card__meta c-lfg-card__roles">
+  </section>
+
+  <footer class="c-lfg-card__footer">
+    <ul class="c-lfg-card__tags">
       @for (role of post.requiredRoles; track role) {
         <li>
           <span class="c-badge c-badge--role">{{ role }}</span>
         </li>
       }
-    </ul>
-  </section>
-  <footer class="c-card__footer">
-    <span class="c-lfg-card__author">
-      @if (post.author) {
-        {{ post.author.riotId }}
-        <app-karma-badge [karma]="post.author.karma" />
-      } @else {
-        <span class="c-lfg-card__deleted">[Usuario eliminado]</span>
-      }
-    </span>
-    <span class="c-lfg-card__meta">
       @if (post.minRank) {
-        <app-rank-badge [rank]="post.minRank" />
+        <li>
+          <app-rank-badge [rank]="post.minRank" />
+        </li>
       }
-      <span class="c-lfg-card__schedule">{{ post.schedule }}</span>
+    </ul>
+    <span class="c-lfg-card__schedule">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      {{ post.schedule }}
     </span>
   </footer>
 </article>

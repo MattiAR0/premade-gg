@@ -1,13 +1,61 @@
 @use 'utilities/variables' as v;
+@use 'utilities/mixins' as m;
 
 .c-footer {
-  text-align: center;
-  padding: v.$spacing-xl;
   border-top: 1px solid v.$color-border;
   margin-top: v.$spacing-3xl;
+  padding-block: v.$spacing-2xl;
+  background: v.$color-bg-surface;
 
-  &__text {
-    font-size: 0.8rem;
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: v.$spacing-lg;
+    text-align: center;
+  }
+
+  &__brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: v.$spacing-xs;
+  }
+
+  &__logo {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: v.$color-text-heading;
+    letter-spacing: -0.02em;
+  }
+
+  &__accent {
+    @include m.gradient-text(v.$gradient-primary);
+  }
+
+  &__tagline {
+    font-size: 0.85rem;
     color: v.$color-text-muted;
+  }
+
+  &__links {
+    display: flex;
+    gap: v.$spacing-xl;
+  }
+
+  &__link {
+    font-size: 0.85rem;
+    color: v.$color-text-muted;
+    transition: color v.$transition-fast;
+
+    &:hover {
+      color: v.$color-text-heading;
+    }
+  }
+
+  &__copy {
+    font-size: 0.75rem;
+    color: v.$color-text-subtle;
   }
 }

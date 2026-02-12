@@ -2,12 +2,25 @@
   <a class="c-navbar__brand" routerLink="/">
     Premade<span class="c-navbar__accent">GG</span>
   </a>
-  <nav class="c-navbar__nav">
+
+  <button
+    class="c-navbar__toggle"
+    [class.c-navbar__toggle--open]="menuOpen"
+    (click)="toggleMenu()"
+    aria-label="Toggle menu"
+  >
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <nav class="c-navbar__nav" [class.c-navbar__nav--open]="menuOpen">
     <a
       class="c-navbar__link"
       routerLink="/"
       routerLinkActive="c-navbar__link--active"
       [routerLinkActiveOptions]="{ exact: true }"
+      (click)="closeMenu()"
     >
       Home
     </a>
@@ -15,15 +28,23 @@
       class="c-navbar__link"
       routerLink="/players"
       routerLinkActive="c-navbar__link--active"
+      (click)="closeMenu()"
     >
-      Players
+      Jugadores
     </a>
     <a
       class="c-navbar__link"
       routerLink="/lfg"
       routerLinkActive="c-navbar__link--active"
+      (click)="closeMenu()"
     >
       LFG Board
     </a>
   </nav>
+
+  <div
+    class="c-navbar__overlay"
+    [class.c-navbar__overlay--visible]="menuOpen"
+    (click)="closeMenu()"
+  ></div>
 </header>

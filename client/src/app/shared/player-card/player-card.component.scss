@@ -1,39 +1,111 @@
 @use 'utilities/variables' as v;
+@use 'utilities/mixins' as m;
 
 .c-player-card {
-  &__avatar {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid v.$color-text-muted;
-  }
+  padding: 0;
+  overflow: hidden;
 
-  &__header-info {
+  &__header {
     display: flex;
     align-items: center;
-    gap: v.$spacing-md;
+    gap: v.$spacing-sm;
+    padding: v.$spacing-md v.$spacing-lg;
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.03), rgba(26, 33, 44, 0.06));
+    border-bottom: 1px solid v.$color-border;
+
+    @include m.respond-below(md) {
+      padding: v.$spacing-sm v.$spacing-md;
+    }
+  }
+
+  &__avatar-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  &__avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: v.$radius-md;
+    object-fit: cover;
+    border: 2px solid v.$color-border-light;
+  }
+
+  &__avatar-placeholder {
+    @include m.flex-center;
+    width: 44px;
+    height: 44px;
+    border-radius: v.$radius-md;
+    background: v.$gradient-accent;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.05rem;
+  }
+
+  &__online-dot {
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 14px;
+    height: 14px;
+    background: v.$color-accent-cyan;
+    border-radius: 50%;
+    border: 2.5px solid v.$color-bg-card;
+  }
+
+  &__info {
     flex: 1;
+    min-width: 0;
   }
 
   &__name {
-    font-size: 1.25rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: v.$color-text-heading;
+    margin-bottom: 0.1rem;
+    @include m.text-truncate;
   }
 
-  &__details {
+  &__meta-row {
     display: flex;
+    align-items: center;
     gap: v.$spacing-sm;
     flex-wrap: wrap;
   }
 
-  &__level {
-    font-size: 0.85rem;
-    color: v.$color-text-muted;
-    margin-top: v.$spacing-sm;
+  &__body {
+    padding: v.$spacing-sm v.$spacing-lg;
+
+    @include m.respond-below(md) {
+      padding: v.$spacing-sm v.$spacing-md;
+    }
+  }
+
+  &__tags {
+    display: flex;
+    gap: v.$spacing-xs;
+    flex-wrap: wrap;
+  }
+
+  &__footer {
+    padding: v.$spacing-sm v.$spacing-lg;
+    border-top: 1px solid v.$color-border;
+
+    @include m.respond-below(md) {
+      padding: v.$spacing-sm v.$spacing-md;
+    }
   }
 
   &__schedule {
-    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: v.$spacing-xs;
+    font-size: 0.8rem;
     color: v.$color-text-muted;
+
+    svg {
+      opacity: 0.6;
+    }
   }
 }

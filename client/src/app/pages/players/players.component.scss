@@ -1,33 +1,65 @@
 @use 'utilities/variables' as v;
 @use 'utilities/mixins' as m;
 
-.c-filters {
-  @include m.glass-effect;
-  padding: v.$spacing-lg;
-  margin-block: v.$spacing-xl;
+// ── Page Header ──────────────────────────────────────
+.c-page-header {
+  margin-bottom: v.$spacing-lg;
 
   &__title {
-    font-size: 1.1rem;
-    margin-bottom: v.$spacing-md;
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: v.$spacing-xs;
+
+    @include m.respond-to(md) {
+      font-size: 1.85rem;
+    }
+  }
+
+  &__desc {
+    font-size: 0.9rem;
+    color: v.$color-text-muted;
+  }
+}
+
+// ── Filters ──────────────────────────────────────────
+.c-filters {
+  background: v.$color-bg-card;
+  border: 1px solid v.$color-border;
+  border-radius: v.$radius-lg;
+  padding: v.$spacing-md;
+  margin-bottom: v.$spacing-lg;
+
+  @include m.respond-to(md) {
+    padding: v.$spacing-md v.$spacing-lg;
   }
 
   &__form {
     display: flex;
+    align-items: flex-end;
     gap: v.$spacing-md;
     flex-wrap: wrap;
-    align-items: flex-end;
+  }
+
+  &__row {
+    display: flex;
+    gap: v.$spacing-md;
+    flex-wrap: wrap;
+    flex: 1;
+    min-width: 0;
   }
 
   &__field {
     display: flex;
     flex-direction: column;
-    gap: v.$spacing-xs;
+    gap: 0.2rem;
     flex: 1;
-    min-width: 150px;
+    min-width: 120px;
   }
 
   &__label {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: v.$color-text-muted;
@@ -35,56 +67,85 @@
 
   &__select,
   &__input {
-    padding: v.$spacing-sm v.$spacing-md;
+    padding: 0.4rem v.$spacing-md;
     background: v.$color-bg-input;
     border: 1px solid v.$color-border;
     border-radius: v.$radius-md;
     color: v.$color-text-primary;
-    font-size: 0.9rem;
-    transition: border-color v.$transition-fast;
+    font-size: 0.85rem;
+    transition: all v.$transition-fast;
+    appearance: none;
 
     &:focus {
       outline: none;
-      border-color: v.$color-accent-cyan;
+      border-color: v.$color-accent-red;
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.08);
     }
+  }
+
+  &__select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 32px;
   }
 
   &__actions {
     display: flex;
-    gap: v.$spacing-sm;
-    align-self: flex-end;
+    gap: v.$spacing-xs;
   }
 }
 
-.c-loading,
+// ── Results bar ──────────────────────────────────────
+.c-results-bar {
+  margin-bottom: v.$spacing-lg;
+
+  &__count {
+    font-size: 0.85rem;
+    color: v.$color-text-muted;
+    font-weight: 500;
+  }
+}
+
+// ── Empty state ──────────────────────────────────────
 .c-empty {
   text-align: center;
-  padding: v.$spacing-3xl;
-  color: v.$color-text-muted;
-  font-size: 1.1rem;
+  padding: v.$spacing-4xl v.$spacing-xl;
+
+  &__icon {
+    color: v.$color-text-subtle;
+    margin-bottom: v.$spacing-lg;
+    opacity: 0.5;
+
+    svg {
+      margin-inline: auto;
+    }
+  }
+
+  &__title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: v.$color-text-primary;
+    margin-bottom: v.$spacing-sm;
+  }
 
   &__hint {
     font-size: 0.85rem;
-    margin-top: v.$spacing-sm;
-    opacity: 0.7;
+    color: v.$color-text-muted;
+    margin-top: v.$spacing-xs;
   }
 }
 
+// ── Error ────────────────────────────────────────────
 .c-error {
   text-align: center;
   padding: v.$spacing-lg;
-  color: #ff6b6b;
-  background: rgba(255, 107, 107, 0.08);
-  border: 1px solid rgba(255, 107, 107, 0.25);
-  border-radius: v.$radius-md;
-  font-size: 1rem;
+  color: #e05555;
+  background: rgba(220, 53, 69, 0.06);
+  border: 1px solid rgba(220, 53, 69, 0.18);
+  border-radius: v.$radius-xl;
+  font-size: 0.95rem;
   margin-block: v.$spacing-lg;
-}
-
-.c-results-count {
-  font-size: 0.85rem;
-  color: v.$color-text-muted;
-  margin-bottom: v.$spacing-md;
 }
 
 // ── Staggered fade-in animation ───────────────────────
@@ -103,37 +164,53 @@
 
 // ── Skeleton Loading ──────────────────────────────────
 .c-skeleton-card {
-  @include m.glass-effect;
-  padding: v.$spacing-lg;
+  background: v.$color-bg-card;
+  border: 1px solid v.$color-border;
+  border-radius: v.$radius-lg;
+  padding: v.$spacing-md v.$spacing-lg;
   display: flex;
   flex-direction: column;
-  gap: v.$spacing-md;
+  gap: v.$spacing-sm;
 
-  &--lg {
-    padding: v.$spacing-xl;
-    gap: v.$spacing-lg;
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-md;
+  }
+
+  &__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-sm;
   }
 }
 
 .c-skeleton {
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 25%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0.04) 75%);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.07) 50%,
+    rgba(255, 255, 255, 0.03) 75%
+  );
   background-size: 200% 100%;
   animation: skeleton-pulse 1.5s ease-in-out infinite;
   border-radius: v.$radius-md;
 
   &--avatar {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    border-radius: v.$radius-md;
+    flex-shrink: 0;
   }
 
   &--title {
-    height: 1.4rem;
+    height: 1.2rem;
     width: 60%;
   }
 
   &--text {
-    height: 1rem;
+    height: 0.9rem;
     width: 100%;
   }
 
@@ -142,34 +219,45 @@
   }
 
   &--badges {
-    height: 2rem;
+    height: 1.5rem;
     width: 50%;
   }
 }
 
 @keyframes skeleton-pulse {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 // ── Infinite Scroll ───────────────────────────────────
 .c-loading-more {
-  text-align: center;
-  padding: v.$spacing-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: v.$spacing-sm;
+  padding: v.$spacing-xl;
   color: v.$color-text-muted;
   font-size: 0.9rem;
+
+  &__spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid v.$color-border;
+    border-top-color: v.$color-accent-red;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .c-end-of-list {
   text-align: center;
-  padding: v.$spacing-lg;
-  color: v.$color-text-muted;
+  padding: v.$spacing-xl;
+  color: v.$color-text-subtle;
   font-size: 0.8rem;
-  opacity: 0.5;
 }
 
 .c-scroll-sentinel {

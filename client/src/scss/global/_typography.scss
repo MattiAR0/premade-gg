@@ -1,14 +1,15 @@
 @use '../utilities/variables' as v;
 
 // ── Fonts ─────────────────────────────────────────────
-// Rajdhani: titulos (gaming feel)
-// Inter: cuerpo (legibilidad)
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap');
+// Inter: cuerpo y headings (limpio, social)
+// Rajdhani: acentos gaming
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap');
 
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   font-size: 1rem;
   color: v.$color-text-primary;
+  -webkit-font-smoothing: antialiased;
 }
 
 h1,
@@ -17,12 +18,11 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Rajdhani', 'Inter', sans-serif;
-  font-weight: 700;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 800;
   color: v.$color-text-heading;
   line-height: 1.2;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+  letter-spacing: -0.02em;
 }
 
 h1 {
@@ -30,18 +30,38 @@ h1 {
 }
 
 h2 {
-  font-size: 2rem;
+  font-size: 1.75rem;
 }
 
 h3 {
-  font-size: 1.5rem;
+  font-size: 1.35rem;
 }
 
 h4 {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
 }
 
 p {
   color: v.$color-text-muted;
   line-height: 1.7;
+}
+
+// ── Utility text classes ──────────────────────────────
+.text-gradient {
+  background: v.$gradient-primary;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-accent {
+  color: v.$color-accent-red;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
 }

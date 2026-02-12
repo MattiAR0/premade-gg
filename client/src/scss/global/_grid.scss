@@ -11,16 +11,33 @@
   @include m.respond-to(md) {
     padding-inline: v.$spacing-xl;
   }
+
+  @include m.respond-to(xl) {
+    padding-inline: v.$spacing-2xl;
+  }
+}
+
+// ── Narrow container (social feed style) ──────────────
+.l-container--narrow {
+  max-width: 720px;
+}
+
+.l-container--medium {
+  max-width: 1080px;
 }
 
 // ── Grid system ───────────────────────────────────────
 .l-grid {
   display: grid;
-  gap: v.$spacing-lg;
+  gap: v.$spacing-md;
+
+  @include m.respond-to(md) {
+    gap: v.$spacing-lg;
+  }
 
   &--1col {
     grid-template-columns: 1fr;
-    max-width: 800px;
+    max-width: 720px;
   }
 
   &--2col {
@@ -34,7 +51,7 @@
   &--3col {
     grid-template-columns: 1fr;
 
-    @include m.respond-to(md) {
+    @include m.respond-to(sm) {
       grid-template-columns: repeat(2, 1fr);
     }
 
@@ -54,9 +71,38 @@
       grid-template-columns: repeat(4, 1fr);
     }
   }
+
+  // Social feed layout - single column
+  &--feed {
+    grid-template-columns: 1fr;
+  }
 }
 
 // ── Section spacing ───────────────────────────────────
 .l-section {
-  padding-block: v.$spacing-3xl;
+  padding-block: v.$spacing-xl;
+
+  @include m.respond-to(md) {
+    padding-block: v.$spacing-2xl;
+  }
+}
+
+// ── Flex layout utilities ─────────────────────────────
+.l-flex {
+  display: flex;
+  gap: v.$spacing-md;
+
+  &--wrap {
+    flex-wrap: wrap;
+  }
+
+  &--center {
+    align-items: center;
+    justify-content: center;
+  }
+
+  &--between {
+    justify-content: space-between;
+    align-items: center;
+  }
 }

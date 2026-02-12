@@ -17,26 +17,64 @@ const { validateAccount, getPlayerRank } = require('../services/riotService');
 const getUsers = async (req, res, next) => {
   try {
     const { rank, role, minKarma } = req.query;
-    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 12));
-    const skip = (page - 1) * limit;
+
+    // ── Cursor-based pagination ──────────────────────────────
+    // En lugar de skip(n) (O(n)), usamos un cursor compuesto (karma + _id)
+    // para que MongoDB salte directamente al punto correcto via índice (O(log n)).
+    // El cliente envía "cursor" con el último valor de karma e _id de la página anterior.
+    const { cursor } = req.query; // formato: "karma_id" ej: "4.2_65f1a2b3..."
 
     const filter = {};
     if (rank) filter.rank = rank;
     if (role) filter.role = role;
     if (minKarma) filter.karma = { $gte: Number(minKarma) };
 
-    const [users, total] = await Promise.all([
-      User.find(filter).sort({ karma: -1 }).skip(skip).limit(limit).lean(),
-      User.countDocuments(filter),
-    ]);
+    // Si hay cursor, filtramos documentos "después" del cursor (karma DESC, _id DESC)
+    if (cursor) {
+      const separatorIdx = cursor.indexOf('_');
+      const cursorKarma = parseFloat(cursor.substring(0, separatorIdx));
+      const cursorId = cursor.substring(separatorIdx + 1);
+      if (!isNaN(cursorKarma) && cursorId) {
+        // Documentos con karma menor, O mismo karma pero _id anterior (DESC)
+        filter.$or = [
+          { karma: { $lt: cursorKarma } },
+          { karma: cursorKarma, _id: { $lt: cursorId } },
+        ];
+      }
+    }
+
+    // Solo contamos documentos cuando NO hay cursor (primera página)
+    const queries = [User.find(filter).sort({ karma: -1, _id: -1 }).limit(limit).lean()];
+    if (!cursor) {
+      queries.push(User.countDocuments(
+        // Count usa el filtro original sin cursor
+        (() => {
+          const f = {};
+          if (rank) f.rank = rank;
+          if (role) f.role = role;
+          if (minKarma) f.karma = { $gte: Number(minKarma) };
+          return f;
+        })(),
+      ));
+    }
+
+    const [users, total] = await Promise.all(queries);
+
+    // Generar el cursor para la siguiente página
+    const lastUser = users[users.length - 1];
+    const nextCursor = lastUser && users.length === limit
+      ? `${lastUser.karma}_${lastUser._id}`
+      : null;
+
+    const resolvedTotal = !cursor && total !== undefined ? total : -1;
 
     res.json({
       data: users,
-      total,
-      page,
+      total: resolvedTotal,
+      nextCursor,
       limit,
-      totalPages: Math.ceil(total / limit),
+      totalPages: resolvedTotal >= 0 ? Math.ceil(resolvedTotal / limit) : -1,
     });
   } catch (err) {
     next(err);

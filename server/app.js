@@ -46,11 +46,26 @@ if (process.env.NODE_ENV === 'production') {
   app.use(morgan('dev'));
 }
 
+// ── Cache-Control para la API ────────────────────────
+// GETs: no-cache fuerza al navegador a revalidar siempre con el servidor,
+// pero permite usar respuesta cacheada si no ha cambiado (304 Not Modified).
+// Esto evita que el browser sirva respuestas vacías obsoletas (ej: antes del seed).
+// La cache real de rendimiento la maneja ApiService en el frontend (in-memory, 60s TTL).
+// Mutaciones: no-store prohíbe cualquier tipo de cache.
+const apiCacheControl = (req, res, next) => {
+  if (req.method === 'GET') {
+    res.set('Cache-Control', 'no-cache');
+  } else {
+    res.set('Cache-Control', 'no-store');
+  }
+  next();
+};
+
 // ── Montaje de rutas (MVC) ────────────────────────────
-app.use('/api/users', userRoutes);
-app.use('/api/reviews', reputationRoutes);
-app.use('/api/lfg', lfgPostRoutes);
-app.use('/api/riot', riotRoutes);
+app.use('/api/users', apiCacheControl, userRoutes);
+app.use('/api/reviews', apiCacheControl, reputationRoutes);
+app.use('/api/lfg', apiCacheControl, lfgPostRoutes);
+app.use('/api/riot', riotRoutes); // Riot API no se cachea (datos en tiempo real)
 
 // Ruta raíz (health check)
 app.get('/', (_req, res) => {

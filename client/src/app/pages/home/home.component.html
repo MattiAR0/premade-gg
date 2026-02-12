@@ -1,36 +1,67 @@
 <main>
   <!-- Hero Section -->
-  <section class="c-hero l-section">
+  <section class="c-hero">
+    <div class="c-hero__bg"></div>
     <header class="c-hero__content l-container">
+      <div class="c-hero__badge">Valorant LFG Platform</div>
       <h1 class="c-hero__title">
-        Find Your <span class="c-hero__accent">Premade</span>
+        Encuentra tu<br />
+        <span class="c-hero__accent">Premade</span> perfecto
       </h1>
       <p class="c-hero__subtitle">
-        Conecta con jugadores de Valorant basándote en reputación, no solo en rango.
-        Los jugadores tóxicos se quedan fuera.
+        Conecta con jugadores basandote en reputacion real, no solo en rango.
+        Una comunidad donde la toxicidad no tiene lugar.
       </p>
       <nav class="c-hero__actions">
         <a class="c-btn c-btn--primary" routerLink="/players">Explorar Jugadores</a>
         <a class="c-btn c-btn--secondary" routerLink="/lfg">LFG Board</a>
       </nav>
+
+      <!-- Floating stats -->
+      <ul class="c-hero__stats">
+        <li class="c-hero__stat">
+          <strong class="c-hero__stat-number">{{ totalPlayers }}</strong>
+          <span class="c-hero__stat-label">Jugadores</span>
+        </li>
+        <li class="c-hero__stat-divider"></li>
+        <li class="c-hero__stat">
+          <strong class="c-hero__stat-number c-hero__stat-number--cyan">Karma</strong>
+          <span class="c-hero__stat-label">Reputacion</span>
+        </li>
+        <li class="c-hero__stat-divider"></li>
+        <li class="c-hero__stat">
+          <strong class="c-hero__stat-number c-hero__stat-number--gold">0 Toxic</strong>
+          <span class="c-hero__stat-label">Filtro activo</span>
+        </li>
+      </ul>
     </header>
   </section>
 
-  <!-- Stats Section -->
-  <section class="c-stats l-section l-container">
-    <h2 class="c-stats__title">La Comunidad</h2>
-    <ul class="c-stats__grid l-grid l-grid--3col">
-      <li class="c-stats__item">
-        <strong class="c-stats__number">{{ totalPlayers }}</strong>
-        <span class="c-stats__label">Jugadores Registrados</span>
+  <!-- Features Section -->
+  <section class="c-features l-section l-container">
+    <h2 class="c-features__title">Como funciona</h2>
+    <p class="c-features__subtitle">Una plataforma disenada para jugadores que valoran el trabajo en equipo</p>
+    <ul class="c-features__grid l-grid l-grid--3col">
+      <li class="c-features__item">
+        <div class="c-features__icon c-features__icon--red">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3 class="c-features__item-title">Busca Jugadores</h3>
+        <p class="c-features__item-desc">Filtra por rango, rol y reputacion. Encuentra companeros que encajen con tu estilo.</p>
       </li>
-      <li class="c-stats__item">
-        <strong class="c-stats__number">Karma</strong>
-        <span class="c-stats__label">Sistema de Reputación</span>
+      <li class="c-features__item">
+        <div class="c-features__icon c-features__icon--cyan">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <h3 class="c-features__item-title">Sistema Karma</h3>
+        <p class="c-features__item-desc">Cada jugador tiene una puntuacion de reputacion. Los toxicos se quedan fuera.</p>
       </li>
-      <li class="c-stats__item">
-        <strong class="c-stats__number">0 Toxic</strong>
-        <span class="c-stats__label">Filtro Anti-Toxicidad</span>
+      <li class="c-features__item">
+        <div class="c-features__icon c-features__icon--purple">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <h3 class="c-features__item-title">LFG Board</h3>
+        <p class="c-features__item-desc">Publica o busca posts de grupo. Conecta con gente que juega cuando tu juegas.</p>
       </li>
     </ul>
   </section>
@@ -41,11 +72,17 @@
       <p class="c-error">{{ errorMessage }}</p>
     </section>
   } @else if (topPlayers.length > 0) {
-    <section class="l-section l-container">
-      <h2>Top Players</h2>
-      <ul class="l-grid l-grid--3col">
-        @for (player of topPlayers; track player._id) {
-          <li>
+    <section class="c-top-players l-section l-container l-container--narrow">
+      <div class="c-top-players__header">
+        <div>
+          <h2>Top Jugadores</h2>
+          <p>Los jugadores con mejor reputacion de la comunidad</p>
+        </div>
+        <a class="c-btn c-btn--ghost c-btn--sm" routerLink="/players">Ver todos</a>
+      </div>
+      <ul class="l-grid l-grid--feed">
+        @for (player of topPlayers; track player._id; let i = $index) {
+          <li class="c-fade-in" [style.animation-delay]="i * 0.1 + 's'">
             <app-player-card [player]="player" />
           </li>
         }

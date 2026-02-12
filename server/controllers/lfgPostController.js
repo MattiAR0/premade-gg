@@ -1,5 +1,6 @@
 const LFGPost = require('../models/LFGPost');
 const User = require('../models/User');
+const { resolveAuthors } = require('../services/authorCache');
 
 /**
  * GET /api/lfg
@@ -14,10 +15,8 @@ const User = require('../models/User');
  */
 const getPosts = async (req, res, next) => {
   try {
-    const { role, minRank, status } = req.query;
-    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const { role, minRank, status, cursor } = req.query;
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 12));
-    const skip = (page - 1) * limit;
 
     const filter = {};
     if (status) {
@@ -28,22 +27,59 @@ const getPosts = async (req, res, next) => {
     if (role) filter.requiredRoles = role;
     if (minRank) filter.minRank = minRank;
 
-    const [posts, total] = await Promise.all([
+    // ── Cursor-based pagination ──────────────────────────────
+    // Cursor compuesto: "createdAt_id" para orden createdAt DESC + _id DESC
+    if (cursor) {
+      const separatorIdx = cursor.indexOf('_');
+      const cursorDate = new Date(cursor.substring(0, separatorIdx));
+      const cursorId = cursor.substring(separatorIdx + 1);
+      if (!isNaN(cursorDate.getTime()) && cursorId) {
+        filter.$or = [
+          { createdAt: { $lt: cursorDate } },
+          { createdAt: cursorDate, _id: { $lt: cursorId } },
+        ];
+      }
+    }
+
+    // Solo contamos cuando no hay cursor (primera página)
+    // En lugar de populate('author'), usamos resolveAuthors() que tiene
+    // cache en memoria — evita re-consultar autores que ya conocemos.
+    const queries = [
       LFGPost.find(filter)
-        .populate('author', 'riotId rank role karma')
-        .sort({ createdAt: -1 })
-        .skip(skip)
+        .sort({ createdAt: -1, _id: -1 })
         .limit(limit)
         .lean(),
-      LFGPost.countDocuments(filter),
-    ]);
+    ];
+    if (!cursor) {
+      queries.push(LFGPost.countDocuments(
+        (() => {
+          const f = {};
+          if (status) { f.status = status; } else { f.status = 'open'; }
+          if (role) f.requiredRoles = role;
+          if (minRank) f.minRank = minRank;
+          return f;
+        })(),
+      ));
+    }
+
+    const [rawPosts, total] = await Promise.all(queries);
+
+    // Resolver autores con cache (1 query batched para IDs no cacheados)
+    const posts = await resolveAuthors(rawPosts);
+
+    const lastPost = posts[posts.length - 1];
+    const nextCursor = lastPost && posts.length === limit
+      ? `${lastPost.createdAt.toISOString()}_${lastPost._id}`
+      : null;
+
+    const resolvedTotal = !cursor && total !== undefined ? total : -1;
 
     res.json({
       data: posts,
-      total,
-      page,
+      total: resolvedTotal,
+      nextCursor,
       limit,
-      totalPages: Math.ceil(total / limit),
+      totalPages: resolvedTotal >= 0 ? Math.ceil(resolvedTotal / limit) : -1,
     });
   } catch (err) {
     next(err);
