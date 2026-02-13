@@ -135,7 +135,7 @@ const userSchema = new mongoose.Schema({
 // ── Índices para rendimiento de consultas ──────────────────
 userSchema.index({ rank: 1, role: 1, karma: -1 });
 userSchema.index({ karma: -1 });
-userSchema.index({ email: 1 });
+// email ya tiene unique: true en el schema, no necesita índice explícito
 
 module.exports = mongoose.model('User', userSchema);
 module.exports.VALORANT_AGENTS = VALORANT_AGENTS;
