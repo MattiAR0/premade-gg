@@ -1,43 +1,57 @@
-<article class="c-card c-lfg-card">
+<article class="c-card c-lfg-card" [routerLink]="['/lfg', post._id]">
+  <!-- Header: título + status -->
   <header class="c-lfg-card__header">
-    <div class="c-lfg-card__author-row">
-      @if (post.author) {
-        <div class="c-lfg-card__author-avatar">
-          {{ post.author.riotId.charAt(0) }}
-        </div>
-        <div class="c-lfg-card__author-info">
-          <a class="c-lfg-card__author-name c-lfg-card__author-name--link" [routerLink]="['/profile', post.author._id]">{{ post.author.riotId }}</a>
-          <app-karma-badge [karma]="post.author.karma" />
-        </div>
-      } @else {
-        <div class="c-lfg-card__author-avatar c-lfg-card__author-avatar--deleted">?</div>
-        <span class="c-lfg-card__deleted">[Usuario eliminado]</span>
-      }
-    </div>
-    <span class="c-badge c-badge--count">{{ post.maxPlayers }} players</span>
+    <h3 class="c-lfg-card__title">{{ post.title }}</h3>
+    @if (post.status === 'full') {
+      <span class="c-badge c-badge--full">Lleno</span>
+    } @else if (post.status === 'closed') {
+      <span class="c-badge c-badge--closed">Cerrado</span>
+    }
   </header>
 
+  <!-- Body: rango, región, miembros -->
   <section class="c-lfg-card__body">
-    <h3 class="c-lfg-card__title">{{ post.title }}</h3>
-    <p class="c-lfg-card__description">{{ post.description }}</p>
+    <div class="c-lfg-card__meta">
+      @if (post.author?.rank) {
+        <app-rank-badge [rank]="post.author.rank" />
+      }
+      <span class="c-badge c-badge--region">{{ regionLabel }}</span>
+    </div>
+
+    <!-- Contador y avatares de miembros -->
+    <div class="c-lfg-card__members">
+      <div class="c-lfg-card__avatars">
+        @for (member of acceptedMembers; track member.user._id; let i = $index) {
+          @if (i < 5) {
+            <a
+              class="c-lfg-card__avatar"
+              [routerLink]="['/profile', member.user._id]"
+              [title]="member.user.riotId"
+              (click)="$event.stopPropagation()">
+              {{ member.user.riotId.charAt(0) }}
+            </a>
+          }
+        }
+      </div>
+      <span class="c-lfg-card__member-count">{{ acceptedCount }}/{{ post.teamSize }}</span>
+    </div>
   </section>
 
+  <!-- Footer: schedule -->
   <footer class="c-lfg-card__footer">
-    <ul class="c-lfg-card__tags">
-      @for (role of post.requiredRoles; track role) {
-        <li>
-          <span class="c-badge c-badge--role">{{ role }}</span>
-        </li>
-      }
-      @if (post.minRank) {
-        <li>
-          <app-rank-badge [rank]="post.minRank" />
-        </li>
-      }
-    </ul>
-    <span class="c-lfg-card__schedule">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      {{ post.schedule }}
-    </span>
+    @if (post.schedule) {
+      <span class="c-lfg-card__schedule">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        {{ post.schedule }}
+      </span>
+    }
+    @if (post.author) {
+      <a
+        class="c-lfg-card__creator"
+        [routerLink]="['/profile', post.author._id]"
+        (click)="$event.stopPropagation()">
+        por {{ post.author.riotId }}
+      </a>
+    }
   </footer>
 </article>

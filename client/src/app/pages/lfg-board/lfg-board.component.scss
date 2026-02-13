@@ -23,6 +23,52 @@
   }
 }
 
+// ── Tabs ─────────────────────────────────────────────
+.c-tabs {
+  display: flex;
+  gap: v.$spacing-xs;
+  margin-bottom: v.$spacing-lg;
+  border-bottom: 2px solid v.$color-border;
+  padding-bottom: 0;
+
+  &__btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+    padding: v.$spacing-sm v.$spacing-lg;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    color: v.$color-text-muted;
+    cursor: pointer;
+    transition: all v.$transition-fast;
+    font-family: inherit;
+
+    &:hover {
+      color: v.$color-text-primary;
+    }
+
+    &--active {
+      color: v.$color-accent-red;
+      border-bottom-color: v.$color-accent-red;
+    }
+  }
+
+  &__label {
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  &__size {
+    font-size: 0.7rem;
+    opacity: 0.6;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
+
 // ── Filters ──────────────────────────────────────────
 .c-filters {
   background: v.$color-bg-card;

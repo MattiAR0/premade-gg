@@ -1,5 +1,22 @@
 const mongoose = require('mongoose');
 
+const memberSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'accepted'],
+    default: 'pending',
+  },
+  joinedAt: {
+    type: Date,
+    default: Date.now,
+  },
+}, { _id: false });
+
 const lfgPostSchema = new mongoose.Schema({
   author: {
     type: mongoose.Schema.Types.ObjectId,
@@ -15,12 +32,11 @@ const lfgPostSchema = new mongoose.Schema({
     type: String,
     maxLength: 500,
   },
-  requiredRoles: [
-    {
-      type: String,
-      enum: ['Duelist', 'Controller', 'Initiator', 'Sentinel', 'Flex'],
-    },
-  ],
+  teamSize: {
+    type: Number,
+    enum: [2, 3, 5],
+    required: true,
+  },
   minRank: {
     type: String,
     enum: [
@@ -44,12 +60,7 @@ const lfgPostSchema = new mongoose.Schema({
   schedule: {
     type: String,
   },
-  maxPlayers: {
-    type: Number,
-    default: 5,
-    min: 2,
-    max: 5,
-  },
+  members: [memberSchema],
   status: {
     type: String,
     enum: ['open', 'full', 'closed'],
@@ -62,9 +73,7 @@ const lfgPostSchema = new mongoose.Schema({
 });
 
 // ── Índices para rendimiento de consultas ──────────────────
-// Consulta principal: filtro por status + orden por createdAt desc
-lfgPostSchema.index({ status: 1, createdAt: -1 });
-// Populate de author (evita collection scan)
+lfgPostSchema.index({ teamSize: 1, status: 1, createdAt: -1 });
 lfgPostSchema.index({ author: 1 });
 
 module.exports = mongoose.model('LFGPost', lfgPostSchema);

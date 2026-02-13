@@ -4,72 +4,20 @@
 .c-lfg-card {
   padding: 0;
   overflow: hidden;
+  cursor: pointer;
+  transition: border-color v.$transition-fast, box-shadow v.$transition-fast;
 
-  // ── Header (author row like a social post) ────────
+  &:hover {
+    border-color: v.$color-accent-red;
+    box-shadow: 0 0 0 1px rgba(220, 53, 69, 0.15);
+  }
+
+  // ── Header ────────────────────────────────────────
   &__header {
     @include m.flex-between;
-    padding: v.$spacing-sm v.$spacing-lg;
+    padding: v.$spacing-md v.$spacing-lg;
     border-bottom: 1px solid v.$color-border;
-
-    @include m.respond-below(md) {
-      padding: v.$spacing-sm v.$spacing-md;
-    }
-  }
-
-  &__author-row {
-    display: flex;
-    align-items: center;
     gap: v.$spacing-sm;
-  }
-
-  &__author-avatar {
-    @include m.flex-center;
-    width: 32px;
-    height: 32px;
-    border-radius: v.$radius-sm;
-    background: v.$gradient-primary;
-    color: #fff;
-    font-weight: 700;
-    font-size: 0.8rem;
-    flex-shrink: 0;
-    text-transform: uppercase;
-
-    &--deleted {
-      background: v.$color-bg-elevated;
-      color: v.$color-text-muted;
-    }
-  }
-
-  &__author-info {
-    display: flex;
-    align-items: center;
-    gap: v.$spacing-sm;
-    flex-wrap: wrap;
-  }
-
-  &__author-name {
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: v.$color-text-heading;
-
-    &--link {
-      transition: color v.$transition-fast;
-
-      &:hover {
-        color: v.$color-accent-red;
-      }
-    }
-  }
-
-  &__deleted {
-    color: v.$color-text-muted;
-    font-style: italic;
-    font-size: 0.85rem;
-  }
-
-  // ── Body ──────────────────────────────────────────
-  &__body {
-    padding: v.$spacing-sm v.$spacing-lg;
 
     @include m.respond-below(md) {
       padding: v.$spacing-sm v.$spacing-md;
@@ -78,18 +26,81 @@
 
   &__title {
     font-family: 'Inter', sans-serif;
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 700;
     color: v.$color-text-heading;
-    margin-bottom: 0.2rem;
     letter-spacing: -0.01em;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  &__description {
+  // ── Body ──────────────────────────────────────────
+  &__body {
+    padding: v.$spacing-md v.$spacing-lg;
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-md;
+
+    @include m.respond-below(md) {
+      padding: v.$spacing-sm v.$spacing-md;
+    }
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+    flex-wrap: wrap;
+  }
+
+  // ── Members ───────────────────────────────────────
+  &__members {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: v.$spacing-sm;
+  }
+
+  &__avatars {
+    display: flex;
+    gap: 0;
+
+    // Overlap avatars slightly
+    > * + * {
+      margin-left: -6px;
+    }
+  }
+
+  &__avatar {
+    @include m.flex-center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: v.$gradient-primary;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    border: 2px solid v.$color-bg-card;
+    transition: transform v.$transition-fast;
+    text-decoration: none;
+    position: relative;
+    z-index: 1;
+
+    &:hover {
+      transform: scale(1.15);
+      z-index: 2;
+    }
+  }
+
+  &__member-count {
     font-size: 0.85rem;
+    font-weight: 600;
     color: v.$color-text-muted;
-    line-height: 1.6;
-    @include m.line-clamp(2);
+    white-space: nowrap;
   }
 
   // ── Footer ────────────────────────────────────────
@@ -98,18 +109,10 @@
     padding: v.$spacing-sm v.$spacing-lg;
     border-top: 1px solid v.$color-border;
     gap: v.$spacing-sm;
-    flex-wrap: wrap;
 
     @include m.respond-below(md) {
       padding: v.$spacing-sm v.$spacing-md;
     }
-  }
-
-  &__tags {
-    display: flex;
-    gap: 0.2rem;
-    flex-wrap: wrap;
-    align-items: center;
   }
 
   &__schedule {
@@ -122,5 +125,47 @@
     svg {
       opacity: 0.6;
     }
+  }
+
+  &__creator {
+    font-size: 0.8rem;
+    color: v.$color-text-subtle;
+    text-decoration: none;
+    transition: color v.$transition-fast;
+
+    &:hover {
+      color: v.$color-accent-red;
+    }
+  }
+}
+
+// ── Badges específicos ──────────────────────────────
+.c-badge {
+  &--region {
+    background: rgba(99, 102, 241, 0.1);
+    color: #818cf8;
+    padding: 0.15rem 0.5rem;
+    border-radius: v.$radius-sm;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  &--full {
+    background: rgba(245, 158, 11, 0.12);
+    color: #f59e0b;
+    padding: 0.15rem 0.5rem;
+    border-radius: v.$radius-sm;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  &--closed {
+    background: rgba(107, 114, 128, 0.12);
+    color: #9ca3af;
+    padding: 0.15rem 0.5rem;
+    border-radius: v.$radius-sm;
+    font-size: 0.7rem;
+    font-weight: 600;
   }
 }

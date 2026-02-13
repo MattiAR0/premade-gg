@@ -3,34 +3,35 @@
   <header class="c-page-header">
     <div class="c-page-header__text">
       <h1 class="c-page-header__title">LFG Board</h1>
-      <p class="c-page-header__desc">Posts de jugadores buscando grupo. Solo jugadores con buen Karma pueden publicar.</p>
+      <p class="c-page-header__desc">Encuentra grupo para jugar. Elige el tipo de equipo y solicita unirte.</p>
     </div>
   </header>
 
-  <!-- Filtros modernos -->
+  <!-- Tabs de tipo de equipo -->
+  <nav class="c-tabs">
+    @for (tab of tabs; track tab) {
+      <button
+        class="c-tabs__btn"
+        [class.c-tabs__btn--active]="activeTab === tab"
+        (click)="switchTab(tab)">
+        <span class="c-tabs__label">{{ tabLabels[tab] }}</span>
+        <span class="c-tabs__size">{{ tab }}v{{ tab }}</span>
+      </button>
+    }
+  </nav>
+
+  <!-- Filtro de estado -->
   <section class="c-filters">
     <form class="c-filters__form" (ngSubmit)="loadPosts()">
-      <div class="c-filters__row">
-        <label class="c-filters__field">
-          <span class="c-filters__label">Estado</span>
-          <select class="c-filters__select" [(ngModel)]="filterStatus" name="status">
-            <option value="">Todos (por defecto: open)</option>
-            @for (status of statuses; track status) {
-              <option [value]="status">{{ status }}</option>
-            }
-          </select>
-        </label>
-
-        <label class="c-filters__field">
-          <span class="c-filters__label">Rol buscado</span>
-          <select class="c-filters__select" [(ngModel)]="filterRole" name="role">
-            <option value="">Todos</option>
-            @for (role of roles; track role) {
-              <option [value]="role">{{ role }}</option>
-            }
-          </select>
-        </label>
-      </div>
+      <label class="c-filters__field">
+        <span class="c-filters__label">Estado</span>
+        <select class="c-filters__select" [(ngModel)]="filterStatus" name="status">
+          <option value="">Todos (por defecto: open)</option>
+          @for (status of statuses; track status) {
+            <option [value]="status">{{ status }}</option>
+          }
+        </select>
+      </label>
 
       <nav class="c-filters__actions">
         <button class="c-btn c-btn--primary c-btn--sm" type="submit">Buscar</button>
@@ -51,13 +52,8 @@
           <li class="c-fade-in" [style.animation-delay]="(i - 1) * 0.1 + 's'">
             <article class="c-skeleton-card c-skeleton-card--post" aria-hidden="true">
               <div class="c-skeleton-card__header">
-                <div class="c-skeleton c-skeleton--avatar-sm"></div>
-                <div class="c-skeleton-card__info">
-                  <div class="c-skeleton c-skeleton--title"></div>
-                </div>
+                <div class="c-skeleton c-skeleton--title"></div>
               </div>
-              <div class="c-skeleton c-skeleton--text"></div>
-              <div class="c-skeleton c-skeleton--text"></div>
               <div class="c-skeleton c-skeleton--text c-skeleton--short"></div>
               <div class="c-skeleton c-skeleton--badges"></div>
             </article>
@@ -67,14 +63,14 @@
     } @else if (posts.length === 0) {
       <div class="c-empty">
         <div class="c-empty__icon">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         </div>
-        <p class="c-empty__title">No hay posts LFG</p>
-        <p class="c-empty__hint">Puede que no haya posts con status "open" o que la base de datos este vacia.</p>
+        <p class="c-empty__title">No hay grupos de {{ tabLabels[activeTab] }}</p>
+        <p class="c-empty__hint">No hay publicaciones activas para este tipo de equipo.</p>
       </div>
     } @else {
       <div class="c-results-bar">
-        <p class="c-results-bar__count">{{ totalPosts }} posts encontrados</p>
+        <p class="c-results-bar__count">{{ totalPosts }} grupos de {{ tabLabels[activeTab] }}</p>
       </div>
       <ul class="l-grid l-grid--2col">
         @for (post of posts; track post._id; let i = $index) {
@@ -87,12 +83,12 @@
       @if (loadingMore) {
         <div class="c-loading-more">
           <div class="c-loading-more__spinner"></div>
-          <span>Cargando mas posts...</span>
+          <span>Cargando mas grupos...</span>
         </div>
       }
 
       @if (!hasMore && posts.length > 0) {
-        <p class="c-end-of-list">Has visto todos los posts</p>
+        <p class="c-end-of-list">Has visto todos los grupos</p>
       }
     }
 

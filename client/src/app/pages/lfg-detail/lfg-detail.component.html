@@ -1,0 +1,195 @@
+<main class="l-container l-container--narrow l-section">
+  @if (loading) {
+    <div class="c-detail-skeleton">
+      <div class="c-skeleton c-skeleton--title" style="width: 60%; height: 1.5rem;"></div>
+      <div class="c-skeleton c-skeleton--text" style="width: 40%; height: 1rem; margin-top: 0.5rem;"></div>
+      <div class="c-skeleton c-skeleton--text" style="width: 100%; height: 4rem; margin-top: 1rem;"></div>
+      <div class="c-skeleton c-skeleton--text" style="width: 80%; height: 3rem; margin-top: 1rem;"></div>
+    </div>
+  } @else if (errorMessage) {
+    <div class="c-error-page">
+      <p class="c-error-page__msg">{{ errorMessage }}</p>
+      <button class="c-btn c-btn--ghost" (click)="goBack()">Volver al tablero</button>
+    </div>
+  } @else if (post) {
+    <!-- Volver -->
+    <button class="c-back-btn" (click)="goBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Volver al tablero
+    </button>
+
+    <!-- Card principal -->
+    <article class="c-detail">
+      <header class="c-detail__header">
+        <div class="c-detail__title-row">
+          <h1 class="c-detail__title">{{ post.title }}</h1>
+          <span class="c-badge c-badge--team">{{ teamLabels[post.teamSize] }}</span>
+          @if (post.status === 'full') {
+            <span class="c-badge c-badge--full">Lleno</span>
+          } @else if (post.status === 'closed') {
+            <span class="c-badge c-badge--closed">Cerrado</span>
+          }
+        </div>
+
+        <!-- Creador -->
+        <div class="c-detail__creator">
+          <span class="c-detail__label">Creado por</span>
+          <a class="c-detail__creator-link" [routerLink]="['/profile', post.author._id]">
+            {{ post.author.riotId }}
+          </a>
+        </div>
+      </header>
+
+      <!-- Info principal -->
+      <section class="c-detail__info">
+        <div class="c-detail__badges">
+          @if (post.author?.rank) {
+            <div class="c-detail__badge-group">
+              <span class="c-detail__label">Rango</span>
+              <app-rank-badge [rank]="post.author.rank" />
+            </div>
+          }
+          <div class="c-detail__badge-group">
+            <span class="c-detail__label">Región</span>
+            <span class="c-badge c-badge--region">{{ regionLabel }}</span>
+          </div>
+          @if (post.schedule) {
+            <div class="c-detail__badge-group">
+              <span class="c-detail__label">Horario</span>
+              <span class="c-detail__value">{{ post.schedule }}</span>
+            </div>
+          }
+        </div>
+
+        @if (post.description) {
+          <div class="c-detail__description">
+            <span class="c-detail__label">Descripción</span>
+            <p class="c-detail__text">{{ post.description }}</p>
+          </div>
+        }
+
+        <!-- Requisitos -->
+        <div class="c-detail__requirements">
+          <span class="c-detail__label">Requisitos</span>
+          <ul class="c-detail__req-list">
+            @if (post.minRank) {
+              <li>Rango mínimo: <strong>{{ post.minRank }}</strong></li>
+            }
+            <li>Karma mínimo: <strong>{{ post.minKarma }}</strong></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Miembros aceptados -->
+      <section class="c-detail__section">
+        <h2 class="c-detail__section-title">
+          Miembros
+          <span class="c-detail__count">{{ acceptedMembers.length }}/{{ post.teamSize }}</span>
+        </h2>
+        <ul class="c-detail__member-list">
+          @for (member of acceptedMembers; track member.user._id) {
+            <li class="c-member">
+              <a class="c-member__link" [routerLink]="['/profile', member.user._id]">
+                <div class="c-member__avatar">{{ member.user.riotId.charAt(0) }}</div>
+                <div class="c-member__info">
+                  <span class="c-member__name">{{ member.user.riotId }}</span>
+                  @if (member.user.rank) {
+                    <app-rank-badge [rank]="member.user.rank" />
+                  }
+                </div>
+              </a>
+              @if (isCreator && member.user._id !== post.author._id) {
+                <button
+                  class="c-btn c-btn--ghost c-btn--xs c-btn--danger"
+                  [disabled]="actionLoading"
+                  (click)="removeMember(member.user._id)">
+                  Expulsar
+                </button>
+              }
+              @if (!isCreator && member.user._id === auth.currentUser()?._id) {
+                <button
+                  class="c-btn c-btn--ghost c-btn--xs"
+                  [disabled]="actionLoading"
+                  (click)="removeMember(member.user._id)">
+                  Abandonar
+                </button>
+              }
+            </li>
+          }
+        </ul>
+      </section>
+
+      <!-- Panel de solicitudes pendientes (solo creador) -->
+      @if (isCreator && pendingMembers.length > 0) {
+        <section class="c-detail__section">
+          <h2 class="c-detail__section-title">
+            Solicitudes pendientes
+            <span class="c-detail__count c-detail__count--pending">{{ pendingMembers.length }}</span>
+          </h2>
+          <ul class="c-detail__member-list">
+            @for (member of pendingMembers; track member.user._id) {
+              <li class="c-member c-member--pending">
+                <a class="c-member__link" [routerLink]="['/profile', member.user._id]">
+                  <div class="c-member__avatar c-member__avatar--pending">{{ member.user.riotId.charAt(0) }}</div>
+                  <div class="c-member__info">
+                    <span class="c-member__name">{{ member.user.riotId }}</span>
+                    @if (member.user.rank) {
+                      <app-rank-badge [rank]="member.user.rank" />
+                    }
+                    @if (member.user.karma) {
+                      <app-karma-badge [karma]="member.user.karma" />
+                    }
+                  </div>
+                </a>
+                <div class="c-member__actions">
+                  <button
+                    class="c-btn c-btn--primary c-btn--xs"
+                    [disabled]="actionLoading"
+                    (click)="handleMember(member.user._id, 'accept')">
+                    Aceptar
+                  </button>
+                  <button
+                    class="c-btn c-btn--ghost c-btn--xs"
+                    [disabled]="actionLoading"
+                    (click)="handleMember(member.user._id, 'reject')">
+                    Rechazar
+                  </button>
+                </div>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+
+      <!-- Acción unirse -->
+      @if (canJoin) {
+        <section class="c-detail__action">
+          <button
+            class="c-btn c-btn--primary"
+            [disabled]="actionLoading"
+            (click)="requestJoin()">
+            @if (actionLoading) {
+              Enviando...
+            } @else {
+              Solicitar unirse
+            }
+          </button>
+        </section>
+      }
+
+      @if (currentMemberStatus === 'pending') {
+        <section class="c-detail__action">
+          <p class="c-detail__pending-msg">Tu solicitud está pendiente de aprobación</p>
+        </section>
+      }
+
+      <!-- Mensajes de feedback -->
+      @if (actionMessage) {
+        <p class="c-detail__feedback c-detail__feedback--ok">{{ actionMessage }}</p>
+      }
+      @if (actionError) {
+        <p class="c-detail__feedback c-detail__feedback--err">{{ actionError }}</p>
+      }
+    </article>
+  }
+</main>

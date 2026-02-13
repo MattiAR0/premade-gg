@@ -17,6 +17,11 @@ export const routes: Routes = [
       import('./pages/lfg-board/lfg-board.component').then((m) => m.LfgBoardComponent),
   },
   {
+    path: 'lfg/:id',
+    loadComponent: () =>
+      import('./pages/lfg-detail/lfg-detail.component').then((m) => m.LfgDetailComponent),
+  },
+  {
     path: 'login',
     loadComponent: () =>
       import('./pages/login/login.component').then((m) => m.LoginComponent),

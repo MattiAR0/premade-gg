@@ -166,19 +166,55 @@ async function seed() {
     // 5. Create LFG Posts (only from users with karma >= 3)
     console.log(`📋 Generating ${LFG_POST_COUNT} LFG posts...`);
     const goodUsers = await User.find({ karma: { $gte: 3 } });
+    const allUsersRefreshed = await User.find({});
+    const TEAM_SIZES = [2, 3, 5];
+    const LFG_TITLES = [
+      'Buscando compañeros para ranked',
+      'Team serio para competitivo',
+      'Chill games, no tóxicos',
+      'Subir de rango juntos',
+      'Buscando support main',
+      'Team nocturno casual',
+      'Ranked tryhard only',
+      'Necesito equipo para torneo',
+      'Premade relajado con comms',
+      'Duo/Trio para grindear',
+    ];
+
     const lfgData = [];
 
     for (let i = 0; i < LFG_POST_COUNT && i < goodUsers.length; i++) {
-      const roles = faker.helpers.arrayElements(VALORANT_ROLES, { min: 1, max: 3 });
+      const teamSize = faker.helpers.arrayElement(TEAM_SIZES);
+      const author = goodUsers[i];
+
+      // Generar miembros: el autor siempre es miembro aceptado
+      const members = [{ user: author._id, status: 'accepted', joinedAt: faker.date.recent() }];
+
+      // Agregar algunos miembros aceptados y pendientes aleatorios
+      const otherUsers = allUsersRefreshed.filter((u) => !u._id.equals(author._id));
+      const shuffled = faker.helpers.shuffle(otherUsers);
+
+      // Algunos aceptados (sin llenar el team completo)
+      const acceptedCount = faker.number.int({ min: 0, max: Math.min(teamSize - 2, shuffled.length) });
+      for (let j = 0; j < acceptedCount && j < shuffled.length; j++) {
+        members.push({ user: shuffled[j]._id, status: 'accepted', joinedAt: faker.date.recent() });
+      }
+
+      // Algunas solicitudes pendientes
+      const pendingCount = faker.number.int({ min: 0, max: Math.min(2, shuffled.length - acceptedCount) });
+      for (let j = acceptedCount; j < acceptedCount + pendingCount && j < shuffled.length; j++) {
+        members.push({ user: shuffled[j]._id, status: 'pending', joinedAt: faker.date.recent() });
+      }
+
       lfgData.push({
-        author: goodUsers[i]._id,
-        title: `Looking for ${roles.join('/')} - ${faker.helpers.arrayElement(VALORANT_RANKS)}+`,
+        author: author._id,
+        title: faker.helpers.arrayElement(LFG_TITLES),
         description: faker.lorem.sentences(2),
-        requiredRoles: roles,
+        teamSize,
         minRank: faker.helpers.arrayElement(VALORANT_RANKS),
         minKarma: faker.helpers.arrayElement([2.5, 3, 3.5, 4]),
         schedule: faker.helpers.arrayElement(SCHEDULES),
-        maxPlayers: faker.number.int({ min: 2, max: 5 }),
+        members,
         status: 'open',
       });
     }

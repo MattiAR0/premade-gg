@@ -9,7 +9,6 @@ WORKDIR /app
 
 # Instalar dependencias (cacheadas si package*.json no cambian)
 COPY package*.json ./
-RUN npm install -g npm@11.6.2
 RUN npm ci
 
 # Copiar código fuente y compilar

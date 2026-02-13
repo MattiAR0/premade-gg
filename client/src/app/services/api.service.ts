@@ -5,7 +5,7 @@ import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { User } from '../models/user.model';
 import { Reputation } from '../models/reputation.model';
-import { LfgPost, MatchmakingResult } from '../models/lfg-post.model';
+import { LfgPost } from '../models/lfg-post.model';
 import { RiotAccountValidation, RiotRankData } from '../models/riot.model';
 
 /** Respuesta paginada genérica del backend (cursor-based) */
@@ -18,8 +18,6 @@ export interface PaginatedResponse<T> {
 }
 
 // ── Cache en memoria con TTL ────────────────────────────
-// Cada entrada guarda el dato y cuándo expira.
-// Se usa solo para GETs de listados, donde los datos no cambian tan rápido.
 interface CacheEntry<T> {
   data: T;
   expiresAt: number;
@@ -36,19 +34,10 @@ export class ApiService {
 
   constructor(private readonly http: HttpClient) {}
 
-  /**
-   * Genera una clave de cache a partir de la URL y los params.
-   * Dos peticiones idénticas producen la misma clave.
-   */
   private cacheKey(url: string, params: HttpParams): string {
     return `${url}?${params.toString()}`;
   }
 
-  /**
-   * GET con cache en memoria. Si hay una entrada válida (no expirada),
-   * la devuelve como Observable sin hacer HTTP. Si no, ejecuta la petición
-   * y guarda el resultado.
-   */
   private cachedGet<T>(url: string, params: HttpParams, ttl = DEFAULT_TTL_MS): Observable<T> {
     const key = this.cacheKey(url, params);
     const entry = this.cache.get(key) as CacheEntry<T> | undefined;
@@ -64,9 +53,18 @@ export class ApiService {
     );
   }
 
-  /** Invalida todo el cache (útil tras crear/editar/borrar recursos) */
+  /** Invalida todo el cache */
   clearCache(): void {
     this.cache.clear();
+  }
+
+  /** Invalida entradas de cache que coincidan con un prefijo de URL */
+  invalidateByPrefix(prefix: string): void {
+    for (const key of this.cache.keys()) {
+      if (key.startsWith(prefix)) {
+        this.cache.delete(key);
+      }
+    }
   }
 
   // ── Riot API (Proxy) ────────────────────────────────
@@ -76,11 +74,7 @@ export class ApiService {
     );
   }
 
-  getRiotRank(
-    region: string,
-    gameName: string,
-    tagLine: string,
-  ): Observable<RiotRankData> {
+  getRiotRank(region: string, gameName: string, tagLine: string): Observable<RiotRankData> {
     return this.http.get<RiotRankData>(
       `${this.baseUrl}/riot/rank/${region}/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`,
     );
@@ -117,13 +111,13 @@ export class ApiService {
 
   // ── LFG Posts ───────────────────────────────────────
   getLfgPosts(filters?: {
-    role?: string;
+    teamSize?: number;
     status?: string;
     cursor?: string;
     limit?: number;
   }): Observable<PaginatedResponse<LfgPost>> {
     let params = new HttpParams();
-    if (filters?.role) params = params.set('role', filters.role);
+    if (filters?.teamSize) params = params.set('teamSize', filters.teamSize.toString());
     if (filters?.status) params = params.set('status', filters.status);
     if (filters?.cursor) params = params.set('cursor', filters.cursor);
     if (filters?.limit) params = params.set('limit', filters.limit.toString());
@@ -131,14 +125,37 @@ export class ApiService {
   }
 
   getLfgPostById(id: string): Observable<LfgPost> {
-    return this.cachedGet<LfgPost>(`${this.baseUrl}/lfg/${id}`, new HttpParams());
+    return this.http.get<LfgPost>(`${this.baseUrl}/lfg/${id}`);
   }
 
-  getMatchmaking(postId: string): Observable<MatchmakingResult> {
-    return this.cachedGet<MatchmakingResult>(
-      `${this.baseUrl}/lfg/${postId}/matchmaking`,
-      new HttpParams(),
-      30_000, // TTL 30s para matchmaking (datos más volátiles)
+  createLfgPost(data: {
+    title: string;
+    description?: string;
+    teamSize: number;
+    minRank?: string;
+    minKarma?: number;
+    schedule?: string;
+  }): Observable<LfgPost> {
+    return this.http.post<LfgPost>(`${this.baseUrl}/lfg`, data).pipe(
+      tap(() => this.invalidateByPrefix(`${this.baseUrl}/lfg`)),
+    );
+  }
+
+  // ── LFG Miembros ────────────────────────────────────
+  joinLfgPost(postId: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/lfg/${postId}/join`, {});
+  }
+
+  handleLfgMember(postId: string, userId: string, action: 'accept' | 'reject'): Observable<{ message: string; post?: LfgPost }> {
+    return this.http.put<{ message: string; post?: LfgPost }>(
+      `${this.baseUrl}/lfg/${postId}/members/${userId}`,
+      { action },
+    );
+  }
+
+  leaveLfgPost(postId: string, userId: string): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(
+      `${this.baseUrl}/lfg/${postId}/members/${userId}`,
     );
   }
 

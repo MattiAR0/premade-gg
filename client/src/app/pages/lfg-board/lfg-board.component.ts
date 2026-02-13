@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, Cha
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { LfgCardComponent } from '../../shared/lfg-card/lfg-card.component';
-import { LfgPost } from '../../models/lfg-post.model';
+import { LfgPost, TeamSizeTab, TEAM_SIZE_LABELS } from '../../models/lfg-post.model';
 
 @Component({
   selector: 'app-lfg-board',
@@ -22,11 +22,14 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   totalPosts = 0;
   readonly pageSize = 12;
 
+  // Tabs por tamaño de equipo
+  activeTab: TeamSizeTab = 2;
+  readonly tabs: TeamSizeTab[] = [2, 3, 5];
+  readonly tabLabels = TEAM_SIZE_LABELS;
+
   // Filtros
   filterStatus = '';
-  filterRole = '';
   statuses = ['open', 'full', 'closed'];
-  roles = ['Duelist', 'Controller', 'Initiator', 'Sentinel', 'Flex'];
 
   @ViewChild('scrollSentinel') scrollSentinel!: ElementRef<HTMLDivElement>;
   private observer: IntersectionObserver | null = null;
@@ -48,6 +51,13 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.observer?.disconnect();
   }
 
+  /** Cambia de tab y recarga los posts */
+  switchTab(tab: TeamSizeTab): void {
+    if (tab === this.activeTab) return;
+    this.activeTab = tab;
+    this.loadPosts();
+  }
+
   /** Carga la primera página (reset completo) */
   loadPosts(): void {
     this.initialLoading = true;
@@ -67,12 +77,12 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Petición genérica de una página */
   private fetchPage(): void {
-    const filters: { role?: string; status?: string; cursor?: string; limit?: number } = {
+    const filters: { teamSize?: number; status?: string; cursor?: string; limit?: number } = {
       limit: this.pageSize,
+      teamSize: this.activeTab,
     };
     if (this.nextCursor) filters.cursor = this.nextCursor;
     if (this.filterStatus) filters.status = this.filterStatus;
-    if (this.filterRole) filters.role = this.filterRole;
 
     this.api.getLfgPosts(filters).subscribe({
       next: (res) => {
@@ -83,7 +93,6 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.loadingMore = false;
         this.cdr.markForCheck();
 
-        // Auto-fill: si el sentinel sigue visible tras cargar, pedimos más datos.
         this.checkAutoFill();
       },
       error: (err) => {
@@ -98,9 +107,6 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Configura el IntersectionObserver para infinite scroll */
   private setupIntersectionObserver(): void {
-    // IntersectionObserver ejecuta su callback fuera de la zona de Angular.
-    // En modo zoneless (Angular 21 sin zone.js), necesitamos notificar a Angular
-    // manualmente para que detecte los cambios tras cargar más datos.
     this.observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && !this.initialLoading) {
@@ -116,10 +122,6 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  /**
-   * Comprueba si el sentinel sigue visible después de renderizar nuevos items.
-   * Si lo está y quedan datos, carga la siguiente.
-   */
   private checkAutoFill(): void {
     if (!this.scrollSentinel || !this.nextCursor) return;
 
@@ -138,7 +140,6 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   clearFilters(): void {
     this.filterStatus = '';
-    this.filterRole = '';
     this.loadPosts();
   }
 }

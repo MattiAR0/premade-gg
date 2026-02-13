@@ -17,7 +17,7 @@
 
 const User = require('../models/User');
 
-const AUTHOR_FIELDS = 'riotId rank role karma';
+const AUTHOR_FIELDS = 'riotId rank role karma region cardImage profileImage profileImageType';
 const TTL_MS = 30_000; // 30 segundos
 
 // Cache: Map<string(userId), { data: object, expiresAt: number }>
