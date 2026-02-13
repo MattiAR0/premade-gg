@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UpperCasePipe, DatePipe } from '@angular/common';
 import { ApiService } from '../../services/api.service';
@@ -34,6 +34,7 @@ export class ProfileComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly apiService: ApiService,
     readonly authService: AuthService,
+    private readonly cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -78,24 +79,33 @@ export class ProfileComponent implements OnInit {
   private loadProfile(id: string): void {
     this.loading = true;
     this.errorMessage = '';
+    this.cdr.markForCheck();
 
     this.apiService.getUserById(id).subscribe({
       next: (user) => {
         this.user = user;
         this.loading = false;
+        this.cdr.markForCheck();
 
         // Cargar reviews y posts en paralelo
         this.apiService.getReviews({ target: id }).subscribe({
-          next: (reviews) => this.reviews = reviews,
+          next: (reviews) => {
+            this.reviews = reviews;
+            this.cdr.markForCheck();
+          },
         });
 
         this.apiService.getLfgPostsByAuthor(id).subscribe({
-          next: (res) => this.lfgPosts = res.data,
+          next: (res) => {
+            this.lfgPosts = res.data;
+            this.cdr.markForCheck();
+          },
         });
       },
       error: () => {
         this.loading = false;
         this.errorMessage = 'No se pudo cargar el perfil';
+        this.cdr.markForCheck();
       },
     });
   }

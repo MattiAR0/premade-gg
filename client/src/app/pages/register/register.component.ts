@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -47,6 +47,7 @@ export class RegisterComponent {
     private readonly authService: AuthService,
     private readonly apiService: ApiService,
     private readonly router: Router,
+    private readonly cdr: ChangeDetectorRef,
   ) {}
 
   /** Valida el Riot ID contra la API */
@@ -68,17 +69,20 @@ export class RegisterComponent {
             this.validatedRank = rankData.normalizedRank || 'Iron';
             this.riotValidated = true;
             this.riotValidating = false;
+            this.cdr.markForCheck();
           },
           error: () => {
             this.validatedRank = '';
             this.riotValidated = true;
             this.riotValidating = false;
+            this.cdr.markForCheck();
           },
         });
       },
       error: (err) => {
         this.riotValidating = false;
         this.riotError = err.error?.message || 'No se pudo validar la cuenta de Riot';
+        this.cdr.markForCheck();
       },
     });
   }
@@ -135,6 +139,7 @@ export class RegisterComponent {
       error: (err) => {
         this.loading = false;
         this.errorMessage = err.error?.message || 'Error al registrarse';
+        this.cdr.markForCheck();
       },
     });
   }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -19,6 +19,7 @@ export class LoginComponent {
   constructor(
     private readonly authService: AuthService,
     private readonly router: Router,
+    private readonly cdr: ChangeDetectorRef,
   ) {}
 
   onSubmit(): void {
@@ -37,6 +38,7 @@ export class LoginComponent {
       error: (err) => {
         this.loading = false;
         this.errorMessage = err.error?.message || 'Error al iniciar sesión';
+        this.cdr.markForCheck();
       },
     });
   }

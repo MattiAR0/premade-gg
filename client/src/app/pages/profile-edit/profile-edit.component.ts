@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -60,6 +60,7 @@ export class ProfileEditComponent implements OnInit {
   constructor(
     readonly authService: AuthService,
     private readonly router: Router,
+    private readonly cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -140,6 +141,7 @@ export class ProfileEditComponent implements OnInit {
     const reader = new FileReader();
     reader.onload = (e) => {
       this.previewUrl = e.target?.result as string;
+      this.cdr.markForCheck();
     };
     reader.readAsDataURL(file);
   }
@@ -176,11 +178,13 @@ export class ProfileEditComponent implements OnInit {
           this.saving = false;
           this.saved = true;
           this.selectedFile = null;
-          setTimeout(() => this.saved = false, 3000);
+          this.cdr.markForCheck();
+          setTimeout(() => { this.saved = false; this.cdr.markForCheck(); }, 3000);
         },
         error: (err) => {
           this.saving = false;
           this.errorMessage = err.error?.message || 'Error al guardar el perfil';
+          this.cdr.markForCheck();
         },
       });
     };
@@ -191,12 +195,14 @@ export class ProfileEditComponent implements OnInit {
       this.authService.uploadAvatar(this.selectedFile).subscribe({
         next: (res) => {
           this.uploadingAvatar = false;
+          this.cdr.markForCheck();
           doSave(res.url);
         },
         error: (err) => {
           this.uploadingAvatar = false;
           this.saving = false;
           this.errorMessage = err.error?.message || 'Error al subir la imagen';
+          this.cdr.markForCheck();
         },
       });
     } else {
