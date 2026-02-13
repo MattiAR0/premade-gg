@@ -8,12 +8,16 @@ const {
   deletePost,
   findCompatiblePlayers,
 } = require('../controllers/lfgPostController');
+const { requireAuth } = require('../middlewares/auth');
 
+// Públicos
 router.get('/', getPosts);
 router.get('/:id', getPostById);
-router.post('/', createPost);
-router.put('/:id', updatePost);
-router.delete('/:id', deletePost);
 router.get('/:id/matchmaking', findCompatiblePlayers);
+
+// Protegidos
+router.post('/', requireAuth, createPost);
+router.put('/:id', requireAuth, updatePost);
+router.delete('/:id', requireAuth, deletePost);
 
 module.exports = router;

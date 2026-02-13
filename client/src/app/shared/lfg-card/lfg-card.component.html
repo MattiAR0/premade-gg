@@ -6,7 +6,7 @@
           {{ post.author.riotId.charAt(0) }}
         </div>
         <div class="c-lfg-card__author-info">
-          <span class="c-lfg-card__author-name">{{ post.author.riotId }}</span>
+          <a class="c-lfg-card__author-name c-lfg-card__author-name--link" [routerLink]="['/profile', post.author._id]">{{ post.author.riotId }}</a>
           <app-karma-badge [karma]="post.author.karma" />
         </div>
       } @else {

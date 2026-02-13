@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -10,6 +11,9 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class NavbarComponent {
   menuOpen = false;
+  userMenuOpen = false;
+
+  constructor(readonly authService: AuthService) {}
 
   toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
@@ -19,5 +23,26 @@ export class NavbarComponent {
   closeMenu(): void {
     this.menuOpen = false;
     document.body.style.overflow = '';
+  }
+
+  toggleUserMenu(): void {
+    this.userMenuOpen = !this.userMenuOpen;
+  }
+
+  closeUserMenu(): void {
+    this.userMenuOpen = false;
+  }
+
+  logout(): void {
+    this.closeMenu();
+    this.closeUserMenu();
+    this.authService.logout();
+  }
+
+  /** Obtiene la primera letra del Riot ID o email para el avatar placeholder */
+  getInitial(): string {
+    const user = this.authService.currentUser();
+    if (!user) return '?';
+    return user.riotId?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || '?';
   }
 }

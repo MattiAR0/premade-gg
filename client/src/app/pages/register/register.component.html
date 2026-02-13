@@ -1,0 +1,169 @@
+<main class="l-container l-section c-auth-page">
+  <div class="c-auth-card">
+    <header class="c-auth-card__header">
+      <h1 class="c-auth-card__title">Crear cuenta</h1>
+      <p class="c-auth-card__subtitle">Únete a la comunidad Premade<span class="c-auth-card__accent">GG</span></p>
+    </header>
+
+    @if (errorMessage) {
+      <div class="c-auth-card__error">{{ errorMessage }}</div>
+    }
+
+    <form class="c-auth-card__form" (ngSubmit)="onSubmit()">
+      <!-- Email -->
+      <label class="c-auth-card__field">
+        <span class="c-auth-card__label">Email</span>
+        <input
+          class="c-auth-card__input"
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="tu@email.com"
+          autocomplete="email"
+          required
+        />
+      </label>
+
+      <!-- Password -->
+      <div class="c-auth-card__row">
+        <label class="c-auth-card__field">
+          <span class="c-auth-card__label">Contraseña</span>
+          <input
+            class="c-auth-card__input"
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            placeholder="Mínimo 6 caracteres"
+            autocomplete="new-password"
+            required
+          />
+        </label>
+        <label class="c-auth-card__field">
+          <span class="c-auth-card__label">Confirmar</span>
+          <input
+            class="c-auth-card__input"
+            type="password"
+            [(ngModel)]="confirmPassword"
+            name="confirmPassword"
+            placeholder="Repite la contraseña"
+            autocomplete="new-password"
+            required
+          />
+        </label>
+      </div>
+
+      <!-- Riot ID -->
+      <div class="c-auth-card__section-title">Cuenta de Valorant</div>
+
+      <div class="c-auth-card__row">
+        <label class="c-auth-card__field" style="flex: 2">
+          <span class="c-auth-card__label">Nombre de juego</span>
+          <input
+            class="c-auth-card__input"
+            type="text"
+            [(ngModel)]="gameName"
+            name="gameName"
+            placeholder="Nombre"
+            (ngModelChange)="onRiotFieldChange()"
+            required
+          />
+        </label>
+        <label class="c-auth-card__field" style="flex: 1">
+          <span class="c-auth-card__label">Tag</span>
+          <input
+            class="c-auth-card__input"
+            type="text"
+            [(ngModel)]="tagLine"
+            name="tagLine"
+            placeholder="EUW"
+            (ngModelChange)="onRiotFieldChange()"
+            required
+          />
+        </label>
+        <div class="c-auth-card__field" style="flex: 0; align-self: flex-end">
+          <button
+            class="c-btn c-btn--secondary c-btn--sm"
+            type="button"
+            (click)="validateRiotId()"
+            [disabled]="riotValidating || (!gameName || !tagLine)"
+          >
+            @if (riotValidating) {
+              <span class="c-auth-card__spinner"></span>
+            } @else {
+              Validar
+            }
+          </button>
+        </div>
+      </div>
+
+      @if (riotError) {
+        <div class="c-auth-card__error">{{ riotError }}</div>
+      }
+
+      @if (riotValidated) {
+        <div class="c-auth-card__success">
+          Cuenta verificada
+          @if (validatedRank) {
+            — Rango: <app-rank-badge [rank]="validatedRank" />
+          }
+        </div>
+      }
+
+      <!-- Region & Role -->
+      <div class="c-auth-card__row">
+        <label class="c-auth-card__field">
+          <span class="c-auth-card__label">Región</span>
+          <select
+            class="c-auth-card__select"
+            [(ngModel)]="region"
+            name="region"
+            (ngModelChange)="onRiotFieldChange()"
+          >
+            @for (r of regions; track r.value) {
+              <option [value]="r.value">{{ r.label }}</option>
+            }
+          </select>
+        </label>
+        <label class="c-auth-card__field">
+          <span class="c-auth-card__label">Rol principal</span>
+          <select class="c-auth-card__select" [(ngModel)]="role" name="role" required>
+            <option value="" disabled>Seleccionar</option>
+            @for (r of roles; track r) {
+              <option [value]="r">{{ r }}</option>
+            }
+          </select>
+        </label>
+      </div>
+
+      <!-- Schedule -->
+      <label class="c-auth-card__field">
+        <span class="c-auth-card__label">Horario de juego</span>
+        <select class="c-auth-card__select" [(ngModel)]="schedule" name="schedule" required>
+          <option value="" disabled>Seleccionar</option>
+          @for (s of schedules; track s) {
+            <option [value]="s">{{ s }}</option>
+          }
+        </select>
+      </label>
+
+      <button
+        class="c-btn c-btn--primary c-auth-card__submit"
+        type="submit"
+        [disabled]="loading"
+      >
+        @if (loading) {
+          <span class="c-auth-card__spinner"></span>
+          Creando cuenta...
+        } @else {
+          Crear cuenta
+        }
+      </button>
+    </form>
+
+    <footer class="c-auth-card__footer">
+      <p>¿Ya tienes cuenta?
+        <a class="c-auth-card__link" routerLink="/login">Inicia sesión</a>
+      </p>
+    </footer>
+  </div>
+</main>

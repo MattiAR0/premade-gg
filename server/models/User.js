@@ -1,6 +1,32 @@
 const mongoose = require('mongoose');
 
+// ── Valorant Agents ────────────────────────────────────────
+const VALORANT_AGENTS = [
+  'Brimstone', 'Phoenix', 'Sage', 'Sova', 'Viper',
+  'Cypher', 'Reyna', 'Killjoy', 'Breach', 'Omen',
+  'Jett', 'Raze', 'Skye', 'Yoru', 'Astra',
+  'KAY/O', 'Chamber', 'Neon', 'Fade', 'Harbor',
+  'Gekko', 'Deadlock', 'Iso', 'Clove', 'Vyse', 'Tejo', 'Waylay',
+];
+
+const VALORANT_ROLES = ['Duelist', 'Controller', 'Initiator', 'Sentinel', 'Flex'];
+
 const userSchema = new mongoose.Schema({
+  // ── Autenticación ──────────────────────────────────────
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    trim: true,
+  },
+  password: {
+    type: String,
+    required: true,
+    select: false, // Nunca se retorna por defecto
+  },
+
+  // ── Identidad Riot ─────────────────────────────────────
   riotId: {
     type: String,
     required: true,
@@ -16,24 +42,19 @@ const userSchema = new mongoose.Schema({
     enum: ['eu', 'na', 'ap', 'kr'],
     default: 'eu',
   },
+
+  // ── Datos de juego ─────────────────────────────────────
   rank: {
     type: String,
     enum: [
-      'Iron',
-      'Bronze',
-      'Silver',
-      'Gold',
-      'Platinum',
-      'Diamond',
-      'Ascendant',
-      'Immortal',
-      'Radiant',
+      'Iron', 'Bronze', 'Silver', 'Gold', 'Platinum',
+      'Diamond', 'Ascendant', 'Immortal', 'Radiant',
     ],
     required: true,
   },
   role: {
     type: String,
-    enum: ['Duelist', 'Controller', 'Initiator', 'Sentinel', 'Flex'],
+    enum: VALORANT_ROLES,
     required: true,
   },
   schedule: {
@@ -58,6 +79,53 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
+
+  // ── Perfil ─────────────────────────────────────────────
+  bio: {
+    type: String,
+    maxLength: 500,
+    default: '',
+  },
+  profileImage: {
+    type: String,
+    default: null,
+  },
+  profileImageType: {
+    type: String,
+    enum: ['upload', 'avatar', 'riot_card'],
+    default: 'riot_card',
+  },
+  favoriteAgents: {
+    type: [{ type: String, enum: VALORANT_AGENTS }],
+    validate: {
+      validator: (v) => v.length <= 3,
+      message: 'Maximum 3 favorite agents allowed',
+    },
+    default: [],
+  },
+  favoriteRole: {
+    type: String,
+    enum: VALORANT_ROLES,
+    default: null,
+  },
+  socialLinks: {
+    discord: { type: String, default: '' },
+    twitter: { type: String, default: '' },
+    twitch: { type: String, default: '' },
+  },
+  availability: {
+    type: Map,
+    of: new mongoose.Schema(
+      {
+        from: { type: String, default: '' },
+        to: { type: String, default: '' },
+        available: { type: Boolean, default: false },
+      },
+      { _id: false },
+    ),
+    default: {},
+  },
+
   createdAt: {
     type: Date,
     default: Date.now,
@@ -65,9 +133,10 @@ const userSchema = new mongoose.Schema({
 });
 
 // ── Índices para rendimiento de consultas ──────────────────
-// Consulta principal: filtro por rank/role + orden por karma desc
 userSchema.index({ rank: 1, role: 1, karma: -1 });
-// Orden por karma solo (sin filtros)
 userSchema.index({ karma: -1 });
+userSchema.index({ email: 1 });
 
 module.exports = mongoose.model('User', userSchema);
+module.exports.VALORANT_AGENTS = VALORANT_AGENTS;
+module.exports.VALORANT_ROLES = VALORANT_ROLES;

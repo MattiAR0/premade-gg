@@ -1,0 +1,219 @@
+<main class="l-container l-container--medium l-section">
+  <header class="c-page-header">
+    <div class="c-page-header__text">
+      <h1 class="c-page-header__title">Configuración del perfil</h1>
+      <p class="c-page-header__desc">Personaliza cómo te ven los demás jugadores</p>
+    </div>
+  </header>
+
+  @if (errorMessage) {
+    <div class="c-settings__error">{{ errorMessage }}</div>
+  }
+
+  @if (saved) {
+    <div class="c-settings__success">Perfil actualizado correctamente</div>
+  }
+
+  <form class="c-settings" (ngSubmit)="save()">
+    <!-- Profile Image Section -->
+    <section class="c-settings__section">
+      <h2 class="c-settings__section-title">Foto de perfil</h2>
+
+      <div class="c-settings__avatar-area">
+        <div class="c-settings__avatar-preview">
+          @if (currentPreview) {
+            <img [src]="currentPreview" alt="Preview" class="c-settings__avatar-img" />
+          } @else {
+            <div class="c-settings__avatar-placeholder">
+              {{ authService.currentUser()?.riotId?.charAt(0)?.toUpperCase() || '?' }}
+            </div>
+          }
+        </div>
+
+        <div class="c-settings__avatar-options">
+          <div class="c-settings__avatar-buttons">
+            <label class="c-btn c-btn--secondary c-btn--sm">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Subir imagen
+              <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
+            </label>
+            <button class="c-btn c-btn--ghost c-btn--sm" type="button" (click)="useRiotCard()">
+              Usar card de Valorant
+            </button>
+          </div>
+          <p class="c-settings__hint">JPG, PNG o WebP. Máximo 2MB.</p>
+        </div>
+      </div>
+
+      <!-- Preset Avatars -->
+      <div class="c-settings__preset-avatars">
+        <p class="c-settings__preset-label">O elige un avatar de agente:</p>
+        <div class="c-settings__preset-grid">
+          @for (avatar of presetAvatars; track avatar.name) {
+            <button
+              type="button"
+              class="c-settings__preset-avatar"
+              [class.c-settings__preset-avatar--selected]="profileImageType === 'avatar' && profileImage === avatar.url"
+              (click)="selectPresetAvatar(avatar.url)"
+              [title]="avatar.name"
+            >
+              <img [src]="avatar.url" [alt]="avatar.name" />
+            </button>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Bio -->
+    <section class="c-settings__section">
+      <h2 class="c-settings__section-title">Sobre ti</h2>
+      <label class="c-settings__field">
+        <span class="c-settings__label">Biografía</span>
+        <textarea
+          class="c-settings__textarea"
+          [(ngModel)]="bio"
+          name="bio"
+          rows="3"
+          maxlength="500"
+          placeholder="Cuéntanos sobre ti, tu estilo de juego..."
+        ></textarea>
+        <span class="c-settings__char-count">{{ bio.length }}/500</span>
+      </label>
+    </section>
+
+    <!-- Favorite Agents -->
+    <section class="c-settings__section">
+      <h2 class="c-settings__section-title">Agentes favoritos <span class="c-settings__section-hint">(max. 3)</span></h2>
+      <div class="c-settings__agents-grid">
+        @for (agent of agents; track agent) {
+          <button
+            type="button"
+            class="c-settings__agent-chip"
+            [class.c-settings__agent-chip--selected]="isAgentSelected(agent)"
+            [class.c-settings__agent-chip--disabled]="!isAgentSelected(agent) && favoriteAgents.length >= 3"
+            (click)="toggleAgent(agent)"
+            [disabled]="!isAgentSelected(agent) && favoriteAgents.length >= 3"
+          >
+            {{ agent }}
+          </button>
+        }
+      </div>
+    </section>
+
+    <!-- Favorite Role & Schedule -->
+    <section class="c-settings__section">
+      <h2 class="c-settings__section-title">Preferencias de juego</h2>
+      <div class="c-settings__row">
+        <label class="c-settings__field">
+          <span class="c-settings__label">Rol favorito</span>
+          <select class="c-settings__select" [(ngModel)]="favoriteRole" name="favoriteRole">
+            <option value="">Sin preferencia</option>
+            @for (r of roles; track r) {
+              <option [value]="r">{{ r }}</option>
+            }
+          </select>
+        </label>
+        <label class="c-settings__field">
+          <span class="c-settings__label">Horario de juego</span>
+          <select class="c-settings__select" [(ngModel)]="schedule" name="schedule">
+            @for (s of schedules; track s) {
+              <option [value]="s">{{ s }}</option>
+            }
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <!-- Social Links -->
+    <section class="c-settings__section">
+      <h2 class="c-settings__section-title">Redes sociales</h2>
+      <div class="c-settings__social-fields">
+        <label class="c-settings__field">
+          <span class="c-settings__label">Discord</span>
+          <input
+            class="c-settings__input"
+            type="text"
+            [(ngModel)]="socialLinks.discord"
+            name="discord"
+            placeholder="usuario#1234"
+          />
+        </label>
+        <label class="c-settings__field">
+          <span class="c-settings__label">Twitter / X</span>
+          <input
+            class="c-settings__input"
+            type="text"
+            [(ngModel)]="socialLinks.twitter"
+            name="twitter"
+            placeholder="@usuario"
+          />
+        </label>
+        <label class="c-settings__field">
+          <span class="c-settings__label">Twitch</span>
+          <input
+            class="c-settings__input"
+            type="text"
+            [(ngModel)]="socialLinks.twitch"
+            name="twitch"
+            placeholder="usuario"
+          />
+        </label>
+      </div>
+    </section>
+
+    <!-- Availability -->
+    <section class="c-settings__section">
+      <h2 class="c-settings__section-title">Disponibilidad semanal</h2>
+      <div class="c-settings__availability">
+        @for (day of daysOfWeek; track day) {
+          <div class="c-settings__day-row">
+            <label class="c-settings__day-toggle">
+              <input
+                type="checkbox"
+                [(ngModel)]="availability[day].available"
+                [name]="'avail_' + day"
+              />
+              <span class="c-settings__day-name">{{ daysLabels[day] }}</span>
+            </label>
+            @if (availability[day].available) {
+              <div class="c-settings__day-times">
+                <input
+                  class="c-settings__time-input"
+                  type="time"
+                  [(ngModel)]="availability[day].from"
+                  [name]="'from_' + day"
+                />
+                <span class="c-settings__time-sep">a</span>
+                <input
+                  class="c-settings__time-input"
+                  type="time"
+                  [(ngModel)]="availability[day].to"
+                  [name]="'to_' + day"
+                />
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <div class="c-settings__actions">
+      <button
+        class="c-btn c-btn--primary"
+        type="submit"
+        [disabled]="saving"
+      >
+        @if (saving) {
+          <span class="c-settings__spinner"></span>
+          {{ uploadingAvatar ? 'Subiendo imagen...' : 'Guardando...' }}
+        } @else {
+          Guardar cambios
+        }
+      </button>
+      <a class="c-btn c-btn--ghost" [routerLink]="['/profile', authService.currentUser()?._id]">
+        Cancelar
+      </a>
+    </div>
+  </form>
+</main>

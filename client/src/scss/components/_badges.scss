@@ -60,4 +60,10 @@
     color: v.$color-text-muted;
     border: 1px solid v.$color-border;
   }
+
+  &--agent {
+    background: rgba(220, 53, 69, 0.08);
+    color: v.$color-accent-red;
+    border: 1px solid rgba(220, 53, 69, 0.18);
+  }
 }

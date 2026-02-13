@@ -14,6 +14,7 @@
 
 const mongoose = require('mongoose');
 const { faker } = require('@faker-js/faker');
+const bcrypt = require('bcrypt');
 const User = require('./models/User');
 const Reputation = require('./models/Reputation');
 const LFGPost = require('./models/LFGPost');
@@ -40,6 +41,27 @@ const VALORANT_ROLES = ['Duelist', 'Controller', 'Initiator', 'Sentinel', 'Flex'
 const SCHEDULES = ['Weekends', 'Evenings', 'Late Night', 'Mornings', 'Flexible'];
 const REGIONS = ['eu', 'na', 'ap', 'kr'];
 
+const VALORANT_AGENTS = [
+  'Brimstone', 'Phoenix', 'Sage', 'Sova', 'Viper',
+  'Cypher', 'Reyna', 'Killjoy', 'Breach', 'Omen',
+  'Jett', 'Raze', 'Skye', 'Yoru', 'Astra',
+  'KAY/O', 'Chamber', 'Neon', 'Fade', 'Harbor',
+  'Gekko', 'Deadlock', 'Iso', 'Clove', 'Vyse',
+];
+
+const BIOS = [
+  'Jugador competitivo buscando equipo serio para ranked.',
+  'Casual player, me gusta divertirme y mejorar.',
+  'Main Duelist buscando team para torneos.',
+  'Support main, buena comunicación y callouts.',
+  'Ex-CS player, adaptándome a Valorant.',
+  'Streamer buscando compañeros de juego.',
+  'Disponible para scrims y ranked.',
+  'Jugador flexible, puedo adaptarme a cualquier rol.',
+  '',
+  '',
+];
+
 async function seed() {
   try {
     console.log('🌱 Connecting to MongoDB...', MONGO_URI);
@@ -56,24 +78,51 @@ async function seed() {
     // 2. Create Users
     console.log(`👤 Generating ${USER_COUNT} users...`);
     const usersData = [];
+    const defaultPassword = await bcrypt.hash('password123', 12);
 
     for (let i = 0; i < USER_COUNT; i++) {
+      const role = faker.helpers.arrayElement(VALORANT_ROLES);
+      const favoriteAgents = faker.helpers.arrayElements(VALORANT_AGENTS, { min: 0, max: 3 });
+      const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+      const availability = {};
+      for (const day of days) {
+        const available = faker.datatype.boolean(0.5);
+        availability[day] = {
+          from: available ? faker.helpers.arrayElement(['16:00', '17:00', '18:00', '19:00', '20:00']) : '',
+          to: available ? faker.helpers.arrayElement(['22:00', '23:00', '00:00', '01:00']) : '',
+          available,
+        };
+      }
+
       usersData.push({
+        email: faker.internet.email().toLowerCase(),
+        password: defaultPassword,
         riotId: faker.internet.userName() + '#' + faker.string.alphanumeric(4).toUpperCase(),
         puuid: faker.string.uuid().replace(/-/g, '') + faker.string.alphanumeric(10),
         region: faker.helpers.arrayElement(REGIONS),
         rank: faker.helpers.arrayElement(VALORANT_RANKS),
-        role: faker.helpers.arrayElement(VALORANT_ROLES),
+        role,
         schedule: faker.helpers.arrayElement(SCHEDULES),
         karma: faker.number.float({ min: 1, max: 5, multipleOf: 0.1 }),
         accountLevel: faker.number.int({ min: 1, max: 500 }),
         cardImage: null,
         lastRankUpdate: faker.date.recent(),
+        bio: faker.helpers.arrayElement(BIOS),
+        profileImageType: 'riot_card',
+        favoriteAgents,
+        favoriteRole: faker.helpers.arrayElement([...VALORANT_ROLES, null]),
+        socialLinks: {
+          discord: faker.datatype.boolean(0.6) ? faker.internet.userName() : '',
+          twitter: faker.datatype.boolean(0.3) ? faker.internet.userName() : '',
+          twitch: faker.datatype.boolean(0.2) ? faker.internet.userName() : '',
+        },
+        availability,
       });
     }
 
     const savedUsers = await User.insertMany(usersData);
     console.log('✅ Users created.');
+    console.log(`   📧 All seed users have password: "password123"`);
 
     // 3. Create Reviews (Reputation)
     console.log(`⭐ Generating ${REVIEW_COUNT} reviews...`);

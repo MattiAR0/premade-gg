@@ -1,0 +1,387 @@
+@use 'utilities/variables' as v;
+@use 'utilities/mixins' as m;
+
+// ── Page Header (matches players page) ──────────────
+.c-page-header {
+  margin-bottom: v.$spacing-lg;
+
+  &__title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: v.$spacing-xs;
+
+    @include m.respond-to(md) {
+      font-size: 1.85rem;
+    }
+  }
+
+  &__desc {
+    font-size: 0.9rem;
+    color: v.$color-text-muted;
+  }
+}
+
+// ── Settings Form ───────────────────────────────────
+.c-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+
+  &__error {
+    text-align: center;
+    padding: v.$spacing-sm v.$spacing-md;
+    color: #e05555;
+    background: rgba(220, 53, 69, 0.06);
+    border: 1px solid rgba(220, 53, 69, 0.18);
+    border-radius: v.$radius-md;
+    font-size: 0.85rem;
+    margin-bottom: v.$spacing-md;
+  }
+
+  &__success {
+    text-align: center;
+    padding: v.$spacing-sm v.$spacing-md;
+    color: v.$color-karma-high;
+    background: rgba(90, 158, 144, 0.06);
+    border: 1px solid rgba(90, 158, 144, 0.18);
+    border-radius: v.$radius-md;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: v.$spacing-md;
+  }
+
+  &__section {
+    background: v.$color-bg-card;
+    border: 1px solid v.$color-border;
+    border-radius: v.$radius-lg;
+    padding: v.$spacing-lg;
+    margin-bottom: v.$spacing-md;
+
+    @include m.respond-below(sm) {
+      padding: v.$spacing-md;
+    }
+  }
+
+  &__section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: v.$color-text-heading;
+    margin-bottom: v.$spacing-md;
+  }
+
+  &__section-hint {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: v.$color-text-muted;
+  }
+
+  // ── Fields ──────────────────────────────────────
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: v.$color-text-muted;
+  }
+
+  &__input,
+  &__select,
+  &__textarea {
+    padding: 0.6rem v.$spacing-md;
+    background: v.$color-bg-input;
+    border: 1px solid v.$color-border;
+    border-radius: v.$radius-md;
+    color: v.$color-text-primary;
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    transition: all v.$transition-fast;
+
+    &::placeholder {
+      color: v.$color-text-subtle;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: v.$color-accent-red;
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.08);
+    }
+  }
+
+  &__select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 32px;
+  }
+
+  &__textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  &__char-count {
+    font-size: 0.7rem;
+    color: v.$color-text-subtle;
+    text-align: right;
+  }
+
+  &__hint {
+    font-size: 0.75rem;
+    color: v.$color-text-subtle;
+    margin-top: v.$spacing-xs;
+  }
+
+  &__row {
+    display: flex;
+    gap: v.$spacing-md;
+
+    @include m.respond-below(sm) {
+      flex-direction: column;
+    }
+
+    > * {
+      flex: 1;
+    }
+  }
+
+  // ── Avatar Section ────────────────────────────────
+  &__avatar-area {
+    display: flex;
+    gap: v.$spacing-lg;
+    align-items: center;
+    margin-bottom: v.$spacing-lg;
+
+    @include m.respond-below(sm) {
+      flex-direction: column;
+    }
+  }
+
+  &__avatar-preview {
+    flex-shrink: 0;
+  }
+
+  &__avatar-img {
+    width: 80px;
+    height: 80px;
+    border-radius: v.$radius-lg;
+    object-fit: cover;
+    border: 2px solid v.$color-border;
+  }
+
+  &__avatar-placeholder {
+    width: 80px;
+    height: 80px;
+    border-radius: v.$radius-lg;
+    background: v.$gradient-primary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #fff;
+  }
+
+  &__avatar-options {
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-sm;
+  }
+
+  &__avatar-buttons {
+    display: flex;
+    gap: v.$spacing-sm;
+    flex-wrap: wrap;
+  }
+
+  // ── Preset Avatars ────────────────────────────────
+  &__preset-avatars {
+    margin-top: v.$spacing-sm;
+  }
+
+  &__preset-label {
+    font-size: 0.8rem;
+    color: v.$color-text-muted;
+    margin-bottom: v.$spacing-sm;
+  }
+
+  &__preset-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: v.$spacing-sm;
+  }
+
+  &__preset-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: v.$radius-md;
+    border: 2px solid v.$color-border;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all v.$transition-fast;
+    background: v.$color-bg-input;
+    padding: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    &:hover {
+      border-color: v.$color-border-light;
+      transform: scale(1.05);
+    }
+
+    &--selected {
+      border-color: v.$color-accent-red;
+      box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.2);
+    }
+  }
+
+  // ── Agent Chips ───────────────────────────────────
+  &__agents-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: v.$spacing-xs;
+  }
+
+  &__agent-chip {
+    padding: v.$spacing-xs v.$spacing-md;
+    border-radius: v.$radius-full;
+    border: 1px solid v.$color-border;
+    background: transparent;
+    color: v.$color-text-primary;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all v.$transition-fast;
+    font-family: 'Inter', sans-serif;
+
+    &:hover:not(:disabled) {
+      border-color: v.$color-accent-red;
+      background: rgba(220, 53, 69, 0.06);
+    }
+
+    &--selected {
+      background: rgba(220, 53, 69, 0.12);
+      border-color: v.$color-accent-red;
+      color: v.$color-accent-red;
+      font-weight: 600;
+    }
+
+    &--disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+  }
+
+  // ── Social Fields ─────────────────────────────────
+  &__social-fields {
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-md;
+  }
+
+  // ── Availability ──────────────────────────────────
+  &__availability {
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-sm;
+  }
+
+  &__day-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: v.$spacing-md;
+    padding: v.$spacing-sm v.$spacing-md;
+    background: v.$color-bg-input;
+    border: 1px solid v.$color-border;
+    border-radius: v.$radius-md;
+
+    @include m.respond-below(sm) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: v.$spacing-sm;
+    }
+  }
+
+  &__day-toggle {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+    cursor: pointer;
+    min-width: 140px;
+
+    input[type='checkbox'] {
+      width: 16px;
+      height: 16px;
+      accent-color: v.$color-accent-red;
+    }
+  }
+
+  &__day-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: v.$color-text-primary;
+  }
+
+  &__day-times {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+  }
+
+  &__time-input {
+    padding: v.$spacing-xs v.$spacing-sm;
+    background: v.$color-bg-dark;
+    border: 1px solid v.$color-border;
+    border-radius: v.$radius-sm;
+    color: v.$color-text-primary;
+    font-size: 0.85rem;
+    font-family: 'Inter', sans-serif;
+
+    &:focus {
+      outline: none;
+      border-color: v.$color-accent-red;
+    }
+  }
+
+  &__time-sep {
+    font-size: 0.8rem;
+    color: v.$color-text-muted;
+  }
+
+  // ── Actions ───────────────────────────────────────
+  &__actions {
+    display: flex;
+    gap: v.$spacing-md;
+    margin-top: v.$spacing-md;
+
+    @include m.respond-below(sm) {
+      flex-direction: column;
+    }
+  }
+
+  &__spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

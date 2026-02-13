@@ -1,0 +1,305 @@
+@use 'utilities/variables' as v;
+@use 'utilities/mixins' as m;
+
+// ── Profile skeleton ────────────────────────────────
+.c-profile-skeleton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: v.$spacing-3xl 0;
+}
+
+.c-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.07) 50%,
+    rgba(255, 255, 255, 0.03) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  border-radius: v.$radius-md;
+
+  &--avatar-lg {
+    width: 96px;
+    height: 96px;
+    border-radius: v.$radius-xl;
+  }
+
+  &--title {
+    height: 1.5rem;
+  }
+
+  &--text {
+    height: 1rem;
+  }
+}
+
+@keyframes skeleton-pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// ── Error ───────────────────────────────────────────
+.c-error {
+  text-align: center;
+  padding: v.$spacing-lg;
+  color: #e05555;
+  background: rgba(220, 53, 69, 0.06);
+  border: 1px solid rgba(220, 53, 69, 0.18);
+  border-radius: v.$radius-xl;
+  font-size: 0.95rem;
+  margin-block: v.$spacing-lg;
+}
+
+// ── Profile ─────────────────────────────────────────
+.c-profile {
+  background: v.$color-bg-card;
+  border: 1px solid v.$color-border;
+  border-radius: v.$radius-xl;
+  padding: v.$spacing-2xl;
+  margin-bottom: v.$spacing-xl;
+
+  @include m.respond-below(sm) {
+    padding: v.$spacing-lg;
+  }
+
+  &__header {
+    display: flex;
+    gap: v.$spacing-xl;
+    align-items: flex-start;
+    margin-bottom: v.$spacing-xl;
+
+    @include m.respond-below(sm) {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  }
+
+  &__avatar-wrap {
+    flex-shrink: 0;
+  }
+
+  &__avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: v.$radius-xl;
+    object-fit: cover;
+    border: 2px solid v.$color-border;
+  }
+
+  &__avatar-placeholder {
+    width: 96px;
+    height: 96px;
+    border-radius: v.$radius-xl;
+    background: v.$gradient-primary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fff;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-sm;
+  }
+
+  &__name {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: v.$color-text-heading;
+  }
+
+  &__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: v.$spacing-sm;
+    align-items: center;
+
+    @include m.respond-below(sm) {
+      justify-content: center;
+    }
+  }
+
+  &__bio {
+    font-size: 0.9rem;
+    color: v.$color-text-primary;
+    line-height: 1.6;
+    max-width: 600px;
+  }
+
+  &__edit-btn {
+    align-self: flex-start;
+    margin-top: v.$spacing-xs;
+
+    @include m.respond-below(sm) {
+      align-self: center;
+    }
+  }
+
+  // ── Sections ────────────────────────────────────
+  &__section {
+    padding-top: v.$spacing-lg;
+    margin-top: v.$spacing-lg;
+    border-top: 1px solid v.$color-border;
+  }
+
+  &__section-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: v.$color-text-muted;
+    margin-bottom: v.$spacing-sm;
+  }
+
+  // ── Agents ──────────────────────────────────────
+  &__agents {
+    display: flex;
+    flex-wrap: wrap;
+    gap: v.$spacing-sm;
+  }
+
+  // ── Social Links ────────────────────────────────
+  &__socials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: v.$spacing-md;
+  }
+
+  &__social {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-xs;
+    font-size: 0.85rem;
+    color: v.$color-text-primary;
+
+    &--link {
+      transition: color v.$transition-fast;
+
+      &:hover {
+        color: v.$color-accent-red;
+      }
+    }
+  }
+
+  // ── Availability ────────────────────────────────
+  &__availability {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: v.$spacing-sm;
+  }
+
+  &__day {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: v.$spacing-sm v.$spacing-md;
+    background: v.$color-bg-input;
+    border: 1px solid v.$color-border;
+    border-radius: v.$radius-md;
+  }
+
+  &__day-name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: v.$color-text-primary;
+  }
+
+  &__day-time {
+    font-size: 0.8rem;
+    color: v.$color-text-muted;
+  }
+
+  // ── Schedule ────────────────────────────────────
+  &__schedule {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+    font-size: 0.9rem;
+    color: v.$color-text-primary;
+  }
+
+  // ── Meta ────────────────────────────────────────
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-md;
+    margin-top: v.$spacing-lg;
+    padding-top: v.$spacing-lg;
+    border-top: 1px solid v.$color-border;
+    flex-wrap: wrap;
+  }
+
+  &__joined {
+    font-size: 0.8rem;
+    color: v.$color-text-muted;
+  }
+
+  // ── Section Blocks (outside card) ───────────────
+  &__section-block {
+    margin-top: v.$spacing-xl;
+  }
+
+  &__block-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: v.$color-text-heading;
+    margin-bottom: v.$spacing-md;
+  }
+
+  &__reviews {
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-sm;
+  }
+}
+
+// ── Review Card ───────────────────────────────────
+.c-review-card {
+  background: v.$color-bg-card;
+  border: 1px solid v.$color-border;
+  border-radius: v.$radius-lg;
+  padding: v.$spacing-md v.$spacing-lg;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: v.$spacing-sm;
+  }
+
+  &__author {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: v.$color-accent-red;
+    transition: color v.$transition-fast;
+
+    &:hover {
+      color: v.$color-accent-red-hover;
+    }
+  }
+
+  &__rating {
+    display: flex;
+    gap: 2px;
+  }
+
+  &__comment {
+    font-size: 0.85rem;
+    color: v.$color-text-primary;
+    line-height: 1.5;
+  }
+
+  &__date {
+    display: block;
+    font-size: 0.75rem;
+    color: v.$color-text-subtle;
+    margin-top: v.$spacing-sm;
+  }
+}

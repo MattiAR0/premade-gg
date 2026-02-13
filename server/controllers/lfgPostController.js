@@ -15,11 +15,14 @@ const { resolveAuthors } = require('../services/authorCache');
  */
 const getPosts = async (req, res, next) => {
   try {
-    const { role, minRank, status, cursor } = req.query;
+    const { role, minRank, status, cursor, author } = req.query;
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 12));
 
     const filter = {};
-    if (status) {
+    if (author) {
+      filter.author = author;
+      // Cuando filtramos por autor, mostramos todos los status
+    } else if (status) {
       filter.status = status;
     } else {
       filter.status = 'open';
@@ -54,7 +57,13 @@ const getPosts = async (req, res, next) => {
       queries.push(LFGPost.countDocuments(
         (() => {
           const f = {};
-          if (status) { f.status = status; } else { f.status = 'open'; }
+          if (author) {
+            f.author = author;
+          } else if (status) {
+            f.status = status;
+          } else {
+            f.status = 'open';
+          }
           if (role) f.requiredRoles = role;
           if (minRank) f.minRank = minRank;
           return f;

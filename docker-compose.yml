@@ -40,6 +40,7 @@ services:
       PORT: 4000
       RIOT_API_KEY: ${RIOT_API_KEY}
       HENRIK_API_KEY: ${HENRIK_API_KEY}
+      JWT_SECRET: ${JWT_SECRET:-premadegg-docker-dev-secret}
     depends_on:
       mongo:
         condition: service_healthy

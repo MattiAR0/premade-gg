@@ -51,6 +51,14 @@
     font-weight: 600;
     font-size: 0.9rem;
     color: v.$color-text-heading;
+
+    &--link {
+      transition: color v.$transition-fast;
+
+      &:hover {
+        color: v.$color-accent-red;
+      }
+    }
   }
 
   &__deleted {

@@ -8,12 +8,16 @@ const {
   deleteUser,
   recalculateKarma,
 } = require('../controllers/userController');
+const { requireAuth } = require('../middlewares/auth');
 
+// Públicos
 router.get('/', getUsers);
 router.get('/:id', getUserById);
-router.post('/', createUser);
-router.put('/:id', updateUser);
-router.delete('/:id', deleteUser);
 router.get('/:id/karma', recalculateKarma);
+
+// Protegidos
+router.post('/', requireAuth, createUser);
+router.put('/:id', requireAuth, updateUser);
+router.delete('/:id', requireAuth, deleteUser);
 
 module.exports = router;

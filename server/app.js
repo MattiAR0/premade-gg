@@ -13,6 +13,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const compression = require('compression');
 const morgan = require('morgan');
+const path = require('path');
 require('dotenv').config();
 
 // Rutas
@@ -20,6 +21,8 @@ const userRoutes = require('./routes/userRoutes');
 const reputationRoutes = require('./routes/reputationRoutes');
 const lfgPostRoutes = require('./routes/lfgPostRoutes');
 const riotRoutes = require('./routes/riotRoutes');
+const authRoutes = require('./routes/authRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
 
 // Middlewares
 const errorHandler = require('./middlewares/errorHandler');
@@ -61,7 +64,12 @@ const apiCacheControl = (req, res, next) => {
   next();
 };
 
+// ── Archivos estáticos (uploads de avatares) ─────────
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // ── Montaje de rutas (MVC) ────────────────────────────
+app.use('/api/auth', apiCacheControl, authRoutes);
+app.use('/api/upload', apiCacheControl, uploadRoutes);
 app.use('/api/users', apiCacheControl, userRoutes);
 app.use('/api/reviews', apiCacheControl, reputationRoutes);
 app.use('/api/lfg', apiCacheControl, lfgPostRoutes);
@@ -73,10 +81,12 @@ app.get('/', (_req, res) => {
     message: 'PremadeGG API is running',
     environment: process.env.NODE_ENV || 'development',
     endpoints: {
+      auth: '/api/auth',
       users: '/api/users',
       reviews: '/api/reviews',
       lfg: '/api/lfg',
       riot: '/api/riot',
+      upload: '/api/upload',
     },
   });
 });

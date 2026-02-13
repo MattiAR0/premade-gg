@@ -1,0 +1,168 @@
+<main class="l-container l-container--medium l-section">
+  @if (loading) {
+    <div class="c-profile-skeleton">
+      <div class="c-skeleton c-skeleton--avatar-lg"></div>
+      <div class="c-skeleton c-skeleton--title" style="width: 200px; margin-top: 16px"></div>
+      <div class="c-skeleton c-skeleton--text" style="width: 300px; margin-top: 8px"></div>
+    </div>
+  } @else if (errorMessage) {
+    <div class="c-error">{{ errorMessage }}</div>
+  } @else if (user) {
+    <!-- Profile Header -->
+    <section class="c-profile">
+      <div class="c-profile__header">
+        <div class="c-profile__avatar-wrap">
+          @if (profileImageUrl) {
+            <img class="c-profile__avatar" [src]="profileImageUrl" [alt]="user.riotId" />
+          } @else {
+            <div class="c-profile__avatar-placeholder">{{ initial }}</div>
+          }
+        </div>
+
+        <div class="c-profile__info">
+          <h1 class="c-profile__name">{{ user.riotId }}</h1>
+          <div class="c-profile__badges">
+            <app-rank-badge [rank]="user.rank" />
+            <app-karma-badge [karma]="user.karma" />
+            <span class="c-badge c-badge--role">{{ user.role }}</span>
+            <span class="c-badge c-badge--region">{{ user.region | uppercase }}</span>
+          </div>
+
+          @if (user.bio) {
+            <p class="c-profile__bio">{{ user.bio }}</p>
+          }
+
+          @if (isOwnProfile) {
+            <a class="c-btn c-btn--secondary c-btn--sm c-profile__edit-btn" routerLink="/settings/profile">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              Editar perfil
+            </a>
+          }
+        </div>
+      </div>
+
+      <!-- Favorite Agents -->
+      @if (user.favoriteAgents && user.favoriteAgents.length > 0) {
+        <div class="c-profile__section">
+          <h2 class="c-profile__section-title">Agentes favoritos</h2>
+          <div class="c-profile__agents">
+            @for (agent of user.favoriteAgents; track agent) {
+              <span class="c-badge c-badge--agent">{{ agent }}</span>
+            }
+          </div>
+        </div>
+      }
+
+      @if (user.favoriteRole) {
+        <div class="c-profile__section">
+          <h2 class="c-profile__section-title">Rol favorito</h2>
+          <span class="c-badge c-badge--role">{{ user.favoriteRole }}</span>
+        </div>
+      }
+
+      <!-- Social Links -->
+      @if (hasSocialLinks) {
+        <div class="c-profile__section">
+          <h2 class="c-profile__section-title">Redes sociales</h2>
+          <div class="c-profile__socials">
+            @if (user.socialLinks.discord) {
+              <div class="c-profile__social">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+                <span>{{ user.socialLinks.discord }}</span>
+              </div>
+            }
+            @if (user.socialLinks.twitter) {
+              <a class="c-profile__social c-profile__social--link" [href]="'https://twitter.com/' + user.socialLinks.twitter" target="_blank" rel="noopener">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                <span>&#64;{{ user.socialLinks.twitter }}</span>
+              </a>
+            }
+            @if (user.socialLinks.twitch) {
+              <a class="c-profile__social c-profile__social--link" [href]="'https://twitch.tv/' + user.socialLinks.twitch" target="_blank" rel="noopener">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
+                <span>{{ user.socialLinks.twitch }}</span>
+              </a>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Availability -->
+      @if (hasAvailability) {
+        <div class="c-profile__section">
+          <h2 class="c-profile__section-title">Disponibilidad</h2>
+          <div class="c-profile__availability">
+            @for (day of daysOfWeek; track day) {
+              @if (user.availability[day]?.available) {
+                <div class="c-profile__day">
+                  <span class="c-profile__day-name">{{ daysLabels[day] }}</span>
+                  <span class="c-profile__day-time">{{ user.availability[day].from }} - {{ user.availability[day].to }}</span>
+                </div>
+              }
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Schedule -->
+      <div class="c-profile__section">
+        <h2 class="c-profile__section-title">Horario general</h2>
+        <div class="c-profile__schedule">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          {{ user.schedule }}
+        </div>
+      </div>
+
+      <!-- Info meta -->
+      <div class="c-profile__meta">
+        @if (user.accountLevel) {
+          <span class="c-badge c-badge--count">Nivel {{ user.accountLevel }}</span>
+        }
+        <span class="c-profile__joined">Miembro desde {{ user.createdAt | date:'MMMM yyyy' }}</span>
+      </div>
+    </section>
+
+    <!-- Reviews -->
+    @if (reviews.length > 0) {
+      <section class="c-profile__section-block">
+        <h2 class="c-profile__block-title">Reviews ({{ reviews.length }})</h2>
+        <div class="c-profile__reviews">
+          @for (review of reviews; track review._id) {
+            <article class="c-review-card">
+              <header class="c-review-card__header">
+                @if (review.author) {
+                  <a class="c-review-card__author" [routerLink]="['/profile', review.author._id]">
+                    {{ review.author.riotId }}
+                  </a>
+                } @else {
+                  <span class="c-review-card__author">[Eliminado]</span>
+                }
+                <div class="c-review-card__rating">
+                  @for (star of [1, 2, 3, 4, 5]; track star) {
+                    <svg width="14" height="14" viewBox="0 0 24 24" [attr.fill]="star <= review.rating ? '#c49a44' : 'none'" [attr.stroke]="star <= review.rating ? '#c49a44' : '#4a5568'" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  }
+                </div>
+              </header>
+              @if (review.comment) {
+                <p class="c-review-card__comment">{{ review.comment }}</p>
+              }
+              <time class="c-review-card__date">{{ review.createdAt | date:'dd/MM/yyyy' }}</time>
+            </article>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- LFG Posts -->
+    @if (lfgPosts.length > 0) {
+      <section class="c-profile__section-block">
+        <h2 class="c-profile__block-title">Posts LFG ({{ lfgPosts.length }})</h2>
+        <div class="l-grid l-grid--feed">
+          @for (post of lfgPosts; track post._id) {
+            <app-lfg-card [post]="post" />
+          }
+        </div>
+      </section>
+    }
+  }
+</main>

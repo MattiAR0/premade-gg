@@ -141,4 +141,10 @@ export class ApiService {
       30_000, // TTL 30s para matchmaking (datos más volátiles)
     );
   }
+
+  // ── LFG Posts by author ────────────────────────────
+  getLfgPostsByAuthor(authorId: string): Observable<PaginatedResponse<LfgPost>> {
+    const params = new HttpParams().set('author', authorId);
+    return this.cachedGet<PaginatedResponse<LfgPost>>(`${this.baseUrl}/lfg`, params);
+  }
 }
