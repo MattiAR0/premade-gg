@@ -26,6 +26,12 @@
             <app-karma-badge [karma]="user.karma" />
             <span class="c-badge c-badge--role">{{ user.role }}</span>
             <span class="c-badge c-badge--region">{{ user.region | uppercase }}</span>
+            @if (user.lookingForTeam) {
+              <span class="c-badge c-badge--lft" title="Looking For Team — Busca equipo competitivo amateur">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                LFT
+              </span>
+            }
           </div>
 
           @if (user.bio) {
@@ -57,6 +63,17 @@
         <div class="c-profile__section">
           <h2 class="c-profile__section-title">Rol favorito</h2>
           <span class="c-badge c-badge--role">{{ user.favoriteRole }}</span>
+        </div>
+      }
+
+      <!-- LFT Details -->
+      @if (user.lookingForTeam && user.lftDetails) {
+        <div class="c-profile__section">
+          <h2 class="c-profile__section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Buscando equipo (LFT)
+          </h2>
+          <p class="c-profile__lft-details">{{ user.lftDetails }}</p>
         </div>
       }
 

@@ -66,4 +66,16 @@
     color: v.$color-accent-red;
     border: 1px solid rgba(220, 53, 69, 0.18);
   }
+
+  &--lft {
+    background: rgba(168, 85, 247, 0.1);
+    color: #c084fc;
+    border: 1px solid rgba(168, 85, 247, 0.25);
+    animation: lft-pulse 2s ease-in-out infinite;
+  }
+}
+
+@keyframes lft-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }

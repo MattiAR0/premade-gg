@@ -38,6 +38,11 @@
           <span class="c-badge c-badge--count">Lv. {{ player.accountLevel }}</span>
         </li>
       }
+      @if (player.lookingForTeam) {
+        <li>
+          <span class="c-badge c-badge--lft">LFT</span>
+        </li>
+      }
     </ul>
   </section>
 

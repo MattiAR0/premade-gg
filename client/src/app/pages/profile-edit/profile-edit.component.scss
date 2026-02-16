@@ -328,6 +328,25 @@
     }
   }
 
+  &__toggle-row {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+    cursor: pointer;
+
+    input[type='checkbox'] {
+      width: 18px;
+      height: 18px;
+      accent-color: #c084fc;
+    }
+  }
+
+  &__toggle-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: v.$color-text-primary;
+  }
+
   &__day-name {
     font-size: 0.85rem;
     font-weight: 600;

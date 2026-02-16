@@ -40,6 +40,8 @@ export class ProfileEditComponent implements OnInit {
   schedule = '';
   socialLinks = { discord: '', twitter: '', twitch: '' };
   availability: Record<string, { from: string; to: string; available: boolean }> = {};
+  lookingForTeam = false;
+  lftDetails = '';
 
   // UI state
   saving = false;
@@ -84,6 +86,8 @@ export class ProfileEditComponent implements OnInit {
       twitter: user.socialLinks?.twitter || '',
       twitch: user.socialLinks?.twitch || '',
     };
+    this.lookingForTeam = user.lookingForTeam || false;
+    this.lftDetails = user.lftDetails || '';
 
     // Inicializar availability
     for (const day of this.daysOfWeek) {
@@ -171,6 +175,8 @@ export class ProfileEditComponent implements OnInit {
         schedule: this.schedule,
         socialLinks: this.socialLinks,
         availability: this.availability,
+        lookingForTeam: this.lookingForTeam,
+        lftDetails: this.lftDetails,
       };
 
       this.authService.updateProfile(data).subscribe({

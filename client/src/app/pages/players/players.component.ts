@@ -26,6 +26,7 @@ export class PlayersComponent implements OnInit, AfterViewInit, OnDestroy {
   filterRank = '';
   filterRole = '';
   filterMinKarma = 0;
+  filterLFT = false;
 
   ranks = ['Iron', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Ascendant', 'Immortal', 'Radiant'];
   roles = ['Duelist', 'Controller', 'Initiator', 'Sentinel', 'Flex'];
@@ -69,13 +70,14 @@ export class PlayersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Petición genérica de una página */
   private fetchPage(): void {
-    const filters: { rank?: string; role?: string; minKarma?: number; cursor?: string; limit?: number } = {
+    const filters: { rank?: string; role?: string; minKarma?: number; lookingForTeam?: boolean; cursor?: string; limit?: number } = {
       limit: this.pageSize,
     };
     if (this.nextCursor) filters.cursor = this.nextCursor;
     if (this.filterRank) filters.rank = this.filterRank;
     if (this.filterRole) filters.role = this.filterRole;
     if (this.filterMinKarma > 0) filters.minKarma = this.filterMinKarma;
+    if (this.filterLFT) filters.lookingForTeam = true;
 
     this.api.getUsers(filters).subscribe({
       next: (res) => {
@@ -148,6 +150,7 @@ export class PlayersComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filterRank = '';
     this.filterRole = '';
     this.filterMinKarma = 0;
+    this.filterLFT = false;
     this.loadPlayers();
   }
 }

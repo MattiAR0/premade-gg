@@ -94,6 +94,22 @@
     display: flex;
     gap: v.$spacing-xs;
   }
+
+  &__field--toggle {
+    flex-direction: row;
+    align-items: center;
+    gap: v.$spacing-sm;
+    min-width: auto;
+    flex: 0 0 auto;
+    padding-top: 1rem; // align with other fields that have labels above
+  }
+
+  &__checkbox {
+    width: 16px;
+    height: 16px;
+    accent-color: #c084fc;
+    cursor: pointer;
+  }
 }
 
 // ── Results bar ──────────────────────────────────────

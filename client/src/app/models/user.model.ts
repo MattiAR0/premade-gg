@@ -29,6 +29,10 @@ export interface User {
   };
   availability: Record<string, { from: string; to: string; available: boolean }>;
 
+  // Looking For Team
+  lookingForTeam: boolean;
+  lftDetails: string;
+
   createdAt: string;
 }
 

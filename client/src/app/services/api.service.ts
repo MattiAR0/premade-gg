@@ -85,6 +85,7 @@ export class ApiService {
     rank?: string;
     role?: string;
     minKarma?: number;
+    lookingForTeam?: boolean;
     cursor?: string;
     limit?: number;
   }): Observable<PaginatedResponse<User>> {
@@ -92,6 +93,7 @@ export class ApiService {
     if (filters?.rank) params = params.set('rank', filters.rank);
     if (filters?.role) params = params.set('role', filters.role);
     if (filters?.minKarma) params = params.set('minKarma', filters.minKarma.toString());
+    if (filters?.lookingForTeam) params = params.set('lookingForTeam', 'true');
     if (filters?.cursor) params = params.set('cursor', filters.cursor);
     if (filters?.limit) params = params.set('limit', filters.limit.toString());
     return this.cachedGet<PaginatedResponse<User>>(`${this.baseUrl}/users`, params);

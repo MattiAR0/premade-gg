@@ -156,6 +156,19 @@
     letter-spacing: 0.06em;
     color: v.$color-text-muted;
     margin-bottom: v.$spacing-sm;
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-xs;
+  }
+
+  &__lft-details {
+    font-size: 0.9rem;
+    color: v.$color-text-primary;
+    line-height: 1.6;
+    padding: v.$spacing-sm v.$spacing-md;
+    background: rgba(168, 85, 247, 0.05);
+    border: 1px solid rgba(168, 85, 247, 0.15);
+    border-radius: v.$radius-md;
   }
 
   // ── Agents ──────────────────────────────────────

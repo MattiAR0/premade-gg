@@ -62,6 +62,16 @@ const BIOS = [
   '',
 ];
 
+const LFT_DETAILS = [
+  'Busco equipo serio para torneos amateur, puedo entrenar 4 días/semana.',
+  'Tengo experiencia en scrims y competitivo, busco team estable.',
+  'IGL con experiencia, busco equipo para VCT Challengers.',
+  'Main smokes buscando equipo organizado con horarios fijos.',
+  'Busco team para competir en ligas online, horario flexible por las tardes.',
+  'Llevo 2 años jugando competitivo, busco proyecto serio.',
+  '',
+];
+
 async function seed() {
   try {
     console.log('🌱 Connecting to MongoDB...', MONGO_URI);
@@ -117,6 +127,8 @@ async function seed() {
           twitch: faker.datatype.boolean(0.2) ? faker.internet.userName() : '',
         },
         availability,
+        lookingForTeam: faker.datatype.boolean(0.3),
+        lftDetails: faker.datatype.boolean(0.3) ? faker.helpers.arrayElement(LFT_DETAILS) : '',
       });
     }
 

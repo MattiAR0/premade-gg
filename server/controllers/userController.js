@@ -16,7 +16,7 @@ const { validateAccount, getPlayerRank } = require('../services/riotService');
  */
 const getUsers = async (req, res, next) => {
   try {
-    const { rank, role, minKarma } = req.query;
+    const { rank, role, minKarma, lookingForTeam } = req.query;
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 12));
 
     // ── Cursor-based pagination ──────────────────────────────
@@ -29,6 +29,7 @@ const getUsers = async (req, res, next) => {
     if (rank) filter.rank = rank;
     if (role) filter.role = role;
     if (minKarma) filter.karma = { $gte: Number(minKarma) };
+    if (lookingForTeam === 'true') filter.lookingForTeam = true;
 
     // Si hay cursor, filtramos documentos "después" del cursor (karma DESC, _id DESC)
     if (cursor) {
@@ -54,6 +55,7 @@ const getUsers = async (req, res, next) => {
           if (rank) f.rank = rank;
           if (role) f.role = role;
           if (minKarma) f.karma = { $gte: Number(minKarma) };
+          if (lookingForTeam === 'true') f.lookingForTeam = true;
           return f;
         })(),
       ));

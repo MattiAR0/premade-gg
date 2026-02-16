@@ -161,6 +161,39 @@
       </div>
     </section>
 
+    <!-- Looking For Team (LFT) -->
+    <section class="c-settings__section">
+      <h2 class="c-settings__section-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Looking For Team (LFT)
+      </h2>
+      <p class="c-settings__hint" style="margin-bottom: 12px">Activa esta opción si buscas un equipo amateur para competir de forma estable, no solo una partida puntual.</p>
+
+      <label class="c-settings__toggle-row">
+        <input
+          type="checkbox"
+          [(ngModel)]="lookingForTeam"
+          name="lookingForTeam"
+        />
+        <span class="c-settings__toggle-label">Estoy buscando equipo</span>
+      </label>
+
+      @if (lookingForTeam) {
+        <label class="c-settings__field" style="margin-top: 12px">
+          <span class="c-settings__label">Detalles (qué buscas, tu experiencia, etc.)</span>
+          <textarea
+            class="c-settings__textarea"
+            [(ngModel)]="lftDetails"
+            name="lftDetails"
+            rows="3"
+            maxlength="300"
+            placeholder="Ej: Busco equipo para torneos amateur, tengo experiencia en scrims, puedo entrenar 4 días/semana..."
+          ></textarea>
+          <span class="c-settings__char-count">{{ lftDetails.length }}/300</span>
+        </label>
+      }
+    </section>
+
     <!-- Availability -->
     <section class="c-settings__section">
       <h2 class="c-settings__section-title">Disponibilidad semanal</h2>
