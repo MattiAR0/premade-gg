@@ -41,6 +41,13 @@ services:
       RIOT_API_KEY: ${RIOT_API_KEY}
       HENRIK_API_KEY: ${HENRIK_API_KEY}
       JWT_SECRET: ${JWT_SECRET:-premadegg-docker-dev-secret}
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      SMTP_FROM: ${SMTP_FROM:-"PremadeGG <noreply@premadegg.com>"}
+      CLIENT_URL: ${CLIENT_URL:-http://localhost:4200}
     depends_on:
       mongo:
         condition: service_healthy

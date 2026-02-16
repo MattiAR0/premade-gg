@@ -27,6 +27,9 @@ const uploadRoutes = require('./routes/uploadRoutes');
 // Middlewares
 const errorHandler = require('./middlewares/errorHandler');
 
+// Services
+const { verifyConnection: verifySmtp } = require('./services/emailService');
+
 // ── Configuración ─────────────────────────────────────
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -97,8 +100,9 @@ app.use(errorHandler);
 // ── Conexión a MongoDB y arranque ─────────────────────
 mongoose
   .connect(MONGO_URI)
-  .then(() => {
+  .then(async () => {
     console.log('✅ MongoDB connected:', MONGO_URI);
+    await verifySmtp();
     app.listen(PORT, () => {
       console.log(`🚀 PremadeGG API running on port ${PORT}`);
     });

@@ -26,6 +26,16 @@ const userSchema = new mongoose.Schema({
     select: false, // Nunca se retorna por defecto
   },
 
+  // ── Reset de contraseña ────────────────────────────────
+  resetPasswordToken: {
+    type: String,
+    select: false,
+  },
+  resetPasswordExpires: {
+    type: Date,
+    select: false,
+  },
+
   // ── Identidad Riot ─────────────────────────────────────
   riotId: {
     type: String,

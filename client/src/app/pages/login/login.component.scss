@@ -107,6 +107,12 @@
     }
   }
 
+  &__forgot {
+    text-align: right;
+    margin-top: -(v.$spacing-xs);
+    font-size: 0.8rem;
+  }
+
   &__spinner {
     display: inline-block;
     width: 16px;
