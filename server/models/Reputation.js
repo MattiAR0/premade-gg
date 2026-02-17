@@ -21,6 +21,10 @@ const reputationSchema = new mongoose.Schema({
     type: String,
     maxLength: 500,
   },
+  playedTogether: {
+    type: Boolean,
+    default: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

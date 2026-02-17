@@ -1,5 +1,56 @@
 const Reputation = require('../models/Reputation');
 const User = require('../models/User');
+const LFGPost = require('../models/LFGPost');
+const Team = require('../models/Team');
+
+/**
+ * Comprueba si dos usuarios han jugado juntos:
+ * - Co-miembros aceptados en un post LFG (incluyendo el author como miembro implícito)
+ * - Compañeros en un equipo (players, coach, owner)
+ */
+const checkPlayedTogetherInternal = async (userA, userB) => {
+  const [lfgMatch, teamMatch] = await Promise.all([
+    // 1) Buscar post LFG donde ambos participaron como accepted o author
+    LFGPost.findOne({
+      $or: [
+        // userA es author y userB es miembro aceptado
+        { author: userA, 'members.user': userB, 'members.status': 'accepted' },
+        // userB es author y userA es miembro aceptado
+        { author: userB, 'members.user': userA, 'members.status': 'accepted' },
+        // Ambos son miembros aceptados
+        {
+          members: {
+            $all: [
+              { $elemMatch: { user: userA, status: 'accepted' } },
+              { $elemMatch: { user: userB, status: 'accepted' } },
+            ],
+          },
+        },
+      ],
+    }).lean(),
+    // 2) Buscar equipo donde ambos pertenecen (players, coach, owner)
+    Team.findOne({
+      $and: [
+        {
+          $or: [
+            { owner: userA },
+            { coach: userA },
+            { 'players.user': userA },
+          ],
+        },
+        {
+          $or: [
+            { owner: userB },
+            { coach: userB },
+            { 'players.user': userB },
+          ],
+        },
+      ],
+    }).lean(),
+  ]);
+
+  return !!(lfgMatch || teamMatch);
+};
 
 /**
  * GET /api/reviews
@@ -44,27 +95,28 @@ const getReviewById = async (req, res, next) => {
 /**
  * POST /api/reviews
  * Crea una review y recalcula el karma del target.
+ * Detecta automáticamente si ambos jugadores han jugado juntos.
  */
 const createReview = async (req, res, next) => {
   try {
-    const { author, target, rating, comment } = req.body;
+    const { target, rating, comment } = req.body;
+    const author = req.user.id; // Tomamos el author del token JWT
 
     // No puedes reviewearte a ti mismo
     if (author === target) {
       return res.status(400).json({ message: 'Cannot review yourself' });
     }
 
-    // Verificar que ambos usuarios existen
-    const [authorUser, targetUser] = await Promise.all([
-      User.findById(author),
-      User.findById(target),
-    ]);
-
-    if (!authorUser || !targetUser) {
-      return res.status(404).json({ message: 'Author or target user not found' });
+    // Verificar que el target existe
+    const targetUser = await User.findById(target);
+    if (!targetUser) {
+      return res.status(404).json({ message: 'Target user not found' });
     }
 
-    const review = await Reputation.create({ author, target, rating, comment });
+    // Detectar si han jugado juntos
+    const playedTogether = await checkPlayedTogetherInternal(author, target);
+
+    const review = await Reputation.create({ author, target, rating, comment, playedTogether });
 
     // Recalcular karma del target
     const reviews = await Reputation.find({ target });
@@ -111,9 +163,43 @@ const deleteReview = async (req, res, next) => {
   }
 };
 
+/**
+ * GET /api/reviews/eligibility/:targetId
+ * Comprueba si el usuario logueado puede dejar una review al target
+ * y si han jugado juntos.
+ */
+const checkEligibility = async (req, res, next) => {
+  try {
+    const authorId = req.user.id;
+    const targetId = req.params.targetId;
+
+    if (authorId === targetId) {
+      return res.json({ canReview: false, reason: 'self', playedTogether: false, existingReview: null });
+    }
+
+    // ¿Ya existe una review?
+    const existing = await Reputation.findOne({ author: authorId, target: targetId })
+      .populate('author', 'riotId rank role')
+      .populate('target', 'riotId rank role');
+
+    // ¿Han jugado juntos?
+    const playedTogether = await checkPlayedTogetherInternal(authorId, targetId);
+
+    res.json({
+      canReview: !existing,
+      reason: existing ? 'already_reviewed' : null,
+      playedTogether,
+      existingReview: existing || null,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getReviews,
   getReviewById,
   createReview,
   deleteReview,
+  checkEligibility,
 };

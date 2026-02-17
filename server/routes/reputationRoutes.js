@@ -5,14 +5,16 @@ const {
   getReviewById,
   createReview,
   deleteReview,
+  checkEligibility,
 } = require('../controllers/reputationController');
 const { requireAuth } = require('../middlewares/auth');
 
 // Públicos
 router.get('/', getReviews);
-router.get('/:id', getReviewById);
 
-// Protegidos
+// Protegidos (eligibility antes de :id para evitar conflicto de rutas)
+router.get('/eligibility/:targetId', requireAuth, checkEligibility);
+router.get('/:id', getReviewById);
 router.post('/', requireAuth, createReview);
 router.delete('/:id', requireAuth, deleteReview);
 

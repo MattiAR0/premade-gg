@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { User } from '../models/user.model';
-import { Reputation } from '../models/reputation.model';
+import { Reputation, ReviewEligibility } from '../models/reputation.model';
 import { LfgPost } from '../models/lfg-post.model';
 import { Team } from '../models/team.model';
 import { RiotAccountValidation, RiotRankData } from '../models/riot.model';
@@ -110,6 +110,22 @@ export class ApiService {
     if (filters?.target) params = params.set('target', filters.target);
     if (filters?.author) params = params.set('author', filters.author);
     return this.cachedGet<Reputation[]>(`${this.baseUrl}/reviews`, params);
+  }
+
+  createReview(data: { target: string; rating: number; comment?: string }): Observable<Reputation> {
+    return this.http.post<Reputation>(`${this.baseUrl}/reviews`, data).pipe(
+      tap(() => this.invalidateByPrefix(`${this.baseUrl}/reviews`)),
+    );
+  }
+
+  deleteReview(id: string): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.baseUrl}/reviews/${id}`).pipe(
+      tap(() => this.invalidateByPrefix(`${this.baseUrl}/reviews`)),
+    );
+  }
+
+  checkReviewEligibility(targetId: string): Observable<ReviewEligibility> {
+    return this.http.get<ReviewEligibility>(`${this.baseUrl}/reviews/eligibility/${targetId}`);
   }
 
   // ── LFG Posts ───────────────────────────────────────

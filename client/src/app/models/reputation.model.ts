@@ -6,5 +6,13 @@ export interface Reputation {
   target: User;
   rating: number;
   comment: string;
+  playedTogether: boolean;
   createdAt: string;
+}
+
+export interface ReviewEligibility {
+  canReview: boolean;
+  reason: 'self' | 'already_reviewed' | null;
+  playedTogether: boolean;
+  existingReview: Reputation | null;
 }

@@ -140,23 +140,120 @@
     </section>
 
     <!-- Reviews -->
-    @if (reviews.length > 0) {
-      <section class="c-profile__section-block">
+    <section class="c-profile__section-block">
+      <div class="c-profile__block-header">
         <h2 class="c-profile__block-title">Reviews ({{ reviews.length }})</h2>
+
+        <!-- Botón para dejar review (solo si está logueado, no es su perfil, y puede) -->
+        @if (eligibility?.canReview) {
+          <button class="c-btn c-btn--primary c-btn--sm" (click)="toggleReviewForm()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            {{ showReviewForm ? 'Cancelar' : 'Dejar review' }}
+          </button>
+        }
+        @if (eligibility && !eligibility.canReview && eligibility.reason === 'already_reviewed') {
+          <span class="c-badge c-badge--subtle">Ya dejaste una review</span>
+        }
+      </div>
+
+      <!-- Aviso de jugaron juntos -->
+      @if (eligibility && !eligibility.playedTogether && eligibility.canReview) {
+        <div class="c-review-notice c-review-notice--info">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          No se detectó historial de partidas juntos (LFG o equipo). Aún puedes dejar una review.
+        </div>
+      }
+      @if (eligibility?.playedTogether && eligibility?.canReview) {
+        <div class="c-review-notice c-review-notice--success">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Habéis jugado juntos — tu review se marcará como verificada.
+        </div>
+      }
+
+      <!-- Review form -->
+      @if (showReviewForm) {
+        <div class="c-review-form">
+          <div class="c-review-form__stars">
+            <span class="c-review-form__label">Puntuación</span>
+            <div class="c-review-form__star-row">
+              @for (star of [1, 2, 3, 4, 5]; track star) {
+                <button
+                  class="c-review-form__star-btn"
+                  (click)="setRating(star)"
+                  (mouseenter)="setHoverRating(star)"
+                  (mouseleave)="setHoverRating(0)">
+                  <svg width="22" height="22" viewBox="0 0 24 24"
+                    [attr.fill]="star <= (reviewHoverRating || reviewRating) ? '#c49a44' : 'none'"
+                    [attr.stroke]="star <= (reviewHoverRating || reviewRating) ? '#c49a44' : '#4a5568'"
+                    stroke-width="2">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="c-review-form__field">
+            <label class="c-review-form__label" for="reviewComment">Comentario (opcional)</label>
+            <textarea
+              id="reviewComment"
+              class="c-review-form__textarea"
+              rows="3"
+              maxlength="500"
+              placeholder="¿Cómo fue la experiencia jugando con este jugador?"
+              [(ngModel)]="reviewComment">
+            </textarea>
+            <span class="c-review-form__count">{{ reviewComment.length }}/500</span>
+          </div>
+
+          @if (reviewError) {
+            <div class="c-review-notice c-review-notice--error">{{ reviewError }}</div>
+          }
+
+          <button
+            class="c-btn c-btn--primary c-btn--sm"
+            [disabled]="reviewRating === 0 || reviewSubmitting"
+            (click)="submitReview()">
+            {{ reviewSubmitting ? 'Enviando...' : 'Publicar review' }}
+          </button>
+        </div>
+      }
+
+      @if (reviewSuccess) {
+        <div class="c-review-notice c-review-notice--success" style="margin-top: 12px">{{ reviewSuccess }}</div>
+      }
+
+      <!-- Reviews list -->
+      @if (reviews.length > 0) {
         <div class="c-profile__reviews">
           @for (review of reviews; track review._id) {
             <article class="c-review-card">
               <header class="c-review-card__header">
-                @if (review.author) {
-                  <a class="c-review-card__author" [routerLink]="['/profile', review.author._id]">
-                    {{ review.author.riotId }}
-                  </a>
-                } @else {
-                  <span class="c-review-card__author">[Eliminado]</span>
-                }
-                <div class="c-review-card__rating">
-                  @for (star of [1, 2, 3, 4, 5]; track star) {
-                    <svg width="14" height="14" viewBox="0 0 24 24" [attr.fill]="star <= review.rating ? '#c49a44' : 'none'" [attr.stroke]="star <= review.rating ? '#c49a44' : '#4a5568'" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <div class="c-review-card__author-wrap">
+                  @if (review.author) {
+                    <a class="c-review-card__author" [routerLink]="['/profile', review.author._id]">
+                      {{ review.author.riotId }}
+                    </a>
+                  } @else {
+                    <span class="c-review-card__author">[Eliminado]</span>
+                  }
+                  @if (review.playedTogether) {
+                    <span class="c-badge c-badge--verified" title="Verificado: jugaron juntos en LFG o equipo">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                      Verificado
+                    </span>
+                  }
+                </div>
+                <div class="c-review-card__actions">
+                  <div class="c-review-card__rating">
+                    @for (star of [1, 2, 3, 4, 5]; track star) {
+                      <svg width="14" height="14" viewBox="0 0 24 24" [attr.fill]="star <= review.rating ? '#c49a44' : 'none'" [attr.stroke]="star <= review.rating ? '#c49a44' : '#4a5568'" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    }
+                  </div>
+                  @if (isOwnReview(review)) {
+                    <button class="c-review-card__delete" title="Eliminar mi review" (click)="deleteReview(review._id)">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
                   }
                 </div>
               </header>
@@ -167,8 +264,10 @@
             </article>
           }
         </div>
-      </section>
-    }
+      } @else if (!showReviewForm) {
+        <p class="c-profile__empty">Aún no hay reviews.</p>
+      }
+    </section>
 
     <!-- LFG Posts -->
     @if (lfgPosts.length > 0) {

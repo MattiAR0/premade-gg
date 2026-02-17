@@ -1,10 +1,11 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UpperCasePipe, DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { User, DAYS_OF_WEEK, DAYS_LABELS } from '../../models/user.model';
-import { Reputation } from '../../models/reputation.model';
+import { Reputation, ReviewEligibility } from '../../models/reputation.model';
 import { LfgPost } from '../../models/lfg-post.model';
 import { RankBadgeComponent } from '../../shared/rank-badge/rank-badge.component';
 import { KarmaBadgeComponent } from '../../shared/karma-badge/karma-badge.component';
@@ -14,7 +15,7 @@ import { LfgCardComponent } from '../../shared/lfg-card/lfg-card.component';
   selector: 'app-profile',
   standalone: true,
   imports: [
-    RouterLink, UpperCasePipe, DatePipe,
+    RouterLink, UpperCasePipe, DatePipe, FormsModule,
     RankBadgeComponent, KarmaBadgeComponent, LfgCardComponent,
   ],
   templateUrl: './profile.component.html',
@@ -26,6 +27,16 @@ export class ProfileComponent implements OnInit {
   lfgPosts: LfgPost[] = [];
   loading = true;
   errorMessage = '';
+
+  // ── Review form state ──────────────────────────────
+  eligibility: ReviewEligibility | null = null;
+  showReviewForm = false;
+  reviewRating = 0;
+  reviewHoverRating = 0;
+  reviewComment = '';
+  reviewSubmitting = false;
+  reviewError = '';
+  reviewSuccess = '';
 
   readonly daysOfWeek = DAYS_OF_WEEK;
   readonly daysLabels = DAYS_LABELS;
@@ -79,6 +90,7 @@ export class ProfileComponent implements OnInit {
   private loadProfile(id: string): void {
     this.loading = true;
     this.errorMessage = '';
+    this.resetReviewForm();
     this.cdr.markForCheck();
 
     this.apiService.getUserById(id).subscribe({
@@ -101,6 +113,16 @@ export class ProfileComponent implements OnInit {
             this.cdr.markForCheck();
           },
         });
+
+        // Comprobar elegibilidad de review (solo si está logueado y no es su propio perfil)
+        if (this.authService.isAuthenticated() && !this.isOwnProfile) {
+          this.apiService.checkReviewEligibility(id).subscribe({
+            next: (elig) => {
+              this.eligibility = elig;
+              this.cdr.markForCheck();
+            },
+          });
+        }
       },
       error: () => {
         this.loading = false;
@@ -108,5 +130,103 @@ export class ProfileComponent implements OnInit {
         this.cdr.markForCheck();
       },
     });
+  }
+
+  // ── Review form helpers ─────────────────────────────
+
+  toggleReviewForm(): void {
+    this.showReviewForm = !this.showReviewForm;
+    if (!this.showReviewForm) {
+      this.resetReviewForm();
+    }
+  }
+
+  setRating(star: number): void {
+    this.reviewRating = star;
+  }
+
+  setHoverRating(star: number): void {
+    this.reviewHoverRating = star;
+  }
+
+  submitReview(): void {
+    if (!this.user || this.reviewRating === 0) return;
+
+    this.reviewSubmitting = true;
+    this.reviewError = '';
+    this.reviewSuccess = '';
+    this.cdr.markForCheck();
+
+    this.apiService.createReview({
+      target: this.user._id,
+      rating: this.reviewRating,
+      comment: this.reviewComment.trim() || undefined,
+    }).subscribe({
+      next: (review) => {
+        this.reviews = [review, ...this.reviews];
+        this.reviewSubmitting = false;
+        this.reviewSuccess = 'Review publicada correctamente';
+        this.showReviewForm = false;
+        // Actualizar el karma mostrado
+        if (this.user) {
+          this.apiService.getUserById(this.user._id).subscribe({
+            next: (u) => {
+              this.user = u;
+              this.cdr.markForCheck();
+            },
+          });
+        }
+        // Ya no puede dejar otra review
+        if (this.eligibility) {
+          this.eligibility = { ...this.eligibility, canReview: false, reason: 'already_reviewed', existingReview: review };
+        }
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.reviewSubmitting = false;
+        this.reviewError = err.error?.message || 'Error al publicar la review';
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  deleteReview(reviewId: string): void {
+    this.apiService.deleteReview(reviewId).subscribe({
+      next: () => {
+        this.reviews = this.reviews.filter((r) => r._id !== reviewId);
+        // Refrescar karma
+        if (this.user) {
+          this.apiService.getUserById(this.user._id).subscribe({
+            next: (u) => {
+              this.user = u;
+              this.cdr.markForCheck();
+            },
+          });
+          // Refrescar elegibilidad
+          this.apiService.checkReviewEligibility(this.user._id).subscribe({
+            next: (elig) => {
+              this.eligibility = elig;
+              this.cdr.markForCheck();
+            },
+          });
+        }
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  isOwnReview(review: Reputation): boolean {
+    return this.authService.currentUser()?._id === review.author?._id;
+  }
+
+  private resetReviewForm(): void {
+    this.showReviewForm = false;
+    this.reviewRating = 0;
+    this.reviewHoverRating = 0;
+    this.reviewComment = '';
+    this.reviewSubmitting = false;
+    this.reviewError = '';
+    this.reviewSuccess = '';
+    this.eligibility = null;
   }
 }

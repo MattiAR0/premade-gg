@@ -266,10 +266,130 @@
     margin-bottom: v.$spacing-md;
   }
 
+  &__block-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: v.$spacing-md;
+    flex-wrap: wrap;
+    gap: v.$spacing-sm;
+  }
+
   &__reviews {
     display: flex;
     flex-direction: column;
     gap: v.$spacing-sm;
+  }
+
+  &__empty {
+    font-size: 0.85rem;
+    color: v.$color-text-muted;
+    margin-top: v.$spacing-sm;
+  }
+}
+
+// ── Review Notice ─────────────────────────────────
+.c-review-notice {
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-sm;
+  padding: v.$spacing-sm v.$spacing-md;
+  border-radius: v.$radius-md;
+  font-size: 0.8rem;
+  margin-bottom: v.$spacing-md;
+
+  &--info {
+    color: #93bbdc;
+    background: rgba(59, 130, 246, 0.06);
+    border: 1px solid rgba(59, 130, 246, 0.18);
+  }
+
+  &--success {
+    color: #6ec87a;
+    background: rgba(34, 197, 94, 0.06);
+    border: 1px solid rgba(34, 197, 94, 0.18);
+  }
+
+  &--error {
+    color: #e05555;
+    background: rgba(220, 53, 69, 0.06);
+    border: 1px solid rgba(220, 53, 69, 0.18);
+  }
+}
+
+// ── Review Form ───────────────────────────────────
+.c-review-form {
+  background: v.$color-bg-card;
+  border: 1px solid v.$color-border;
+  border-radius: v.$radius-lg;
+  padding: v.$spacing-lg;
+  margin-bottom: v.$spacing-md;
+
+  &__stars {
+    margin-bottom: v.$spacing-md;
+  }
+
+  &__label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: v.$color-text-muted;
+    margin-bottom: v.$spacing-xs;
+  }
+
+  &__star-row {
+    display: flex;
+    gap: 4px;
+  }
+
+  &__star-btn {
+    background: none;
+    border: none;
+    padding: 2px;
+    cursor: pointer;
+    transition: transform v.$transition-fast;
+
+    &:hover {
+      transform: scale(1.2);
+    }
+  }
+
+  &__field {
+    margin-bottom: v.$spacing-md;
+  }
+
+  &__textarea {
+    width: 100%;
+    padding: v.$spacing-sm v.$spacing-md;
+    background: v.$color-bg-input;
+    border: 1px solid v.$color-border;
+    border-radius: v.$radius-md;
+    color: v.$color-text-primary;
+    font-size: 0.9rem;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 70px;
+    transition: all v.$transition-fast;
+
+    &::placeholder {
+      color: v.$color-text-subtle;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: v.$color-accent-red;
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.08);
+    }
+  }
+
+  &__count {
+    display: block;
+    text-align: right;
+    font-size: 0.7rem;
+    color: v.$color-text-subtle;
+    margin-top: 4px;
   }
 }
 
@@ -285,6 +405,13 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: v.$spacing-sm;
+    gap: v.$spacing-sm;
+  }
+
+  &__author-wrap {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
   }
 
   &__author {
@@ -298,9 +425,30 @@
     }
   }
 
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+  }
+
   &__rating {
     display: flex;
     gap: 2px;
+  }
+
+  &__delete {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    color: v.$color-text-subtle;
+    transition: color v.$transition-fast;
+    border-radius: v.$radius-sm;
+
+    &:hover {
+      color: #e05555;
+      background: rgba(220, 53, 69, 0.1);
+    }
   }
 
   &__comment {
@@ -315,4 +463,27 @@
     color: v.$color-text-subtle;
     margin-top: v.$spacing-sm;
   }
+}
+
+// ── Badge: Verified ───────────────────────────────
+.c-badge--verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #6ec87a;
+  background: rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  padding: 2px 8px;
+  border-radius: v.$radius-md;
+}
+
+.c-badge--subtle {
+  font-size: 0.75rem;
+  color: v.$color-text-muted;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid v.$color-border;
+  padding: 4px 10px;
+  border-radius: v.$radius-md;
 }
