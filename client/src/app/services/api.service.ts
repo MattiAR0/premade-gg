@@ -8,6 +8,7 @@ import { Reputation, ReviewEligibility } from '../models/reputation.model';
 import { LfgPost } from '../models/lfg-post.model';
 import { Team } from '../models/team.model';
 import { RiotAccountValidation, RiotRankData } from '../models/riot.model';
+import { AppNotification } from '../models/notification.model';
 
 /** Respuesta paginada genérica del backend (cursor-based) */
 export interface PaginatedResponse<T> {
@@ -237,5 +238,28 @@ export class ApiService {
 
   removeTeamStaff(teamId: string, userId: string): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${this.baseUrl}/teams/${teamId}/staff/${userId}`);
+  }
+
+  // ── Notifications ───────────────────────────────────
+  getNotifications(unreadOnly = false): Observable<AppNotification[]> {
+    let params = new HttpParams();
+    if (unreadOnly) params = params.set('unreadOnly', 'true');
+    return this.http.get<AppNotification[]>(`${this.baseUrl}/notifications`, { params });
+  }
+
+  getUnreadNotificationCount(): Observable<{ count: number }> {
+    return this.http.get<{ count: number }>(`${this.baseUrl}/notifications/unread-count`);
+  }
+
+  markNotificationAsRead(id: string): Observable<{ message: string }> {
+    return this.http.put<{ message: string }>(`${this.baseUrl}/notifications/${id}/read`, {});
+  }
+
+  markAllNotificationsAsRead(): Observable<{ message: string }> {
+    return this.http.put<{ message: string }>(`${this.baseUrl}/notifications/read-all`, {});
+  }
+
+  deleteNotification(id: string): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.baseUrl}/notifications/${id}`);
   }
 }

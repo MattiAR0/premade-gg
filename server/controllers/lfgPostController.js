@@ -1,5 +1,6 @@
 const LFGPost = require('../models/LFGPost');
 const User = require('../models/User');
+const Notification = require('../models/Notification');
 const { resolveAuthors } = require('../services/authorCache');
 
 const RANK_ORDER = [
@@ -272,6 +273,15 @@ const joinPost = async (req, res, next) => {
     post.members.push({ user: userId, status: 'pending' });
     await post.save();
 
+    // Notificar al creador del grupo
+    await Notification.create({
+      recipient: post.author,
+      sender: userId,
+      type: 'join_request',
+      lfgPost: post._id,
+      message: `${user.riotId} quiere unirse a tu grupo "${post.title}"`,
+    });
+
     res.status(201).json({ message: 'Solicitud enviada correctamente' });
   } catch (err) {
     next(err);
@@ -309,6 +319,16 @@ const handleMemberRequest = async (req, res, next) => {
     if (action === 'reject') {
       post.members.splice(memberIdx, 1);
       await post.save();
+
+      // Notificar al usuario rechazado
+      await Notification.create({
+        recipient: req.params.userId,
+        sender: req.user.id,
+        type: 'request_rejected',
+        lfgPost: post._id,
+        message: `Tu solicitud para unirte a "${post.title}" fue rechazada`,
+      });
+
       return res.json({ message: 'Solicitud rechazada' });
     }
 
@@ -328,6 +348,15 @@ const handleMemberRequest = async (req, res, next) => {
 
     await post.save();
     await post.populate('members.user', 'riotId rank region cardImage profileImage profileImageType');
+
+    // Notificar al usuario aceptado
+    await Notification.create({
+      recipient: req.params.userId,
+      sender: req.user.id,
+      type: 'request_accepted',
+      lfgPost: post._id,
+      message: `¡Tu solicitud para unirte a "${post.title}" fue aceptada!`,
+    });
 
     res.json({ message: 'Miembro aceptado', post });
   } catch (err) {
@@ -378,6 +407,18 @@ const leavePost = async (req, res, next) => {
     }
 
     await post.save();
+
+    // Notificar al miembro expulsado (solo si es el creador quien expulsa)
+    if (!isSelf && isCreator) {
+      await Notification.create({
+        recipient: targetUserId,
+        sender: requesterId,
+        type: 'member_kicked',
+        lfgPost: post._id,
+        message: `Has sido expulsado del grupo "${post.title}"`,
+      });
+    }
+
     res.json({ message: isSelf ? 'Has abandonado el grupo' : 'Miembro expulsado' });
   } catch (err) {
     next(err);

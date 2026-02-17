@@ -1,0 +1,74 @@
+<div class="c-notif">
+  <!-- Bell button -->
+  <button class="c-notif__bell" (click)="notificationService.togglePanel()" aria-label="Notificaciones">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+      <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+    </svg>
+    @if (notificationService.hasUnread()) {
+      <span class="c-notif__badge">{{ notificationService.unreadCount() }}</span>
+    }
+  </button>
+
+  <!-- Panel dropdown -->
+  @if (notificationService.panelOpen()) {
+    <div class="c-notif__panel">
+      <div class="c-notif__header">
+        <h3 class="c-notif__title">Notificaciones</h3>
+        @if (notificationService.hasUnread()) {
+          <button class="c-notif__mark-all" (click)="notificationService.markAllAsRead()">
+            Marcar todo como leído
+          </button>
+        }
+      </div>
+
+      <div class="c-notif__list">
+        @if (notificationService.notifications().length === 0) {
+          <div class="c-notif__empty">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <p>No tienes notificaciones</p>
+          </div>
+        } @else {
+          @for (notification of notificationService.notifications(); track notification._id) {
+            <div
+              class="c-notif__item"
+              [class.c-notif__item--unread]="!notification.read"
+              (click)="onNotificationClick(notification)"
+            >
+              <span class="c-notif__icon">{{ getIcon(notification.type) }}</span>
+              <div class="c-notif__content">
+                <p class="c-notif__message">{{ notification.message }}</p>
+                <span class="c-notif__time">{{ notification.createdAt | date: 'dd/MM/yy HH:mm' }}</span>
+                @if (notification.lfgPost) {
+                  <a
+                    class="c-notif__link"
+                    [routerLink]="['/lfg', notification.lfgPost._id]"
+                    (click)="notificationService.closePanel()"
+                  >
+                    Ver grupo
+                  </a>
+                }
+              </div>
+              <button
+                class="c-notif__delete"
+                (click)="$event.stopPropagation(); notificationService.delete(notification._id)"
+                aria-label="Eliminar notificación"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+          }
+        }
+      </div>
+    </div>
+
+    <!-- Overlay para cerrar el panel -->
+    <div class="c-notif__overlay" (click)="notificationService.closePanel()"></div>
+  }
+</div>

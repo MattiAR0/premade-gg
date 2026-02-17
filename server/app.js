@@ -24,6 +24,7 @@ const teamRoutes = require('./routes/teamRoutes');
 const riotRoutes = require('./routes/riotRoutes');
 const authRoutes = require('./routes/authRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 // Middlewares
 const errorHandler = require('./middlewares/errorHandler');
@@ -78,6 +79,7 @@ app.use('/api/users', apiCacheControl, userRoutes);
 app.use('/api/reviews', apiCacheControl, reputationRoutes);
 app.use('/api/lfg', apiCacheControl, lfgPostRoutes);
 app.use('/api/teams', apiCacheControl, teamRoutes);
+app.use('/api/notifications', apiCacheControl, notificationRoutes);
 app.use('/api/riot', riotRoutes); // Riot API no se cachea (datos en tiempo real)
 
 // Ruta raíz (health check)
@@ -91,6 +93,7 @@ app.get('/', (_req, res) => {
       reviews: '/api/reviews',
       lfg: '/api/lfg',
       teams: '/api/teams',
+      notifications: '/api/notifications',
       riot: '/api/riot',
       upload: '/api/upload',
     },

@@ -1,0 +1,247 @@
+@use '../utilities/variables' as v;
+@use '../utilities/mixins' as m;
+
+// ── Notification Bell ───────────────────────────────
+.c-notif {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  // ── Bell button ──────────────────────────────────
+  &__bell {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: v.$radius-md;
+    background: transparent;
+    color: v.$color-text-muted;
+    cursor: pointer;
+    transition:
+      color v.$transition-fast,
+      background-color v.$transition-fast;
+
+    &:hover {
+      color: v.$color-text-heading;
+      background: rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  // ── Unread badge ─────────────────────────────────
+  &__badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: v.$radius-full;
+    background: v.$color-accent-red;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    box-shadow: 0 0 0 2px v.$color-bg-dark;
+    animation: notif-pulse 2s ease-in-out infinite;
+  }
+
+  // ── Panel dropdown ───────────────────────────────
+  &__panel {
+    position: absolute;
+    top: calc(100% + v.$spacing-sm);
+    right: 0;
+    width: 360px;
+    max-height: 480px;
+    background: v.$color-bg-elevated;
+    border: 1px solid v.$color-border;
+    border-radius: v.$radius-lg;
+    box-shadow: v.$shadow-float;
+    z-index: v.$z-dropdown;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    @include m.respond-below(md) {
+      position: fixed;
+      top: 60px;
+      right: v.$spacing-md;
+      left: v.$spacing-md;
+      width: auto;
+      max-height: calc(100vh - 80px);
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: v.$spacing-md;
+    border-bottom: 1px solid v.$color-border;
+  }
+
+  &__title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: v.$color-text-heading;
+    margin: 0;
+  }
+
+  &__mark-all {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: v.$color-accent-red;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: v.$spacing-xs v.$spacing-sm;
+    border-radius: v.$radius-sm;
+    transition: background v.$transition-fast;
+    font-family: inherit;
+
+    &:hover {
+      background: rgba(220, 53, 69, 0.08);
+    }
+  }
+
+  // ── Notification list ────────────────────────────
+  &__list {
+    overflow-y: auto;
+    flex: 1;
+    scrollbar-width: thin;
+    scrollbar-color: v.$color-border transparent;
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: v.$spacing-sm;
+    padding: v.$spacing-2xl v.$spacing-lg;
+    color: v.$color-text-muted;
+
+    p {
+      font-size: 0.85rem;
+      margin: 0;
+    }
+  }
+
+  // ── Single notification item ─────────────────────
+  &__item {
+    display: flex;
+    align-items: flex-start;
+    gap: v.$spacing-sm;
+    padding: v.$spacing-sm v.$spacing-md;
+    border-bottom: 1px solid rgba(v.$color-border, 0.5);
+    cursor: pointer;
+    transition: background v.$transition-fast;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    &--unread {
+      background: rgba(220, 53, 69, 0.04);
+      border-left: 3px solid v.$color-accent-red;
+
+      &:hover {
+        background: rgba(220, 53, 69, 0.07);
+      }
+    }
+  }
+
+  &__icon {
+    font-size: 1.2rem;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  &__content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__message {
+    font-size: 0.82rem;
+    color: v.$color-text-primary;
+    margin: 0 0 v.$spacing-xs;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+
+  &__time {
+    font-size: 0.7rem;
+    color: v.$color-text-muted;
+  }
+
+  &__link {
+    display: inline-block;
+    margin-top: v.$spacing-xs;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: v.$color-accent-red;
+    transition: color v.$transition-fast;
+
+    &:hover {
+      color: v.$color-accent-red-hover;
+    }
+  }
+
+  &__delete {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: v.$radius-sm;
+    background: transparent;
+    color: v.$color-text-muted;
+    cursor: pointer;
+    opacity: 0;
+    transition:
+      opacity v.$transition-fast,
+      color v.$transition-fast,
+      background v.$transition-fast;
+
+    .c-notif__item:hover & {
+      opacity: 1;
+    }
+
+    &:hover {
+      color: v.$color-accent-red;
+      background: rgba(220, 53, 69, 0.08);
+    }
+  }
+
+  // ── Overlay para cerrar ──────────────────────────
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    z-index: v.$z-dropdown - 1;
+  }
+}
+
+// ── Pulse animation para el badge ──────────────────
+@keyframes notif-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 2px v.$color-bg-dark;
+  }
+  50% {
+    box-shadow:
+      0 0 0 2px v.$color-bg-dark,
+      0 0 8px rgba(220, 53, 69, 0.4);
+  }
+}
