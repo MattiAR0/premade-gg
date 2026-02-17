@@ -2,6 +2,7 @@ const LFGPost = require('../models/LFGPost');
 const User = require('../models/User');
 const Notification = require('../models/Notification');
 const { resolveAuthors } = require('../services/authorCache');
+const socketService = require('../services/socketService');
 
 const RANK_ORDER = [
   'Iron', 'Bronze', 'Silver', 'Gold', 'Platinum',
@@ -274,13 +275,18 @@ const joinPost = async (req, res, next) => {
     await post.save();
 
     // Notificar al creador del grupo
-    await Notification.create({
+    const joinNotif = await Notification.create({
       recipient: post.author,
       sender: userId,
       type: 'join_request',
       lfgPost: post._id,
       message: `${user.riotId} quiere unirse a tu grupo "${post.title}"`,
     });
+    const populatedJoinNotif = await Notification.findById(joinNotif._id)
+      .populate('sender', 'riotId rank profileImage profileImageType')
+      .populate('lfgPost', 'title')
+      .lean();
+    socketService.emitToUser(post.author.toString(), 'notification:new', populatedJoinNotif);
 
     res.status(201).json({ message: 'Solicitud enviada correctamente' });
   } catch (err) {
@@ -321,13 +327,18 @@ const handleMemberRequest = async (req, res, next) => {
       await post.save();
 
       // Notificar al usuario rechazado
-      await Notification.create({
+      const rejectNotif = await Notification.create({
         recipient: req.params.userId,
         sender: req.user.id,
         type: 'request_rejected',
         lfgPost: post._id,
         message: `Tu solicitud para unirte a "${post.title}" fue rechazada`,
       });
+      const populatedRejectNotif = await Notification.findById(rejectNotif._id)
+        .populate('sender', 'riotId rank profileImage profileImageType')
+        .populate('lfgPost', 'title')
+        .lean();
+      socketService.emitToUser(req.params.userId, 'notification:new', populatedRejectNotif);
 
       return res.json({ message: 'Solicitud rechazada' });
     }
@@ -350,13 +361,18 @@ const handleMemberRequest = async (req, res, next) => {
     await post.populate('members.user', 'riotId rank region cardImage profileImage profileImageType');
 
     // Notificar al usuario aceptado
-    await Notification.create({
+    const acceptNotif = await Notification.create({
       recipient: req.params.userId,
       sender: req.user.id,
       type: 'request_accepted',
       lfgPost: post._id,
       message: `¡Tu solicitud para unirte a "${post.title}" fue aceptada!`,
     });
+    const populatedAcceptNotif = await Notification.findById(acceptNotif._id)
+      .populate('sender', 'riotId rank profileImage profileImageType')
+      .populate('lfgPost', 'title')
+      .lean();
+    socketService.emitToUser(req.params.userId, 'notification:new', populatedAcceptNotif);
 
     res.json({ message: 'Miembro aceptado', post });
   } catch (err) {
@@ -410,13 +426,18 @@ const leavePost = async (req, res, next) => {
 
     // Notificar al miembro expulsado (solo si es el creador quien expulsa)
     if (!isSelf && isCreator) {
-      await Notification.create({
+      const kickNotif = await Notification.create({
         recipient: targetUserId,
         sender: requesterId,
         type: 'member_kicked',
         lfgPost: post._id,
         message: `Has sido expulsado del grupo "${post.title}"`,
       });
+      const populatedKickNotif = await Notification.findById(kickNotif._id)
+        .populate('sender', 'riotId rank profileImage profileImageType')
+        .populate('lfgPost', 'title')
+        .lean();
+      socketService.emitToUser(targetUserId, 'notification:new', populatedKickNotif);
     }
 
     res.json({ message: isSelf ? 'Has abandonado el grupo' : 'Miembro expulsado' });

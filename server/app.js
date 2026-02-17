@@ -9,6 +9,8 @@
  */
 
 const express = require('express');
+const http = require('http');
+const { Server: SocketIO } = require('socket.io');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const compression = require('compression');
@@ -25,16 +27,23 @@ const riotRoutes = require('./routes/riotRoutes');
 const authRoutes = require('./routes/authRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const messageRoutes = require('./routes/messageRoutes');
 
 // Middlewares
 const errorHandler = require('./middlewares/errorHandler');
 
 // Services
 const { verifyConnection: verifySmtp } = require('./services/emailService');
+const socketService = require('./services/socketService');
 
 // ── Configuración ─────────────────────────────────────
-const app = express();
-const PORT = process.env.PORT || 4000;
+const app = express();const server = http.createServer(app);
+const io = new SocketIO(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
+});const PORT = process.env.PORT || 4000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/premade-gg';
 
 // ── Middlewares globales ──────────────────────────────
@@ -80,6 +89,7 @@ app.use('/api/reviews', apiCacheControl, reputationRoutes);
 app.use('/api/lfg', apiCacheControl, lfgPostRoutes);
 app.use('/api/teams', apiCacheControl, teamRoutes);
 app.use('/api/notifications', apiCacheControl, notificationRoutes);
+app.use('/api/messages', apiCacheControl, messageRoutes);
 app.use('/api/riot', riotRoutes); // Riot API no se cachea (datos en tiempo real)
 
 // Ruta raíz (health check)
@@ -94,6 +104,7 @@ app.get('/', (_req, res) => {
       lfg: '/api/lfg',
       teams: '/api/teams',
       notifications: '/api/notifications',
+      messages: '/api/messages',
       riot: '/api/riot',
       upload: '/api/upload',
     },
@@ -109,7 +120,12 @@ mongoose
   .then(async () => {
     console.log('✅ MongoDB connected:', MONGO_URI);
     await verifySmtp();
-    app.listen(PORT, () => {
+
+    // Inicializar Socket.IO
+    socketService.init(io);
+    console.log('🔌 Socket.IO initialized');
+
+    server.listen(PORT, () => {
       console.log(`🚀 PremadeGG API running on port ${PORT}`);
     });
   })
@@ -118,4 +134,4 @@ mongoose
     process.exit(1);
   });
 
-module.exports = app;
+module.exports = { app, server, io };

@@ -51,6 +51,7 @@
 
     <!-- Auth section -->
     @if (authService.isAuthenticated()) {
+      <app-message-panel />
       <app-notification-bell />
       <div class="c-navbar__user" (click)="toggleUserMenu()">
         @if (authService.currentUser()?.profileImage) {

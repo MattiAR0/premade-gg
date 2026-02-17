@@ -89,6 +89,9 @@
   }
 
   &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding: v.$spacing-sm v.$spacing-lg;
     border-top: 1px solid v.$color-border;
 
@@ -106,6 +109,25 @@
 
     svg {
       opacity: 0.6;
+    }
+  }
+
+  &__msg-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: v.$radius-sm;
+    background: transparent;
+    color: v.$color-text-muted;
+    cursor: pointer;
+    transition: color v.$transition-fast, background v.$transition-fast;
+
+    &:hover {
+      color: v.$color-accent-red;
+      background: rgba(220, 53, 69, 0.1);
     }
   }
 }

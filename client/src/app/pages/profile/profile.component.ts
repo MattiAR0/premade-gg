@@ -4,6 +4,7 @@ import { UpperCasePipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
+import { MessageService } from '../../services/message.service';
 import { User, DAYS_OF_WEEK, DAYS_LABELS } from '../../models/user.model';
 import { Reputation, ReviewEligibility } from '../../models/reputation.model';
 import { LfgPost } from '../../models/lfg-post.model';
@@ -45,8 +46,20 @@ export class ProfileComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly apiService: ApiService,
     readonly authService: AuthService,
+    private readonly messageService: MessageService,
     private readonly cdr: ChangeDetectorRef,
   ) {}
+
+  /** Puede enviar mensaje (logueado y no es su propio perfil) */
+  get canMessage(): boolean {
+    return this.authService.isAuthenticated() && !this.isOwnProfile;
+  }
+
+  /** Abre chat directo con este jugador */
+  sendMessage(): void {
+    if (!this.user) return;
+    this.messageService.startDirectChat(this.user._id);
+  }
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {

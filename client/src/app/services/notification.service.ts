@@ -1,15 +1,15 @@
 import { Injectable, signal, computed, OnDestroy, effect } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
+import { SocketService } from './socket.service';
 import { AppNotification } from '../models/notification.model';
-
-const POLL_INTERVAL_MS = 30_000; // 30 segundos
 
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationService implements OnDestroy {
-  private pollTimer: ReturnType<typeof setInterval> | null = null;
+  private socketSubs: Subscription[] = [];
 
   /** Todas las notificaciones cargadas */
   private readonly notificationsSignal = signal<AppNotification[]>([]);
@@ -29,13 +29,15 @@ export class NotificationService implements OnDestroy {
   constructor(
     private readonly api: ApiService,
     private readonly auth: AuthService,
+    private readonly socket: SocketService,
   ) {
-    // Reacciona a cambios de autenticación
+    // Reacciona a cambios de autenticación y conexión de socket
     effect(() => {
-      if (this.auth.isAuthenticated()) {
-        this.startPolling();
-      } else {
-        this.stopPolling();
+      if (this.auth.isAuthenticated() && this.socket.connected()) {
+        this.setupSocketListeners();
+        this.refresh();
+      } else if (!this.auth.isAuthenticated()) {
+        this.teardownSocketListeners();
         this.notificationsSignal.set([]);
         this.unreadCountSignal.set(0);
       }
@@ -43,7 +45,24 @@ export class NotificationService implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.stopPolling();
+    this.teardownSocketListeners();
+  }
+
+  /** Configura listeners de Socket.IO para notificaciones en tiempo real */
+  private setupSocketListeners(): void {
+    this.teardownSocketListeners();
+
+    this.socketSubs.push(
+      this.socket.on<AppNotification>('notification:new').subscribe((notification) => {
+        this.notificationsSignal.update((list) => [notification, ...list]);
+        this.unreadCountSignal.update((c) => c + 1);
+      }),
+    );
+  }
+
+  private teardownSocketListeners(): void {
+    this.socketSubs.forEach((s) => s.unsubscribe());
+    this.socketSubs = [];
   }
 
   /** Carga las notificaciones y el contador */
@@ -107,18 +126,5 @@ export class NotificationService implements OnDestroy {
         }
       },
     });
-  }
-
-  private startPolling(): void {
-    this.stopPolling();
-    this.refresh();
-    this.pollTimer = setInterval(() => this.refresh(), POLL_INTERVAL_MS);
-  }
-
-  private stopPolling(): void {
-    if (this.pollTimer) {
-      clearInterval(this.pollTimer);
-      this.pollTimer = null;
-    }
   }
 }

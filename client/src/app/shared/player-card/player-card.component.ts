@@ -4,6 +4,8 @@ import { RouterLink } from '@angular/router';
 import { KarmaBadgeComponent } from '../karma-badge/karma-badge.component';
 import { RankBadgeComponent } from '../rank-badge/rank-badge.component';
 import { User } from '../../models/user.model';
+import { AuthService } from '../../services/auth.service';
+import { MessageService } from '../../services/message.service';
 
 @Component({
   selector: 'app-player-card',
@@ -14,4 +16,21 @@ import { User } from '../../models/user.model';
 })
 export class PlayerCardComponent {
   @Input({ required: true }) player!: User;
+
+  constructor(
+    readonly auth: AuthService,
+    private readonly messageService: MessageService,
+  ) {}
+
+  /** Abre un chat directo con este jugador */
+  sendMessage(event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
+    this.messageService.startDirectChat(this.player._id);
+  }
+
+  /** Mostrar botón solo si el usuario está autenticado y no es su propia tarjeta */
+  get canMessage(): boolean {
+    return this.auth.isAuthenticated() && this.auth.currentUser()?._id !== this.player._id;
+  }
 }

@@ -52,6 +52,18 @@ export const routes: Routes = [
       import('./pages/reset-password/reset-password.component').then((m) => m.ResetPasswordComponent),
   },
   {
+    path: 'messages',
+    loadComponent: () =>
+      import('./pages/messages/messages.component').then((m) => m.MessagesComponent),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'messages/:id',
+    loadComponent: () =>
+      import('./pages/messages/messages.component').then((m) => m.MessagesComponent),
+    canActivate: [authGuard],
+  },
+  {
     path: 'profile/:id',
     loadComponent: () =>
       import('./pages/profile/profile.component').then((m) => m.ProfileComponent),

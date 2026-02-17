@@ -1,0 +1,603 @@
+@use 'utilities/variables' as v;
+@use 'utilities/mixins' as m;
+
+.c-messages {
+  display: flex;
+  height: calc(100vh - 64px); // Altura del viewport menos el navbar
+  max-height: calc(100vh - 64px);
+  background: v.$color-bg-dark;
+
+  // ═══ Sidebar (Lista de conversaciones) ═══════════
+  &__sidebar {
+    width: 360px;
+    min-width: 360px;
+    display: flex;
+    flex-direction: column;
+    background: v.$color-bg-card;
+    border-right: 1px solid v.$color-border;
+
+    @include m.respond-below(md) {
+      width: 100%;
+      min-width: 100%;
+
+      &--hidden {
+        display: none;
+      }
+    }
+  }
+
+  &__sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: v.$spacing-md v.$spacing-lg;
+    border-bottom: 1px solid v.$color-border;
+  }
+
+  &__sidebar-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: v.$color-text-heading;
+    margin: 0;
+  }
+
+  &__new-group-btn {
+    @include m.flex-center;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: v.$radius-md;
+    background: transparent;
+    color: v.$color-text-muted;
+    cursor: pointer;
+    transition: color v.$transition-fast, background v.$transition-fast;
+
+    &:hover {
+      color: v.$color-text-heading;
+      background: rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  // ── Group form ──────────────────────────────────
+  &__group-form {
+    padding: v.$spacing-md;
+    border-bottom: 1px solid v.$color-border;
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-sm;
+  }
+
+  &__group-input {
+    width: 100%;
+    padding: v.$spacing-sm v.$spacing-md;
+    background: v.$color-bg-input;
+    border: 1px solid v.$color-border;
+    border-radius: v.$radius-md;
+    color: v.$color-text-primary;
+    font-family: inherit;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color v.$transition-fast;
+
+    &:focus {
+      border-color: v.$color-accent-red;
+    }
+
+    &::placeholder {
+      color: v.$color-text-subtle;
+    }
+  }
+
+  &__group-actions {
+    display: flex;
+    gap: v.$spacing-sm;
+  }
+
+  // ── Conversation list ───────────────────────────
+  &__conversation-list {
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: v.$color-border transparent;
+  }
+
+  &__loading,
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: v.$spacing-2xl v.$spacing-lg;
+    color: v.$color-text-muted;
+    text-align: center;
+
+    svg {
+      opacity: 0.4;
+      margin-bottom: v.$spacing-md;
+    }
+
+    p {
+      font-size: 0.9rem;
+      margin: 0 0 v.$spacing-xs;
+    }
+
+    span {
+      font-size: 0.78rem;
+      color: v.$color-text-subtle;
+    }
+  }
+
+  &__conversation-item {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+    width: 100%;
+    padding: v.$spacing-sm v.$spacing-lg;
+    border: none;
+    border-bottom: 1px solid rgba(v.$color-border, 0.5);
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    transition: background v.$transition-fast;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    &--active {
+      background: rgba(220, 53, 69, 0.06);
+      border-left: 3px solid v.$color-accent-red;
+
+      &:hover {
+        background: rgba(220, 53, 69, 0.08);
+      }
+    }
+
+    &--unread {
+      background: rgba(220, 53, 69, 0.03);
+    }
+  }
+
+  &__conversation-avatar {
+    position: relative;
+    flex-shrink: 0;
+
+    img {
+      width: 42px;
+      height: 42px;
+      border-radius: v.$radius-md;
+      object-fit: cover;
+    }
+  }
+
+  &__avatar-placeholder {
+    @include m.flex-center;
+    width: 42px;
+    height: 42px;
+    border-radius: v.$radius-md;
+    background: v.$gradient-accent;
+    color: v.$color-text-heading;
+    font-weight: 700;
+    font-size: 0.95rem;
+
+    &--sm {
+      width: 34px;
+      height: 34px;
+      font-size: 0.85rem;
+    }
+
+    &--xs {
+      width: 28px;
+      height: 28px;
+      font-size: 0.7rem;
+      border-radius: v.$radius-sm;
+    }
+  }
+
+  &__group-indicator {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: v.$color-accent-cyan;
+    color: #fff;
+    border: 2px solid v.$color-bg-card;
+  }
+
+  &__conversation-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__conversation-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: v.$spacing-sm;
+    margin-bottom: 2px;
+  }
+
+  &__conversation-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: v.$color-text-heading;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__conversation-time {
+    font-size: 0.68rem;
+    color: v.$color-text-muted;
+    flex-shrink: 0;
+  }
+
+  &__conversation-preview {
+    font-size: 0.78rem;
+    color: v.$color-text-muted;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &--empty {
+      font-style: italic;
+      color: v.$color-text-subtle;
+    }
+  }
+
+  &__unread-badge {
+    flex-shrink: 0;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: v.$radius-full;
+    background: v.$color-accent-red;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // ═══ Chat area ═══════════════════════════════════
+  &__chat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+
+    @include m.respond-below(md) {
+      &--hidden {
+        display: none;
+      }
+    }
+  }
+
+  &__chat-header {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+    padding: v.$spacing-sm v.$spacing-lg;
+    border-bottom: 1px solid v.$color-border;
+    background: v.$color-bg-card;
+    min-height: 56px;
+  }
+
+  &__back-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: v.$radius-md;
+    background: transparent;
+    color: v.$color-text-muted;
+    cursor: pointer;
+
+    @include m.respond-below(md) {
+      display: flex;
+    }
+
+    &:hover {
+      color: v.$color-text-heading;
+      background: rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  &__chat-header-avatar {
+    flex-shrink: 0;
+
+    img {
+      width: 36px;
+      height: 36px;
+      border-radius: v.$radius-md;
+      object-fit: cover;
+    }
+  }
+
+  &__chat-header-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__chat-header-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: v.$color-text-heading;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__chat-header-members {
+    font-size: 0.72rem;
+    color: v.$color-text-muted;
+  }
+
+  &__profile-link {
+    @include m.flex-center;
+    width: 34px;
+    height: 34px;
+    border-radius: v.$radius-md;
+    color: v.$color-text-muted;
+    transition: color v.$transition-fast, background v.$transition-fast;
+
+    &:hover {
+      color: v.$color-text-heading;
+      background: rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  // ── Chat body (messages) ────────────────────────
+  &__chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: v.$spacing-md v.$spacing-lg;
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-xs;
+    scrollbar-width: thin;
+    scrollbar-color: v.$color-border transparent;
+  }
+
+  &__chat-loading {
+    display: flex;
+    flex-direction: column;
+    padding: v.$spacing-lg;
+    gap: v.$spacing-sm;
+  }
+
+  &__load-more {
+    text-align: center;
+    padding: v.$spacing-sm;
+  }
+
+  &__load-more-btn {
+    font-family: inherit;
+    font-size: 0.75rem;
+    color: v.$color-accent-red;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: v.$spacing-xs v.$spacing-sm;
+    border-radius: v.$radius-sm;
+
+    &:hover {
+      background: rgba(220, 53, 69, 0.08);
+    }
+  }
+
+  // ── Day separator ───────────────────────────────
+  &__day-separator {
+    text-align: center;
+    padding: v.$spacing-sm 0;
+
+    span {
+      font-size: 0.7rem;
+      color: v.$color-text-muted;
+      background: v.$color-bg-elevated;
+      padding: v.$spacing-xs v.$spacing-md;
+      border-radius: v.$radius-full;
+    }
+  }
+
+  // ── Message bubbles ─────────────────────────────
+  &__bubble-wrap {
+    display: flex;
+    gap: v.$spacing-xs;
+    max-width: 75%;
+
+    &--own {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    &--other {
+      align-self: flex-start;
+    }
+  }
+
+  &__bubble-avatar {
+    flex-shrink: 0;
+    align-self: flex-end;
+
+    img {
+      width: 28px;
+      height: 28px;
+      border-radius: v.$radius-sm;
+      object-fit: cover;
+    }
+  }
+
+  &__bubble {
+    padding: v.$spacing-sm v.$spacing-md;
+    border-radius: v.$radius-lg;
+    background: v.$color-bg-elevated;
+    border: 1px solid v.$color-border;
+    position: relative;
+    min-width: 60px;
+
+    &--own {
+      background: rgba(220, 53, 69, 0.12);
+      border-color: rgba(220, 53, 69, 0.2);
+    }
+  }
+
+  &__bubble-sender {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: v.$color-accent-cyan;
+    margin-bottom: 2px;
+  }
+
+  &__bubble-text {
+    font-size: 0.85rem;
+    color: v.$color-text-primary;
+    margin: 0;
+    line-height: 1.4;
+    word-break: break-word;
+    white-space: pre-wrap;
+  }
+
+  &__bubble-time {
+    display: block;
+    font-size: 0.62rem;
+    color: v.$color-text-subtle;
+    text-align: right;
+    margin-top: 4px;
+  }
+
+  // ── Typing indicator ────────────────────────────
+  &__typing {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-xs;
+    padding: v.$spacing-xs;
+    align-self: flex-start;
+  }
+
+  &__typing-dots {
+    display: flex;
+    gap: 3px;
+
+    span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: v.$color-text-muted;
+      animation: typing-bounce 1.2s infinite;
+
+      &:nth-child(2) { animation-delay: 0.2s; }
+      &:nth-child(3) { animation-delay: 0.4s; }
+    }
+  }
+
+  &__typing-text {
+    font-size: 0.72rem;
+    color: v.$color-text-muted;
+    font-style: italic;
+  }
+
+  // ── Chat footer (input) ─────────────────────────
+  &__chat-footer {
+    padding: v.$spacing-sm v.$spacing-lg;
+    border-top: 1px solid v.$color-border;
+    background: v.$color-bg-card;
+  }
+
+  &__input-wrap {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+    background: v.$color-bg-input;
+    border: 1px solid v.$color-border;
+    border-radius: v.$radius-lg;
+    padding: v.$spacing-xs v.$spacing-sm;
+    transition: border-color v.$transition-fast;
+
+    &:focus-within {
+      border-color: v.$color-accent-red;
+    }
+  }
+
+  &__input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: v.$color-text-primary;
+    font-family: inherit;
+    font-size: 0.88rem;
+    padding: v.$spacing-xs v.$spacing-sm;
+    outline: none;
+
+    &::placeholder {
+      color: v.$color-text-subtle;
+    }
+  }
+
+  &__send-btn {
+    @include m.flex-center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: v.$radius-md;
+    background: v.$color-accent-red;
+    color: #fff;
+    cursor: pointer;
+    transition: background v.$transition-fast, transform v.$transition-fast;
+    flex-shrink: 0;
+
+    &:hover:not(:disabled) {
+      background: v.$color-accent-red-hover;
+      transform: scale(1.05);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+
+  // ── No chat selected ────────────────────────────
+  &__no-chat {
+    flex: 1;
+    @include m.flex-center;
+    flex-direction: column;
+    gap: v.$spacing-md;
+    color: v.$color-text-muted;
+    text-align: center;
+    padding: v.$spacing-2xl;
+
+    svg {
+      opacity: 0.2;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      color: v.$color-text-heading;
+      margin: 0;
+    }
+
+    p {
+      font-size: 0.85rem;
+      margin: 0;
+    }
+  }
+}
+
+// ── Typing bounce animation ─────────────────────────
+@keyframes typing-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}

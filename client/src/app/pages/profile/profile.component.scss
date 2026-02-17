@@ -142,6 +142,18 @@
     }
   }
 
+  &__msg-btn {
+    align-self: flex-start;
+    margin-top: v.$spacing-xs;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    @include m.respond-below(sm) {
+      align-self: center;
+    }
+  }
+
   // ── Sections ────────────────────────────────────
   &__section {
     padding-top: v.$spacing-lg;
