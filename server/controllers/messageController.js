@@ -153,10 +153,7 @@ const createGroupConversation = async (req, res, next) => {
     }
 
     // Verificar que todos los participantes existen
-    const existingUsers = await User.find(
-      { _id: { $in: allParticipants } },
-      '_id',
-    ).lean();
+    const existingUsers = await User.find({ _id: { $in: allParticipants } }, '_id').lean();
 
     if (existingUsers.length !== allParticipants.length) {
       return res.status(400).json({ message: 'Uno o más usuarios no existen' });
@@ -257,7 +254,9 @@ const sendMessage = async (req, res, next) => {
     }
 
     if (content.length > 2000) {
-      return res.status(400).json({ message: 'El mensaje es demasiado largo (máx. 2000 caracteres)' });
+      return res
+        .status(400)
+        .json({ message: 'El mensaje es demasiado largo (máx. 2000 caracteres)' });
     }
 
     // Verificar que el usuario es participante
@@ -292,11 +291,7 @@ const sendMessage = async (req, res, next) => {
       .lean();
 
     // Emitir el mensaje a todos los participantes de la conversación
-    socketService.emitToConversation(
-      conversationId,
-      'message:new',
-      populatedMessage,
-    );
+    socketService.emitToConversation(conversationId, 'message:new', populatedMessage);
 
     // Emitir actualización de conversación (para la lista de conversaciones)
     const updatedConversation = await Conversation.findById(conversationId)
@@ -368,10 +363,7 @@ const getUnreadCount = async (req, res, next) => {
     const userId = req.user.id;
 
     // Obtener IDs de conversaciones del usuario
-    const conversations = await Conversation.find(
-      { participants: userId },
-      '_id',
-    ).lean();
+    const conversations = await Conversation.find({ participants: userId }, '_id').lean();
 
     const conversationIds = conversations.map((c) => c._id);
 

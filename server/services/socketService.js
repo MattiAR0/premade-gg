@@ -56,10 +56,7 @@ const init = (socketIo) => {
 
     // Unir al usuario a rooms de sus conversaciones
     try {
-      const conversations = await Conversation.find(
-        { participants: userId },
-        '_id',
-      ).lean();
+      const conversations = await Conversation.find({ participants: userId }, '_id').lean();
 
       for (const conv of conversations) {
         socket.join(`conversation:${conv._id}`);
