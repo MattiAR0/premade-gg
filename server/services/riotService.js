@@ -95,6 +95,42 @@ const validateAccount = async (gameName, tagLine) => {
 // ── HenrikDev API (MMR/Rank) ─────────────────────────
 
 /**
+ * Obtiene datos de cuenta (card, nivel) de un jugador via HenrikDev Account API.
+ * @param {string} gameName - Nombre del jugador
+ * @param {string} tagLine - Tag del jugador
+ * @returns {Promise<{accountLevel: number|null, card: {small: string, large: string, wide: string}|null}>}
+ */
+const getPlayerAccount = async (gameName, tagLine) => {
+  try {
+    const headers = {};
+    if (HENRIK_API_KEY) {
+      headers.Authorization = HENRIK_API_KEY;
+    }
+
+    const response = await axios.get(
+      `${HENRIK_BASE_URL}/valorant/v1/account/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`,
+      {
+        headers,
+        timeout: 10000,
+      },
+    );
+
+    const data = response.data?.data;
+
+    return {
+      accountLevel: data?.account_level || null,
+      card: data?.card || null,
+    };
+  } catch (err) {
+    console.error('HenrikDev Account API error:', err.message);
+    return {
+      accountLevel: null,
+      card: null,
+    };
+  }
+};
+
+/**
  * Obtiene el rango competitivo real de un jugador via HenrikDev API.
  * @param {string} gameName - Nombre del jugador
  * @param {string} tagLine - Tag del jugador
@@ -126,8 +162,6 @@ const getPlayerRank = async (gameName, tagLine, region = 'eu') => {
       currentRank: currentTier,
       normalizedRank,
       elo: data?.current?.elo || null,
-      images: data?.images || null,
-      accountLevel: data?.account_level || null,
     };
   } catch (err) {
     if (err.response) {
@@ -138,8 +172,6 @@ const getPlayerRank = async (gameName, tagLine, region = 'eu') => {
           currentRank: null,
           normalizedRank: null,
           elo: null,
-          images: null,
-          accountLevel: null,
         };
       }
       if (status === 429) {
@@ -154,8 +186,6 @@ const getPlayerRank = async (gameName, tagLine, region = 'eu') => {
       currentRank: null,
       normalizedRank: null,
       elo: null,
-      images: null,
-      accountLevel: null,
     };
   }
 };
@@ -163,5 +193,6 @@ const getPlayerRank = async (gameName, tagLine, region = 'eu') => {
 module.exports = {
   validateAccount,
   getPlayerRank,
+  getPlayerAccount,
   normalizeRank,
 };

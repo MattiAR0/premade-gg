@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const User = require('../models/User');
 const { generateToken } = require('../middlewares/auth');
-const { validateAccount, getPlayerRank } = require('../services/riotService');
+const { validateAccount, getPlayerRank, getPlayerAccount } = require('../services/riotService');
 const { sendPasswordResetEmail } = require('../services/emailService');
 
 const SALT_ROUNDS = 12;
@@ -74,8 +74,11 @@ const register = async (req, res, next) => {
       return res.status(err.statusCode || 502).json({ message: err.message });
     }
 
-    // 2. Obtener rango de HenrikDev
-    const rankData = await getPlayerRank(gameName, tagLine, region);
+    // 2. Obtener rango de HenrikDev + datos de cuenta (card, nivel)
+    const [rankData, accountData] = await Promise.all([
+      getPlayerRank(gameName, tagLine, region),
+      getPlayerAccount(gameName, tagLine),
+    ]);
     const rank = rankData.normalizedRank || 'Iron';
 
     // 3. Hash de la contraseña
@@ -91,8 +94,8 @@ const register = async (req, res, next) => {
       rank,
       role,
       schedule,
-      accountLevel: rankData.accountLevel,
-      cardImage: rankData.images?.large || null,
+      accountLevel: accountData.accountLevel,
+      cardImage: accountData.card?.large || null,
       lastRankUpdate: new Date(),
     });
 
@@ -153,6 +156,9 @@ const login = async (req, res, next) => {
  * GET /api/auth/me
  * Retorna el usuario autenticado actual.
  * Requiere middleware requireAuth.
+ *
+ * Si el usuario no tiene cardImage ni accountLevel, intenta obtenerlos
+ * de la HenrikDev Account API y los persiste para futuras peticiones.
  */
 const getMe = async (req, res, next) => {
   try {
@@ -160,6 +166,28 @@ const getMe = async (req, res, next) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+
+    // Auto-populate cardImage / accountLevel si faltan
+    if ((!user.cardImage || user.accountLevel == null) && user.riotId?.includes('#')) {
+      try {
+        const [gameName, tagLine] = user.riotId.split('#');
+        const accountData = await getPlayerAccount(gameName, tagLine);
+        const updates = {};
+        if (!user.cardImage && accountData.card?.large) {
+          updates.cardImage = accountData.card.large;
+        }
+        if (user.accountLevel == null && accountData.accountLevel != null) {
+          updates.accountLevel = accountData.accountLevel;
+        }
+        if (Object.keys(updates).length > 0) {
+          Object.assign(user, updates);
+          await user.save();
+        }
+      } catch {
+        // No bloquear getMe si la API externa falla
+      }
+    }
+
     res.json(sanitizeUser(user));
   } catch (err) {
     next(err);

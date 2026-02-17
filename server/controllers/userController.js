@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const Reputation = require('../models/Reputation');
 const LFGPost = require('../models/LFGPost');
-const { validateAccount, getPlayerRank } = require('../services/riotService');
+const { validateAccount, getPlayerRank, getPlayerAccount } = require('../services/riotService');
 
 /**
  * GET /api/users
@@ -126,8 +126,11 @@ const createUser = async (req, res, next) => {
       return res.status(err.statusCode || 502).json({ message: err.message });
     }
 
-    // 2. Obtener rango real de HenrikDev
-    const rankData = await getPlayerRank(gameName, tagLine, region);
+    // 2. Obtener rango real de HenrikDev + datos de cuenta (card, nivel)
+    const [rankData, accountData] = await Promise.all([
+      getPlayerRank(gameName, tagLine, region),
+      getPlayerAccount(gameName, tagLine),
+    ]);
     const rank = rankData.normalizedRank || 'Iron'; // Default a Iron si no tiene ranked
 
     // 3. Crear usuario con datos verificados
@@ -138,8 +141,8 @@ const createUser = async (req, res, next) => {
       rank,
       role,
       schedule,
-      accountLevel: rankData.accountLevel,
-      cardImage: rankData.images?.large || null,
+      accountLevel: accountData.accountLevel,
+      cardImage: accountData.card?.large || null,
       lastRankUpdate: new Date(),
     });
 

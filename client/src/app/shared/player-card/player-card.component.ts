@@ -22,6 +22,17 @@ export class PlayerCardComponent {
     private readonly messageService: MessageService,
   ) {}
 
+  /** Obtiene la URL de la imagen de perfil según el tipo elegido */
+  get avatarUrl(): string | null {
+    if (this.player.profileImageType === 'riot_card' && this.player.cardImage) {
+      return this.player.cardImage;
+    }
+    if (this.player.profileImage) {
+      return this.player.profileImage;
+    }
+    return this.player.cardImage || null;
+  }
+
   /** Abre un chat directo con este jugador */
   sendMessage(event: Event): void {
     event.stopPropagation();

@@ -45,7 +45,7 @@ export const VALORANT_AGENTS = [
   'Cypher', 'Reyna', 'Killjoy', 'Breach', 'Omen',
   'Jett', 'Raze', 'Skye', 'Yoru', 'Astra',
   'KAY/O', 'Chamber', 'Neon', 'Fade', 'Harbor',
-  'Gekko', 'Deadlock', 'Iso', 'Clove', 'Vyse', 'Tejo', 'Waylay',
+  'Gekko', 'Deadlock', 'Iso', 'Clove', 'Vyse', 'Tejo', 'Waylay', 'Veto',
 ] as const;
 
 export const VALORANT_ROLES = [

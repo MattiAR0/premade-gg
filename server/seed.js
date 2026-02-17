@@ -46,7 +46,7 @@ const VALORANT_AGENTS = [
   'Cypher', 'Reyna', 'Killjoy', 'Breach', 'Omen',
   'Jett', 'Raze', 'Skye', 'Yoru', 'Astra',
   'KAY/O', 'Chamber', 'Neon', 'Fade', 'Harbor',
-  'Gekko', 'Deadlock', 'Iso', 'Clove', 'Vyse',
+  'Gekko', 'Deadlock', 'Iso', 'Clove', 'Vyse', 'Tejo', 'Waylay', 'Veto',
 ];
 
 const BIOS = [

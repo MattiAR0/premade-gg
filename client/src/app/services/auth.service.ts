@@ -1,5 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, tap, catchError, of, firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
@@ -55,15 +55,19 @@ export class AuthService {
     try {
       const user = await firstValueFrom(
         this.http.get<User>(`${this.baseUrl}/auth/me`).pipe(
-          catchError(() => {
-            this.clearToken();
+          catchError((err: HttpErrorResponse) => {
+            // Solo borrar el token si el servidor rechaza explícitamente la autenticación.
+            // Errores de red u otros transitorios no deben cerrar la sesión.
+            if (err.status === 401 || err.status === 403) {
+              this.clearToken();
+            }
             return of(null);
           }),
         ),
       );
       this.currentUserSignal.set(user);
     } catch {
-      this.clearToken();
+      // Error inesperado (no debería llegar aquí gracias al catchError)
     } finally {
       this.sessionRestoredSignal.set(true);
     }

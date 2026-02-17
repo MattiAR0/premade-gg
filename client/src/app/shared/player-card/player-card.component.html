@@ -1,10 +1,10 @@
 <article class="c-card c-player-card" [routerLink]="['/profile', player._id]" style="cursor: pointer">
   <header class="c-player-card__header">
     <div class="c-player-card__avatar-wrap">
-      @if (player.cardImage) {
+      @if (avatarUrl) {
         <img
           class="c-player-card__avatar"
-          [src]="player.cardImage"
+          [src]="avatarUrl"
           [alt]="player.riotId + ' avatar'"
         />
       } @else {
