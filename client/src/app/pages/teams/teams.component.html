@@ -1,0 +1,126 @@
+<main class="l-container l-container--medium l-section">
+  <!-- Hero header -->
+  <header class="c-page-header c-page-header--teams">
+    <div class="c-page-header__icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+        <path d="M2 17l10 5 10-5"/>
+        <path d="M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <div class="c-page-header__text">
+      <h1 class="c-page-header__title">Equipos</h1>
+      <p class="c-page-header__desc">Descubre equipos de Valorant, su historia, roster y staff. Encuentra tu próximo equipo.</p>
+    </div>
+  </header>
+
+  <!-- Filtros -->
+  <section class="c-filters">
+    <form class="c-filters__form" (ngSubmit)="loadTeams()">
+      <label class="c-filters__field c-filters__field--search">
+        <span class="c-filters__label">Buscar</span>
+        <div class="c-filters__search-wrap">
+          <svg class="c-filters__search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input
+            class="c-filters__input"
+            type="text"
+            [(ngModel)]="searchQuery"
+            name="search"
+            placeholder="Nombre o tag del equipo..."
+          />
+        </div>
+      </label>
+
+      <label class="c-filters__field">
+        <span class="c-filters__label">Región</span>
+        <select class="c-filters__select" [(ngModel)]="filterRegion" name="region">
+          <option value="">Todas</option>
+          @for (r of regions; track r) {
+            <option [value]="r">{{ regionLabels[r] }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="c-filters__field">
+        <span class="c-filters__label">Rango objetivo</span>
+        <select class="c-filters__select" [(ngModel)]="filterRank" name="rank">
+          <option value="">Todos</option>
+          @for (rank of ranks; track rank) {
+            <option [value]="rank">{{ rank }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="c-filters__toggle">
+        <input type="checkbox" [(ngModel)]="filterRecruiting" name="recruiting" />
+        <span class="c-filters__toggle-label">Solo reclutando</span>
+      </label>
+
+      <nav class="c-filters__actions">
+        <button class="c-btn c-btn--primary c-btn--sm" type="submit">Buscar</button>
+        <button class="c-btn c-btn--ghost c-btn--sm" type="button" (click)="clearFilters()">Limpiar</button>
+      </nav>
+    </form>
+  </section>
+
+  <!-- Teams Feed -->
+  <section class="c-feed">
+    @if (errorMessage) {
+      <p class="c-error">{{ errorMessage }}</p>
+    } @else if (initialLoading) {
+      <ul class="l-grid l-grid--2col">
+        @for (i of [1, 2, 3, 4]; track i) {
+          <li class="c-fade-in" [style.animation-delay]="(i - 1) * 0.1 + 's'">
+            <article class="c-skeleton-card c-skeleton-card--team" aria-hidden="true">
+              <div class="c-skeleton-card__header">
+                <div class="c-skeleton c-skeleton--avatar-sm"></div>
+                <div class="c-skeleton-card__info">
+                  <div class="c-skeleton c-skeleton--title"></div>
+                  <div class="c-skeleton c-skeleton--text c-skeleton--short"></div>
+                </div>
+              </div>
+              <div class="c-skeleton c-skeleton--text"></div>
+              <div class="c-skeleton c-skeleton--badges"></div>
+            </article>
+          </li>
+        }
+      </ul>
+    } @else if (teams.length === 0) {
+      <div class="c-empty">
+        <div class="c-empty__icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <p class="c-empty__title">No hay equipos</p>
+        <p class="c-empty__hint">No se encontraron equipos con esos filtros. ¡Sé el primero en crear uno!</p>
+      </div>
+    } @else {
+      <div class="c-results-bar">
+        <p class="c-results-bar__count">{{ totalTeams }} equipos encontrados</p>
+      </div>
+      <ul class="l-grid l-grid--2col">
+        @for (team of teams; track team._id; let i = $index) {
+          <li class="c-fade-in" [style.animation-delay]="(i % 4) * 0.06 + 's'">
+            <app-team-card [team]="team" />
+          </li>
+        }
+      </ul>
+
+      @if (loadingMore) {
+        <div class="c-loading-more">
+          <div class="c-loading-more__spinner"></div>
+          <span>Cargando más equipos...</span>
+        </div>
+      }
+
+      @if (!hasMore && teams.length > 0) {
+        <p class="c-end-of-list">Has visto todos los equipos</p>
+      }
+    }
+
+    <div #scrollSentinel class="c-scroll-sentinel"></div>
+  </section>
+</main>

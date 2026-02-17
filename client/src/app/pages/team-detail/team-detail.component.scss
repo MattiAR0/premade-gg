@@ -1,0 +1,464 @@
+@use 'utilities/variables' as v;
+@use 'utilities/mixins' as m;
+
+// ── Skeleton ────────────────────────────────────────
+.c-detail-skeleton {
+  display: flex;
+  flex-direction: column;
+  padding: v.$spacing-xl 0;
+}
+
+.c-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.07) 50%,
+    rgba(255, 255, 255, 0.03) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  border-radius: v.$radius-md;
+}
+
+@keyframes skeleton-pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// ── Error page ──────────────────────────────────────
+.c-error-page {
+  text-align: center;
+  padding: v.$spacing-4xl v.$spacing-xl;
+
+  &__msg {
+    font-size: 1.1rem;
+    color: #e05555;
+    margin-bottom: v.$spacing-lg;
+  }
+}
+
+// ── Back button ─────────────────────────────────────
+.c-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: v.$spacing-xs;
+  background: none;
+  border: none;
+  color: v.$color-text-muted;
+  font-size: 0.85rem;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: v.$spacing-lg;
+  transition: color v.$transition-fast;
+
+  &:hover {
+    color: v.$color-text-primary;
+  }
+}
+
+// ── Team Detail Card ────────────────────────────────
+.c-team-detail {
+  background: v.$color-bg-card;
+  border: 1px solid v.$color-border;
+  border-radius: v.$radius-xl;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-lg;
+    padding: v.$spacing-xl;
+    border-bottom: 1px solid v.$color-border;
+    background: v.$gradient-accent;
+
+    @include m.respond-below(md) {
+      padding: v.$spacing-md;
+      gap: v.$spacing-md;
+    }
+  }
+
+  &__logo {
+    @include m.flex-center;
+    width: 72px;
+    height: 72px;
+    border-radius: v.$radius-lg;
+    background: v.$color-bg-dark;
+    border: 2px solid v.$color-border-light;
+    flex-shrink: 0;
+    overflow: hidden;
+
+    @include m.respond-below(md) {
+      width: 56px;
+      height: 56px;
+    }
+  }
+
+  &__logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__logo-text {
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: v.$color-accent-cyan;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__title-area {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title-row {
+    display: flex;
+    align-items: baseline;
+    gap: v.$spacing-sm;
+    margin-bottom: v.$spacing-sm;
+  }
+
+  &__name {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: v.$color-text-heading;
+    letter-spacing: -0.02em;
+
+    @include m.respond-to(md) {
+      font-size: 1.85rem;
+    }
+  }
+
+  &__tag {
+    font-size: 1rem;
+    font-weight: 700;
+    color: v.$color-accent-cyan;
+    opacity: 0.8;
+  }
+
+  &__badges {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+    flex-wrap: wrap;
+  }
+
+  // ── Sections ──────────────────────────────────────
+  &__section {
+    padding: v.$spacing-lg v.$spacing-xl;
+    border-bottom: 1px solid v.$color-border;
+
+    @include m.respond-below(md) {
+      padding: v.$spacing-md;
+    }
+
+    &:last-of-type {
+      border-bottom: none;
+    }
+
+    &--recruiting {
+      background: rgba(52, 211, 153, 0.03);
+      border-left: 3px solid rgba(52, 211, 153, 0.4);
+    }
+  }
+
+  &__section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: v.$color-text-heading;
+    margin-bottom: v.$spacing-md;
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+
+    svg {
+      color: v.$color-text-subtle;
+    }
+
+    &--green svg {
+      color: #34d399;
+    }
+  }
+
+  &__count {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: v.$color-text-muted;
+    background: v.$color-bg-elevated;
+    padding: 0.1rem 0.5rem;
+    border-radius: v.$radius-sm;
+  }
+
+  &__text {
+    font-size: 0.9rem;
+    color: v.$color-text-muted;
+    line-height: 1.7;
+    white-space: pre-line;
+  }
+
+  &__label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: v.$color-text-subtle;
+  }
+
+  &__empty-msg {
+    font-size: 0.85rem;
+    color: v.$color-text-subtle;
+    font-style: italic;
+  }
+
+  &__member-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-sm;
+  }
+
+  // ── Recruiting ────────────────────────────────────
+  &__recruiting-roles {
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-sm;
+    margin-bottom: v.$spacing-md;
+  }
+
+  &__role-chips {
+    display: flex;
+    gap: v.$spacing-xs;
+    flex-wrap: wrap;
+  }
+
+  // ── Socials ───────────────────────────────────────
+  &__socials {
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-sm;
+  }
+
+  &__social {
+    font-size: 0.85rem;
+    color: v.$color-text-muted;
+
+    strong {
+      color: v.$color-text-primary;
+    }
+  }
+
+  // ── Achievements ──────────────────────────────────
+  &__achievements {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-sm;
+  }
+
+  // ── Feedback ──────────────────────────────────────
+  &__feedback {
+    text-align: center;
+    padding: v.$spacing-sm v.$spacing-xl;
+    font-size: 0.85rem;
+
+    &--ok { color: #34d399; }
+    &--err { color: #e05555; }
+  }
+}
+
+// ── Achievement row ─────────────────────────────────
+.c-achievement {
+  display: flex;
+  align-items: flex-start;
+  gap: v.$spacing-md;
+  padding: v.$spacing-sm v.$spacing-md;
+  background: v.$color-bg-elevated;
+  border-radius: v.$radius-md;
+
+  &__icon {
+    @include m.flex-center;
+    width: 32px;
+    height: 32px;
+    border-radius: v.$radius-sm;
+    background: rgba(196, 154, 68, 0.1);
+    color: v.$color-accent-gold;
+    flex-shrink: 0;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  &__title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: v.$color-text-heading;
+  }
+
+  &__desc {
+    font-size: 0.8rem;
+    color: v.$color-text-muted;
+  }
+}
+
+// ── Member row ──────────────────────────────────────
+.c-member {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: v.$spacing-sm v.$spacing-md;
+  background: v.$color-bg-elevated;
+  border-radius: v.$radius-md;
+  gap: v.$spacing-sm;
+
+  &--coach {
+    border: 1px solid rgba(196, 154, 68, 0.2);
+    background: rgba(196, 154, 68, 0.04);
+  }
+
+  &--staff {
+    border: 1px solid rgba(122, 127, 158, 0.15);
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+    text-decoration: none;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__avatar {
+    @include m.flex-center;
+    width: 36px;
+    height: 36px;
+    border-radius: v.$radius-md;
+    background: v.$gradient-primary;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    flex-shrink: 0;
+
+    &--coach {
+      background: v.$gradient-warm;
+    }
+
+    &--staff {
+      background: v.$gradient-secondary;
+      color: v.$color-accent-purple;
+    }
+  }
+
+  &__info {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  &__name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: v.$color-text-heading;
+    transition: color v.$transition-fast;
+
+    .c-member__link:hover & {
+      color: v.$color-accent-cyan;
+    }
+  }
+
+  &__role-tag {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.1rem 0.4rem;
+    border-radius: v.$radius-sm;
+    background: rgba(99, 102, 241, 0.1);
+    color: #818cf8;
+
+    &--gold {
+      background: rgba(196, 154, 68, 0.12);
+      color: v.$color-accent-gold;
+    }
+
+    &--purple {
+      background: rgba(122, 127, 158, 0.12);
+      color: v.$color-accent-purple;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: v.$spacing-xs;
+    flex-shrink: 0;
+  }
+}
+
+// ── Badges ──────────────────────────────────────────
+.c-badge {
+  &--region {
+    background: rgba(99, 102, 241, 0.1);
+    color: #818cf8;
+    padding: 0.2rem 0.6rem;
+    border-radius: v.$radius-sm;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  &--recruiting {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: rgba(52, 211, 153, 0.1);
+    color: #34d399;
+    padding: 0.2rem 0.6rem;
+    border-radius: v.$radius-sm;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  &--owner {
+    background: rgba(196, 154, 68, 0.12);
+    color: v.$color-accent-gold;
+    padding: 0.15rem 0.5rem;
+    border-radius: v.$radius-sm;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &--role {
+    background: rgba(99, 102, 241, 0.08);
+    color: #818cf8;
+    padding: 0.2rem 0.6rem;
+    border-radius: v.$radius-sm;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+}
+
+// ── Buttons ─────────────────────────────────────────
+.c-btn {
+  &--xs {
+    padding: 0.25rem 0.6rem;
+    font-size: 0.75rem;
+  }
+
+  &--danger {
+    color: #e05555;
+    border-color: rgba(220, 53, 69, 0.3);
+
+    &:hover {
+      background: rgba(220, 53, 69, 0.08);
+    }
+  }
+}

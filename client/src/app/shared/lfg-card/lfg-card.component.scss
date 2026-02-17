@@ -5,11 +5,51 @@
   padding: 0;
   overflow: hidden;
   cursor: pointer;
-  transition: border-color v.$transition-fast, box-shadow v.$transition-fast;
+  transition: border-color v.$transition-fast, box-shadow v.$transition-fast, transform v.$transition-fast;
+  position: relative;
 
   &:hover {
     border-color: v.$color-accent-red;
-    box-shadow: 0 0 0 1px rgba(220, 53, 69, 0.15);
+    box-shadow: 0 0 0 1px rgba(220, 53, 69, 0.15), v.$shadow-glow-red;
+    transform: translateY(-2px);
+  }
+
+  &--full {
+    opacity: 0.85;
+
+    &:hover {
+      border-color: v.$color-border-light;
+      box-shadow: none;
+      transform: none;
+    }
+  }
+
+  &--closed {
+    opacity: 0.6;
+
+    &:hover {
+      border-color: v.$color-border-light;
+      box-shadow: none;
+      transform: none;
+    }
+  }
+
+  // ── Status bar (top accent) ───────────────────────
+  &__status-bar {
+    height: 3px;
+    width: 100%;
+
+    &--open {
+      background: v.$gradient-primary;
+    }
+
+    &--full {
+      background: linear-gradient(90deg, #f59e0b, #d97706);
+    }
+
+    &--closed {
+      background: v.$color-border;
+    }
   }
 
   // ── Header ────────────────────────────────────────
@@ -56,8 +96,46 @@
     flex-wrap: wrap;
   }
 
-  // ── Members ───────────────────────────────────────
+  &__req {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: v.$color-text-subtle;
+    padding: 0.1rem 0.4rem;
+    background: v.$color-bg-elevated;
+    border-radius: v.$radius-sm;
+  }
+
+  &__desc {
+    font-size: 0.8rem;
+    color: v.$color-text-muted;
+    line-height: 1.45;
+    @include m.line-clamp(2);
+  }
+
+  // ── Members & Progress ────────────────────────────
   &__members {
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-xs;
+  }
+
+  &__progress-bar {
+    width: 100%;
+    height: 4px;
+    background: v.$color-bg-elevated;
+    border-radius: v.$radius-full;
+    overflow: hidden;
+  }
+
+  &__progress-fill {
+    height: 100%;
+    background: v.$gradient-primary;
+    border-radius: v.$radius-full;
+    transition: width 0.4s ease;
+    min-width: 4px;
+  }
+
+  &__members-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -68,7 +146,6 @@
     display: flex;
     gap: 0;
 
-    // Overlap avatars slightly
     > * + * {
       margin-left: -6px;
     }
@@ -98,9 +175,14 @@
 
   &__member-count {
     font-size: 0.85rem;
-    font-weight: 600;
+    font-weight: 500;
     color: v.$color-text-muted;
     white-space: nowrap;
+
+    strong {
+      font-weight: 700;
+      color: v.$color-text-primary;
+    }
   }
 
   // ── Footer ────────────────────────────────────────
@@ -141,6 +223,19 @@
 
 // ── Badges específicos ──────────────────────────────
 .c-badge {
+  &--open {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: rgba(52, 211, 153, 0.1);
+    color: #34d399;
+    padding: 0.15rem 0.5rem;
+    border-radius: v.$radius-sm;
+    font-size: 0.7rem;
+    font-weight: 600;
+    animation: pulse-badge 2s ease-in-out infinite;
+  }
+
   &--region {
     background: rgba(99, 102, 241, 0.1);
     color: #818cf8;
@@ -168,4 +263,9 @@
     font-size: 0.7rem;
     font-weight: 600;
   }
+}
+
+@keyframes pulse-badge {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }

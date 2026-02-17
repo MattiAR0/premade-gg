@@ -42,6 +42,8 @@ export class ProfileEditComponent implements OnInit {
   availability: Record<string, { from: string; to: string; available: boolean }> = {};
   lookingForTeam = false;
   lftDetails = '';
+  isCoach = false;
+  coachDetails = '';
 
   // UI state
   saving = false;
@@ -88,6 +90,8 @@ export class ProfileEditComponent implements OnInit {
     };
     this.lookingForTeam = user.lookingForTeam || false;
     this.lftDetails = user.lftDetails || '';
+    this.isCoach = user.isCoach || false;
+    this.coachDetails = user.coachDetails || '';
 
     // Inicializar availability
     for (const day of this.daysOfWeek) {
@@ -177,6 +181,8 @@ export class ProfileEditComponent implements OnInit {
         availability: this.availability,
         lookingForTeam: this.lookingForTeam,
         lftDetails: this.lftDetails,
+        isCoach: this.isCoach,
+        coachDetails: this.coachDetails,
       };
 
       this.authService.updateProfile(data).subscribe({

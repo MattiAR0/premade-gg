@@ -1,0 +1,73 @@
+<article class="c-card c-team-card" [routerLink]="['/teams', team._id]">
+  <!-- Header: Logo + nombre + tag -->
+  <header class="c-team-card__header">
+    <div class="c-team-card__logo">
+      @if (team.logo) {
+        <img [src]="team.logo" [alt]="team.name" class="c-team-card__logo-img" />
+      } @else {
+        <span class="c-team-card__logo-text">{{ initials }}</span>
+      }
+    </div>
+    <div class="c-team-card__identity">
+      <h3 class="c-team-card__name">{{ team.name }}</h3>
+      <span class="c-team-card__tag">[{{ team.tag }}]</span>
+    </div>
+    @if (team.recruiting) {
+      <span class="c-badge c-badge--recruiting">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="6"/></svg>
+        Reclutando
+      </span>
+    }
+  </header>
+
+  <!-- Body: descripción + info -->
+  <section class="c-team-card__body">
+    @if (truncatedDescription) {
+      <p class="c-team-card__desc">{{ truncatedDescription }}</p>
+    }
+
+    <div class="c-team-card__meta">
+      @if (team.targetRank) {
+        <app-rank-badge [rank]="team.targetRank" />
+      }
+      <span class="c-badge c-badge--region">{{ regionLabel }}</span>
+    </div>
+
+    <!-- Roster preview -->
+    <div class="c-team-card__roster">
+      <div class="c-team-card__avatars">
+        @for (player of team.players; track player.user._id; let i = $index) {
+          @if (i < 5) {
+            <div class="c-team-card__avatar" [title]="player.user.riotId">
+              {{ player.user.riotId.charAt(0) }}
+            </div>
+          }
+        }
+      </div>
+      <span class="c-team-card__roster-count">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        {{ playerCount }} jugadores
+      </span>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="c-team-card__footer">
+    <div class="c-team-card__staff-info">
+      @if (hasCoach) {
+        <span class="c-team-card__coach-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          Coach: {{ team.coach!.riotId }}
+        </span>
+      }
+    </div>
+    @if (team.owner) {
+      <a
+        class="c-team-card__owner"
+        [routerLink]="['/profile', team.owner._id]"
+        (click)="$event.stopPropagation()">
+        por {{ team.owner.riotId }}
+      </a>
+    }
+  </footer>
+</article>

@@ -22,6 +22,16 @@ export const routes: Routes = [
       import('./pages/lfg-detail/lfg-detail.component').then((m) => m.LfgDetailComponent),
   },
   {
+    path: 'teams',
+    loadComponent: () =>
+      import('./pages/teams/teams.component').then((m) => m.TeamsComponent),
+  },
+  {
+    path: 'teams/:id',
+    loadComponent: () =>
+      import('./pages/team-detail/team-detail.component').then((m) => m.TeamDetailComponent),
+  },
+  {
     path: 'login',
     loadComponent: () =>
       import('./pages/login/login.component').then((m) => m.LoginComponent),

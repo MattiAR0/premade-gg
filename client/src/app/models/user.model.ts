@@ -33,6 +33,10 @@ export interface User {
   lookingForTeam: boolean;
   lftDetails: string;
 
+  // Coach
+  isCoach: boolean;
+  coachDetails: string;
+
   createdAt: string;
 }
 

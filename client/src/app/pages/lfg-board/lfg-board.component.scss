@@ -5,6 +5,25 @@
 .c-page-header {
   margin-bottom: v.$spacing-lg;
 
+  &--lfg {
+    display: flex;
+    align-items: flex-start;
+    gap: v.$spacing-lg;
+    padding: v.$spacing-xl 0;
+    flex-wrap: wrap;
+  }
+
+  &__icon {
+    @include m.flex-center;
+    width: 56px;
+    height: 56px;
+    border-radius: v.$radius-lg;
+    background: v.$gradient-primary;
+    color: #fff;
+    flex-shrink: 0;
+    box-shadow: v.$shadow-glow-red;
+  }
+
   &__title {
     font-size: 1.6rem;
     font-weight: 800;
@@ -21,6 +40,40 @@
     color: v.$color-text-muted;
     max-width: 560px;
   }
+
+  &__stats {
+    margin-left: auto;
+    display: flex;
+    gap: v.$spacing-lg;
+
+    @include m.respond-below(md) {
+      margin-left: 0;
+      width: 100%;
+    }
+  }
+
+  &__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: v.$spacing-sm v.$spacing-lg;
+    background: v.$color-bg-card;
+    border: 1px solid v.$color-border;
+    border-radius: v.$radius-md;
+  }
+
+  &__stat-value {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: v.$color-accent-red;
+  }
+
+  &__stat-label {
+    font-size: 0.7rem;
+    color: v.$color-text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
 }
 
 // ── Tabs ─────────────────────────────────────────────
@@ -35,7 +88,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.1rem;
+    gap: 0.15rem;
     padding: v.$spacing-sm v.$spacing-lg;
     background: none;
     border: none;
@@ -45,14 +98,32 @@
     cursor: pointer;
     transition: all v.$transition-fast;
     font-family: inherit;
+    position: relative;
 
     &:hover {
       color: v.$color-text-primary;
+      background: rgba(255, 255, 255, 0.02);
     }
 
     &--active {
       color: v.$color-accent-red;
       border-bottom-color: v.$color-accent-red;
+
+      .c-tabs__icon {
+        color: v.$color-accent-red;
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  &__icon {
+    display: flex;
+    transition: all v.$transition-fast;
+    margin-bottom: 0.1rem;
+    opacity: 0.7;
+
+    .c-tabs__btn--active & {
+      opacity: 1;
     }
   }
 

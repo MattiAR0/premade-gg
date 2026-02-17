@@ -147,6 +147,17 @@ const userSchema = new mongoose.Schema({
     default: '',
   },
 
+  // ── Coach ──────────────────────────────────────────────
+  isCoach: {
+    type: Boolean,
+    default: false,
+  },
+  coachDetails: {
+    type: String,
+    maxLength: 500,
+    default: '',
+  },
+
   createdAt: {
     type: Date,
     default: Date.now,

@@ -1,8 +1,20 @@
-<article class="c-card c-lfg-card" [routerLink]="['/lfg', post._id]">
+<article class="c-card c-lfg-card" [class.c-lfg-card--full]="post.status === 'full'" [class.c-lfg-card--closed]="post.status === 'closed'" [routerLink]="['/lfg', post._id]">
+  <!-- Status indicator bar -->
+  <div class="c-lfg-card__status-bar"
+    [class.c-lfg-card__status-bar--open]="post.status === 'open'"
+    [class.c-lfg-card__status-bar--full]="post.status === 'full'"
+    [class.c-lfg-card__status-bar--closed]="post.status === 'closed'">
+  </div>
+
   <!-- Header: título + status -->
   <header class="c-lfg-card__header">
     <h3 class="c-lfg-card__title">{{ post.title }}</h3>
-    @if (post.status === 'full') {
+    @if (post.status === 'open') {
+      <span class="c-badge c-badge--open">
+        <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="6"/></svg>
+        Abierto
+      </span>
+    } @else if (post.status === 'full') {
       <span class="c-badge c-badge--full">Lleno</span>
     } @else if (post.status === 'closed') {
       <span class="c-badge c-badge--closed">Cerrado</span>
@@ -16,28 +28,42 @@
         <app-rank-badge [rank]="post.author.rank" />
       }
       <span class="c-badge c-badge--region">{{ regionLabel }}</span>
+      @if (post.minRank) {
+        <span class="c-lfg-card__req">Min: {{ post.minRank }}</span>
+      }
     </div>
 
-    <!-- Contador y avatares de miembros -->
+    @if (post.description) {
+      <p class="c-lfg-card__desc">{{ post.description }}</p>
+    }
+
+    <!-- Barra de progreso de miembros -->
     <div class="c-lfg-card__members">
-      <div class="c-lfg-card__avatars">
-        @for (member of acceptedMembers; track member.user._id; let i = $index) {
-          @if (i < 5) {
-            <a
-              class="c-lfg-card__avatar"
-              [routerLink]="['/profile', member.user._id]"
-              [title]="member.user.riotId"
-              (click)="$event.stopPropagation()">
-              {{ member.user.riotId.charAt(0) }}
-            </a>
-          }
-        }
+      <div class="c-lfg-card__progress-bar">
+        <div class="c-lfg-card__progress-fill" [style.width.%]="(acceptedCount / post.teamSize) * 100"></div>
       </div>
-      <span class="c-lfg-card__member-count">{{ acceptedCount }}/{{ post.teamSize }}</span>
+      <div class="c-lfg-card__members-row">
+        <div class="c-lfg-card__avatars">
+          @for (member of acceptedMembers; track member.user._id; let i = $index) {
+            @if (i < 5) {
+              <a
+                class="c-lfg-card__avatar"
+                [routerLink]="['/profile', member.user._id]"
+                [title]="member.user.riotId"
+                (click)="$event.stopPropagation()">
+                {{ member.user.riotId.charAt(0) }}
+              </a>
+            }
+          }
+        </div>
+        <span class="c-lfg-card__member-count">
+          <strong>{{ acceptedCount }}</strong>/{{ post.teamSize }}
+        </span>
+      </div>
     </div>
   </section>
 
-  <!-- Footer: schedule -->
+  <!-- Footer: schedule + creator -->
   <footer class="c-lfg-card__footer">
     @if (post.schedule) {
       <span class="c-lfg-card__schedule">

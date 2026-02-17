@@ -1,0 +1,338 @@
+@use 'utilities/variables' as v;
+@use 'utilities/mixins' as m;
+
+// ── Page Header (Teams style) ────────────────────────
+.c-page-header {
+  margin-bottom: v.$spacing-lg;
+
+  &--teams {
+    display: flex;
+    align-items: flex-start;
+    gap: v.$spacing-lg;
+    padding: v.$spacing-xl 0;
+  }
+
+  &__icon {
+    @include m.flex-center;
+    width: 56px;
+    height: 56px;
+    border-radius: v.$radius-lg;
+    background: v.$gradient-accent;
+    border: 1px solid v.$color-border-light;
+    color: v.$color-accent-cyan;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: v.$spacing-xs;
+
+    @include m.respond-to(md) {
+      font-size: 1.85rem;
+    }
+  }
+
+  &__desc {
+    font-size: 0.9rem;
+    color: v.$color-text-muted;
+    max-width: 560px;
+  }
+}
+
+// ── Filters ──────────────────────────────────────────
+.c-filters {
+  background: v.$color-bg-card;
+  border: 1px solid v.$color-border;
+  border-radius: v.$radius-lg;
+  padding: v.$spacing-md;
+  margin-bottom: v.$spacing-lg;
+
+  @include m.respond-to(md) {
+    padding: v.$spacing-md v.$spacing-lg;
+  }
+
+  &__form {
+    display: flex;
+    align-items: flex-end;
+    gap: v.$spacing-md;
+    flex-wrap: wrap;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    flex: 1;
+    min-width: 140px;
+
+    &--search {
+      flex: 2;
+      min-width: 200px;
+    }
+  }
+
+  &__label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: v.$color-text-muted;
+  }
+
+  &__search-wrap {
+    position: relative;
+  }
+
+  &__search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: v.$color-text-subtle;
+    pointer-events: none;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 0.4rem v.$spacing-md 0.4rem 34px;
+    background: v.$color-bg-input;
+    border: 1px solid v.$color-border;
+    border-radius: v.$radius-md;
+    color: v.$color-text-primary;
+    font-size: 0.85rem;
+    font-family: inherit;
+    transition: all v.$transition-fast;
+
+    &::placeholder {
+      color: v.$color-text-subtle;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: v.$color-accent-cyan;
+      box-shadow: 0 0 0 3px rgba(90, 158, 144, 0.08);
+    }
+  }
+
+  &__select {
+    padding: 0.4rem v.$spacing-md;
+    background: v.$color-bg-input;
+    border: 1px solid v.$color-border;
+    border-radius: v.$radius-md;
+    color: v.$color-text-primary;
+    font-size: 0.85rem;
+    transition: all v.$transition-fast;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 32px;
+
+    &:focus {
+      outline: none;
+      border-color: v.$color-accent-cyan;
+      box-shadow: 0 0 0 3px rgba(90, 158, 144, 0.08);
+    }
+  }
+
+  &__toggle {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+    cursor: pointer;
+    padding-bottom: 0.3rem;
+
+    input[type='checkbox'] {
+      accent-color: v.$color-accent-cyan;
+    }
+  }
+
+  &__toggle-label {
+    font-size: 0.8rem;
+    color: v.$color-text-muted;
+    white-space: nowrap;
+  }
+
+  &__actions {
+    display: flex;
+    gap: v.$spacing-xs;
+  }
+}
+
+// ── Feed layout ──────────────────────────────────────
+.c-feed {
+  min-height: 200px;
+}
+
+// ── Results bar ──────────────────────────────────────
+.c-results-bar {
+  margin-bottom: v.$spacing-lg;
+
+  &__count {
+    font-size: 0.85rem;
+    color: v.$color-text-muted;
+    font-weight: 500;
+  }
+}
+
+// ── Empty state ──────────────────────────────────────
+.c-empty {
+  text-align: center;
+  padding: v.$spacing-4xl v.$spacing-xl;
+
+  &__icon {
+    color: v.$color-text-subtle;
+    margin-bottom: v.$spacing-lg;
+    opacity: 0.5;
+
+    svg { margin-inline: auto; }
+  }
+
+  &__title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: v.$color-text-primary;
+    margin-bottom: v.$spacing-sm;
+  }
+
+  &__hint {
+    font-size: 0.85rem;
+    color: v.$color-text-muted;
+    margin-top: v.$spacing-xs;
+  }
+}
+
+// ── Error ────────────────────────────────────────────
+.c-error {
+  text-align: center;
+  padding: v.$spacing-lg;
+  color: #e05555;
+  background: rgba(220, 53, 69, 0.06);
+  border: 1px solid rgba(220, 53, 69, 0.18);
+  border-radius: v.$radius-xl;
+  font-size: 0.95rem;
+  margin-block: v.$spacing-lg;
+}
+
+// ── Staggered fade-in ────────────────────────────────
+.c-fade-in {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fade-in-up 0.4s ease-out forwards;
+}
+
+@keyframes fade-in-up {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ── Skeleton Loading ─────────────────────────────────
+.c-skeleton-card {
+  background: v.$color-bg-card;
+  border: 1px solid v.$color-border;
+  border-radius: v.$radius-lg;
+  padding: v.$spacing-md v.$spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-sm;
+
+  &--team {
+    gap: v.$spacing-md;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-md;
+  }
+
+  &__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-xs;
+  }
+}
+
+.c-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.07) 50%,
+    rgba(255, 255, 255, 0.03) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  border-radius: v.$radius-md;
+
+  &--avatar-sm {
+    width: 44px;
+    height: 44px;
+    border-radius: v.$radius-md;
+    flex-shrink: 0;
+  }
+
+  &--title {
+    height: 1.2rem;
+    width: 50%;
+  }
+
+  &--text {
+    height: 0.9rem;
+    width: 100%;
+  }
+
+  &--short {
+    width: 35%;
+  }
+
+  &--badges {
+    height: 1.5rem;
+    width: 40%;
+  }
+}
+
+@keyframes skeleton-pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// ── Infinite scroll ──────────────────────────────────
+.c-loading-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: v.$spacing-sm;
+  padding: v.$spacing-xl;
+  color: v.$color-text-muted;
+  font-size: 0.9rem;
+
+  &__spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid v.$color-border;
+    border-top-color: v.$color-accent-cyan;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.c-end-of-list {
+  text-align: center;
+  padding: v.$spacing-xl;
+  color: v.$color-text-subtle;
+  font-size: 0.8rem;
+}
+
+.c-scroll-sentinel {
+  height: 1px;
+  visibility: hidden;
+}

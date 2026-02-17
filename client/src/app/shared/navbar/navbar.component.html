@@ -40,6 +40,14 @@
     >
       LFG Board
     </a>
+    <a
+      class="c-navbar__link"
+      routerLink="/teams"
+      routerLinkActive="c-navbar__link--active"
+      (click)="closeMenu()"
+    >
+      Equipos
+    </a>
 
     <!-- Auth section -->
     @if (authService.isAuthenticated()) {

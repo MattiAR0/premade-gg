@@ -1,0 +1,251 @@
+<main class="l-container l-container--narrow l-section">
+  @if (loading) {
+    <div class="c-detail-skeleton">
+      <div class="c-skeleton c-skeleton--title" style="width: 60%; height: 1.5rem;"></div>
+      <div class="c-skeleton c-skeleton--text" style="width: 40%; height: 1rem; margin-top: 0.5rem;"></div>
+      <div class="c-skeleton c-skeleton--text" style="width: 100%; height: 6rem; margin-top: 1rem;"></div>
+      <div class="c-skeleton c-skeleton--text" style="width: 80%; height: 4rem; margin-top: 1rem;"></div>
+    </div>
+  } @else if (errorMessage) {
+    <div class="c-error-page">
+      <p class="c-error-page__msg">{{ errorMessage }}</p>
+      <button class="c-btn c-btn--ghost" (click)="goBack()">Volver a equipos</button>
+    </div>
+  } @else if (team) {
+    <!-- Volver -->
+    <button class="c-back-btn" (click)="goBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Volver a equipos
+    </button>
+
+    <!-- Card principal del equipo -->
+    <article class="c-team-detail">
+      <!-- Header con logo y nombre -->
+      <header class="c-team-detail__header">
+        <div class="c-team-detail__logo">
+          @if (team.logo) {
+            <img [src]="team.logo" [alt]="team.name" class="c-team-detail__logo-img" />
+          } @else {
+            <span class="c-team-detail__logo-text">{{ teamInitials }}</span>
+          }
+        </div>
+        <div class="c-team-detail__title-area">
+          <div class="c-team-detail__title-row">
+            <h1 class="c-team-detail__name">{{ team.name }}</h1>
+            <span class="c-team-detail__tag">[{{ team.tag }}]</span>
+          </div>
+          <div class="c-team-detail__badges">
+            @if (team.targetRank) {
+              <app-rank-badge [rank]="team.targetRank" />
+            }
+            <span class="c-badge c-badge--region">{{ regionLabel }}</span>
+            @if (team.recruiting) {
+              <span class="c-badge c-badge--recruiting">
+                <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="6"/></svg>
+                Reclutando
+              </span>
+            }
+          </div>
+        </div>
+      </header>
+
+      <!-- Historia / Descripción -->
+      @if (team.description) {
+        <section class="c-team-detail__section">
+          <h2 class="c-team-detail__section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            Nuestra historia
+          </h2>
+          <p class="c-team-detail__text">{{ team.description }}</p>
+        </section>
+      }
+
+      <!-- Roster de jugadores -->
+      <section class="c-team-detail__section">
+        <h2 class="c-team-detail__section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Roster
+          <span class="c-team-detail__count">{{ team.players.length }} jugadores</span>
+        </h2>
+        <ul class="c-team-detail__member-list">
+          @for (player of team.players; track player.user._id) {
+            <li class="c-member c-member--player">
+              <a class="c-member__link" [routerLink]="['/profile', player.user._id]">
+                <div class="c-member__avatar">{{ player.user.riotId.charAt(0) }}</div>
+                <div class="c-member__info">
+                  <span class="c-member__name">{{ player.user.riotId }}</span>
+                  <span class="c-member__role-tag">{{ player.role }}</span>
+                  @if (player.user.rank) {
+                    <app-rank-badge [rank]="player.user.rank" />
+                  }
+                </div>
+              </a>
+              @if (player.user._id === team.owner._id) {
+                <span class="c-badge c-badge--owner">Owner</span>
+              }
+              @if (isOwner && player.user._id !== team.owner._id) {
+                <button
+                  class="c-btn c-btn--ghost c-btn--xs c-btn--danger"
+                  [disabled]="actionLoading"
+                  (click)="removePlayer(player.user._id)">
+                  Remover
+                </button>
+              }
+              @if (!isOwner && player.user._id === auth.currentUser()?._id) {
+                <button
+                  class="c-btn c-btn--ghost c-btn--xs"
+                  [disabled]="actionLoading"
+                  (click)="leaveTeam()">
+                  Abandonar
+                </button>
+              }
+            </li>
+          }
+        </ul>
+      </section>
+
+      <!-- Coach -->
+      <section class="c-team-detail__section">
+        <h2 class="c-team-detail__section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          Coach
+        </h2>
+        @if (team.coach) {
+          <div class="c-member c-member--coach">
+            <a class="c-member__link" [routerLink]="['/profile', team.coach._id]">
+              <div class="c-member__avatar c-member__avatar--coach">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              </div>
+              <div class="c-member__info">
+                <span class="c-member__name">{{ team.coach.riotId }}</span>
+                <span class="c-member__role-tag c-member__role-tag--gold">Coach</span>
+              </div>
+            </a>
+            @if (isOwner) {
+              <button
+                class="c-btn c-btn--ghost c-btn--xs c-btn--danger"
+                [disabled]="actionLoading"
+                (click)="removeCoach()">
+                Remover coach
+              </button>
+            }
+          </div>
+        } @else {
+          <p class="c-team-detail__empty-msg">Este equipo aún no tiene coach asignado.</p>
+        }
+      </section>
+
+      <!-- Staff -->
+      @if (team.staff && team.staff.length > 0) {
+        <section class="c-team-detail__section">
+          <h2 class="c-team-detail__section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            Staff
+            <span class="c-team-detail__count">{{ team.staff.length }}</span>
+          </h2>
+          <ul class="c-team-detail__member-list">
+            @for (s of team.staff; track s.user._id) {
+              <li class="c-member c-member--staff">
+                <a class="c-member__link" [routerLink]="['/profile', s.user._id]">
+                  <div class="c-member__avatar c-member__avatar--staff">{{ s.user.riotId.charAt(0) }}</div>
+                  <div class="c-member__info">
+                    <span class="c-member__name">{{ s.user.riotId }}</span>
+                    <span class="c-member__role-tag c-member__role-tag--purple">{{ staffLabels[s.role] || s.role }}</span>
+                  </div>
+                </a>
+                @if (isOwner) {
+                  <button
+                    class="c-btn c-btn--ghost c-btn--xs c-btn--danger"
+                    [disabled]="actionLoading"
+                    (click)="removeStaff(s.user._id)">
+                    Remover
+                  </button>
+                }
+              </li>
+            }
+          </ul>
+        </section>
+      }
+
+      <!-- Logros -->
+      @if (team.achievements && team.achievements.length > 0) {
+        <section class="c-team-detail__section">
+          <h2 class="c-team-detail__section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+            Logros
+          </h2>
+          <ul class="c-team-detail__achievements">
+            @for (ach of team.achievements; track ach.title) {
+              <li class="c-achievement">
+                <div class="c-achievement__icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                </div>
+                <div class="c-achievement__info">
+                  <span class="c-achievement__title">{{ ach.title }}</span>
+                  @if (ach.description) {
+                    <span class="c-achievement__desc">{{ ach.description }}</span>
+                  }
+                </div>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+
+      <!-- Reclutamiento -->
+      @if (team.recruiting) {
+        <section class="c-team-detail__section c-team-detail__section--recruiting">
+          <h2 class="c-team-detail__section-title c-team-detail__section-title--green">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+            Buscamos jugadores
+          </h2>
+          @if (team.recruitingRoles && team.recruitingRoles.length > 0) {
+            <div class="c-team-detail__recruiting-roles">
+              <span class="c-team-detail__label">Roles buscados:</span>
+              <div class="c-team-detail__role-chips">
+                @for (role of team.recruitingRoles; track role) {
+                  <span class="c-badge c-badge--role">{{ role }}</span>
+                }
+              </div>
+            </div>
+          }
+          @if (team.recruitingDetails) {
+            <p class="c-team-detail__text">{{ team.recruitingDetails }}</p>
+          }
+        </section>
+      }
+
+      <!-- Redes sociales -->
+      @if (team.socialLinks?.discord || team.socialLinks?.twitter || team.socialLinks?.twitch || team.socialLinks?.youtube) {
+        <section class="c-team-detail__section">
+          <h2 class="c-team-detail__section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            Redes sociales
+          </h2>
+          <div class="c-team-detail__socials">
+            @if (team.socialLinks.discord) {
+              <span class="c-team-detail__social">Discord: <strong>{{ team.socialLinks.discord }}</strong></span>
+            }
+            @if (team.socialLinks.twitter) {
+              <span class="c-team-detail__social">Twitter: <strong>{{ team.socialLinks.twitter }}</strong></span>
+            }
+            @if (team.socialLinks.twitch) {
+              <span class="c-team-detail__social">Twitch: <strong>{{ team.socialLinks.twitch }}</strong></span>
+            }
+            @if (team.socialLinks.youtube) {
+              <span class="c-team-detail__social">YouTube: <strong>{{ team.socialLinks.youtube }}</strong></span>
+            }
+          </div>
+        </section>
+      }
+
+      <!-- Feedback messages -->
+      @if (actionMessage) {
+        <p class="c-team-detail__feedback c-team-detail__feedback--ok">{{ actionMessage }}</p>
+      }
+      @if (actionError) {
+        <p class="c-team-detail__feedback c-team-detail__feedback--err">{{ actionError }}</p>
+      }
+    </article>
+  }
+</main>

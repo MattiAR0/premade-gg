@@ -6,6 +6,7 @@ import { environment } from '../../environments/environment';
 import { User } from '../models/user.model';
 import { Reputation } from '../models/reputation.model';
 import { LfgPost } from '../models/lfg-post.model';
+import { Team } from '../models/team.model';
 import { RiotAccountValidation, RiotRankData } from '../models/riot.model';
 
 /** Respuesta paginada genérica del backend (cursor-based) */
@@ -165,5 +166,56 @@ export class ApiService {
   getLfgPostsByAuthor(authorId: string): Observable<PaginatedResponse<LfgPost>> {
     const params = new HttpParams().set('author', authorId);
     return this.cachedGet<PaginatedResponse<LfgPost>>(`${this.baseUrl}/lfg`, params);
+  }
+
+  // ── Teams ───────────────────────────────────────────
+  getTeams(filters?: Record<string, string | number | boolean>): Observable<PaginatedResponse<Team>> {
+    let params = new HttpParams();
+    if (filters) {
+      for (const [key, value] of Object.entries(filters)) {
+        if (value !== undefined && value !== '' && value !== false) {
+          params = params.set(key, String(value));
+        }
+      }
+    }
+    return this.cachedGet<PaginatedResponse<Team>>(`${this.baseUrl}/teams`, params);
+  }
+
+  getTeamById(id: string): Observable<Team> {
+    return this.http.get<Team>(`${this.baseUrl}/teams/${id}`);
+  }
+
+  createTeam(data: Partial<Team>): Observable<Team> {
+    return this.http.post<Team>(`${this.baseUrl}/teams`, data).pipe(
+      tap(() => this.invalidateByPrefix(`${this.baseUrl}/teams`)),
+    );
+  }
+
+  updateTeam(id: string, data: Partial<Team>): Observable<Team> {
+    return this.http.put<Team>(`${this.baseUrl}/teams/${id}`, data);
+  }
+
+  deleteTeam(id: string): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.baseUrl}/teams/${id}`);
+  }
+
+  setTeamCoach(teamId: string, userId: string | null): Observable<{ message: string }> {
+    return this.http.put<{ message: string }>(`${this.baseUrl}/teams/${teamId}/coach`, { userId });
+  }
+
+  addTeamPlayer(teamId: string, userId: string, role: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/teams/${teamId}/players`, { userId, role });
+  }
+
+  removeTeamPlayer(teamId: string, userId: string): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.baseUrl}/teams/${teamId}/players/${userId}`);
+  }
+
+  addTeamStaff(teamId: string, userId: string, role: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/teams/${teamId}/staff`, { userId, role });
+  }
+
+  removeTeamStaff(teamId: string, userId: string): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.baseUrl}/teams/${teamId}/staff/${userId}`);
   }
 }

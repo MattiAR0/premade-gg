@@ -1,0 +1,223 @@
+@use 'utilities/variables' as v;
+@use 'utilities/mixins' as m;
+
+.c-team-card {
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color v.$transition-fast, box-shadow v.$transition-fast, transform v.$transition-fast;
+
+  &:hover {
+    border-color: v.$color-accent-cyan;
+    box-shadow: 0 0 0 1px rgba(90, 158, 144, 0.15), v.$shadow-glow-cyan;
+    transform: translateY(-2px);
+  }
+
+  // ── Header ────────────────────────────────────────
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-md;
+    padding: v.$spacing-md v.$spacing-lg;
+    border-bottom: 1px solid v.$color-border;
+    position: relative;
+
+    @include m.respond-below(md) {
+      padding: v.$spacing-sm v.$spacing-md;
+    }
+  }
+
+  &__logo {
+    @include m.flex-center;
+    width: 44px;
+    height: 44px;
+    border-radius: v.$radius-md;
+    background: v.$gradient-accent;
+    border: 1px solid v.$color-border-light;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  &__logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__logo-text {
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: v.$color-accent-cyan;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__identity {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: baseline;
+    gap: v.$spacing-xs;
+  }
+
+  &__name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: v.$color-text-heading;
+    @include m.text-truncate;
+  }
+
+  &__tag {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: v.$color-accent-cyan;
+    opacity: 0.8;
+    white-space: nowrap;
+  }
+
+  // ── Body ──────────────────────────────────────────
+  &__body {
+    padding: v.$spacing-md v.$spacing-lg;
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-md;
+
+    @include m.respond-below(md) {
+      padding: v.$spacing-sm v.$spacing-md;
+    }
+  }
+
+  &__desc {
+    font-size: 0.8rem;
+    color: v.$color-text-muted;
+    line-height: 1.5;
+    @include m.line-clamp(2);
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+    flex-wrap: wrap;
+  }
+
+  // ── Roster ────────────────────────────────────────
+  &__roster {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: v.$spacing-sm;
+  }
+
+  &__avatars {
+    display: flex;
+
+    > * + * {
+      margin-left: -6px;
+    }
+  }
+
+  &__avatar {
+    @include m.flex-center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: v.$gradient-secondary;
+    border: 2px solid v.$color-bg-card;
+    color: v.$color-accent-cyan;
+    font-weight: 700;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 1;
+  }
+
+  &__roster-count {
+    display: inline-flex;
+    align-items: center;
+    gap: v.$spacing-xs;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: v.$color-text-muted;
+    white-space: nowrap;
+
+    svg {
+      opacity: 0.6;
+    }
+  }
+
+  // ── Footer ────────────────────────────────────────
+  &__footer {
+    @include m.flex-between;
+    padding: v.$spacing-sm v.$spacing-lg;
+    border-top: 1px solid v.$color-border;
+    gap: v.$spacing-sm;
+    min-height: 36px;
+
+    @include m.respond-below(md) {
+      padding: v.$spacing-sm v.$spacing-md;
+    }
+  }
+
+  &__staff-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__coach-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: v.$spacing-xs;
+    font-size: 0.75rem;
+    color: v.$color-accent-gold;
+    font-weight: 600;
+
+    svg {
+      opacity: 0.7;
+    }
+  }
+
+  &__owner {
+    font-size: 0.8rem;
+    color: v.$color-text-subtle;
+    text-decoration: none;
+    transition: color v.$transition-fast;
+    white-space: nowrap;
+
+    &:hover {
+      color: v.$color-accent-cyan;
+    }
+  }
+}
+
+// ── Badges ──────────────────────────────────────────
+.c-badge {
+  &--recruiting {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: rgba(52, 211, 153, 0.1);
+    color: #34d399;
+    padding: 0.15rem 0.55rem;
+    border-radius: v.$radius-sm;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  &--region {
+    background: rgba(99, 102, 241, 0.1);
+    color: #818cf8;
+    padding: 0.15rem 0.5rem;
+    border-radius: v.$radius-sm;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
