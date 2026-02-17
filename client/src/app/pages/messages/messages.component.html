@@ -33,7 +33,7 @@
     }
 
     <!-- Lista de conversaciones -->
-    <div class="c-messages__conversation-list">
+    <nav class="c-messages__conversation-list">
       @if (messageService.loadingConversations() && messageService.conversations().length === 0) {
         <div class="c-messages__loading">
           <div class="c-skeleton c-skeleton--text" style="width: 80%; margin-bottom: 12px"></div>
@@ -42,11 +42,11 @@
         </div>
       } @else if (messageService.conversations().length === 0) {
         <div class="c-messages__empty">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="c-messages__empty-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
           </svg>
-          <p>No tienes conversaciones</p>
-          <span>Envía un mensaje a un jugador desde su perfil o tarjeta</span>
+          <p class="c-messages__empty-text">No tienes conversaciones</p>
+          <span class="c-messages__empty-hint">Envía un mensaje a un jugador desde su perfil o tarjeta</span>
         </div>
       } @else {
         @for (conv of messageService.conversations(); track conv._id) {
@@ -57,7 +57,7 @@
             (click)="selectConversation(conv)">
             <div class="c-messages__conversation-avatar">
               @if (getConversationImage(conv)) {
-                <img [src]="getConversationImage(conv)" [alt]="getConversationName(conv)" />
+                <img class="c-messages__conversation-avatar-img" [src]="getConversationImage(conv)" [alt]="getConversationName(conv)" />
               } @else {
                 <div class="c-messages__avatar-placeholder">
                   {{ getConversationInitial(conv) }}
@@ -88,7 +88,7 @@
           </button>
         }
       }
-    </div>
+    </nav>
   </aside>
 
   <!-- ═══ Panel derecho: chat activo ═══ -->
@@ -101,7 +101,7 @@
         </button>
         <div class="c-messages__chat-header-avatar">
           @if (getConversationImage(messageService.activeConversation()!)) {
-            <img [src]="getConversationImage(messageService.activeConversation()!)" [alt]="getConversationName(messageService.activeConversation()!)" />
+            <img class="c-messages__chat-header-avatar-img" [src]="getConversationImage(messageService.activeConversation()!)" [alt]="getConversationName(messageService.activeConversation()!)" />
           } @else {
             <div class="c-messages__avatar-placeholder c-messages__avatar-placeholder--sm">
               {{ getConversationInitial(messageService.activeConversation()!) }}
@@ -148,7 +148,7 @@
           <!-- Day separator -->
           @if (isNewDay(i)) {
             <div class="c-messages__day-separator">
-              <span>{{ msg.createdAt | date: 'dd MMMM yyyy' }}</span>
+              <span class="c-messages__day-separator-text">{{ msg.createdAt | date: 'dd MMMM yyyy' }}</span>
             </div>
           }
 
@@ -160,7 +160,7 @@
             @if (!isOwnMessage(msg.sender._id) && messageService.activeConversation()!.type === 'group') {
               <div class="c-messages__bubble-avatar">
                 @if (msg.sender.cardImage || msg.sender.profileImage) {
-                  <img [src]="msg.sender.cardImage || msg.sender.profileImage" [alt]="msg.sender.riotId" />
+                  <img class="c-messages__bubble-avatar-img" [src]="msg.sender.cardImage || msg.sender.profileImage" [alt]="msg.sender.riotId" />
                 } @else {
                   <div class="c-messages__avatar-placeholder c-messages__avatar-placeholder--xs">
                     {{ msg.sender.riotId.charAt(0).toUpperCase() }}
@@ -183,7 +183,7 @@
         @if (getActiveTypingUsers().length > 0) {
           <div class="c-messages__typing">
             <span class="c-messages__typing-dots">
-              <span></span><span></span><span></span>
+              <span class="c-messages__typing-dots-dot"></span><span class="c-messages__typing-dots-dot"></span><span class="c-messages__typing-dots-dot"></span>
             </span>
             <span class="c-messages__typing-text">
               @for (userId of getActiveTypingUsers(); track userId; let last = $last) {
@@ -220,11 +220,11 @@
     } @else {
       <!-- No conversation selected -->
       <div class="c-messages__no-chat">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="c-messages__no-chat-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
         </svg>
-        <h3>Selecciona una conversación</h3>
-        <p>Elige un chat de la lista o envía un mensaje a un jugador</p>
+        <h3 class="c-messages__no-chat-title">Selecciona una conversación</h3>
+        <p class="c-messages__no-chat-text">Elige un chat de la lista o envía un mensaje a un jugador</p>
       </div>
     }
   </section>

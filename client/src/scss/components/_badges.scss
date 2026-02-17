@@ -13,22 +13,13 @@
   white-space: nowrap;
   transition: all v.$transition-fast;
 
-  &--karma-high {
-    background: rgba(90, 158, 144, 0.1);
-    color: v.$color-karma-high;
-    border: 1px solid rgba(90, 158, 144, 0.2);
-  }
-
-  &--karma-mid {
-    background: rgba(196, 154, 68, 0.1);
-    color: v.$color-karma-mid;
-    border: 1px solid rgba(196, 154, 68, 0.2);
-  }
-
-  &--karma-low {
-    background: rgba(220, 53, 69, 0.1);
-    color: v.$color-karma-low;
-    border: 1px solid rgba(220, 53, 69, 0.2);
+  // Karma modifiers generated from $karma-colors map (@each loop)
+  @each $level, $clr in v.$karma-colors {
+    &--karma-#{$level} {
+      background: rgba($clr, 0.1);
+      color: $clr;
+      border: 1px solid rgba($clr, 0.2);
+    }
   }
 
   &--rank {

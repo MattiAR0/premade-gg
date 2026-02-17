@@ -179,7 +179,7 @@
     color: v.$color-text-muted;
     white-space: nowrap;
 
-    strong {
+    &-value {
       font-weight: 700;
       color: v.$color-text-primary;
     }
@@ -204,7 +204,7 @@
     font-size: 0.8rem;
     color: v.$color-text-muted;
 
-    svg {
+    &-icon {
       opacity: 0.6;
     }
   }

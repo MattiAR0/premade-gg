@@ -57,7 +57,7 @@
               (click)="selectPresetAvatar(avatar.url)"
               [title]="avatar.name"
             >
-              <img [src]="avatar.url" [alt]="avatar.name" />
+              <img class="c-settings__preset-avatar-img" [src]="avatar.url" [alt]="avatar.name" />
             </button>
           }
         </div>
@@ -171,6 +171,7 @@
 
       <label class="c-settings__toggle-row">
         <input
+          class="c-settings__toggle-row-checkbox"
           type="checkbox"
           [(ngModel)]="lookingForTeam"
           name="lookingForTeam"
@@ -204,6 +205,7 @@
 
       <label class="c-settings__toggle-row">
         <input
+          class="c-settings__toggle-row-checkbox"
           type="checkbox"
           [(ngModel)]="isCoach"
           name="isCoach"
@@ -235,6 +237,7 @@
           <div class="c-settings__day-row">
             <label class="c-settings__day-toggle">
               <input
+                class="c-settings__day-toggle-checkbox"
                 type="checkbox"
                 [(ngModel)]="availability[day].available"
                 [name]="'avail_' + day"

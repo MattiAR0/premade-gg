@@ -60,7 +60,7 @@
       </label>
 
       <label class="c-filters__toggle">
-        <input type="checkbox" [(ngModel)]="filterRecruiting" name="recruiting" />
+        <input class="c-filters__toggle-checkbox" type="checkbox" [(ngModel)]="filterRecruiting" name="recruiting" />
         <span class="c-filters__toggle-label">Solo reclutando</span>
       </label>
 
@@ -96,7 +96,7 @@
     } @else if (teams.length === 0) {
       <div class="c-empty">
         <div class="c-empty__icon">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="c-empty__icon-svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 2L2 7l10 5 10-5-10-5z"/>
             <path d="M2 17l10 5 10-5"/>
             <path d="M2 12l10 5 10-5"/>

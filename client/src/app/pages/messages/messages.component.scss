@@ -110,21 +110,24 @@
     padding: v.$spacing-2xl v.$spacing-lg;
     color: v.$color-text-muted;
     text-align: center;
+  }
 
-    svg {
-      opacity: 0.4;
-      margin-bottom: v.$spacing-md;
-    }
+  &__empty-icon,
+  &__loading-icon {
+    opacity: 0.4;
+    margin-bottom: v.$spacing-md;
+  }
 
-    p {
-      font-size: 0.9rem;
-      margin: 0 0 v.$spacing-xs;
-    }
+  &__empty-text,
+  &__loading-text {
+    font-size: 0.9rem;
+    margin: 0 0 v.$spacing-xs;
+  }
 
-    span {
-      font-size: 0.78rem;
-      color: v.$color-text-subtle;
-    }
+  &__empty-hint,
+  &__loading-hint {
+    font-size: 0.78rem;
+    color: v.$color-text-subtle;
   }
 
   &__conversation-item {
@@ -163,7 +166,7 @@
     position: relative;
     flex-shrink: 0;
 
-    img {
+    &-img {
       width: 42px;
       height: 42px;
       border-radius: v.$radius-md;
@@ -317,7 +320,7 @@
   &__chat-header-avatar {
     flex-shrink: 0;
 
-    img {
+    &-img {
       width: 36px;
       height: 36px;
       border-radius: v.$radius-md;
@@ -404,7 +407,7 @@
     text-align: center;
     padding: v.$spacing-sm 0;
 
-    span {
+    &-text {
       font-size: 0.7rem;
       color: v.$color-text-muted;
       background: v.$color-bg-elevated;
@@ -433,7 +436,7 @@
     flex-shrink: 0;
     align-self: flex-end;
 
-    img {
+    &-img {
       width: 28px;
       height: 28px;
       border-radius: v.$radius-sm;
@@ -494,7 +497,7 @@
     display: flex;
     gap: 3px;
 
-    span {
+    &-dot {
       width: 6px;
       height: 6px;
       border-radius: 50%;
@@ -582,17 +585,17 @@
     text-align: center;
     padding: v.$spacing-2xl;
 
-    svg {
+    &-icon {
       opacity: 0.2;
     }
 
-    h3 {
+    &-title {
       font-size: 1.1rem;
       color: v.$color-text-heading;
       margin: 0;
     }
 
-    p {
+    &-text {
       font-size: 0.85rem;
       margin: 0;
     }

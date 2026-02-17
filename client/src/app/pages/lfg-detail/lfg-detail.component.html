@@ -67,9 +67,9 @@
           <span class="c-detail__label">Requisitos</span>
           <ul class="c-detail__req-list">
             @if (post.minRank) {
-              <li>Rango mínimo: <strong>{{ post.minRank }}</strong></li>
+              <li class="c-detail__req-item">Rango mínimo: <strong class="c-detail__req-value">{{ post.minRank }}</strong></li>
             }
-            <li>Karma mínimo: <strong>{{ post.minKarma }}</strong></li>
+            <li class="c-detail__req-item">Karma mínimo: <strong class="c-detail__req-value">{{ post.minKarma }}</strong></li>
           </ul>
         </div>
       </section>

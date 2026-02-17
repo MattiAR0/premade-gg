@@ -223,7 +223,7 @@
     flex-wrap: wrap;
     gap: v.$spacing-md;
 
-    h2 {
+    &-title {
       margin-bottom: v.$spacing-xs;
     }
   }

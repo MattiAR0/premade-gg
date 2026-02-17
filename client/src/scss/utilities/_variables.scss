@@ -41,6 +41,13 @@ $color-karma-high: #5a9e90;
 $color-karma-mid: #c49a44;
 $color-karma-low: #dc3545;
 
+// Karma map — used with @each to generate badge modifiers
+$karma-colors: (
+  'high': $color-karma-high,
+  'mid': $color-karma-mid,
+  'low': $color-karma-low,
+);
+
 // Shadows (subtle, less glow)
 $shadow-card: 0 4px 20px rgba(0, 0, 0, 0.3);
 $shadow-card-hover: 0 12px 40px rgba(0, 0, 0, 0.4);

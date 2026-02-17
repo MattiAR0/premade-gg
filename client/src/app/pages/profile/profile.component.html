@@ -10,7 +10,7 @@
   } @else if (user) {
     <!-- Profile Header -->
     <section class="c-profile">
-      <div class="c-profile__header">
+      <header class="c-profile__header">
         <div class="c-profile__avatar-wrap">
           @if (profileImageUrl) {
             <img class="c-profile__avatar" [src]="profileImageUrl" [alt]="user.riotId" />
@@ -52,41 +52,41 @@
             </button>
           }
         </div>
-      </div>
+      </header>
 
       <!-- Favorite Agents -->
       @if (user.favoriteAgents && user.favoriteAgents.length > 0) {
-        <div class="c-profile__section">
+        <section class="c-profile__section">
           <h2 class="c-profile__section-title">Agentes favoritos</h2>
           <div class="c-profile__agents">
             @for (agent of user.favoriteAgents; track agent) {
               <span class="c-badge c-badge--agent">{{ agent }}</span>
             }
           </div>
-        </div>
+        </section>
       }
 
       @if (user.favoriteRole) {
-        <div class="c-profile__section">
+        <section class="c-profile__section">
           <h2 class="c-profile__section-title">Rol favorito</h2>
           <span class="c-badge c-badge--role">{{ user.favoriteRole }}</span>
-        </div>
+        </section>
       }
 
       <!-- LFT Details -->
       @if (user.lookingForTeam && user.lftDetails) {
-        <div class="c-profile__section">
+        <section class="c-profile__section">
           <h2 class="c-profile__section-title">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             Buscando equipo (LFT)
           </h2>
           <p class="c-profile__lft-details">{{ user.lftDetails }}</p>
-        </div>
+        </section>
       }
 
       <!-- Social Links -->
       @if (hasSocialLinks) {
-        <div class="c-profile__section">
+        <section class="c-profile__section">
           <h2 class="c-profile__section-title">Redes sociales</h2>
           <div class="c-profile__socials">
             @if (user.socialLinks.discord) {
@@ -108,12 +108,12 @@
               </a>
             }
           </div>
-        </div>
+        </section>
       }
 
       <!-- Availability -->
       @if (hasAvailability) {
-        <div class="c-profile__section">
+        <section class="c-profile__section">
           <h2 class="c-profile__section-title">Disponibilidad</h2>
           <div class="c-profile__availability">
             @for (day of daysOfWeek; track day) {
@@ -125,25 +125,25 @@
               }
             }
           </div>
-        </div>
+        </section>
       }
 
       <!-- Schedule -->
-      <div class="c-profile__section">
+      <section class="c-profile__section">
         <h2 class="c-profile__section-title">Horario general</h2>
         <div class="c-profile__schedule">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           {{ user.schedule }}
         </div>
-      </div>
+      </section>
 
       <!-- Info meta -->
-      <div class="c-profile__meta">
+      <footer class="c-profile__meta">
         @if (user.accountLevel) {
           <span class="c-badge c-badge--count">Nivel {{ user.accountLevel }}</span>
         }
         <span class="c-profile__joined">Miembro desde {{ user.createdAt | date:'MMMM yyyy' }}</span>
-      </div>
+      </footer>
     </section>
 
     <!-- Reviews -->

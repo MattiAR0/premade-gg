@@ -155,7 +155,7 @@
     cursor: pointer;
     padding-bottom: 0.3rem;
 
-    input[type='checkbox'] {
+    &-checkbox {
       accent-color: v.$color-accent-cyan;
     }
   }
@@ -198,7 +198,7 @@
     margin-bottom: v.$spacing-lg;
     opacity: 0.5;
 
-    svg { margin-inline: auto; }
+    &-svg { margin-inline: auto; }
   }
 
   &__title {
@@ -510,7 +510,7 @@
     gap: v.$spacing-sm;
     cursor: pointer;
 
-    input[type='checkbox'] {
+    &-checkbox {
       accent-color: v.$color-accent-cyan;
     }
   }
