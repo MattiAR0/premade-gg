@@ -127,7 +127,23 @@ const createPost = async (req, res, next) => {
       });
     }
 
-    const { title, description, teamSize, minRank, minKarma, schedule } = req.body;
+    const { title, description, teamSize, minRank, minKarma, initialMembers } = req.body;
+
+    // Miembros iniciales: el autor + los que haya seleccionado
+    const members = [{ user: userId, status: 'accepted', joinedAt: new Date() }];
+
+    if (Array.isArray(initialMembers) && initialMembers.length > 0) {
+      // Max teamSize - 1 miembros adicionales (el autor ya cuenta)
+      const maxExtra = (teamSize || 2) - 1;
+      const extras = initialMembers.slice(0, maxExtra);
+      for (const memberId of extras) {
+        if (memberId === userId) continue; // No duplicar al autor
+        const memberUser = await User.findById(memberId);
+        if (memberUser) {
+          members.push({ user: memberId, status: 'accepted', joinedAt: new Date() });
+        }
+      }
+    }
 
     const post = await LFGPost.create({
       author: userId,
@@ -136,8 +152,7 @@ const createPost = async (req, res, next) => {
       teamSize,
       minRank,
       minKarma,
-      schedule,
-      members: [{ user: userId, status: 'accepted', joinedAt: new Date() }],
+      members,
     });
 
     const populated = await post.populate([
@@ -164,12 +179,11 @@ const updatePost = async (req, res, next) => {
       return res.status(403).json({ message: 'Solo el creador puede editar este post' });
     }
 
-    const { title, description, minRank, minKarma, schedule, status } = req.body;
+    const { title, description, minRank, minKarma, status } = req.body;
     if (title !== undefined) post.title = title;
     if (description !== undefined) post.description = description;
     if (minRank !== undefined) post.minRank = minRank;
     if (minKarma !== undefined) post.minKarma = minKarma;
-    if (schedule !== undefined) post.schedule = schedule;
     if (status !== undefined) post.status = status;
 
     await post.save();

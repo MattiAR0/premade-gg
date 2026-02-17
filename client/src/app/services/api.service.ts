@@ -137,7 +137,7 @@ export class ApiService {
     teamSize: number;
     minRank?: string;
     minKarma?: number;
-    schedule?: string;
+    initialMembers?: string[];
   }): Observable<LfgPost> {
     return this.http.post<LfgPost>(`${this.baseUrl}/lfg`, data).pipe(
       tap(() => this.invalidateByPrefix(`${this.baseUrl}/lfg`)),
@@ -167,7 +167,11 @@ export class ApiService {
     const params = new HttpParams().set('author', authorId);
     return this.cachedGet<PaginatedResponse<LfgPost>>(`${this.baseUrl}/lfg`, params);
   }
-
+  // ── User Search (autocomplete) ─────────────
+  searchUsers(query: string): Observable<User[]> {
+    const params = new HttpParams().set('q', query);
+    return this.http.get<User[]>(`${this.baseUrl}/users/search`, { params });
+  }
   // ── Teams ───────────────────────────────────────────
   getTeams(filters?: Record<string, string | number | boolean>): Observable<PaginatedResponse<Team>> {
     let params = new HttpParams();

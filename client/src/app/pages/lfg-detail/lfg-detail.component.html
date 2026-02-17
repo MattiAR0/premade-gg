@@ -43,7 +43,7 @@
       <!-- Info principal -->
       <section class="c-detail__info">
         <div class="c-detail__badges">
-          @if (post.author?.rank) {
+          @if (post.author.rank) {
             <div class="c-detail__badge-group">
               <span class="c-detail__label">Rango</span>
               <app-rank-badge [rank]="post.author.rank" />
@@ -53,12 +53,6 @@
             <span class="c-detail__label">Región</span>
             <span class="c-badge c-badge--region">{{ regionLabel }}</span>
           </div>
-          @if (post.schedule) {
-            <div class="c-detail__badge-group">
-              <span class="c-detail__label">Horario</span>
-              <span class="c-detail__value">{{ post.schedule }}</span>
-            </div>
-          }
         </div>
 
         @if (post.description) {

@@ -218,6 +218,31 @@ const recalculateKarma = async (req, res, next) => {
   }
 };
 
+/**
+ * GET /api/users/search?q=...
+ * Búsqueda rápida de usuarios por riotId (autocomplete).
+ * Devuelve máximo 10 resultados con campos básicos.
+ */
+const searchUsers = async (req, res, next) => {
+  try {
+    const { q } = req.query;
+    if (!q || q.length < 2) {
+      return res.json([]);
+    }
+
+    const users = await User.find(
+      { riotId: { $regex: q, $options: 'i' } },
+    )
+      .select('riotId rank role karma region profileImage profileImageType cardImage')
+      .limit(10)
+      .lean();
+
+    res.json(users);
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getUsers,
   getUserById,
@@ -225,4 +250,5 @@ module.exports = {
   updateUser,
   deleteUser,
   recalculateKarma,
+  searchUsers,
 };

@@ -384,3 +384,347 @@
   height: 1px;
   visibility: hidden;
 }
+
+// ── Modal ────────────────────────────────────────────
+.c-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: v.$spacing-lg;
+  animation: overlay-in 0.2s ease;
+}
+
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.c-modal {
+  background: v.$color-bg-elevated;
+  border: 1px solid v.$color-border-light;
+  border-radius: v.$radius-xl;
+  width: 100%;
+  max-width: 540px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: v.$spacing-xl;
+  box-shadow: v.$shadow-float;
+  animation: modal-in 0.25s ease;
+
+  @include m.respond-below(md) {
+    padding: v.$spacing-lg;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: v.$spacing-lg;
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: v.$color-text-heading;
+  }
+
+  &__close {
+    @include m.flex-center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: v.$color-text-muted;
+    cursor: pointer;
+    border-radius: v.$radius-md;
+    transition: all v.$transition-fast;
+
+    &:hover {
+      color: v.$color-text-primary;
+      background: rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  &__error {
+    padding: v.$spacing-sm v.$spacing-md;
+    background: rgba(220, 53, 69, 0.08);
+    border: 1px solid rgba(220, 53, 69, 0.2);
+    border-radius: v.$radius-md;
+    color: #e05555;
+    font-size: 0.85rem;
+    margin-bottom: v.$spacing-md;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-md;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: v.$color-text-muted;
+  }
+
+  &__label-hint {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    color: v.$color-text-subtle;
+    font-size: 0.7rem;
+  }
+
+  &__input,
+  &__select,
+  &__textarea {
+    padding: v.$spacing-sm v.$spacing-md;
+    background: v.$color-bg-input;
+    border: 1px solid v.$color-border;
+    border-radius: v.$radius-md;
+    color: v.$color-text-primary;
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: all v.$transition-fast;
+
+    &::placeholder {
+      color: v.$color-text-subtle;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: v.$color-accent-red;
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.08);
+    }
+  }
+
+  &__select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 32px;
+  }
+
+  &__textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  &__hint {
+    font-size: 0.7rem;
+    color: v.$color-text-subtle;
+    text-align: right;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: v.$spacing-md;
+
+    @include m.respond-below(md) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: v.$spacing-sm;
+    margin-top: v.$spacing-sm;
+    padding-top: v.$spacing-md;
+    border-top: 1px solid v.$color-border;
+  }
+
+  &__spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// ── Member Chips ─────────────────────────────────────
+.c-member-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: v.$spacing-xs;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.c-member-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.6rem;
+  background: rgba(220, 53, 69, 0.08);
+  border: 1px solid rgba(220, 53, 69, 0.2);
+  border-radius: v.$radius-full;
+  font-size: 0.8rem;
+  animation: fade-in-up 0.2s ease forwards;
+
+  &__name {
+    color: v.$color-text-primary;
+    font-weight: 600;
+  }
+
+  &__rank {
+    color: v.$color-accent-gold;
+    font-size: 0.7rem;
+  }
+
+  &__remove {
+    @include m.flex-center;
+    width: 18px;
+    height: 18px;
+    border: none;
+    background: transparent;
+    color: v.$color-text-muted;
+    cursor: pointer;
+    padding: 0;
+    border-radius: 50%;
+    transition: all v.$transition-fast;
+
+    &:hover {
+      color: v.$color-accent-red;
+      background: rgba(220, 53, 69, 0.15);
+    }
+  }
+}
+
+// ── Member Search ────────────────────────────────────
+.c-member-search {
+  position: relative;
+
+  &__wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  &__icon {
+    position: absolute;
+    left: 10px;
+    color: v.$color-text-subtle;
+    pointer-events: none;
+  }
+
+  &__input {
+    width: 100%;
+    padding: v.$spacing-sm v.$spacing-md v.$spacing-sm 34px;
+    background: v.$color-bg-input;
+    border: 1px solid v.$color-border;
+    border-radius: v.$radius-md;
+    color: v.$color-text-primary;
+    font-size: 0.85rem;
+    font-family: inherit;
+    transition: all v.$transition-fast;
+
+    &::placeholder {
+      color: v.$color-text-subtle;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: v.$color-accent-red;
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.08);
+    }
+  }
+
+  &__spinner {
+    position: absolute;
+    right: 10px;
+    width: 14px;
+    height: 14px;
+    border: 2px solid v.$color-border;
+    border-top-color: v.$color-accent-red;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+
+  &__results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    margin-top: 4px;
+    background: v.$color-bg-elevated;
+    border: 1px solid v.$color-border-light;
+    border-radius: v.$radius-md;
+    box-shadow: v.$shadow-float;
+    max-height: 200px;
+    overflow-y: auto;
+    list-style: none;
+    padding: v.$spacing-xs 0;
+  }
+
+  &__result {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: v.$spacing-sm v.$spacing-md;
+    cursor: pointer;
+    transition: background v.$transition-fast;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+  }
+
+  &__result-info {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+  }
+
+  &__result-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: v.$color-text-primary;
+  }
+
+  &__result-rank {
+    font-size: 0.75rem;
+    color: v.$color-accent-gold;
+    padding: 0.1rem 0.4rem;
+    background: rgba(196, 154, 68, 0.1);
+    border-radius: v.$radius-full;
+  }
+
+  &__result-role {
+    font-size: 0.7rem;
+    color: v.$color-text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}

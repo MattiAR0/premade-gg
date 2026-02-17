@@ -7,10 +7,12 @@ const {
   updateUser,
   deleteUser,
   recalculateKarma,
+  searchUsers,
 } = require('../controllers/userController');
 const { requireAuth } = require('../middlewares/auth');
 
 // Públicos
+router.get('/search', searchUsers); // Debe estar ANTES de /:id
 router.get('/', getUsers);
 router.get('/:id', getUserById);
 router.get('/:id/karma', recalculateKarma);

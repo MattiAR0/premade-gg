@@ -4,12 +4,11 @@ import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { Team, STAFF_ROLE_LABELS } from '../../models/team.model';
 import { RankBadgeComponent } from '../../shared/rank-badge/rank-badge.component';
-import { KarmaBadgeComponent } from '../../shared/karma-badge/karma-badge.component';
 
 @Component({
   selector: 'app-team-detail',
   standalone: true,
-  imports: [RouterLink, RankBadgeComponent, KarmaBadgeComponent],
+  imports: [RouterLink, RankBadgeComponent],
   templateUrl: './team-detail.component.html',
   styleUrl: './team-detail.component.scss',
 })

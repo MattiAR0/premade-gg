@@ -20,6 +20,12 @@
           <span class="c-page-header__stat-label">grupos activos</span>
         </div>
       }
+      @if (auth.isAuthenticated()) {
+        <button class="c-btn c-btn--primary" (click)="openCreateModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Crear grupo
+        </button>
+      }
     </div>
   </header>
 
@@ -120,3 +126,165 @@
     <div #scrollSentinel class="c-scroll-sentinel"></div>
   </section>
 </main>
+
+<!-- ── Modal: Crear grupo LFG ──────────────────────── -->
+@if (showCreateModal) {
+  <div class="c-modal-overlay" (click)="closeCreateModal()">
+    <div class="c-modal" (click)="$event.stopPropagation()">
+      <header class="c-modal__header">
+        <h2 class="c-modal__title">Crear grupo LFG</h2>
+        <button class="c-modal__close" (click)="closeCreateModal()" aria-label="Cerrar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </header>
+
+      @if (createError) {
+        <p class="c-modal__error">{{ createError }}</p>
+      }
+
+      <form class="c-modal__form" (ngSubmit)="submitNewPost()">
+        <label class="c-modal__field">
+          <span class="c-modal__label">Título *</span>
+          <input
+            class="c-modal__input"
+            type="text"
+            [(ngModel)]="newPost.title"
+            name="title"
+            placeholder="Ej: Buscamos duo para ranked..."
+            maxlength="120"
+            required
+          />
+          <span class="c-modal__hint">{{ newPost.title.length }}/120</span>
+        </label>
+
+        <label class="c-modal__field">
+          <span class="c-modal__label">Descripción</span>
+          <textarea
+            class="c-modal__textarea"
+            [(ngModel)]="newPost.description"
+            name="description"
+            placeholder="Describe lo que buscas, horarios, requisitos..."
+            maxlength="500"
+            rows="3"
+          ></textarea>
+          <span class="c-modal__hint">{{ newPost.description.length }}/500</span>
+        </label>
+
+        <div class="c-modal__row">
+          <label class="c-modal__field">
+            <span class="c-modal__label">Tamaño de equipo *</span>
+            <select class="c-modal__select" [(ngModel)]="newPost.teamSize" name="teamSize">
+              @for (opt of teamSizeOptions; track opt.value) {
+                <option [ngValue]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+          </label>
+
+          <label class="c-modal__field">
+            <span class="c-modal__label">Rango mínimo</span>
+            <select class="c-modal__select" [(ngModel)]="newPost.minRank" name="minRank">
+              <option value="">Sin mínimo</option>
+              @for (rank of rankOptions; track rank) {
+                <option [value]="rank">{{ rank }}</option>
+              }
+            </select>
+          </label>
+        </div>
+
+        <div class="c-modal__row">
+          <label class="c-modal__field">
+            <span class="c-modal__label">Karma mínimo</span>
+            <input
+              class="c-modal__input"
+              type="number"
+              [(ngModel)]="newPost.minKarma"
+              name="minKarma"
+              min="0"
+              max="5"
+              step="0.5"
+            />
+          </label>
+        </div>
+
+        <!-- Buscador de miembros -->
+        <div class="c-modal__field">
+          <span class="c-modal__label">
+            Miembros en tu grupo
+            <span class="c-modal__label-hint">({{ selectedMembers.length }}/{{ maxMembers }} adicionales)</span>
+          </span>
+
+          @if (selectedMembers.length > 0) {
+            <ul class="c-member-chips">
+              @for (member of selectedMembers; track member._id) {
+                <li class="c-member-chip">
+                  <span class="c-member-chip__name">{{ member.riotId }}</span>
+                  @if (member.rank) {
+                    <span class="c-member-chip__rank">{{ member.rank }}</span>
+                  }
+                  <button
+                    class="c-member-chip__remove"
+                    type="button"
+                    (click)="removeMember(member)"
+                    aria-label="Quitar">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+
+          @if (selectedMembers.length < maxMembers) {
+            <div class="c-member-search">
+              <div class="c-member-search__wrap">
+                <svg class="c-member-search__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input
+                  class="c-member-search__input"
+                  type="text"
+                  [(ngModel)]="memberSearchQuery"
+                  name="memberSearch"
+                  (input)="onMemberSearchInput()"
+                  placeholder="Buscar jugador por Riot ID..."
+                  autocomplete="off"
+                />
+                @if (searchingMembers) {
+                  <span class="c-member-search__spinner"></span>
+                }
+              </div>
+
+              @if (memberSearchResults.length > 0) {
+                <ul class="c-member-search__results">
+                  @for (user of memberSearchResults; track user._id) {
+                    <li class="c-member-search__result" (click)="selectMember(user)">
+                      <div class="c-member-search__result-info">
+                        <span class="c-member-search__result-name">{{ user.riotId }}</span>
+                        @if (user.rank) {
+                          <span class="c-member-search__result-rank">{{ user.rank }}</span>
+                        }
+                      </div>
+                      @if (user.role) {
+                        <span class="c-member-search__result-role">{{ user.role }}</span>
+                      }
+                    </li>
+                  }
+                </ul>
+              }
+            </div>
+          }
+
+          <span class="c-modal__hint">Busca jugadores que ya están contigo para añadirlos directamente al grupo.</span>
+        </div>
+
+        <footer class="c-modal__footer">
+          <button class="c-btn c-btn--ghost" type="button" (click)="closeCreateModal()">Cancelar</button>
+          <button class="c-btn c-btn--primary" type="submit" [disabled]="creatingPost">
+            @if (creatingPost) {
+              <span class="c-modal__spinner"></span> Creando...
+            } @else {
+              Crear grupo
+            }
+          </button>
+        </footer>
+      </form>
+    </div>
+  </div>
+}

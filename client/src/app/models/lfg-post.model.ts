@@ -14,10 +14,10 @@ export interface LfgPost {
   teamSize: 2 | 3 | 5;
   minRank: string;
   minKarma: number;
-  schedule: string;
   members: LfgMember[];
   status: 'open' | 'full' | 'closed';
   createdAt: string;
+  expiresAt: string;
 }
 
 export type TeamSizeTab = 2 | 3 | 5;

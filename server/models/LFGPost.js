@@ -57,9 +57,6 @@ const lfgPostSchema = new mongoose.Schema({
     min: 0,
     max: 5,
   },
-  schedule: {
-    type: String,
-  },
   members: [memberSchema],
   status: {
     type: String,
@@ -69,6 +66,11 @@ const lfgPostSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
+  },
+  expiresAt: {
+    type: Date,
+    default: () => new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 horas
+    index: { expires: 0 }, // TTL index: MongoDB borra el doc cuando expiresAt < now
   },
 });
 

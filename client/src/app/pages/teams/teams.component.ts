@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
+import { AuthService } from '../../services/auth.service';
 import { TeamCardComponent } from '../../shared/team-card/team-card.component';
 import { Team } from '../../models/team.model';
 
@@ -36,12 +38,27 @@ export class TeamsComponent implements OnInit, AfterViewInit, OnDestroy {
     'Diamond', 'Ascendant', 'Immortal', 'Radiant',
   ];
 
+  // ── Crear equipo ──────────────────────────────────────
+  showCreateModal = false;
+  creatingTeam = false;
+  createError = '';
+  newTeam = {
+    name: '',
+    tag: '',
+    description: '',
+    region: 'eu',
+    targetRank: 'Gold',
+    recruiting: false,
+  };
+
   @ViewChild('scrollSentinel') scrollSentinel!: ElementRef<HTMLDivElement>;
   private observer: IntersectionObserver | null = null;
 
   constructor(
     private readonly api: ApiService,
     private readonly cdr: ChangeDetectorRef,
+    private readonly router: Router,
+    readonly auth: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -134,5 +151,61 @@ export class TeamsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filterRecruiting = false;
     this.searchQuery = '';
     this.loadTeams();
+  }
+
+  // ── Create team modal ─────────────────────────────────
+  openCreateModal(): void {
+    this.showCreateModal = true;
+    this.createError = '';
+    this.newTeam = {
+      name: '',
+      tag: '',
+      description: '',
+      region: 'eu',
+      targetRank: 'Gold',
+      recruiting: false,
+    };
+  }
+
+  closeCreateModal(): void {
+    this.showCreateModal = false;
+  }
+
+  submitNewTeam(): void {
+    if (!this.newTeam.name.trim()) {
+      this.createError = 'El nombre del equipo es obligatorio.';
+      return;
+    }
+    if (!this.newTeam.tag.trim()) {
+      this.createError = 'El tag del equipo es obligatorio.';
+      return;
+    }
+    this.creatingTeam = true;
+    this.createError = '';
+
+    const payload: Record<string, unknown> = {
+      name: this.newTeam.name.trim(),
+      tag: this.newTeam.tag.trim().toUpperCase(),
+      region: this.newTeam.region,
+      targetRank: this.newTeam.targetRank,
+      recruiting: this.newTeam.recruiting,
+    };
+    if (this.newTeam.description.trim()) {
+      payload['description'] = this.newTeam.description.trim();
+    }
+
+    this.api.createTeam(payload as any).subscribe({
+      next: (team) => {
+        this.creatingTeam = false;
+        this.showCreateModal = false;
+        this.cdr.markForCheck();
+        this.router.navigate(['/teams', team._id]);
+      },
+      error: (err) => {
+        this.creatingTeam = false;
+        this.createError = err.error?.message || 'Error al crear el equipo.';
+        this.cdr.markForCheck();
+      },
+    });
   }
 }

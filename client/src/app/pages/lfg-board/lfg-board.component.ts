@@ -1,8 +1,11 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Subject, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
 import { ApiService } from '../../services/api.service';
+import { AuthService } from '../../services/auth.service';
 import { LfgCardComponent } from '../../shared/lfg-card/lfg-card.component';
 import { LfgPost, TeamSizeTab, TEAM_SIZE_LABELS } from '../../models/lfg-post.model';
+import { User } from '../../models/user.model';
 
 @Component({
   selector: 'app-lfg-board',
@@ -31,16 +34,46 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   filterStatus = '';
   statuses = ['open', 'full', 'closed'];
 
+  // ── Crear post ─────────────────────────────────────
+  showCreateModal = false;
+  creatingPost = false;
+  createError = '';
+  newPost = {
+    title: '',
+    description: '',
+    teamSize: 2 as 2 | 3 | 5,
+    minRank: '',
+    minKarma: 3,
+  };
+  readonly rankOptions = [
+    'Iron', 'Bronze', 'Silver', 'Gold', 'Platinum',
+    'Diamond', 'Ascendant', 'Immortal', 'Radiant',
+  ];
+  readonly teamSizeOptions: { value: 2 | 3 | 5; label: string }[] = [
+    { value: 2, label: 'Duo (2v2)' },
+    { value: 3, label: 'Trio (3v3)' },
+    { value: 5, label: '5-Stack (5v5)' },
+  ];
+
+  // ── Buscador de miembros ───────────────────────────
+  memberSearchQuery = '';
+  memberSearchResults: User[] = [];
+  selectedMembers: User[] = [];
+  searchingMembers = false;
+  private memberSearch$ = new Subject<string>();
+
   @ViewChild('scrollSentinel') scrollSentinel!: ElementRef<HTMLDivElement>;
   private observer: IntersectionObserver | null = null;
 
   constructor(
     private readonly api: ApiService,
     private readonly cdr: ChangeDetectorRef,
+    readonly auth: AuthService,
   ) {}
 
   ngOnInit(): void {
     this.loadPosts();
+    this.setupMemberSearch();
   }
 
   ngAfterViewInit(): void {
@@ -141,5 +174,100 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   clearFilters(): void {
     this.filterStatus = '';
     this.loadPosts();
+  }
+
+  // ── Create post modal ────────────────────────────────
+  openCreateModal(): void {
+    this.showCreateModal = true;
+    this.createError = '';
+    this.newPost = {
+      title: '',
+      description: '',
+      teamSize: this.activeTab,
+      minRank: '',
+      minKarma: 3,
+    };
+    this.selectedMembers = [];
+    this.memberSearchQuery = '';
+    this.memberSearchResults = [];
+  }
+
+  closeCreateModal(): void {
+    this.showCreateModal = false;
+  }
+
+  submitNewPost(): void {
+    if (!this.newPost.title.trim()) {
+      this.createError = 'El título es obligatorio.';
+      return;
+    }
+    this.creatingPost = true;
+    this.createError = '';
+
+    const payload: Record<string, unknown> = {
+      title: this.newPost.title.trim(),
+      teamSize: this.newPost.teamSize,
+    };
+    if (this.newPost.description.trim()) payload['description'] = this.newPost.description.trim();
+    if (this.newPost.minRank) payload['minRank'] = this.newPost.minRank;
+    if (this.newPost.minKarma > 0) payload['minKarma'] = this.newPost.minKarma;
+    if (this.selectedMembers.length > 0) {
+      payload['initialMembers'] = this.selectedMembers.map((u) => u._id);
+    }
+
+    this.api.createLfgPost(payload as any).subscribe({
+      next: () => {
+        this.creatingPost = false;
+        this.showCreateModal = false;
+        this.loadPosts();
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.creatingPost = false;
+        this.createError = err.error?.message || 'Error al crear el grupo.';
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  // ── Member search ──────────────────────────────────
+  private setupMemberSearch(): void {
+    this.memberSearch$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((query) => {
+        if (query.length < 2) return of([]);
+        this.searchingMembers = true;
+        return this.api.searchUsers(query);
+      }),
+    ).subscribe((users) => {
+      const currentUserId = this.auth.currentUser()?._id;
+      const selectedIds = new Set(this.selectedMembers.map((u) => u._id));
+      this.memberSearchResults = users.filter(
+        (u) => u._id !== currentUserId && !selectedIds.has(u._id),
+      );
+      this.searchingMembers = false;
+      this.cdr.markForCheck();
+    });
+  }
+
+  onMemberSearchInput(): void {
+    this.memberSearch$.next(this.memberSearchQuery);
+  }
+
+  selectMember(user: User): void {
+    const maxExtra = this.newPost.teamSize - 1;
+    if (this.selectedMembers.length >= maxExtra) return;
+    this.selectedMembers.push(user);
+    this.memberSearchQuery = '';
+    this.memberSearchResults = [];
+  }
+
+  removeMember(user: User): void {
+    this.selectedMembers = this.selectedMembers.filter((u) => u._id !== user._id);
+  }
+
+  get maxMembers(): number {
+    return this.newPost.teamSize - 1;
   }
 }

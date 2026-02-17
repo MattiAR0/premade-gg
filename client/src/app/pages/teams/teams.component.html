@@ -12,6 +12,14 @@
       <h1 class="c-page-header__title">Equipos</h1>
       <p class="c-page-header__desc">Descubre equipos de Valorant, su historia, roster y staff. Encuentra tu próximo equipo.</p>
     </div>
+    @if (auth.isAuthenticated()) {
+      <div class="c-page-header__actions">
+        <button class="c-btn c-btn--primary" (click)="openCreateModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Crear equipo
+        </button>
+      </div>
+    }
   </header>
 
   <!-- Filtros -->
@@ -124,3 +132,103 @@
     <div #scrollSentinel class="c-scroll-sentinel"></div>
   </section>
 </main>
+
+<!-- ── Modal: Crear equipo ─────────────────────────── -->
+@if (showCreateModal) {
+  <div class="c-modal-overlay" (click)="closeCreateModal()">
+    <div class="c-modal" (click)="$event.stopPropagation()">
+      <header class="c-modal__header">
+        <h2 class="c-modal__title">Crear equipo</h2>
+        <button class="c-modal__close" (click)="closeCreateModal()" aria-label="Cerrar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </header>
+
+      @if (createError) {
+        <p class="c-modal__error">{{ createError }}</p>
+      }
+
+      <form class="c-modal__form" (ngSubmit)="submitNewTeam()">
+        <div class="c-modal__row">
+          <label class="c-modal__field c-modal__field--grow">
+            <span class="c-modal__label">Nombre del equipo *</span>
+            <input
+              class="c-modal__input"
+              type="text"
+              [(ngModel)]="newTeam.name"
+              name="name"
+              placeholder="Ej: Phantom Esports"
+              maxlength="40"
+              required
+            />
+            <span class="c-modal__hint">{{ newTeam.name.length }}/40</span>
+          </label>
+
+          <label class="c-modal__field c-modal__field--tag">
+            <span class="c-modal__label">Tag *</span>
+            <input
+              class="c-modal__input"
+              type="text"
+              [(ngModel)]="newTeam.tag"
+              name="tag"
+              placeholder="PHE"
+              maxlength="6"
+              required
+              style="text-transform: uppercase"
+            />
+            <span class="c-modal__hint">{{ newTeam.tag.length }}/6</span>
+          </label>
+        </div>
+
+        <label class="c-modal__field">
+          <span class="c-modal__label">Descripción / Historia</span>
+          <textarea
+            class="c-modal__textarea"
+            [(ngModel)]="newTeam.description"
+            name="description"
+            placeholder="Cuéntanos sobre tu equipo: cómo surgió, objetivos, qué buscan..."
+            maxlength="1500"
+            rows="4"
+          ></textarea>
+          <span class="c-modal__hint">{{ newTeam.description.length }}/1500</span>
+        </label>
+
+        <div class="c-modal__row">
+          <label class="c-modal__field">
+            <span class="c-modal__label">Región</span>
+            <select class="c-modal__select" [(ngModel)]="newTeam.region" name="region">
+              @for (r of regions; track r) {
+                <option [value]="r">{{ regionLabels[r] }}</option>
+              }
+            </select>
+          </label>
+
+          <label class="c-modal__field">
+            <span class="c-modal__label">Rango objetivo</span>
+            <select class="c-modal__select" [(ngModel)]="newTeam.targetRank" name="targetRank">
+              @for (rank of ranks; track rank) {
+                <option [value]="rank">{{ rank }}</option>
+              }
+            </select>
+          </label>
+        </div>
+
+        <label class="c-modal__toggle">
+          <input type="checkbox" [(ngModel)]="newTeam.recruiting" name="recruiting" />
+          <span class="c-modal__toggle-label">Estamos reclutando jugadores</span>
+        </label>
+
+        <footer class="c-modal__footer">
+          <button class="c-btn c-btn--ghost" type="button" (click)="closeCreateModal()">Cancelar</button>
+          <button class="c-btn c-btn--primary" type="submit" [disabled]="creatingTeam">
+            @if (creatingTeam) {
+              <span class="c-modal__spinner"></span> Creando...
+            } @else {
+              Crear equipo
+            }
+          </button>
+        </footer>
+      </form>
+    </div>
+  </div>
+}
