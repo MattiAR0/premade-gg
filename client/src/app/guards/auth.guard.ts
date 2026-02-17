@@ -3,11 +3,15 @@ import { Router, type CanActivateFn } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 /**
- * Guard funcional que redirige a /login si el usuario no está autenticado.
+ * Guard funcional que espera a que la sesión se restaure
+ * antes de decidir si el usuario está autenticado.
  */
-export const authGuard: CanActivateFn = () => {
+export const authGuard: CanActivateFn = async () => {
   const authService = inject(AuthService);
   const router = inject(Router);
+
+  // Esperar a que se complete la restauración de sesión (si está en curso)
+  await authService.whenSessionRestored;
 
   if (authService.isAuthenticated()) {
     return true;
