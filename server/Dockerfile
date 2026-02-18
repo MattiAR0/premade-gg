@@ -9,18 +9,19 @@ WORKDIR /app
 #    (aprovecha la cache de Docker: si no cambian, no reinstala)
 COPY package*.json ./
 
-# 2. Instalar dependencias
-RUN npm install
+# 2. Instalar dependencias (producción o todas según NODE_ENV)
+ARG NODE_ENV=development
+RUN if [ "$NODE_ENV" = "production" ]; then \
+      npm ci --omit=dev; \
+    else \
+      npm install && npm install -g nodemon; \
+    fi
 
-# 3. Instalar nodemon globalmente para que siempre esté en PATH
-#    (el volumen anónimo de docker-compose puede sobreescribir node_modules)
-RUN npm install -g nodemon
-
-# 4. Copiar el resto del código fuente
+# 3. Copiar el resto del código fuente
 COPY . .
 
 # Puerto que expone la API
 EXPOSE 4000
 
-# Comando por defecto: arrancar con nodemon (hot-reload en desarrollo)
-CMD ["nodemon", "app.js"]
+# Comando por defecto: node en producción, nodemon en desarrollo
+CMD if [ "$NODE_ENV" = "production" ]; then node app.js; else nodemon app.js; fi

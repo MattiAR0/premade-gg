@@ -1,0 +1,38 @@
+# ── Render Blueprint ───────────────────────────────────
+# Archivo para deploy automático en Render.com
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: premadegg-api
+    runtime: node
+    region: frankfurt  # Cambiar según tu ubicación (oregon, singapore, etc.)
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false  # Se configura manualmente en el dashboard (Atlas URI)
+      - key: JWT_SECRET
+        sync: false
+      - key: RIOT_API_KEY
+        sync: false
+      - key: HENRIK_API_KEY
+        sync: false
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_SECURE
+        value: "false"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      - key: CLIENT_URL
+        sync: false  # URL de Vercel (ej: https://premadegg.vercel.app)

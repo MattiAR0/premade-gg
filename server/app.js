@@ -41,16 +41,26 @@ const { connectDB } = require('./config/db');
 // ── Configuración ─────────────────────────────────────
 const app = express();
 const server = http.createServer(app);
+
+// CORS: en producción solo acepta el dominio del frontend (Vercel)
+// En desarrollo acepta cualquier origen para facilitar el trabajo
+const allowedOrigins = process.env.CLIENT_URL
+  ? process.env.CLIENT_URL.split(',')
+  : ['http://localhost:4200'];
+
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' ? allowedOrigins : '*',
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  credentials: true,
+};
+
 const io = new SocketIO(server, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
-  },
+  cors: corsOptions,
 });
 const PORT = process.env.PORT || 4000;
 
 // ── Middlewares globales ──────────────────────────────
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(compression()); // Comprime respuestas JSON (~70% menos tamaño)
 app.use(express.json());
 
