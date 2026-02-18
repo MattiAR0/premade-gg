@@ -5,11 +5,12 @@
  *
  * Purpose:
  * 1. Connects to MongoDB.
- * 2. Cleans the DB (Drops existing Users, Reputations and LFGPosts).
+ * 2. Cleans the DB (Drops existing Users, Reputations, LFGPosts and Teams).
  * 3. Creates 20 realistic Users with Valorant ranks/roles.
  * 4. Creates 50 Reviews interacting between these users.
  * 5. Creates 10 LFG Posts from users with good karma.
- * 6. Calculates initial Karma based on reviews.
+ * 6. Creates 5 Teams with rosters, coaches, and achievements.
+ * 7. Calculates initial Karma based on reviews.
  */
 
 const mongoose = require('mongoose');
@@ -18,6 +19,7 @@ const bcrypt = require('bcrypt');
 const User = require('./models/User');
 const Reputation = require('./models/Reputation');
 const LFGPost = require('./models/LFGPost');
+const Team = require('./models/Team');
 require('dotenv').config();
 
 // Configuration
@@ -42,11 +44,34 @@ const SCHEDULES = ['Weekends', 'Evenings', 'Late Night', 'Mornings', 'Flexible']
 const REGIONS = ['eu', 'na', 'ap', 'kr'];
 
 const VALORANT_AGENTS = [
-  'Brimstone', 'Phoenix', 'Sage', 'Sova', 'Viper',
-  'Cypher', 'Reyna', 'Killjoy', 'Breach', 'Omen',
-  'Jett', 'Raze', 'Skye', 'Yoru', 'Astra',
-  'KAY/O', 'Chamber', 'Neon', 'Fade', 'Harbor',
-  'Gekko', 'Deadlock', 'Iso', 'Clove', 'Vyse', 'Tejo', 'Waylay', 'Veto',
+  'Brimstone',
+  'Phoenix',
+  'Sage',
+  'Sova',
+  'Viper',
+  'Cypher',
+  'Reyna',
+  'Killjoy',
+  'Breach',
+  'Omen',
+  'Jett',
+  'Raze',
+  'Skye',
+  'Yoru',
+  'Astra',
+  'KAY/O',
+  'Chamber',
+  'Neon',
+  'Fade',
+  'Harbor',
+  'Gekko',
+  'Deadlock',
+  'Iso',
+  'Clove',
+  'Vyse',
+  'Tejo',
+  'Waylay',
+  'Veto',
 ];
 
 const BIOS = [
@@ -83,6 +108,7 @@ async function seed() {
     await User.deleteMany({});
     await Reputation.deleteMany({});
     await LFGPost.deleteMany({});
+    await Team.deleteMany({});
     console.log('✨ Database clean.');
 
     // 2. Create Users
@@ -98,7 +124,9 @@ async function seed() {
       for (const day of days) {
         const available = faker.datatype.boolean(0.5);
         availability[day] = {
-          from: available ? faker.helpers.arrayElement(['16:00', '17:00', '18:00', '19:00', '20:00']) : '',
+          from: available
+            ? faker.helpers.arrayElement(['16:00', '17:00', '18:00', '19:00', '20:00'])
+            : '',
           to: available ? faker.helpers.arrayElement(['22:00', '23:00', '00:00', '01:00']) : '',
           available,
         };
@@ -207,13 +235,19 @@ async function seed() {
       const shuffled = faker.helpers.shuffle(otherUsers);
 
       // Algunos aceptados (sin llenar el team completo)
-      const acceptedCount = faker.number.int({ min: 0, max: Math.min(teamSize - 2, shuffled.length) });
+      const acceptedCount = faker.number.int({
+        min: 0,
+        max: Math.min(teamSize - 2, shuffled.length),
+      });
       for (let j = 0; j < acceptedCount && j < shuffled.length; j++) {
         members.push({ user: shuffled[j]._id, status: 'accepted', joinedAt: faker.date.recent() });
       }
 
       // Algunas solicitudes pendientes
-      const pendingCount = faker.number.int({ min: 0, max: Math.min(2, shuffled.length - acceptedCount) });
+      const pendingCount = faker.number.int({
+        min: 0,
+        max: Math.min(2, shuffled.length - acceptedCount),
+      });
       for (let j = acceptedCount; j < acceptedCount + pendingCount && j < shuffled.length; j++) {
         members.push({ user: shuffled[j]._id, status: 'pending', joinedAt: faker.date.recent() });
       }
@@ -233,6 +267,120 @@ async function seed() {
 
     await LFGPost.insertMany(lfgData);
     console.log('✅ LFG Posts created.');
+
+    // 6. Create Teams
+    const TEAM_COUNT = 5;
+    console.log(`🏰 Generating ${TEAM_COUNT} teams...`);
+    const TEAM_NAMES = [
+      'Valorant Reapers',
+      'Shadow Strikers',
+      'Neon Wolves',
+      'Phantom Squad',
+      'Iron Clad Gaming',
+    ];
+    const TEAM_TAGS = ['REAP', 'SHDS', 'NWLF', 'PHNT', 'IRON'];
+    const TEAM_DESCRIPTIONS = [
+      'Equipo competitivo buscando mejorar en ranked y torneos amateur.',
+      'Grupo de amigos que buscan ser competitivos y pasarlo bien.',
+      'Team enfocado en scrims y mejora constante.',
+      'Equipo casual con ganas de competir en ligas online.',
+      'Roster estable buscando coach y analista para siguiente temporada.',
+    ];
+    const ACHIEVEMENTS = [
+      {
+        title: 'Campeón Liga Amateur S1',
+        description: 'Primer puesto en la liga amateur de Valorant.',
+      },
+      {
+        title: 'Semifinalista Torneo Community',
+        description: 'Top 4 en torneo comunitario de 32 equipos.',
+      },
+      { title: 'MVP Regional', description: 'Mejor equipo de la región en el mes.' },
+    ];
+    const RECRUITING_ROLES = [
+      'Duelist',
+      'Controller',
+      'Initiator',
+      'Sentinel',
+      'Flex',
+      'Coach',
+      'Analyst',
+    ];
+
+    const teamData = [];
+    const usedOwners = new Set();
+
+    for (let i = 0; i < TEAM_COUNT; i++) {
+      // Pick a unique owner
+      let owner;
+      do {
+        owner = faker.helpers.arrayElement(allUsersRefreshed);
+      } while (usedOwners.has(owner._id.toString()));
+      usedOwners.add(owner._id.toString());
+
+      // Pick 2-4 players (owner is always first player)
+      const otherPlayers = allUsersRefreshed.filter(
+        (u) => !u._id.equals(owner._id) && !usedOwners.has(u._id.toString()),
+      );
+      const shuffledPlayers = faker.helpers.shuffle(otherPlayers);
+      const playerCount = faker.number.int({ min: 2, max: Math.min(4, shuffledPlayers.length) });
+
+      const players = [
+        { user: owner._id, role: owner.role || 'Flex', joinedAt: faker.date.recent() },
+      ];
+      for (let j = 0; j < playerCount; j++) {
+        players.push({
+          user: shuffledPlayers[j]._id,
+          role: shuffledPlayers[j].role || faker.helpers.arrayElement(VALORANT_ROLES),
+          joinedAt: faker.date.recent(),
+        });
+      }
+
+      // Optional coach
+      const hasCoach = faker.datatype.boolean(0.4);
+      const coachUser = hasCoach
+        ? faker.helpers.arrayElement(allUsersRefreshed.filter((u) => !u._id.equals(owner._id)))
+        : null;
+
+      // Optional achievements
+      const achievements = faker.datatype.boolean(0.5)
+        ? faker.helpers.arrayElements(ACHIEVEMENTS, { min: 1, max: 2 }).map((a) => ({
+            ...a,
+            date: faker.date.recent(),
+          }))
+        : [];
+
+      const recruiting = faker.datatype.boolean(0.5);
+
+      teamData.push({
+        name: TEAM_NAMES[i],
+        tag: TEAM_TAGS[i],
+        description: TEAM_DESCRIPTIONS[i],
+        owner: owner._id,
+        coach: coachUser ? coachUser._id : null,
+        staff: [],
+        players,
+        region: faker.helpers.arrayElement(REGIONS),
+        targetRank: faker.helpers.arrayElement(VALORANT_RANKS),
+        socialLinks: {
+          discord: faker.datatype.boolean(0.7) ? faker.internet.userName() : '',
+          twitter: faker.datatype.boolean(0.3) ? faker.internet.userName() : '',
+          twitch: faker.datatype.boolean(0.2) ? faker.internet.userName() : '',
+          youtube: faker.datatype.boolean(0.1) ? faker.internet.userName() : '',
+        },
+        achievements,
+        recruiting,
+        recruitingRoles: recruiting
+          ? faker.helpers.arrayElements(RECRUITING_ROLES, { min: 1, max: 3 })
+          : [],
+        recruitingDetails: recruiting
+          ? 'Buscamos jugadores activos con buena actitud y ganas de mejorar.'
+          : '',
+      });
+    }
+
+    await Team.insertMany(teamData);
+    console.log('✅ Teams created.');
 
     console.log('🌱 Seed completed successfully!');
     process.exit(0);

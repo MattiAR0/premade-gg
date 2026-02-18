@@ -17,12 +17,7 @@ const notificationSchema = new mongoose.Schema({
   /** Tipo de notificación */
   type: {
     type: String,
-    enum: [
-      'join_request',
-      'request_accepted',
-      'request_rejected',
-      'member_kicked',
-    ],
+    enum: ['join_request', 'request_accepted', 'request_rejected', 'member_kicked'],
     required: true,
   },
   /** Post LFG relacionado (opcional, por si se amplía a otros tipos) */

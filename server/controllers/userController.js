@@ -48,26 +48,27 @@ const getUsers = async (req, res, next) => {
     // Solo contamos documentos cuando NO hay cursor (primera página)
     const queries = [User.find(filter).sort({ karma: -1, _id: -1 }).limit(limit).lean()];
     if (!cursor) {
-      queries.push(User.countDocuments(
-        // Count usa el filtro original sin cursor
-        (() => {
-          const f = {};
-          if (rank) f.rank = rank;
-          if (role) f.role = role;
-          if (minKarma) f.karma = { $gte: Number(minKarma) };
-          if (lookingForTeam === 'true') f.lookingForTeam = true;
-          return f;
-        })(),
-      ));
+      queries.push(
+        User.countDocuments(
+          // Count usa el filtro original sin cursor
+          (() => {
+            const f = {};
+            if (rank) f.rank = rank;
+            if (role) f.role = role;
+            if (minKarma) f.karma = { $gte: Number(minKarma) };
+            if (lookingForTeam === 'true') f.lookingForTeam = true;
+            return f;
+          })(),
+        ),
+      );
     }
 
     const [users, total] = await Promise.all(queries);
 
     // Generar el cursor para la siguiente página
     const lastUser = users[users.length - 1];
-    const nextCursor = lastUser && users.length === limit
-      ? `${lastUser.karma}_${lastUser._id}`
-      : null;
+    const nextCursor =
+      lastUser && users.length === limit ? `${lastUser.karma}_${lastUser._id}` : null;
 
     const resolvedTotal = !cursor && total !== undefined ? total : -1;
 
@@ -233,9 +234,7 @@ const searchUsers = async (req, res, next) => {
       return res.json([]);
     }
 
-    const users = await User.find(
-      { riotId: { $regex: q, $options: 'i' } },
-    )
+    const users = await User.find({ riotId: { $regex: q, $options: 'i' } })
       .select('riotId rank role karma region profileImage profileImageType cardImage')
       .limit(10)
       .lean();

@@ -1,21 +1,24 @@
 const mongoose = require('mongoose');
 
-const memberSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
+const memberSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ['pending', 'accepted'],
+      default: 'pending',
+    },
+    joinedAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
-  status: {
-    type: String,
-    enum: ['pending', 'accepted'],
-    default: 'pending',
-  },
-  joinedAt: {
-    type: Date,
-    default: Date.now,
-  },
-}, { _id: false });
+  { _id: false },
+);
 
 const lfgPostSchema = new mongoose.Schema({
   author: {

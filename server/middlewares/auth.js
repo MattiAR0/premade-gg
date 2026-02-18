@@ -56,11 +56,7 @@ const optionalAuth = (req, _res, next) => {
  * @returns {string} Token JWT
  */
 const generateToken = (user) => {
-  return jwt.sign(
-    { id: user._id, email: user.email },
-    JWT_SECRET,
-    { expiresIn: '7d' },
-  );
+  return jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
 };
 
 module.exports = { requireAuth, optionalAuth, generateToken, JWT_SECRET };

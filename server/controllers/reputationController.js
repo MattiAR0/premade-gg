@@ -32,18 +32,10 @@ const checkPlayedTogetherInternal = async (userA, userB) => {
     Team.findOne({
       $and: [
         {
-          $or: [
-            { owner: userA },
-            { coach: userA },
-            { 'players.user': userA },
-          ],
+          $or: [{ owner: userA }, { coach: userA }, { 'players.user': userA }],
         },
         {
-          $or: [
-            { owner: userB },
-            { coach: userB },
-            { 'players.user': userB },
-          ],
+          $or: [{ owner: userB }, { coach: userB }, { 'players.user': userB }],
         },
       ],
     }).lean(),
@@ -174,7 +166,12 @@ const checkEligibility = async (req, res, next) => {
     const targetId = req.params.targetId;
 
     if (authorId === targetId) {
-      return res.json({ canReview: false, reason: 'self', playedTogether: false, existingReview: null });
+      return res.json({
+        canReview: false,
+        reason: 'self',
+        playedTogether: false,
+        existingReview: null,
+      });
     }
 
     // ¿Ya existe una review?

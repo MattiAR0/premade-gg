@@ -5,8 +5,15 @@ const { resolveAuthors } = require('../services/authorCache');
 const socketService = require('../services/socketService');
 
 const RANK_ORDER = [
-  'Iron', 'Bronze', 'Silver', 'Gold', 'Platinum',
-  'Diamond', 'Ascendant', 'Immortal', 'Radiant',
+  'Iron',
+  'Bronze',
+  'Silver',
+  'Gold',
+  'Platinum',
+  'Diamond',
+  'Ascendant',
+  'Immortal',
+  'Radiant',
 ];
 
 /**
@@ -70,9 +77,10 @@ const getPosts = async (req, res, next) => {
     const posts = await resolveAuthors(rawPosts);
 
     const lastPost = posts[posts.length - 1];
-    const nextCursor = lastPost && posts.length === limit
-      ? `${lastPost.createdAt.toISOString()}_${lastPost._id}`
-      : null;
+    const nextCursor =
+      lastPost && posts.length === limit
+        ? `${lastPost.createdAt.toISOString()}_${lastPost._id}`
+        : null;
 
     const resolvedTotal = !cursor && total !== undefined ? total : -1;
 
@@ -96,7 +104,10 @@ const getPostById = async (req, res, next) => {
   try {
     const post = await LFGPost.findById(req.params.id)
       .populate('author', 'riotId rank role karma region cardImage profileImage profileImageType')
-      .populate('members.user', 'riotId rank role karma region cardImage profileImage profileImageType')
+      .populate(
+        'members.user',
+        'riotId rank role karma region cardImage profileImage profileImageType',
+      )
       .lean();
 
     if (!post) {
@@ -158,8 +169,14 @@ const createPost = async (req, res, next) => {
     });
 
     const populated = await post.populate([
-      { path: 'author', select: 'riotId rank role karma region cardImage profileImage profileImageType' },
-      { path: 'members.user', select: 'riotId rank role karma region cardImage profileImage profileImageType' },
+      {
+        path: 'author',
+        select: 'riotId rank role karma region cardImage profileImage profileImageType',
+      },
+      {
+        path: 'members.user',
+        select: 'riotId rank role karma region cardImage profileImage profileImageType',
+      },
     ]);
     res.status(201).json(populated);
   } catch (err) {
@@ -191,7 +208,10 @@ const updatePost = async (req, res, next) => {
     await post.save();
     await post.populate([
       { path: 'author', select: 'riotId rank role karma region' },
-      { path: 'members.user', select: 'riotId rank region cardImage profileImage profileImageType' },
+      {
+        path: 'members.user',
+        select: 'riotId rank region cardImage profileImage profileImageType',
+      },
     ]);
     res.json(post);
   } catch (err) {
@@ -243,9 +263,10 @@ const joinPost = async (req, res, next) => {
     // Verificar si ya es miembro o tiene solicitud pendiente
     const existingMember = post.members.find((m) => m.user.toString() === userId);
     if (existingMember) {
-      const msg = existingMember.status === 'accepted'
-        ? 'Ya eres miembro de este grupo'
-        : 'Ya tienes una solicitud pendiente';
+      const msg =
+        existingMember.status === 'accepted'
+          ? 'Ya eres miembro de este grupo'
+          : 'Ya tienes una solicitud pendiente';
       return res.status(400).json({ message: msg });
     }
 
@@ -315,9 +336,7 @@ const handleMemberRequest = async (req, res, next) => {
       return res.status(403).json({ message: 'Solo el creador puede gestionar solicitudes' });
     }
 
-    const memberIdx = post.members.findIndex(
-      (m) => m.user.toString() === req.params.userId,
-    );
+    const memberIdx = post.members.findIndex((m) => m.user.toString() === req.params.userId);
     if (memberIdx === -1) {
       return res.status(404).json({ message: 'Solicitud no encontrada' });
     }
@@ -358,7 +377,10 @@ const handleMemberRequest = async (req, res, next) => {
     }
 
     await post.save();
-    await post.populate('members.user', 'riotId rank region cardImage profileImage profileImageType');
+    await post.populate(
+      'members.user',
+      'riotId rank region cardImage profileImage profileImageType',
+    );
 
     // Notificar al usuario aceptado
     const acceptNotif = await Notification.create({
@@ -404,12 +426,12 @@ const leavePost = async (req, res, next) => {
 
     // No permitir que el creador se expulse a sí mismo
     if (targetUserId === post.author.toString()) {
-      return res.status(400).json({ message: 'El creador no puede abandonar su propio grupo. Ciérralo en su lugar.' });
+      return res
+        .status(400)
+        .json({ message: 'El creador no puede abandonar su propio grupo. Ciérralo en su lugar.' });
     }
 
-    const memberIdx = post.members.findIndex(
-      (m) => m.user.toString() === targetUserId,
-    );
+    const memberIdx = post.members.findIndex((m) => m.user.toString() === targetUserId);
     if (memberIdx === -1) {
       return res.status(404).json({ message: 'Miembro no encontrado' });
     }

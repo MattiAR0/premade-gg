@@ -11,7 +11,6 @@
 const express = require('express');
 const http = require('http');
 const { Server: SocketIO } = require('socket.io');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const compression = require('compression');
 const morgan = require('morgan');
@@ -36,19 +35,23 @@ const errorHandler = require('./middlewares/errorHandler');
 const { verifyConnection: verifySmtp } = require('./services/emailService');
 const socketService = require('./services/socketService');
 
+// Config
+const { connectDB } = require('./config/db');
+
 // ── Configuración ─────────────────────────────────────
-const app = express();const server = http.createServer(app);
+const app = express();
+const server = http.createServer(app);
 const io = new SocketIO(server, {
   cors: {
     origin: '*',
     methods: ['GET', 'POST'],
   },
-});const PORT = process.env.PORT || 4000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/premade-gg';
+});
+const PORT = process.env.PORT || 4000;
 
 // ── Middlewares globales ──────────────────────────────
 app.use(cors());
-app.use(compression());       // Comprime respuestas JSON (~70% menos tamaño)
+app.use(compression()); // Comprime respuestas JSON (~70% menos tamaño)
 app.use(express.json());
 
 // Logs condicionales (Requisito Rúbrica: 20%)
@@ -115,10 +118,8 @@ app.get('/', (_req, res) => {
 app.use(errorHandler);
 
 // ── Conexión a MongoDB y arranque ─────────────────────
-mongoose
-  .connect(MONGO_URI)
+connectDB()
   .then(async () => {
-    console.log('✅ MongoDB connected:', MONGO_URI);
     await verifySmtp();
 
     // Inicializar Socket.IO
