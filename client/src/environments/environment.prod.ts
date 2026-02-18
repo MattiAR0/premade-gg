@@ -8,6 +8,6 @@
  */
 export const environment = {
   production: true,
-  apiUrl: 'https://premadegg-api.onrender.com/api',
-  socketUrl: 'https://premadegg-api.onrender.com',
+  apiUrl: 'https://premade-gg.onrender.com/api',
+  socketUrl: 'https://premade-gg.onrender.com',
 };
