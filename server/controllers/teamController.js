@@ -141,7 +141,25 @@ const createTeam = async (req, res, next) => {
       recruiting,
       recruitingRoles,
       recruitingDetails,
+      initialPlayers, // New field for initial members
     } = req.body;
+
+    // Validate initialPlayers if present
+    let initialPlayersList = [];
+    if (initialPlayers && Array.isArray(initialPlayers)) {
+      initialPlayersList = [...new Set(initialPlayers)];
+      if (initialPlayersList.length > 9) {
+        return res.status(400).json({ message: 'Máximo 9 jugadores iniciales adicionales' });
+      }
+    }
+
+    // Prepare initial team players (Owner + invited users)
+    const teamPlayers = [{ user: userId, role: 'Flex', joinedAt: new Date() }];
+    for (const pId of initialPlayersList) {
+      if (pId !== userId) {
+        teamPlayers.push({ user: pId, role: 'Flex', joinedAt: new Date() });
+      }
+    }
 
     const team = await Team.create({
       name,
@@ -154,21 +172,29 @@ const createTeam = async (req, res, next) => {
       recruiting,
       recruitingRoles,
       recruitingDetails,
-      players: [{ user: userId, role: 'Flex', joinedAt: new Date() }],
+      players: teamPlayers,
     });
 
     // Create a group chat for the new team
     const teamConversation = await Conversation.create({
       type: 'group',
       name: `Team ${name}`,
-      participants: [userId],
+      participants: [userId, ...initialPlayersList.filter(id => id !== userId)],
       admin: userId,
       teamId: team._id,
     });
 
-    // Join the owner to the chat
-    socketService.joinUserToConversation(userId, teamConversation._id.toString());
-    socketService.emitToUser(userId, 'conversation:new', teamConversation);
+    // Join all participants to the chat and notify them
+    for (const pId of teamConversation.participants) {
+      const pIdStr = pId.toString();
+      socketService.joinUserToConversation(pIdStr, teamConversation._id.toString());
+      if (pIdStr === userId) {
+        socketService.emitToUser(userId, 'conversation:new', teamConversation);
+      } else {
+        // We might need to populate this properly in real app, but for now we just emit
+        socketService.emitToUser(pIdStr, 'conversation:new', teamConversation);
+      }
+    }
 
     const populated = await team.populate([
       { path: 'owner', select: POPULATE_FIELDS },
@@ -473,6 +499,94 @@ const removeStaff = async (req, res, next) => {
   }
 };
 
+/**
+ * POST /api/teams/:id/requests
+ * Body: { message: string }
+ */
+const requestToJoin = async (req, res, next) => {
+  try {
+    const team = await Team.findById(req.params.id);
+    if (!team) {
+      return res.status(404).json({ message: 'Equipo no encontrado' });
+    }
+
+    // Check if user is already in team
+    const isPlayer = team.players.some((p) => p.user.toString() === req.user.id);
+    const isStaff = team.staff.some((s) => s.user.toString() === req.user.id);
+    if (isPlayer || isStaff || team.owner.toString() === req.user.id) {
+      return res.status(400).json({ message: 'Ya eres miembro de este equipo' });
+    }
+
+    // Check if there is already a pending request
+    const existingReq = team.joinRequests.find((r) => r.user.toString() === req.user.id && r.status === 'pending');
+    if (existingReq) {
+      return res.status(400).json({ message: 'Ya tienes una solicitud pendiente para este equipo' });
+    }
+
+    const { message } = req.body;
+    team.joinRequests.push({ user: req.user.id, message: message || '' });
+    await team.save();
+
+    res.json({ message: 'Solicitud enviada correctamente' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * PUT /api/teams/:id/requests/:userId
+ * Body: { status: 'accepted' | 'rejected' }
+ */
+const reviewJoinRequest = async (req, res, next) => {
+  try {
+    const team = await Team.findById(req.params.id);
+    if (!team) {
+      return res.status(404).json({ message: 'Equipo no encontrado' });
+    }
+
+    if (team.owner.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Solo el dueño puede revisar solicitudes' });
+    }
+
+    const requestUser = req.params.userId;
+    const { status } = req.body;
+
+    if (!['accepted', 'rejected'].includes(status)) {
+      return res.status(400).json({ message: 'Estado de solicitud inválido' });
+    }
+
+    const requestIndex = team.joinRequests.findIndex(
+      (r) => r.user.toString() === requestUser && r.status === 'pending'
+    );
+
+    if (requestIndex === -1) {
+      return res.status(404).json({ message: 'Solicitud no encontrada o ya procesada' });
+    }
+
+    team.joinRequests[requestIndex].status = status;
+
+    if (status === 'accepted') {
+      team.players.push({ user: requestUser, role: 'Flex', joinedAt: new Date() });
+
+      const conversation = await Conversation.findOneAndUpdate(
+        { teamId: team._id },
+        { $addToSet: { participants: requestUser } },
+        { new: true }
+      );
+      if (conversation) {
+        socketService.joinUserToConversation(requestUser, conversation._id.toString());
+        socketService.emitToUser(requestUser, 'conversation:new', conversation);
+        socketService.emitToConversation(conversation._id.toString(), 'conversation:updated', conversation);
+      }
+    }
+
+    await team.save();
+    res.json({ message: `Solicitud ${status === 'accepted' ? 'aceptada' : 'rechazada'}` });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getTeams,
   getTeamById,
@@ -484,4 +598,6 @@ module.exports = {
   removePlayer,
   addStaff,
   removeStaff,
+  requestToJoin,
+  reviewJoinRequest,
 };

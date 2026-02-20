@@ -40,6 +40,13 @@ export interface Team {
   recruiting: boolean;
   recruitingRoles: string[];
   recruitingDetails: string;
+  joinRequests?: {
+    _id?: string;
+    user: User;
+    message: string;
+    status: 'pending' | 'accepted' | 'rejected';
+    createdAt: string;
+  }[];
   createdAt: string;
 }
 

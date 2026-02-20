@@ -5,6 +5,8 @@ import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { TeamCardComponent } from '../../shared/team-card/team-card.component';
 import { Team } from '../../models/team.model';
+import { User } from '../../models/user.model';
+import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-teams',
@@ -51,6 +53,12 @@ export class TeamsComponent implements OnInit, AfterViewInit, OnDestroy {
     recruiting: false,
   };
 
+  // Búsqueda de usuarios iniciales
+  memberSearchQuery = '';
+  memberSearchResults: User[] = [];
+  selectedInitialMembers: User[] = [];
+  private readonly searchSubject = new Subject<string>();
+
   @ViewChild('scrollSentinel') scrollSentinel!: ElementRef<HTMLDivElement>;
   private observer: IntersectionObserver | null = null;
 
@@ -59,7 +67,24 @@ export class TeamsComponent implements OnInit, AfterViewInit, OnDestroy {
     private readonly cdr: ChangeDetectorRef,
     private readonly router: Router,
     readonly auth: AuthService,
-  ) {}
+  ) {
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(query => {
+        if (!query.trim()) {
+          return [[]]; // empty array as observable
+        }
+        return this.api.searchUsers(query);
+      })
+    ).subscribe(results => {
+      const myId = this.auth.currentUser()?._id;
+      this.memberSearchResults = results.filter(u =>
+        u._id !== myId && !this.selectedInitialMembers.some(sm => sm._id === u._id)
+      );
+      this.cdr.markForCheck();
+    });
+  }
 
   ngOnInit(): void {
     this.loadTeams();
@@ -157,6 +182,9 @@ export class TeamsComponent implements OnInit, AfterViewInit, OnDestroy {
   openCreateModal(): void {
     this.showCreateModal = true;
     this.createError = '';
+    this.memberSearchQuery = '';
+    this.memberSearchResults = [];
+    this.selectedInitialMembers = [];
     this.newTeam = {
       name: '',
       tag: '',
@@ -169,6 +197,27 @@ export class TeamsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   closeCreateModal(): void {
     this.showCreateModal = false;
+  }
+
+  onMemberSearchChange(query: string): void {
+    this.memberSearchQuery = query;
+    this.searchSubject.next(query);
+  }
+
+  selectInitialMember(user: User): void {
+    if (this.selectedInitialMembers.length >= 9) {
+      return; // Max 9 additional members limits
+    }
+    if (!this.selectedInitialMembers.some(u => u._id === user._id)) {
+      this.selectedInitialMembers.push(user);
+    }
+    this.memberSearchQuery = '';
+    this.memberSearchResults = [];
+    this.searchSubject.next('');
+  }
+
+  removeInitialMember(user: User): void {
+    this.selectedInitialMembers = this.selectedInitialMembers.filter(u => u._id !== user._id);
   }
 
   submitNewTeam(): void {
@@ -192,6 +241,9 @@ export class TeamsComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     if (this.newTeam.description.trim()) {
       payload['description'] = this.newTeam.description.trim();
+    }
+    if (this.selectedInitialMembers.length > 0) {
+      payload['initialPlayers'] = this.selectedInitialMembers.map(u => u._id);
     }
 
     this.api.createTeam(payload as any).subscribe({

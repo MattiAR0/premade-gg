@@ -34,7 +34,7 @@ export class ApiService {
   private readonly baseUrl = environment.apiUrl;
   private readonly cache = new Map<string, CacheEntry<unknown>>();
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   private cacheKey(url: string, params: HttpParams): string {
     return `${url}?${params.toString()}`;
@@ -238,6 +238,16 @@ export class ApiService {
 
   removeTeamStaff(teamId: string, userId: string): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${this.baseUrl}/teams/${teamId}/staff/${userId}`);
+  }
+
+  // ── Team Join Requests ────────────────────────────────
+
+  requestJoinTeam(teamId: string, message: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/teams/${teamId}/requests`, { message });
+  }
+
+  reviewJoinRequestTeam(teamId: string, userId: string, status: 'accepted' | 'rejected'): Observable<{ message: string }> {
+    return this.http.put<{ message: string }>(`${this.baseUrl}/teams/${teamId}/requests/${userId}`, { status });
   }
 
   // ── Notifications ───────────────────────────────────

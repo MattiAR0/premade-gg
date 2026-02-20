@@ -20,6 +20,13 @@ export class TeamDetailComponent implements OnInit {
   actionError = '';
   actionLoading = false;
 
+  // Join Requests
+  showJoinModal = false;
+  joinRequestMessage = '';
+  joinLoading = false;
+  joinError = '';
+  joinSuccess = '';
+
   readonly staffLabels = STAFF_ROLE_LABELS;
 
   constructor(
@@ -28,7 +35,7 @@ export class TeamDetailComponent implements OnInit {
     private readonly api: ApiService,
     readonly auth: AuthService,
     private readonly cdr: ChangeDetectorRef,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
@@ -44,7 +51,19 @@ export class TeamDetailComponent implements OnInit {
   get isPlayerInTeam(): boolean {
     if (!this.team || !this.auth.isAuthenticated()) return false;
     const userId = this.auth.currentUser()?._id;
-    return this.team.players?.some((p) => p.user?._id === userId) || false;
+    const isPlayer = this.team.players?.some((p) => p.user?._id === userId) || false;
+    const isStaff = this.team.staff?.some((s) => s.user?._id === userId) || false;
+    return isPlayer || isStaff;
+  }
+
+  get isPendingRequest(): boolean {
+    if (!this.team || !this.auth.isAuthenticated()) return false;
+    const userId = this.auth.currentUser()?._id;
+    return this.team.joinRequests?.some((r) => r.user?._id === userId && r.status === 'pending') || false;
+  }
+
+  get pendingRequests() {
+    return this.team?.joinRequests?.filter(r => r.status === 'pending') || [];
   }
 
   get regionLabel(): string {
@@ -146,7 +165,90 @@ export class TeamDetailComponent implements OnInit {
     });
   }
 
+  deleteTeam(): void {
+    if (!this.team || !this.isOwner) return;
+
+    // Quick confirmation
+    if (!confirm(`¿Estás seguro de que deseas eliminar el equipo "${this.team.name}"? Esta acción no se puede deshacer.`)) {
+      return;
+    }
+
+    this.actionLoading = true;
+    this.actionMessage = '';
+    this.actionError = '';
+
+    this.api.deleteTeam(this.team._id).subscribe({
+      next: (res) => {
+        this.actionMessage = res.message;
+        this.actionLoading = false;
+        this.cdr.markForCheck();
+        // Redirect to teams list after brief delay
+        setTimeout(() => this.router.navigate(['/teams']), 1500);
+      },
+      error: (err) => {
+        this.actionError = err.error?.message || 'Error al eliminar el equipo';
+        this.actionLoading = false;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
   goBack(): void {
     this.router.navigate(['/teams']);
+  }
+
+  // ── Join Requests ──────────────────────────────────
+  openJoinModal(): void {
+    this.showJoinModal = true;
+    this.joinRequestMessage = '';
+    this.joinError = '';
+    this.joinSuccess = '';
+  }
+
+  closeJoinModal(): void {
+    this.showJoinModal = false;
+  }
+
+  submitJoinRequest(): void {
+    if (!this.team) return;
+    this.joinLoading = true;
+    this.joinError = '';
+
+    this.api.requestJoinTeam(this.team._id, this.joinRequestMessage.trim()).subscribe({
+      next: (res) => {
+        this.joinLoading = false;
+        this.joinSuccess = res.message;
+        this.cdr.markForCheck();
+        setTimeout(() => {
+          this.closeJoinModal();
+          this.loadTeam(this.team!._id);
+        }, 1500);
+      },
+      error: (err) => {
+        this.joinLoading = false;
+        this.joinError = err.error?.message || 'Error al enviar la solicitud';
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  reviewJoinRequest(userId: string, status: 'accepted' | 'rejected'): void {
+    if (!this.team) return;
+    this.actionLoading = true;
+    this.actionMessage = '';
+    this.actionError = '';
+
+    this.api.reviewJoinRequestTeam(this.team._id, userId, status).subscribe({
+      next: (res) => {
+        this.actionMessage = res.message;
+        this.actionLoading = false;
+        this.loadTeam(this.team!._id);
+      },
+      error: (err) => {
+        this.actionError = err.error?.message || 'Error al procesar la solicitud';
+        this.actionLoading = false;
+        this.cdr.markForCheck();
+      }
+    });
   }
 }

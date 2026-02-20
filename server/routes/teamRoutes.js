@@ -11,6 +11,8 @@ const {
   removePlayer,
   addStaff,
   removeStaff,
+  requestToJoin,
+  reviewJoinRequest,
 } = require('../controllers/teamController');
 const { requireAuth } = require('../middlewares/auth');
 
@@ -33,5 +35,9 @@ router.delete('/:id/players/:userId', requireAuth, removePlayer);
 // Staff
 router.post('/:id/staff', requireAuth, addStaff);
 router.delete('/:id/staff/:userId', requireAuth, removeStaff);
+
+// Solicitudes (Join Requests)
+router.post('/:id/requests', requireAuth, requestToJoin);
+router.put('/:id/requests/:userId', requireAuth, reviewJoinRequest);
 
 module.exports = router;

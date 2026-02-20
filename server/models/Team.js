@@ -142,6 +142,28 @@ const teamSchema = new mongoose.Schema({
     default: '',
   },
 
+  // ── Solicitudes de Ingreso (Join Requests) ──
+  joinRequests: [{
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    message: {
+      type: String,
+      maxLength: 500,
+      default: '',
+    },
+    status: {
+      type: String,
+      enum: ['pending', 'accepted', 'rejected'],
+      default: 'pending',
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    }
+  }],
+
   createdAt: {
     type: Date,
     default: Date.now,
