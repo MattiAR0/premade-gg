@@ -9,9 +9,9 @@
 .c-auth-page {
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  min-height: calc(100vh - 200px);
-  padding-top: v.$spacing-2xl;
+  align-items: center;
+  min-height: calc(100vh - 80px); /* Ajustando en caso de que haya un header superior */
+  padding: v.$spacing-2xl 0;
 }
 
 .c-auth-card {

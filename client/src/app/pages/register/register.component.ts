@@ -50,48 +50,11 @@ export class RegisterComponent {
     private readonly cdr: ChangeDetectorRef,
   ) {}
 
-  /** Valida el Riot ID contra la API */
-  validateRiotId(): void {
-    if (!this.gameName || !this.tagLine) {
-      this.riotError = 'Introduce tu nombre de juego y tag';
-      return;
-    }
-
-    this.riotValidating = true;
-    this.riotError = '';
-    this.riotValidated = false;
-
-    this.apiService.validateRiotId(this.gameName, this.tagLine).subscribe({
-      next: () => {
-        // Obtener rango
-        this.apiService.getRiotRank(this.region, this.gameName, this.tagLine).subscribe({
-          next: (rankData) => {
-            this.validatedRank = rankData.normalizedRank || 'Iron';
-            this.riotValidated = true;
-            this.riotValidating = false;
-            this.cdr.markForCheck();
-          },
-          error: () => {
-            this.validatedRank = '';
-            this.riotValidated = true;
-            this.riotValidating = false;
-            this.cdr.markForCheck();
-          },
-        });
-      },
-      error: (err) => {
-        this.riotValidating = false;
-        this.riotError = err.error?.message || 'No se pudo validar la cuenta de Riot';
-        this.cdr.markForCheck();
-      },
-    });
-  }
-
   /** Resetea la validación cuando cambian los campos de Riot */
   onRiotFieldChange(): void {
-    this.riotValidated = false;
-    this.riotError = '';
-    this.validatedRank = '';
+    // Ya no se usa para limpiar la validación manual, pero se deja
+    // por si acaso es útil para otra cosa o se remueve si se prefiere.
+    this.errorMessage = '';
   }
 
   onSubmit(): void {
@@ -113,8 +76,8 @@ export class RegisterComponent {
       return;
     }
 
-    if (!this.riotValidated) {
-      this.errorMessage = 'Debes validar tu Riot ID antes de registrarte';
+    if (!this.gameName || !this.tagLine) {
+      this.errorMessage = 'Introduce tu nombre de juego y tag';
       return;
     }
 
@@ -125,6 +88,20 @@ export class RegisterComponent {
 
     this.loading = true;
 
+    // Validar Riot ID automáticamente antes de registrar
+    this.apiService.validateRiotId(this.gameName, this.tagLine).subscribe({
+      next: () => {
+        this.finishRegistration();
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorMessage = err.error?.message || 'No se pudo validar la cuenta de Riot';
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  private finishRegistration(): void {
     this.authService.register({
       email: this.email,
       password: this.password,

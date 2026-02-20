@@ -80,34 +80,7 @@
             required
           />
         </label>
-        <div class="c-auth-card__field" style="flex: 0; align-self: flex-end">
-          <button
-            class="c-btn c-btn--secondary c-btn--sm"
-            type="button"
-            (click)="validateRiotId()"
-            [disabled]="riotValidating || (!gameName || !tagLine)"
-          >
-            @if (riotValidating) {
-              <span class="c-auth-card__spinner"></span>
-            } @else {
-              Validar
-            }
-          </button>
-        </div>
       </div>
-
-      @if (riotError) {
-        <div class="c-auth-card__error">{{ riotError }}</div>
-      }
-
-      @if (riotValidated) {
-        <div class="c-auth-card__success">
-          Cuenta verificada
-          @if (validatedRank) {
-            — Rango: <app-rank-badge [rank]="validatedRank" />
-          }
-        </div>
-      }
 
       <!-- Region & Role -->
       <div class="c-auth-card__row">
