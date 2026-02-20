@@ -328,3 +328,22 @@ El build de producción es exitoso, sin errores ni advertencias, y la base de c�
 **Resultado:**
 - El sistema de correos transaccionales (como "Recuperar contraseña") ahora funciona perfectamente en el entorno de producción de Render.
 - Al usar llamadas HTTP directas (Brevo API) en lugar de transporte SMTP clásico, se evitan por completo los bloqueos de firewall de Render y se permite el envío a cualquier destinatario global sin requerir validación de dominio personalizado.
+
+---
+
+## 15. Chat sobre corrección de Navbar y mejoras de UX en Perfil (feb 2026)
+
+**Prompts clave:**
+- "una vez iniciada sesión, arriba a la derecha no sale la foto de la perfil elegida, sale la default"
+- "me gustaria aparte agregar que al editar perfil cuando confirmas y guardas los cambios sea algo más visual porque el usuario no nota que ha guardado los cambios"
+
+**Acciones:**
+- Se corrigió el componente `NavbarComponent` para que muestre el avatar correcto del usuario creando el getter `avatarUrl`. Este verifica si el usuario usa `riot_card`, un `avatar` predefinido o una imagen subida (`upload`), remplazando la búsqueda única de `profileImage` (que resultaba nula si se usaba la tarjeta de Riot).
+- Se mejoró considerablemente la experiencia de usuario (UX) en la pantalla de edición de perfil (`profile-edit`):
+  - Se implementó un auto-scroll (`window.scrollTo`) hacia arriba después de realizar un guardado exitoso, para que el usuario siempre vea la alerta de éxito.
+  - El botón de "Guardar cambios" recibe un cambio de estado al completarse la solicitud: se pone verde verde, muestra un icono de verificación con el texto "Guardado con éxito", y bloquea clics adicionales durante 3 segundos.
+  - Se añadió una animación CSS de entrada (`slideDown`) al panel de "Perfil actualizado correctamente" para hacerlo más llamativo.
+
+**Resultado:**
+- La barra de navegación ahora refleja con precisión la imagen de perfil seleccionada por el jugador en todo momento.
+- Queda introducido un feedback visual claro y animado al editar el perfil, asegurando que el usuario comprenda instantáneamente que los cambios quedaron registrados.
