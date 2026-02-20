@@ -22,6 +22,9 @@ const transporter = nodemailer.createTransport({
   tls: {
     rejectUnauthorized: false,
   },
+  // FORZAR IPv4 EN RENDER
+  // Esto evita el error ENETUNREACH al intentar conectar por IPv6
+  family: 4,
 });
 
 const FROM = process.env.SMTP_FROM || '"PremadeGG" <noreply@premadegg.com>';

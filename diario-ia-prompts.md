@@ -276,3 +276,29 @@ El build de producción es exitoso, sin errores ni advertencias, y la base de c�
 - El proyecto vuelve a levantarse íntegramente con `docker compose up --build`, usando una imagen ligera de nginx para el frontend y Node para la API, aunque la compilación de Angular se hace fuera de Docker como paso previo.
 - El error de `nextCursor` en el frontend no afecta al runtime; el tipado y la paginación con cursor funcionan correctamente.
 - Queda un plan claro para volver al build multi-stage dentro de Docker cuando se solucione el problema de red del entorno.
+
+---
+
+## 13. Chat sobre Setup Inicial y Arquitectura (feb 2026)
+
+**Prompts clave:**
+- "Actúa como un Senior Tech Lead y Arquitecto de Software experto en el stack MEAN..."
+- "puedes seguir tu el instructions.md para probar el proyecto"
+- "no funciona"
+- "no tengo mongoDB instalado, como lo podria instalar, y porque mongoDB y no otro tipo de BBDD"
+
+**Acciones / fixes aplicados:**
+- Creación de la estructura base del Monorepo (`client/` y `server/`) siguiendo rúbricas estrictas.
+- Configuración del servidor con Express, Morgan (logging por entorno) y configuración `package.json` estricta (`dev`, `start`, `lint`).
+- Implementación de `seed.js` con `@faker-js/faker` para poblar usuarios y reviews cruzadas asegurando integridad de datos.
+- Creación de modelos Mongoose (`User` y `Reputation`) e instanciación del backend.
+- Inicialización del frontend con Angular (standalone components) e integración de arquitectura SCSS (`_variables`, `_reset`, `_mixins`, `main.scss`).
+- Elaboración de un componente BEM demostrativo `player-card` con lógica TS e interpolación.
+- Corrección de errores en la compilación SASS de Angular ajustando rutas relativas (`@use`) y corrigiendo la exportación de estilos.
+- Elaboración de documentación de despliegue local (`INSTRUCTIONS.md`) detallando la instalación y configuración de MongoDB.
+- Se brindó soporte arquitectónico justificando MongoDB vs SQL por la naturaleza JSON del Stack MEAN y la flexibilidad ante esquemas como `schedule` u otras propiedades dinámicas.
+
+**Resultado:**
+- Repositorio inicializado y funcional. Frontend (Angular + SCSS) compila y se sirve correctamente.
+- Backend en Node.js configurado, poblado con faker y listo para el desarrollo de rutas.
+- Decisiones arquitectónicas (SASS utils separation, Faker Logic, Semantic HTML / BEM y DB engine NoSQL) documentadas para el proyecto de grado.
