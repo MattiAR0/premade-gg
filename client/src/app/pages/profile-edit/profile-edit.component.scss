@@ -49,6 +49,14 @@
     font-size: 0.85rem;
     font-weight: 600;
     margin-bottom: v.$spacing-md;
+    animation: slideDown 0.3s ease-out;
+  }
+
+  &__btn-success {
+    background-color: rgba(90, 158, 144, 0.15) !important;
+    border-color: rgba(90, 158, 144, 0.3) !important;
+    color: v.$color-karma-high !important;
+    pointer-events: none;
   }
 
   &__section {
@@ -147,7 +155,7 @@
       flex-direction: column;
     }
 
-    > * {
+    >* {
       flex: 1;
     }
   }
@@ -403,5 +411,19 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

@@ -81,7 +81,7 @@ export class ProfileEditComponent implements OnInit {
     readonly authService: AuthService,
     private readonly router: Router,
     private readonly cdr: ChangeDetectorRef,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const user = this.authService.currentUser();
@@ -207,6 +207,7 @@ export class ProfileEditComponent implements OnInit {
           this.saved = true;
           this.selectedFile = null;
           this.cdr.markForCheck();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
           setTimeout(() => { this.saved = false; this.cdr.markForCheck(); }, 3000);
         },
         error: (err) => {

@@ -7,11 +7,11 @@
   </header>
 
   @if (errorMessage) {
-    <div class="c-settings__error">{{ errorMessage }}</div>
+  <div class="c-settings__error">{{ errorMessage }}</div>
   }
 
   @if (saved) {
-    <div class="c-settings__success">Perfil actualizado correctamente</div>
+  <div class="c-settings__success">Perfil actualizado correctamente</div>
   }
 
   <form class="c-settings" (ngSubmit)="save()">
@@ -22,18 +22,22 @@
       <div class="c-settings__avatar-area">
         <div class="c-settings__avatar-preview">
           @if (currentPreview) {
-            <img [src]="currentPreview" alt="Preview" class="c-settings__avatar-img" />
+          <img [src]="currentPreview" alt="Preview" class="c-settings__avatar-img" />
           } @else {
-            <div class="c-settings__avatar-placeholder">
-              {{ authService.currentUser()?.riotId?.charAt(0)?.toUpperCase() || '?' }}
-            </div>
+          <div class="c-settings__avatar-placeholder">
+            {{ authService.currentUser()?.riotId?.charAt(0)?.toUpperCase() || '?' }}
+          </div>
           }
         </div>
 
         <div class="c-settings__avatar-options">
           <div class="c-settings__avatar-buttons">
             <label class="c-btn c-btn--secondary c-btn--sm">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
               Subir imagen
               <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
             </label>
@@ -50,15 +54,11 @@
         <p class="c-settings__preset-label">O elige un avatar de agente:</p>
         <div class="c-settings__preset-grid">
           @for (avatar of presetAvatars; track avatar.name) {
-            <button
-              type="button"
-              class="c-settings__preset-avatar"
-              [class.c-settings__preset-avatar--selected]="profileImageType === 'avatar' && profileImage === avatar.url"
-              (click)="selectPresetAvatar(avatar.url)"
-              [title]="avatar.name"
-            >
-              <img class="c-settings__preset-avatar-img" [src]="avatar.url" [alt]="avatar.name" />
-            </button>
+          <button type="button" class="c-settings__preset-avatar"
+            [class.c-settings__preset-avatar--selected]="profileImageType === 'avatar' && profileImage === avatar.url"
+            (click)="selectPresetAvatar(avatar.url)" [title]="avatar.name">
+            <img class="c-settings__preset-avatar-img" [src]="avatar.url" [alt]="avatar.name" />
+          </button>
           }
         </div>
       </div>
@@ -69,33 +69,24 @@
       <h2 class="c-settings__section-title">Sobre ti</h2>
       <label class="c-settings__field">
         <span class="c-settings__label">Biografía</span>
-        <textarea
-          class="c-settings__textarea"
-          [(ngModel)]="bio"
-          name="bio"
-          rows="3"
-          maxlength="500"
-          placeholder="Cuéntanos sobre ti, tu estilo de juego..."
-        ></textarea>
+        <textarea class="c-settings__textarea" [(ngModel)]="bio" name="bio" rows="3" maxlength="500"
+          placeholder="Cuéntanos sobre ti, tu estilo de juego..."></textarea>
         <span class="c-settings__char-count">{{ bio.length }}/500</span>
       </label>
     </section>
 
     <!-- Favorite Agents -->
     <section class="c-settings__section">
-      <h2 class="c-settings__section-title">Agentes favoritos <span class="c-settings__section-hint">(max. 3)</span></h2>
+      <h2 class="c-settings__section-title">Agentes favoritos <span class="c-settings__section-hint">(max. 3)</span>
+      </h2>
       <div class="c-settings__agents-grid">
         @for (agent of agents; track agent) {
-          <button
-            type="button"
-            class="c-settings__agent-chip"
-            [class.c-settings__agent-chip--selected]="isAgentSelected(agent)"
-            [class.c-settings__agent-chip--disabled]="!isAgentSelected(agent) && favoriteAgents.length >= 3"
-            (click)="toggleAgent(agent)"
-            [disabled]="!isAgentSelected(agent) && favoriteAgents.length >= 3"
-          >
-            {{ agent }}
-          </button>
+        <button type="button" class="c-settings__agent-chip"
+          [class.c-settings__agent-chip--selected]="isAgentSelected(agent)"
+          [class.c-settings__agent-chip--disabled]="!isAgentSelected(agent) && favoriteAgents.length >= 3"
+          (click)="toggleAgent(agent)" [disabled]="!isAgentSelected(agent) && favoriteAgents.length >= 3">
+          {{ agent }}
+        </button>
         }
       </div>
     </section>
@@ -109,7 +100,7 @@
           <select class="c-settings__select" [(ngModel)]="favoriteRole" name="favoriteRole">
             <option value="">Sin preferencia</option>
             @for (r of roles; track r) {
-              <option [value]="r">{{ r }}</option>
+            <option [value]="r">{{ r }}</option>
             }
           </select>
         </label>
@@ -117,7 +108,7 @@
           <span class="c-settings__label">Horario de juego</span>
           <select class="c-settings__select" [(ngModel)]="schedule" name="schedule">
             @for (s of schedules; track s) {
-              <option [value]="s">{{ s }}</option>
+            <option [value]="s">{{ s }}</option>
             }
           </select>
         </label>
@@ -130,33 +121,18 @@
       <div class="c-settings__social-fields">
         <label class="c-settings__field">
           <span class="c-settings__label">Discord</span>
-          <input
-            class="c-settings__input"
-            type="text"
-            [(ngModel)]="socialLinks.discord"
-            name="discord"
-            placeholder="usuario#1234"
-          />
+          <input class="c-settings__input" type="text" [(ngModel)]="socialLinks.discord" name="discord"
+            placeholder="usuario#1234" />
         </label>
         <label class="c-settings__field">
           <span class="c-settings__label">Twitter / X</span>
-          <input
-            class="c-settings__input"
-            type="text"
-            [(ngModel)]="socialLinks.twitter"
-            name="twitter"
-            placeholder="@usuario"
-          />
+          <input class="c-settings__input" type="text" [(ngModel)]="socialLinks.twitter" name="twitter"
+            placeholder="@usuario" />
         </label>
         <label class="c-settings__field">
           <span class="c-settings__label">Twitch</span>
-          <input
-            class="c-settings__input"
-            type="text"
-            [(ngModel)]="socialLinks.twitch"
-            name="twitch"
-            placeholder="usuario"
-          />
+          <input class="c-settings__input" type="text" [(ngModel)]="socialLinks.twitch" name="twitch"
+            placeholder="usuario" />
         </label>
       </div>
     </section>
@@ -164,68 +140,59 @@
     <!-- Looking For Team (LFT) -->
     <section class="c-settings__section">
       <h2 class="c-settings__section-title">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
         Looking For Team (LFT)
       </h2>
-      <p class="c-settings__hint" style="margin-bottom: 12px">Activa esta opción si buscas un equipo amateur para competir de forma estable, no solo una partida puntual.</p>
+      <p class="c-settings__hint" style="margin-bottom: 12px">Activa esta opción si buscas un equipo amateur para
+        competir de forma estable, no solo una partida puntual.</p>
 
       <label class="c-settings__toggle-row">
-        <input
-          class="c-settings__toggle-row-checkbox"
-          type="checkbox"
-          [(ngModel)]="lookingForTeam"
-          name="lookingForTeam"
-        />
+        <input class="c-settings__toggle-row-checkbox" type="checkbox" [(ngModel)]="lookingForTeam"
+          name="lookingForTeam" />
         <span class="c-settings__toggle-label">Estoy buscando equipo</span>
       </label>
 
       @if (lookingForTeam) {
-        <label class="c-settings__field" style="margin-top: 12px">
-          <span class="c-settings__label">Detalles (qué buscas, tu experiencia, etc.)</span>
-          <textarea
-            class="c-settings__textarea"
-            [(ngModel)]="lftDetails"
-            name="lftDetails"
-            rows="3"
-            maxlength="300"
-            placeholder="Ej: Busco equipo para torneos amateur, tengo experiencia en scrims, puedo entrenar 4 días/semana..."
-          ></textarea>
-          <span class="c-settings__char-count">{{ lftDetails.length }}/300</span>
-        </label>
+      <label class="c-settings__field" style="margin-top: 12px">
+        <span class="c-settings__label">Detalles (qué buscas, tu experiencia, etc.)</span>
+        <textarea class="c-settings__textarea" [(ngModel)]="lftDetails" name="lftDetails" rows="3" maxlength="300"
+          placeholder="Ej: Busco equipo para torneos amateur, tengo experiencia en scrims, puedo entrenar 4 días/semana..."></textarea>
+        <span class="c-settings__char-count">{{ lftDetails.length }}/300</span>
+      </label>
       }
     </section>
 
     <!-- Coach -->
     <section class="c-settings__section">
       <h2 class="c-settings__section-title">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+        </svg>
         Soy Coach
       </h2>
-      <p class="c-settings__hint" style="margin-bottom: 12px">Activa esta opción si ofreces coaching o dirección técnica para equipos.</p>
+      <p class="c-settings__hint" style="margin-bottom: 12px">Activa esta opción si ofreces coaching o dirección técnica
+        para equipos.</p>
 
       <label class="c-settings__toggle-row">
-        <input
-          class="c-settings__toggle-row-checkbox"
-          type="checkbox"
-          [(ngModel)]="isCoach"
-          name="isCoach"
-        />
+        <input class="c-settings__toggle-row-checkbox" type="checkbox" [(ngModel)]="isCoach" name="isCoach" />
         <span class="c-settings__toggle-label">Soy coach / director técnico</span>
       </label>
 
       @if (isCoach) {
-        <label class="c-settings__field" style="margin-top: 12px">
-          <span class="c-settings__label">Detalles sobre tu experiencia como coach</span>
-          <textarea
-            class="c-settings__textarea"
-            [(ngModel)]="coachDetails"
-            name="coachDetails"
-            rows="3"
-            maxlength="500"
-            placeholder="Ej: Experiencia dirigiendo equipos en torneos amateur, especializado en análisis de VODs, estrategias de ataque/defensa..."
-          ></textarea>
-          <span class="c-settings__char-count">{{ coachDetails.length }}/500</span>
-        </label>
+      <label class="c-settings__field" style="margin-top: 12px">
+        <span class="c-settings__label">Detalles sobre tu experiencia como coach</span>
+        <textarea class="c-settings__textarea" [(ngModel)]="coachDetails" name="coachDetails" rows="3" maxlength="500"
+          placeholder="Ej: Experiencia dirigiendo equipos en torneos amateur, especializado en análisis de VODs, estrategias de ataque/defensa..."></textarea>
+        <span class="c-settings__char-count">{{ coachDetails.length }}/500</span>
+      </label>
       }
     </section>
 
@@ -234,50 +201,41 @@
       <h2 class="c-settings__section-title">Disponibilidad semanal</h2>
       <div class="c-settings__availability">
         @for (day of daysOfWeek; track day) {
-          <div class="c-settings__day-row">
-            <label class="c-settings__day-toggle">
-              <input
-                class="c-settings__day-toggle-checkbox"
-                type="checkbox"
-                [(ngModel)]="availability[day].available"
-                [name]="'avail_' + day"
-              />
-              <span class="c-settings__day-name">{{ daysLabels[day] }}</span>
-            </label>
-            @if (availability[day].available) {
-              <div class="c-settings__day-times">
-                <input
-                  class="c-settings__time-input"
-                  type="time"
-                  [(ngModel)]="availability[day].from"
-                  [name]="'from_' + day"
-                />
-                <span class="c-settings__time-sep">a</span>
-                <input
-                  class="c-settings__time-input"
-                  type="time"
-                  [(ngModel)]="availability[day].to"
-                  [name]="'to_' + day"
-                />
-              </div>
-            }
+        <div class="c-settings__day-row">
+          <label class="c-settings__day-toggle">
+            <input class="c-settings__day-toggle-checkbox" type="checkbox" [(ngModel)]="availability[day].available"
+              [name]="'avail_' + day" />
+            <span class="c-settings__day-name">{{ daysLabels[day] }}</span>
+          </label>
+          @if (availability[day].available) {
+          <div class="c-settings__day-times">
+            <input class="c-settings__time-input" type="time" [(ngModel)]="availability[day].from"
+              [name]="'from_' + day" />
+            <span class="c-settings__time-sep">a</span>
+            <input class="c-settings__time-input" type="time" [(ngModel)]="availability[day].to" [name]="'to_' + day" />
           </div>
+          }
+        </div>
         }
       </div>
     </section>
 
     <!-- Actions -->
     <div class="c-settings__actions">
-      <button
-        class="c-btn c-btn--primary"
-        type="submit"
-        [disabled]="saving"
-      >
+      <button class="c-btn" [class.c-btn--primary]="!saved" [class.c-settings__btn-success]="saved" type="submit"
+        [disabled]="saving">
         @if (saving) {
-          <span class="c-settings__spinner"></span>
-          {{ uploadingAvatar ? 'Subiendo imagen...' : 'Guardando...' }}
+        <span class="c-settings__spinner"></span>
+        {{ uploadingAvatar ? 'Subiendo imagen...' : 'Guardando...' }}
+        } @else if (saved) {
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: text-bottom;">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+          <polyline points="22 4 12 14.01 9 11.01" />
+        </svg>
+        Guardado con éxito
         } @else {
-          Guardar cambios
+        Guardar cambios
         }
       </button>
       <a class="c-btn c-btn--ghost" [routerLink]="['/profile', authService.currentUser()?._id]">
