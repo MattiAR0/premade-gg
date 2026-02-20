@@ -62,7 +62,7 @@ export class SocketService {
       console.log('🔌 Socket.IO disconnected');
     });
 
-    this.socket.on('connect_error', (err) => {
+    this.socket.on('connect_error', (err: Error) => {
       console.error('Socket.IO connection error:', err.message);
     });
 

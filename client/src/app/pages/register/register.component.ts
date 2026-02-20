@@ -3,12 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
-import { RankBadgeComponent } from '../../shared/rank-badge/rank-badge.component';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, RouterLink, RankBadgeComponent],
+  imports: [FormsModule, RouterLink],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
 })
@@ -48,7 +47,7 @@ export class RegisterComponent {
     private readonly apiService: ApiService,
     private readonly router: Router,
     private readonly cdr: ChangeDetectorRef,
-  ) {}
+  ) { }
 
   /** Resetea la validación cuando cambian los campos de Riot */
   onRiotFieldChange(): void {
