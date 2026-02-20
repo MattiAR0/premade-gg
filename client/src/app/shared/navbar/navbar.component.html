@@ -71,8 +71,8 @@
     <app-message-panel />
     <app-notification-bell />
     <div class="c-navbar__user" (click)="toggleUserMenu()">
-      @if (authService.currentUser()?.profileImage) {
-      <img class="c-navbar__avatar" [src]="authService.currentUser()!.profileImage" alt="Avatar" />
+      @if (avatarUrl) {
+      <img class="c-navbar__avatar" [src]="avatarUrl" alt="Avatar" />
       } @else {
       <div class="c-navbar__avatar-placeholder">{{ getInitial() }}</div>
       }

@@ -15,7 +15,7 @@ export class NavbarComponent {
   menuOpen = false;
   userMenuOpen = false;
 
-  constructor(readonly authService: AuthService) {}
+  constructor(readonly authService: AuthService) { }
 
   toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
@@ -46,5 +46,18 @@ export class NavbarComponent {
     const user = this.authService.currentUser();
     if (!user) return '?';
     return user.riotId?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || '?';
+  }
+
+  /** Obtiene la URL de la imagen de perfil actual según el tipo elegido */
+  get avatarUrl(): string | null {
+    const user = this.authService.currentUser();
+    if (!user) return null;
+    if (user.profileImageType === 'riot_card' && user.cardImage) {
+      return user.cardImage;
+    }
+    if (user.profileImage) {
+      return user.profileImage;
+    }
+    return user.cardImage || null;
   }
 }

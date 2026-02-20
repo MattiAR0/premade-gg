@@ -302,3 +302,29 @@ El build de producción es exitoso, sin errores ni advertencias, y la base de c�
 - Repositorio inicializado y funcional. Frontend (Angular + SCSS) compila y se sirve correctamente.
 - Backend en Node.js configurado, poblado con faker y listo para el desarrollo de rutas.
 - Decisiones arquitectónicas (SASS utils separation, Faker Logic, Semantic HTML / BEM y DB engine NoSQL) documentadas para el proyecto de grado.
+
+---
+
+## 14. Chat sobre problemas SMTP en despliegue (Render) y migración a API (feb 2026)
+
+**Prompts clave:**
+- "tengo un problema, cuando despliego la app, la parte backend, en render, el sistema de correos no funciona"
+- "lo tengo de esta manera, asi estaria bien?" (mostrando variables de entorno)
+- "SMTP connection failed: connect ENETUNREACH 2a00:1450..."
+- "SMTP connection failed: Connection timeout"
+- "quiero que los correos se pueda enviar a cualquier correo, no solo al mio"
+- "pero si no puedo comprar dominios"
+- "TypeError: brevo.TransactionalEmailsApi is not a constructor"
+
+**Diagnóstico y acciones:**
+- Detecté que la conexión original de `nodemailer` con Gmail fallaba en Render inicialmente por intentar usar IPv6 (`ENETUNREACH`). Se forzó a IPv4 (`family: 4`).
+- Tras forzar IPv4, Render devolvió un `Connection timeout`, lo cual confirmó que la capa gratuita de Render bloquea activamente los puertos SMTP salientes (587, 465, 25) para prevenir spam.
+- Propuse migrar a **Resend** (API HTTP por el puerto 443, libre de bloqueos). Implementé el código, pero el usuario no tenía un dominio propio comprado para verificarlo, por lo que Resend solo le permitía enviar correos a su propia dirección.
+- Propuse una solución final sin dominio propio: usar el plan gratuito de **Brevo (antes Sendinblue)** mediante su cliente de API oficial para Node.js (`@getbrevo/brevo`).
+- Implementé el SDK de Brevo en `emailService.js`.
+- Detecté un error crítico (`TypeError`) al arrancar el contenedor: la sintaxis del SDK v3 de Brevo ya no era compatible con la versión v4 instalada vía npm.
+- Investigué dentro del contenedor (`node -e`, leyendo el `README.md` del paquete) y adapté el código a la nueva sintaxis (`const { BrevoClient } = require('@getbrevo/brevo'); new BrevoClient(...)`).
+
+**Resultado:**
+- El sistema de correos transaccionales (como "Recuperar contraseña") ahora funciona perfectamente en el entorno de producción de Render.
+- Al usar llamadas HTTP directas (Brevo API) en lugar de transporte SMTP clásico, se evitan por completo los bloqueos de firewall de Render y se permite el envío a cualquier destinatario global sin requerir validación de dominio personalizado.
