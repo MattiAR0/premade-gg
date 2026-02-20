@@ -11,6 +11,7 @@
 }
 
 .c-auth-card {
+  box-sizing: border-box;
   width: 100%;
   max-width: 440px;
   background: v.$color-bg-card;
@@ -76,6 +77,8 @@
   }
 
   &__input {
+    box-sizing: border-box;
+    width: 100%;
     padding: 0.6rem v.$spacing-md;
     background: v.$color-bg-input;
     border: 1px solid v.$color-border;
@@ -160,12 +163,14 @@
       flex-direction: column;
     }
 
-    > * {
+    >* {
       flex: 1;
     }
   }
 
   &__select {
+    box-sizing: border-box;
+    width: 100%;
     padding: 0.6rem v.$spacing-md;
     background: v.$color-bg-input;
     border: 1px solid v.$color-border;
@@ -193,5 +198,7 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
