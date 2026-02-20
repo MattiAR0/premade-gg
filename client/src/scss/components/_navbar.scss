@@ -102,6 +102,29 @@
     margin-left: v.$spacing-xs;
   }
 
+  &__games-mobile {
+    display: none;
+    flex-direction: column;
+    gap: v.$spacing-xs;
+    margin-bottom: v.$spacing-md;
+    padding-bottom: v.$spacing-md;
+    border-bottom: 1px solid v.$color-border;
+
+    &-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: v.$color-text-muted;
+      margin-bottom: v.$spacing-xs;
+      padding-left: v.$spacing-sm;
+    }
+
+    @include m.respond-below(lg) {
+      display: flex;
+    }
+  }
+
   // ── Hamburger toggle ──────────────────────────────
   &__toggle {
     display: none;

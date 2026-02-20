@@ -31,6 +31,27 @@
   </button>
 
   <nav class="c-navbar__nav" [class.c-navbar__nav--open]="menuOpen">
+    <div class="c-navbar__games-mobile">
+      <div class="c-navbar__games-mobile-title">Selecciona un juego</div>
+      <button class="c-navbar__game c-navbar__game--active">
+        <img src="assets/images/games/valorant-icon.png" alt="" class="c-navbar__game-icon"
+          onerror="this.style.display='none'">
+        Valorant
+      </button>
+      <button class="c-navbar__game" disabled title="Próximamente">
+        <img src="assets/images/games/lol-icon.png" alt="" class="c-navbar__game-icon"
+          onerror="this.style.display='none'">
+        League of Legends
+        <span class="c-navbar__game-badge">Coming soon</span>
+      </button>
+      <button class="c-navbar__game" disabled title="Próximamente">
+        <img src="assets/images/games/cs2-icon.png" alt="" class="c-navbar__game-icon"
+          onerror="this.style.display='none'">
+        Counter Strike
+        <span class="c-navbar__game-badge">Coming soon</span>
+      </button>
+    </div>
+
     <a class="c-navbar__link" routerLink="/" routerLinkActive="c-navbar__link--active"
       [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()">
       Home
