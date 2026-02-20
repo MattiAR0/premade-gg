@@ -24,6 +24,7 @@ export interface Conversation {
   name: string | null;
   groupImage: string | null;
   admin: { _id: string; riotId: string } | null;
+  teamId?: string;
   lastMessage: LastMessage | null;
   unreadCount?: number;
   createdAt: string;

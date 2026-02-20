@@ -46,6 +46,13 @@ const conversationSchema = new mongoose.Schema(
       default: null,
     },
 
+    /** Opcional: ID del equipo si es un chat de equipo */
+    teamId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Team',
+      default: null,
+    },
+
     /** Snapshot del último mensaje para listados */
     lastMessage: {
       content: { type: String, default: '' },

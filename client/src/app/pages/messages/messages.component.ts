@@ -4,7 +4,11 @@ import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from '../../services/message.service';
 import { AuthService } from '../../services/auth.service';
+import { ApiService } from '../../services/api.service';
 import { Conversation, ConversationParticipant } from '../../models/message.model';
+import { User } from '../../models/user.model';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-messages',
@@ -23,13 +27,36 @@ export class MessagesComponent implements OnInit, OnDestroy {
   // Group creation
   showGroupForm = false;
   groupName = '';
+  searchQuery = '';
+  searchResults: User[] = [];
+  selectedUsers: User[] = [];
+  private readonly searchSubject = new Subject<string>();
 
   constructor(
     readonly messageService: MessageService,
     readonly auth: AuthService,
+    private readonly apiService: ApiService,
     private readonly route: ActivatedRoute,
     private readonly cdr: ChangeDetectorRef,
-  ) {}
+  ) {
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(query => {
+        if (!query.trim()) {
+          return [[]]; // empty array as observable
+        }
+        return this.apiService.searchUsers(query);
+      })
+    ).subscribe(results => {
+      // Filter out already selected users and self
+      const myId = this.auth.currentUser()?._id;
+      this.searchResults = results.filter(u =>
+        u._id !== myId && !this.selectedUsers.some(su => su._id === u._id)
+      );
+      this.cdr.markForCheck();
+    });
+  }
 
   ngOnInit(): void {
     this.messageService.loadConversations();
@@ -200,5 +227,34 @@ export class MessagesComponent implements OnInit, OnDestroy {
   toggleGroupForm(): void {
     this.showGroupForm = !this.showGroupForm;
     this.groupName = '';
+    this.searchQuery = '';
+    this.searchResults = [];
+    this.selectedUsers = [];
+  }
+
+  onSearchChange(query: string): void {
+    this.searchQuery = query;
+    this.searchSubject.next(query);
+  }
+
+  selectUserForGroup(user: User): void {
+    if (!this.selectedUsers.some(u => u._id === user._id)) {
+      this.selectedUsers.push(user);
+    }
+    this.searchQuery = '';
+    this.searchResults = [];
+    this.searchSubject.next(''); // Clear search
+  }
+
+  removeUserFromGroup(user: User): void {
+    this.selectedUsers = this.selectedUsers.filter(u => u._id !== user._id);
+  }
+
+  createGroup(): void {
+    if (!this.groupName.trim() || this.selectedUsers.length === 0) return;
+
+    const participantIds = this.selectedUsers.map(u => u._id);
+    this.messageService.createGroupConversation(this.groupName, participantIds);
+    this.toggleGroupForm();
   }
 }

@@ -1,5 +1,7 @@
 const Team = require('../models/Team');
 const User = require('../models/User');
+const Conversation = require('../models/Conversation');
+const socketService = require('../services/socketService');
 
 const POPULATE_FIELDS =
   'riotId rank role karma region cardImage profileImage profileImageType isCoach';
@@ -155,6 +157,19 @@ const createTeam = async (req, res, next) => {
       players: [{ user: userId, role: 'Flex', joinedAt: new Date() }],
     });
 
+    // Create a group chat for the new team
+    const teamConversation = await Conversation.create({
+      type: 'group',
+      name: `Team ${name}`,
+      participants: [userId],
+      admin: userId,
+      teamId: team._id,
+    });
+
+    // Join the owner to the chat
+    socketService.joinUserToConversation(userId, teamConversation._id.toString());
+    socketService.emitToUser(userId, 'conversation:new', teamConversation);
+
     const populated = await team.populate([
       { path: 'owner', select: POPULATE_FIELDS },
       { path: 'players.user', select: POPULATE_FIELDS },
@@ -227,6 +242,10 @@ const deleteTeam = async (req, res, next) => {
     if (team.owner.toString() !== req.user.id) {
       return res.status(403).json({ message: 'Solo el dueño puede eliminar el equipo' });
     }
+
+    // Optional: Delete the team conversation
+    await Conversation.deleteOne({ teamId: team._id });
+
     await team.deleteOne();
     res.json({ message: 'Equipo eliminado' });
   } catch (err) {
@@ -301,6 +320,19 @@ const addPlayer = async (req, res, next) => {
 
     team.players.push({ user: userId, role: role || 'Flex' });
     await team.save();
+
+    // Add player to the team conversation
+    const conversation = await Conversation.findOneAndUpdate(
+      { teamId: team._id },
+      { $addToSet: { participants: userId } },
+      { new: true }
+    );
+    if (conversation) {
+      socketService.joinUserToConversation(userId, conversation._id.toString());
+      socketService.emitToUser(userId, 'conversation:new', conversation);
+      socketService.emitToConversation(conversation._id.toString(), 'conversation:updated', conversation);
+    }
+
     await team.populate('players.user', POPULATE_FIELDS);
 
     res.json({ message: 'Jugador agregado', team });
@@ -341,6 +373,19 @@ const removePlayer = async (req, res, next) => {
     team.players.splice(idx, 1);
     await team.save();
 
+    // Remove player from the team conversation
+    const conversation = await Conversation.findOneAndUpdate(
+      { teamId: team._id },
+      { $pull: { participants: targetUserId } },
+      { new: true }
+    );
+    if (conversation) {
+      // It's harder to force a socket to leave a room from outside, but we can emit an update
+      socketService.emitToConversation(conversation._id.toString(), 'conversation:updated', conversation);
+      // Optional: Inform the removed user
+      socketService.emitToUser(targetUserId, 'conversation:removed', { conversationId: conversation._id });
+    }
+
     res.json({ message: isSelf ? 'Has abandonado el equipo' : 'Jugador removido' });
   } catch (err) {
     next(err);
@@ -369,6 +414,19 @@ const addStaff = async (req, res, next) => {
 
     team.staff.push({ user: userId, role });
     await team.save();
+
+    // Add staff to the team conversation
+    const conversation = await Conversation.findOneAndUpdate(
+      { teamId: team._id },
+      { $addToSet: { participants: userId } },
+      { new: true }
+    );
+    if (conversation) {
+      socketService.joinUserToConversation(userId, conversation._id.toString());
+      socketService.emitToUser(userId, 'conversation:new', conversation);
+      socketService.emitToConversation(conversation._id.toString(), 'conversation:updated', conversation);
+    }
+
     await team.populate('staff.user', POPULATE_FIELDS);
 
     res.json({ message: 'Staff agregado', team });
@@ -397,6 +455,17 @@ const removeStaff = async (req, res, next) => {
 
     team.staff.splice(idx, 1);
     await team.save();
+
+    // Remove staff from the team conversation
+    const conversation = await Conversation.findOneAndUpdate(
+      { teamId: team._id },
+      { $pull: { participants: req.params.userId } },
+      { new: true }
+    );
+    if (conversation) {
+      socketService.emitToConversation(conversation._id.toString(), 'conversation:updated', conversation);
+      socketService.emitToUser(req.params.userId, 'conversation:removed', { conversationId: conversation._id });
+    }
 
     res.json({ message: 'Staff removido' });
   } catch (err) {

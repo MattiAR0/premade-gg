@@ -4,89 +4,140 @@
     <header class="c-messages__sidebar-header">
       <h2 class="c-messages__sidebar-title">Mensajes</h2>
       <button class="c-messages__new-group-btn" (click)="toggleGroupForm()" title="Nuevo grupo">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/><line x1="20" y1="8" x2="20" y2="14"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <line x1="23" y1="11" x2="17" y2="11" />
+          <line x1="20" y1="8" x2="20" y2="14" />
+        </svg>
       </button>
     </header>
 
     <!-- Formulario nuevo grupo -->
     @if (showGroupForm) {
-      <div class="c-messages__group-form">
-        <input
-          type="text"
-          class="c-messages__group-input"
-          placeholder="Nombre del grupo..."
-          [(ngModel)]="groupName"
-          maxlength="60"
-        />
-        <div class="c-messages__group-actions">
-          <button
-            class="c-btn c-btn--primary c-btn--sm"
-            [disabled]="!groupName.trim()"
-            (click)="toggleGroupForm()">
-            Siguiente
-          </button>
-          <button class="c-btn c-btn--secondary c-btn--sm" (click)="toggleGroupForm()">
-            Cancelar
-          </button>
-        </div>
+    <div class="c-messages__group-form">
+      <input type="text" class="c-messages__group-input" placeholder="Nombre del grupo..." [(ngModel)]="groupName"
+        maxlength="60" />
+      <!-- Busqueda de usuarios -->
+      <div class="c-messages__user-search">
+        <input type="text" class="c-messages__group-input" placeholder="Buscar jugadores..." [ngModel]="searchQuery"
+          (ngModelChange)="onSearchChange($event)" autocomplete="off" />
+        @if (searchResults.length > 0) {
+        <ul class="c-messages__search-results">
+          @for (user of searchResults; track user._id) {
+          <li class="c-messages__search-result-item" (click)="selectUserForGroup(user)">
+            <div class="c-messages__search-result-avatar">
+              @if (user.profileImage || user.cardImage) {
+              <img [src]="user.profileImage || user.cardImage" [alt]="user.riotId">
+              } @else {
+              <div class="c-messages__avatar-placeholder c-messages__avatar-placeholder--xs">
+                {{ user.riotId.charAt(0).toUpperCase() }}
+              </div>
+              }
+            </div>
+            <span class="c-messages__search-result-name">{{ user.riotId }}</span>
+          </li>
+          }
+        </ul>
+        }
       </div>
+
+      <!-- Usuarios seleccionados -->
+      @if (selectedUsers.length > 0) {
+      <div class="c-messages__selected-users">
+        @for (user of selectedUsers; track user._id) {
+        <span class="c-messages__selected-badge" (click)="removeUserFromGroup(user)" title="Quitar usuario">
+          {{ user.riotId }}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </span>
+        }
+      </div>
+      }
+
+      <div class="c-messages__group-actions">
+        <button class="c-btn c-btn--primary c-btn--sm" [disabled]="!groupName.trim() || selectedUsers.length === 0"
+          (click)="createGroup()">
+          Crear Grupo
+        </button>
+        <button class="c-btn c-btn--secondary c-btn--sm" (click)="toggleGroupForm()">
+          Cancelar
+        </button>
+      </div>
+    </div>
     }
 
     <!-- Lista de conversaciones -->
     <nav class="c-messages__conversation-list">
       @if (messageService.loadingConversations() && messageService.conversations().length === 0) {
-        <div class="c-messages__loading">
-          <div class="c-skeleton c-skeleton--text" style="width: 80%; margin-bottom: 12px"></div>
-          <div class="c-skeleton c-skeleton--text" style="width: 60%; margin-bottom: 12px"></div>
-          <div class="c-skeleton c-skeleton--text" style="width: 70%"></div>
-        </div>
+      <div class="c-messages__loading">
+        <div class="c-skeleton c-skeleton--text" style="width: 80%; margin-bottom: 12px"></div>
+        <div class="c-skeleton c-skeleton--text" style="width: 60%; margin-bottom: 12px"></div>
+        <div class="c-skeleton c-skeleton--text" style="width: 70%"></div>
+      </div>
       } @else if (messageService.conversations().length === 0) {
-        <div class="c-messages__empty">
-          <svg class="c-messages__empty-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-          </svg>
-          <p class="c-messages__empty-text">No tienes conversaciones</p>
-          <span class="c-messages__empty-hint">Envía un mensaje a un jugador desde su perfil o tarjeta</span>
-        </div>
+      <div class="c-messages__empty">
+        <svg class="c-messages__empty-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        </svg>
+        <p class="c-messages__empty-text">No tienes conversaciones</p>
+        <span class="c-messages__empty-hint">Envía un mensaje a un jugador desde su perfil o tarjeta</span>
+      </div>
       } @else {
-        @for (conv of messageService.conversations(); track conv._id) {
-          <button
-            class="c-messages__conversation-item"
-            [class.c-messages__conversation-item--active]="messageService.activeConversation()?._id === conv._id"
-            [class.c-messages__conversation-item--unread]="conv.unreadCount && conv.unreadCount > 0"
-            (click)="selectConversation(conv)">
-            <div class="c-messages__conversation-avatar">
-              @if (getConversationImage(conv)) {
-                <img class="c-messages__conversation-avatar-img" [src]="getConversationImage(conv)" [alt]="getConversationName(conv)" />
-              } @else {
-                <div class="c-messages__avatar-placeholder">
-                  {{ getConversationInitial(conv) }}
-                </div>
-              }
-              @if (conv.type === 'group') {
-                <span class="c-messages__group-indicator">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                </span>
-              }
-            </div>
-            <div class="c-messages__conversation-info">
-              <div class="c-messages__conversation-top">
-                <span class="c-messages__conversation-name">{{ getConversationName(conv) }}</span>
-                @if (conv.lastMessage?.createdAt) {
-                  <span class="c-messages__conversation-time">{{ conv.lastMessage?.createdAt | date: 'dd/MM HH:mm' }}</span>
-                }
-              </div>
-              @if (conv.lastMessage?.content) {
-                <p class="c-messages__conversation-preview">{{ conv.lastMessage?.content }}</p>
-              } @else {
-                <p class="c-messages__conversation-preview c-messages__conversation-preview--empty">Sin mensajes aún</p>
-              }
-            </div>
-            @if (conv.unreadCount && conv.unreadCount > 0) {
-              <span class="c-messages__unread-badge">{{ conv.unreadCount }}</span>
+      @for (conv of messageService.conversations(); track conv._id) {
+      <button class="c-messages__conversation-item"
+        [class.c-messages__conversation-item--active]="messageService.activeConversation()?._id === conv._id"
+        [class.c-messages__conversation-item--unread]="conv.unreadCount && conv.unreadCount > 0"
+        (click)="selectConversation(conv)">
+        <div class="c-messages__conversation-avatar">
+          @if (getConversationImage(conv)) {
+          <img class="c-messages__conversation-avatar-img" [src]="getConversationImage(conv)"
+            [alt]="getConversationName(conv)" />
+          } @else {
+          <div class="c-messages__avatar-placeholder">
+            {{ getConversationInitial(conv) }}
+          </div>
+          }
+          @if (conv.type === 'group') {
+          <span class="c-messages__group-indicator" [class.c-messages__group-indicator--team]="!!conv.teamId"
+            [title]="conv.teamId ? 'Chat de Equipo' : 'Grupo'">
+            @if (conv.teamId) {
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2L2 7l10 5 10-5-10-5zm0 2.8L19.2 8 12 11.6 4.8 8 12 4.8zm0 5.4L2.4 15l9.6 4.8L21.6 15z" />
+            </svg>
+            } @else {
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
             }
-          </button>
+          </span>
+          }
+        </div>
+        <div class="c-messages__conversation-info">
+          <div class="c-messages__conversation-top">
+            <span class="c-messages__conversation-name">{{ getConversationName(conv) }}</span>
+            @if (conv.lastMessage?.createdAt) {
+            <span class="c-messages__conversation-time">{{ conv.lastMessage?.createdAt | date: 'dd/MM HH:mm' }}</span>
+            }
+          </div>
+          @if (conv.lastMessage?.content) {
+          <p class="c-messages__conversation-preview">{{ conv.lastMessage?.content }}</p>
+          } @else {
+          <p class="c-messages__conversation-preview c-messages__conversation-preview--empty">Sin mensajes aún</p>
+          }
+        </div>
+        @if (conv.unreadCount && conv.unreadCount > 0) {
+        <span class="c-messages__unread-badge">{{ conv.unreadCount }}</span>
         }
+      </button>
+      }
       }
     </nav>
   </aside>
@@ -94,138 +145,141 @@
   <!-- ═══ Panel derecho: chat activo ═══ -->
   <section class="c-messages__chat" [class.c-messages__chat--hidden]="mobileView === 'list'">
     @if (messageService.activeConversation()) {
-      <!-- Chat header -->
-      <header class="c-messages__chat-header">
-        <button class="c-messages__back-btn" (click)="backToList()">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <div class="c-messages__chat-header-avatar">
-          @if (getConversationImage(messageService.activeConversation()!)) {
-            <img class="c-messages__chat-header-avatar-img" [src]="getConversationImage(messageService.activeConversation()!)" [alt]="getConversationName(messageService.activeConversation()!)" />
-          } @else {
-            <div class="c-messages__avatar-placeholder c-messages__avatar-placeholder--sm">
-              {{ getConversationInitial(messageService.activeConversation()!) }}
-            </div>
-          }
-        </div>
-        <div class="c-messages__chat-header-info">
-          <h3 class="c-messages__chat-header-name">{{ getConversationName(messageService.activeConversation()!) }}</h3>
-          @if (messageService.activeConversation()!.type === 'group') {
-            <span class="c-messages__chat-header-members">{{ messageService.activeConversation()!.participants.length }} miembros</span>
-          }
-        </div>
-        @if (messageService.activeConversation()!.type === 'direct') {
-          <a
-            class="c-messages__profile-link"
-            [routerLink]="['/profile', getOtherParticipant(messageService.activeConversation()!)?._id]"
-            title="Ver perfil">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </a>
-        }
-      </header>
-
-      <!-- Messages area -->
-      <div
-        class="c-messages__chat-body"
-        #messagesContainer
-        (scroll)="onScroll()">
-
-        @if (messageService.loadingMessages() && messageService.messages().length === 0) {
-          <div class="c-messages__chat-loading">
-            <div class="c-skeleton c-skeleton--text" style="width: 60%; margin-bottom: 8px"></div>
-            <div class="c-skeleton c-skeleton--text" style="width: 40%; margin-bottom: 8px; align-self: flex-end"></div>
-            <div class="c-skeleton c-skeleton--text" style="width: 50%"></div>
-          </div>
-        }
-
-        @if (messageService.messagesNextCursor() && messageService.messages().length > 0) {
-          <div class="c-messages__load-more">
-            <button class="c-messages__load-more-btn" (click)="onScroll()">Cargar anteriores</button>
-          </div>
-        }
-
-        @for (msg of messageService.messages(); track msg._id; let i = $index) {
-          <!-- Day separator -->
-          @if (isNewDay(i)) {
-            <div class="c-messages__day-separator">
-              <span class="c-messages__day-separator-text">{{ msg.createdAt | date: 'dd MMMM yyyy' }}</span>
-            </div>
-          }
-
-          <div
-            class="c-messages__bubble-wrap"
-            [class.c-messages__bubble-wrap--own]="isOwnMessage(msg.sender._id)"
-            [class.c-messages__bubble-wrap--other]="!isOwnMessage(msg.sender._id)">
-
-            @if (!isOwnMessage(msg.sender._id) && messageService.activeConversation()!.type === 'group') {
-              <div class="c-messages__bubble-avatar">
-                @if (msg.sender.cardImage || msg.sender.profileImage) {
-                  <img class="c-messages__bubble-avatar-img" [src]="msg.sender.cardImage || msg.sender.profileImage" [alt]="msg.sender.riotId" />
-                } @else {
-                  <div class="c-messages__avatar-placeholder c-messages__avatar-placeholder--xs">
-                    {{ msg.sender.riotId.charAt(0).toUpperCase() }}
-                  </div>
-                }
-              </div>
-            }
-
-            <div class="c-messages__bubble" [class.c-messages__bubble--own]="isOwnMessage(msg.sender._id)">
-              @if (!isOwnMessage(msg.sender._id) && messageService.activeConversation()!.type === 'group') {
-                <span class="c-messages__bubble-sender">{{ msg.sender.riotId }}</span>
-              }
-              <p class="c-messages__bubble-text">{{ msg.content }}</p>
-              <span class="c-messages__bubble-time">{{ msg.createdAt | date: 'HH:mm' }}</span>
-            </div>
-          </div>
-        }
-
-        <!-- Typing indicator -->
-        @if (getActiveTypingUsers().length > 0) {
-          <div class="c-messages__typing">
-            <span class="c-messages__typing-dots">
-              <span class="c-messages__typing-dots-dot"></span><span class="c-messages__typing-dots-dot"></span><span class="c-messages__typing-dots-dot"></span>
-            </span>
-            <span class="c-messages__typing-text">
-              @for (userId of getActiveTypingUsers(); track userId; let last = $last) {
-                {{ getParticipantName(userId) }}@if (!last) {, }
-              }
-              escribiendo...
-            </span>
-          </div>
-        }
-      </div>
-
-      <!-- Message input -->
-      <footer class="c-messages__chat-footer">
-        <div class="c-messages__input-wrap">
-          <input
-            #messageInput
-            type="text"
-            class="c-messages__input"
-            placeholder="Escribe un mensaje..."
-            [(ngModel)]="newMessage"
-            (keydown)="onKeyDown($event)"
-            (input)="onTyping()"
-            maxlength="2000"
-            autocomplete="off"
-          />
-          <button
-            class="c-messages__send-btn"
-            [disabled]="!newMessage.trim()"
-            (click)="send()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-          </button>
-        </div>
-      </footer>
-    } @else {
-      <!-- No conversation selected -->
-      <div class="c-messages__no-chat">
-        <svg class="c-messages__no-chat-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    <!-- Chat header -->
+    <header class="c-messages__chat-header">
+      <button class="c-messages__back-btn" (click)="backToList()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6" />
         </svg>
-        <h3 class="c-messages__no-chat-title">Selecciona una conversación</h3>
-        <p class="c-messages__no-chat-text">Elige un chat de la lista o envía un mensaje a un jugador</p>
+      </button>
+      <div class="c-messages__chat-header-avatar">
+        @if (getConversationImage(messageService.activeConversation()!)) {
+        <img class="c-messages__chat-header-avatar-img"
+          [src]="getConversationImage(messageService.activeConversation()!)"
+          [alt]="getConversationName(messageService.activeConversation()!)" />
+        } @else {
+        <div class="c-messages__avatar-placeholder c-messages__avatar-placeholder--sm">
+          {{ getConversationInitial(messageService.activeConversation()!) }}
+        </div>
+        }
       </div>
+      <div class="c-messages__chat-header-info">
+        <h3 class="c-messages__chat-header-name">{{ getConversationName(messageService.activeConversation()!) }}</h3>
+        @if (messageService.activeConversation()!.type === 'group') {
+        <span class="c-messages__chat-header-members">
+          {{ messageService.activeConversation()!.participants.length }} miembros
+          @if (messageService.activeConversation()!.teamId) {
+          · Equipo
+          }
+        </span>
+        }
+      </div>
+      @if (messageService.activeConversation()!.type === 'direct') {
+      <a class="c-messages__profile-link"
+        [routerLink]="['/profile', getOtherParticipant(messageService.activeConversation()!)?._id]" title="Ver perfil">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+      </a>
+      }
+    </header>
+
+    <!-- Messages area -->
+    <div class="c-messages__chat-body" #messagesContainer (scroll)="onScroll()">
+
+      @if (messageService.loadingMessages() && messageService.messages().length === 0) {
+      <div class="c-messages__chat-loading">
+        <div class="c-skeleton c-skeleton--text" style="width: 60%; margin-bottom: 8px"></div>
+        <div class="c-skeleton c-skeleton--text" style="width: 40%; margin-bottom: 8px; align-self: flex-end"></div>
+        <div class="c-skeleton c-skeleton--text" style="width: 50%"></div>
+      </div>
+      }
+
+      @if (messageService.messagesNextCursor() && messageService.messages().length > 0) {
+      <div class="c-messages__load-more">
+        <button class="c-messages__load-more-btn" (click)="onScroll()">Cargar anteriores</button>
+      </div>
+      }
+
+      @for (msg of messageService.messages(); track msg._id; let i = $index) {
+      <!-- Day separator -->
+      @if (isNewDay(i)) {
+      <div class="c-messages__day-separator">
+        <span class="c-messages__day-separator-text">{{ msg.createdAt | date: 'dd MMMM yyyy' }}</span>
+      </div>
+      }
+
+      <div class="c-messages__bubble-wrap" [class.c-messages__bubble-wrap--own]="isOwnMessage(msg.sender._id)"
+        [class.c-messages__bubble-wrap--other]="!isOwnMessage(msg.sender._id)">
+
+        @if (!isOwnMessage(msg.sender._id) && messageService.activeConversation()!.type === 'group') {
+        <div class="c-messages__bubble-avatar">
+          @if (msg.sender.cardImage || msg.sender.profileImage) {
+          <img class="c-messages__bubble-avatar-img" [src]="msg.sender.cardImage || msg.sender.profileImage"
+            [alt]="msg.sender.riotId" />
+          } @else {
+          <div class="c-messages__avatar-placeholder c-messages__avatar-placeholder--xs">
+            {{ msg.sender.riotId.charAt(0).toUpperCase() }}
+          </div>
+          }
+        </div>
+        }
+
+        <div class="c-messages__bubble" [class.c-messages__bubble--own]="isOwnMessage(msg.sender._id)">
+          @if (!isOwnMessage(msg.sender._id) && messageService.activeConversation()!.type === 'group') {
+          <span class="c-messages__bubble-sender">{{ msg.sender.riotId }}</span>
+          }
+          <p class="c-messages__bubble-text">{{ msg.content }}</p>
+          <span class="c-messages__bubble-time">{{ msg.createdAt | date: 'HH:mm' }}</span>
+        </div>
+      </div>
+      }
+
+      <!-- Typing indicator -->
+      @if (getActiveTypingUsers().length > 0) {
+      <div class="c-messages__typing">
+        <span class="c-messages__typing-dots">
+          <span class="c-messages__typing-dots-dot"></span><span class="c-messages__typing-dots-dot"></span><span
+            class="c-messages__typing-dots-dot"></span>
+        </span>
+        <span class="c-messages__typing-text">
+          @for (userId of getActiveTypingUsers(); track userId; let last = $last) {
+          {{ getParticipantName(userId) }}@if (!last) {, }
+          }
+          escribiendo...
+        </span>
+      </div>
+      }
+    </div>
+
+    <!-- Message input -->
+    <footer class="c-messages__chat-footer">
+      <div class="c-messages__input-wrap">
+        <input #messageInput type="text" class="c-messages__input" placeholder="Escribe un mensaje..."
+          [(ngModel)]="newMessage" (keydown)="onKeyDown($event)" (input)="onTyping()" maxlength="2000"
+          autocomplete="off" />
+        <button class="c-messages__send-btn" [disabled]="!newMessage.trim()" (click)="send()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13" />
+            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+          </svg>
+        </button>
+      </div>
+    </footer>
+    } @else {
+    <!-- No conversation selected -->
+    <div class="c-messages__no-chat">
+      <svg class="c-messages__no-chat-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      </svg>
+      <h3 class="c-messages__no-chat-title">Selecciona una conversación</h3>
+      <p class="c-messages__no-chat-text">Elige un chat de la lista o envía un mensaje a un jugador</p>
+    </div>
     }
   </section>
 </main>
