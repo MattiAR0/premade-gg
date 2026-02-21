@@ -347,3 +347,38 @@ El build de producción es exitoso, sin errores ni advertencias, y la base de c�
 **Resultado:**
 - La barra de navegación ahora refleja con precisión la imagen de perfil seleccionada por el jugador en todo momento.
 - Queda introducido un feedback visual claro y animado al editar el perfil, asegurando que el usuario comprenda instantáneamente que los cambios quedaron registrados.
+
+---
+
+## 16. Chat sobre Chats Grupales, Gestión de Equipos y Solicitudes de Ingreso (feb 2026)
+
+**Prompts clave:**
+- "Me gustaria que me agregues los chats grupales en la parte de mensajes. Pudiendo buscar desde ahi a jugadores para poder añadirlos al grupo"
+- "La funcion de aceptar a alguien en el equipo no funciona, y borrar el equipo me gustaria que la notificacion fuese algo de la web no un alert del navegador"
+- "me da este error en vercel relacionado con la definicion de algunas variables, creo que puede ser por algun problema de los imports o de variables mal declaradas"
+
+**Acciones:**
+- **Chats Grupales y de Equipo:**
+  - Se modificó el esquema de `Conversation.js` para soportar chats tipo `group`, con propiedades extra como `name`, `groupImage`, `admin` y enlace opcional `teamId`.
+  - Se añadieron iconos dorados específicos e indicadores en la IU (`messages.component.html`) para distinguir entre DMs, Grupos Personalizados y Grupos Oficiales de Equipo (`· Equipo`).
+  - Al crear un Equipo, el backend instaura automáticamente una nueva conversación grupal y enlaza vía WebSockets al owner y posibles integrantes.
+  - Implementación de un modal/buscador de uso generalizado en la sección de Mensajes para entablar Grupos Nuevos con multiselección interactiva (chips visuales para remover usuarios elegidos).
+
+- **Gestión Avanzada de Equipos:**
+  - Se añadió la capacidad de **Añadir Jugadores Iniciales** al crear un equipo. Se reutilizó el buscador del chat grupal en el modal de Nuevo Equipo, permitiendo meter hasta a 9 acompañantes al momento de fundarlo (unidos automáticamente al equipo y al chat).
+  - Se desarrolló la función **Eliminar Equipo**. Se implementó un borrado en cascada en `teamController.js` para destruir la conversación de equipo vinculada, y en el frontend se reemplazó el obsoleto `window.confirm` por un flamante modal de la plataforma en color rojo preventivo.
+  
+- **Solicitudes de Unión (Join Requests):**
+  - Los usuarios ajenos avistan ahora un botón de "Solicitar unirse" que abre un modal con un `textarea` para redactar una carta introductoria.
+  - El array `joinRequests` del Scheme de `Team` almacena usuarios, adjuntos textuales y estados (`pending`, `accepted`, `rejected`).
+  - El Capitán visiona instantáneamente arriba del detalle las peticiones por revisar.
+  - Se corrigió un severo bug que impedía aprobar a un usuario debido a la ausencia del `.populate('joinRequests.user')` en el endpoint `GET /api/teams/:id`, produciendo un fallo en cadena en el update subyacente de `$addToSet`.
+
+- **Estilos y Build de Producción:**
+  - Se resolvió un falso positivo en `ng build` (Angular AOT) insertando explícitamente `CommonModule` e `FormsModule` al componente standalone `team-detail.component.ts`.
+  - Se subsanó un percance con `rgba()` sobre variables CSS en entorno SASS de alta rigurosidad pasándolo a su color hexadecimal puro en variables nativas.
+
+**Resultado:**
+- El sistema de comunicación cuenta ahora con canales tanto directos como para escuadras formadas.
+- La administración de Equipos fluye sin tropiezos, logrando reclutar, expulsar y disolver formaciones bajo un entorno interactivo y estéticamente afín al resto de preMadeGG.
+- Vercel y el contenedor de producción ya erigen el bundle libre de problemas en las plantillas HTML o en los Mixins de CSS.
