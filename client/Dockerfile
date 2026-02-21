@@ -13,7 +13,7 @@ RUN npm ci
 
 # Copiar código fuente y compilar
 COPY . .
-RUN npm run build -- --configuration=production
+RUN npm run build -- --configuration=docker
 
 # ── Stage 2: Serve ─────────────────────────────────────
 FROM nginx:alpine
