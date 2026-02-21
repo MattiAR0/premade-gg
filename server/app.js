@@ -34,6 +34,7 @@ const errorHandler = require('./middlewares/errorHandler');
 // Services
 const { verifyConnection: verifySmtp } = require('./services/emailService');
 const socketService = require('./services/socketService');
+const seedDefaults = require('./utils/seedDefaults');
 
 // Config
 const { connectDB } = require('./config/db');
@@ -130,6 +131,7 @@ app.use(errorHandler);
 // ── Conexión a MongoDB y arranque ─────────────────────
 connectDB()
   .then(async () => {
+    await seedDefaults();
     await verifySmtp();
 
     // Inicializar Socket.IO
