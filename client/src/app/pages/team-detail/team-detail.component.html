@@ -55,7 +55,7 @@
 
       <div class="c-team-detail__actions">
         @if (isOwner) {
-        <button class="c-btn c-btn--danger c-btn--sm" [disabled]="actionLoading" (click)="deleteTeam()"
+        <button class="c-btn c-btn--danger c-btn--sm" [disabled]="actionLoading" (click)="openDeleteModal()"
           title="Eliminar este equipo de forma permanente">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="3 6 5 6 21 6"></polyline>
@@ -351,17 +351,50 @@
     </section>
     }
 
-    <!-- Feedback messages -->
-    @if (actionMessage) {
-    <p class="c-team-detail__feedback c-team-detail__feedback--ok">{{ actionMessage }}</p>
-    }
-    @if (actionError) {
+    <!-- Modales y alertas de errores -->
+    @if (actionError && !showDeleteModal) {
     <p class="c-team-detail__feedback c-team-detail__feedback--err">{{ actionError }}</p>
     }
   </article>
   }
 </main>
 
+<!-- Modal Eliminar Equipo -->
+@if (showDeleteModal) {
+<div class="c-modal-overlay" (click)="closeDeleteModal()">
+  <div class="c-modal c-modal--small" (click)="$event.stopPropagation()">
+    <header class="c-modal__header">
+      <h2 class="c-modal__title" style="color: #e05555;">Eliminar Equipo</h2>
+    </header>
+
+    @if (actionError) {
+    <p class="c-modal__error">{{ actionError }}</p>
+    }
+    @if (actionMessage) {
+    <p class="c-modal__success">{{ actionMessage }}</p>
+    }
+
+    <div class="c-modal__form">
+      <p class="c-modal__text">¿Estás seguro de que deseas eliminar el equipo <strong>{{ team?.name }}</strong>? Esta
+        acción borrará el equipo y su chat asociado, y <strong>no se puede deshacer</strong>.</p>
+
+      <footer class="c-modal__footer">
+        <button class="c-btn c-btn--ghost" type="button" (click)="closeDeleteModal()">Cancelar</button>
+        <button class="c-btn c-btn--danger" type="button" (click)="deleteTeam()"
+          [disabled]="actionLoading || !!actionMessage">
+          @if (actionLoading) {
+          <span class="c-modal__spinner"></span> Borrando...
+          } @else {
+          Sí, eliminar equipo
+          }
+        </button>
+      </footer>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Modal Unirse (Ya existente) -->
 @if (showJoinModal) {
 <div class="c-modal-overlay" (click)="closeJoinModal()">
   <div class="c-modal c-modal--small" (click)="$event.stopPropagation()">

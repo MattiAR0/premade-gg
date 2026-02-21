@@ -114,6 +114,7 @@ const getTeamById = async (req, res, next) => {
       .populate('coach', POPULATE_FIELDS)
       .populate('players.user', POPULATE_FIELDS)
       .populate('staff.user', POPULATE_FIELDS)
+      .populate('joinRequests.user', POPULATE_FIELDS)
       .lean();
 
     if (!team) {
@@ -563,7 +564,9 @@ const reviewJoinRequest = async (req, res, next) => {
       return res.status(404).json({ message: 'Solicitud no encontrada o ya procesada' });
     }
 
-    team.joinRequests[requestIndex].status = status;
+    // Actualizamos el estado en memoria para el histórico o lo borramos. 
+    // Optaremos por borrarlo de la lista para no llenar la base de datos de "rejected" o "accepted" antiguos.
+    team.joinRequests.splice(requestIndex, 1);
 
     if (status === 'accepted') {
       team.players.push({ user: requestUser, role: 'Flex', joinedAt: new Date() });
@@ -579,6 +582,10 @@ const reviewJoinRequest = async (req, res, next) => {
         socketService.emitToConversation(conversation._id.toString(), 'conversation:updated', conversation);
       }
     }
+
+    // Asegurarse de que Mongoose se entere de los cambios a los arrays
+    team.markModified('joinRequests');
+    team.markModified('players');
 
     await team.save();
     res.json({ message: `Solicitud ${status === 'accepted' ? 'aceptada' : 'rechazada'}` });

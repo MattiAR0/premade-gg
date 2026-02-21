@@ -22,6 +22,9 @@ export class TeamDetailComponent implements OnInit {
   actionError = '';
   actionLoading = false;
 
+  // Delete Team Modal
+  showDeleteModal = false;
+
   // Join Requests
   showJoinModal = false;
   joinRequestMessage = '';
@@ -167,13 +170,19 @@ export class TeamDetailComponent implements OnInit {
     });
   }
 
+  openDeleteModal(): void {
+    if (!this.team || !this.isOwner) return;
+    this.showDeleteModal = true;
+    this.actionMessage = '';
+    this.actionError = '';
+  }
+
+  closeDeleteModal(): void {
+    this.showDeleteModal = false;
+  }
+
   deleteTeam(): void {
     if (!this.team || !this.isOwner) return;
-
-    // Quick confirmation
-    if (!confirm(`¿Estás seguro de que deseas eliminar el equipo "${this.team.name}"? Esta acción no se puede deshacer.`)) {
-      return;
-    }
 
     this.actionLoading = true;
     this.actionMessage = '';
