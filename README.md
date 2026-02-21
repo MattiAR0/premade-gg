@@ -78,6 +78,99 @@ El servidor inyecta automáticamente cuentas y datos (equipos, posts LFG) de pru
 | `npm run seed`  | `node seed.js`             | Poblar la BBDD con datos de prueba   |
 | `npm run lint`  | `eslint .`                 | Ejecutar linter                      |
 
+## Endpoints de la API
+
+### Autenticación (`/api/auth`)
+| Método | Ruta | Auth | Descripción |
+|--------|------|:----:|-------------|
+| POST | `/api/auth/register` | — | Registrar nuevo usuario |
+| POST | `/api/auth/login` | — | Iniciar sesión (devuelve JWT) |
+| GET | `/api/auth/me` | 🔒 | Obtener usuario autenticado |
+| PUT | `/api/auth/profile` | 🔒 | Actualizar perfil propio |
+| POST | `/api/auth/forgot-password` | — | Solicitar restablecimiento de contraseña |
+| POST | `/api/auth/reset-password` | — | Restablecer contraseña con token |
+
+### Usuarios (`/api/users`)
+| Método | Ruta | Auth | Descripción |
+|--------|------|:----:|-------------|
+| GET | `/api/users` | — | Listar usuarios (paginado con cursor) |
+| GET | `/api/users/search?q=...` | — | Buscar usuarios por Riot ID |
+| GET | `/api/users/:id` | — | Obtener usuario por ID |
+| GET | `/api/users/:id/karma` | — | Recalcular karma de un usuario |
+| POST | `/api/users` | 🔒 | Crear usuario (valida Riot ID) |
+| PUT | `/api/users/:id` | 🔒 | Actualizar usuario |
+| DELETE | `/api/users/:id` | 🔒 | Eliminar usuario y datos asociados |
+
+### LFG Posts (`/api/lfg`)
+| Método | Ruta | Auth | Descripción |
+|--------|------|:----:|-------------|
+| GET | `/api/lfg` | — | Listar posts LFG (paginado) |
+| GET | `/api/lfg/:id` | — | Obtener post por ID |
+| POST | `/api/lfg` | 🔒 | Crear post LFG |
+| PUT | `/api/lfg/:id` | 🔒 | Actualizar post |
+| DELETE | `/api/lfg/:id` | 🔒 | Eliminar post |
+| POST | `/api/lfg/:id/join` | 🔒 | Solicitar unirse a un post |
+| PUT | `/api/lfg/:id/members/:userId` | 🔒 | Aceptar/rechazar solicitud |
+| DELETE | `/api/lfg/:id/members/:userId` | 🔒 | Abandonar/expulsar de un post |
+
+### Equipos (`/api/teams`)
+| Método | Ruta | Auth | Descripción |
+|--------|------|:----:|-------------|
+| GET | `/api/teams` | — | Listar equipos |
+| GET | `/api/teams/:id` | — | Obtener equipo por ID |
+| POST | `/api/teams` | 🔒 | Crear equipo |
+| PUT | `/api/teams/:id` | 🔒 | Actualizar equipo |
+| DELETE | `/api/teams/:id` | 🔒 | Eliminar equipo (cascada) |
+| PUT | `/api/teams/:id/coach` | 🔒 | Asignar coach |
+| POST | `/api/teams/:id/players` | 🔒 | Añadir jugador |
+| DELETE | `/api/teams/:id/players/:userId` | 🔒 | Eliminar jugador |
+| POST | `/api/teams/:id/staff` | 🔒 | Añadir staff |
+| DELETE | `/api/teams/:id/staff/:userId` | 🔒 | Eliminar staff |
+| POST | `/api/teams/:id/requests` | 🔒 | Solicitar unirse al equipo |
+| PUT | `/api/teams/:id/requests/:userId` | 🔒 | Aceptar/rechazar solicitud |
+
+### Reviews (`/api/reviews`)
+| Método | Ruta | Auth | Descripción |
+|--------|------|:----:|-------------|
+| GET | `/api/reviews` | — | Listar reviews |
+| GET | `/api/reviews/eligibility/:targetId` | 🔒 | Verificar si puedes dejar review |
+| GET | `/api/reviews/:id` | — | Obtener review por ID |
+| POST | `/api/reviews` | 🔒 | Crear review |
+| DELETE | `/api/reviews/:id` | 🔒 | Eliminar review propia |
+
+### Notificaciones (`/api/notifications`)
+| Método | Ruta | Auth | Descripción |
+|--------|------|:----:|-------------|
+| GET | `/api/notifications` | 🔒 | Listar notificaciones |
+| GET | `/api/notifications/unread-count` | 🔒 | Obtener nº de no leídas |
+| PUT | `/api/notifications/read-all` | 🔒 | Marcar todas como leídas |
+| PUT | `/api/notifications/:id/read` | 🔒 | Marcar una como leída |
+| DELETE | `/api/notifications/:id` | 🔒 | Eliminar notificación |
+
+### Mensajes (`/api/messages`)
+| Método | Ruta | Auth | Descripción |
+|--------|------|:----:|-------------|
+| GET | `/api/messages/conversations` | 🔒 | Listar conversaciones |
+| POST | `/api/messages/conversations/direct` | 🔒 | Crear/obtener chat directo |
+| POST | `/api/messages/conversations/group` | 🔒 | Crear conversación grupal |
+| GET | `/api/messages/conversations/:id/messages` | 🔒 | Obtener mensajes de conversación |
+| POST | `/api/messages/conversations/:id/messages` | 🔒 | Enviar mensaje |
+| PUT | `/api/messages/conversations/:id/read` | 🔒 | Marcar conversación como leída |
+| GET | `/api/messages/unread-count` | 🔒 | Obtener total de mensajes no leídos |
+
+### Riot API (`/api/riot`)
+| Método | Ruta | Auth | Descripción |
+|--------|------|:----:|-------------|
+| GET | `/api/riot/validate/:gameName/:tagLine` | — | Validar cuenta de Riot |
+| GET | `/api/riot/rank/:region/:gameName/:tagLine` | — | Obtener rango real del jugador |
+
+### Upload (`/api/upload`)
+| Método | Ruta | Auth | Descripción |
+|--------|------|:----:|-------------|
+| POST | `/api/upload/avatar` | 🔒 | Subir imagen de avatar |
+
+> 🔒 = Requiere token JWT en header `Authorization: Bearer <token>`
+
 ## Reglas de Desarrollo (Rúbricas)
 Este proyecto sigue rúbricas académicas estrictas:
 1. **Sin "divitis"**: HTML semántico obligatorio.
