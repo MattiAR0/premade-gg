@@ -398,3 +398,87 @@ El build de producción es exitoso, sin errores ni advertencias, y la base de c�
 
 **Resultado:**
 - El entorno ahora garantiza usuarios, equipos y LFG de prueba disponibles desde el primer segundo sin scripts manuales, útil para agilizar simulaciones en Vercel, Render o Docker.
+
+---
+
+## 18. Chat sobre estética “seria gamer” y mejor uso del espacio en Jugadores/LFG (feb 2026)
+
+**Prompts clave:**
+- "Puedes cambiar la estetica de la aplicacion, tipo los colores, no me gusta que sea tan colorido me gusta mas que tenga una estetica más seria pero que mantenga la estética gamer"
+- "siento que en las pestañas de jugadores y LFG hay mucho espacio sin usar, no se si puedes cambiar un poco el estilo"
+- "agrega este chat al diario de ia"
+
+**Acciones (estética):**
+- Se reemplazó la paleta multicolor (rojo neón, cian, púrpura, dorado, azul) por una **paleta “Dark Esports”** en `_variables.scss`:
+  - Un solo acento principal: rojo refinado `#dc3545` (en lugar de neón).
+  - Colores secundarios más apagados: cian → sage teal, púrpura → slate, dorado → bronce, azul → acero.
+  - Gradientes multicolor sustituidos por gradientes monocromáticos o de un solo tono.
+  - Fondos más neutros y oscuros; sombras y glows reducidos.
+- Se actualizaron componentes y páginas para usar las nuevas variables (botones, badges, navbar, hero, cards, focus, errores, selección de texto, mixins de borde gradiente).
+
+**Acciones (espacio en Jugadores y LFG):**
+- Contenedor de ambas páginas cambiado de `l-container--narrow` (720px) a `l-container--medium` (1080px).
+- Grid de tarjetas de columna única a **2 columnas** (`l-grid--2col`) en Jugadores y LFG Board.
+- Filtros más compactos e inline (filtros + botones en una fila), menos padding y labels/selects más pequeños.
+- Tarjetas (player-card, lfg-card) con menos padding interno, avatares y tipografía algo más compactos; descripción LFG limitada a 2 líneas.
+- Títulos de página y sección reducidos; espaciado del grid y de sección (`l-section`) reducido.
+- `l-container--medium` en `_grid.scss` pasado de 960px a 1080px.
+
+**Resultado:**
+- La app tiene una estética más seria y “esports”, con un único acento rojo y el resto en tonos neutros/muted, manteniendo la sensación gamer.
+- Las pestañas Jugadores y LFG aprovechan mejor el ancho de pantalla, muestran más contenido visible (2 columnas de cards) y filtros más compactos, con menos espacio vacío.
+
+---
+
+## 19. Chat sobre estética moderna, red social y hovers suaves (feb 2026)
+
+**Prompts clave:**
+- "Me gustaria hacer unos cambios en la estetica de la aplicacion, que tenga toques mas modernos y más llamativos. Aparte una interfaz más llamativa que la web sea responsive. Intenta darle un toque más de red social o de blog que de pagina web"
+- "los colores y el estilo me parece bien, quizás el el efecto de hover es un poco exagerado, y no me gusta la distribucion de la web, prefiero que parezca una red social"
+- "me gustaria que agregues este chat al diario de la ia"
+
+**Acciones (primera ronda — estética moderna y red social):**
+- Se actualizaron los **design tokens** en `_variables.scss`: paleta más profunda, gradientes (primary, secondary, accent), sombras suaves, radios más redondeados (hasta pill), transiciones.
+- Se añadieron **mixins** en `_mixins.scss`: `social-card`, `gradient-text`, `line-clamp`, `custom-scrollbar`, `respond-below` para responsive.
+- Se modernizó la **tipografía**: Inter para títulos y cuerpo, menos agresiva; clases `.text-gradient`, `.text-accent`.
+- **Navbar responsive**: menú hamburguesa animado en móvil, panel lateral deslizante, overlay, enlaces con estilo social; logo con gradient en "GG".
+- **Botones** tipo pill con gradiente en primary; **badges** pill con colores por tipo (karma, rank, role, region).
+- **Cards** con mixin `social-card`; **player-card** y **lfg-card** rediseñadas con avatar/autor, estilo post social.
+- **Home**: hero con fondo animado sutil, badge, título con gradient, barra de stats flotante, sección "Cómo funciona" con iconos y cards, Top Jugadores con enlace "Ver todos".
+- **Footer** con branding, tagline y enlaces; **estilos globales** con fondo fijo y gradientes suaves.
+- **Grid**: `l-container--narrow`, `l-grid--feed` para layout tipo feed.
+
+**Acciones (segunda ronda — hovers suaves y layout feed):**
+- **Hovers suavizados**: Se eliminaron todos los `translateY` y movimientos exagerados. Cards: solo cambio de borde y fondo muy sutil en hover. Botones: primary solo sube brillo (`filter: brightness`), secondary/ghost solo color de borde. Features del home: mismo criterio. Navbar brand: quitado el `scale` en hover. Mixin `social-card` y `glow-hover` actualizados sin transform.
+- **Layout tipo red social**: Jugadores pasó de grid 2 columnas a **feed único** (`l-grid--feed`) con `l-container--narrow` (720px). LFG Board ya usaba feed; se unificó con container narrow. Home "Top Jugadores" pasó de grid 3 columnas a **feed vertical centrado**. Todo el contenido de listas (players, posts LFG, top players) se muestra en una columna centrada, como un timeline de red social.
+- Corrección de deprecación SASS: `lighten()` sustituido por `color.adjust()` en mixins y valor fijo en home.
+
+**Resultado:**
+- La aplicación tiene una estética moderna, con gradientes y tipografía limpia, navbar responsive con hamburger y cards estilo post/perfil social.
+- Los hovers son discretos (solo cambio de borde/brillo), sin saltos ni elevaciones exageradas.
+- La distribución es claramente de red social: una columna de feed centrada (720px) en Jugadores, LFG Board y Top Jugadores del home, con sensación de timeline al hacer scroll.
+
+---
+
+## 20. Chat sobre carga de jugadores/LFG y fix zoneless (feb 2026)
+
+**Prompts clave:**
+- "Estoy teniendo un problema con la carga de los jugadores y de los post LFG puedes meterte en la web y navegar por las distintas pestañas para comprobar que falla"
+- "Vale, ahora funciona pero es raro, tengo que cambiar de pestaña y volver a entrar para que cargue"
+- "agrega este chat al diario de la ia"
+
+**Diagnóstico:**
+- Se comprobaron las APIs (`/api/users`, `/api/lfg`) y el código compilado en Docker: todo respondía correctamente y el front desplegado ya usaba paginación por cursor.
+- El síntoma (datos visibles solo tras navegar y volver) apuntaba a que la vista no se actualizaba cuando llegaban los datos de forma asíncrona.
+- Se confirmó que el proyecto **no tiene `zone.js`** en dependencias; Angular 21 corre en **modo zoneless**. En ese modo, Angular no detecta por sí solo los cambios tras operaciones asíncronas (HTTP, callbacks de `IntersectionObserver`), por lo que el primer render no se refresca cuando llega la respuesta.
+
+**Acciones:**
+- Se inyectó `ChangeDetectorRef` en **HomeComponent**, **PlayersComponent** y **LfgBoardComponent**.
+- Se llamó a `this.cdr.markForCheck()` en todos los callbacks donde se actualizan datos asíncronos:
+  - En los `subscribe` (next y error) de `getUsers` / `getLfgPosts`.
+  - En el callback del **IntersectionObserver** (infinite scroll), que se ejecuta fuera del contexto de Angular.
+- Se reconstruyó el contenedor Docker del client (`docker compose up --build client -d`) y se comprobó que los nuevos chunks incluyen `markForCheck`.
+
+**Resultado:**
+- La carga de jugadores y posts LFG se muestra correctamente en la **primera visita** a cada pestaña, sin necesidad de cambiar de pestaña y volver.
+- El comportamiento queda documentado para futuros componentes que dependan de HTTP o APIs nativas (IntersectionObserver, etc.) en modo zoneless: hay que notificar cambios con `ChangeDetectorRef.markForCheck()` (o usar signals/async pipe).
