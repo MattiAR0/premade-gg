@@ -107,3 +107,37 @@ Una interfaz pulida y profesional que retiene la identidad "gamer" mientras ofre
 
 **Resultados:**
 Una aplicación optimizada, con tiempos de respuesta ágiles, animaciones fluidas, código limpio y contenedores estables listos para defender el proyecto.
+
+---
+
+## Reflexión Técnica: Errores de la IA, Refactorizaciones y Decisiones del Desarrollador
+
+### Errores que cometió la IA
+
+1. **Interfaz demasiado colorida y exagerada.** La IA generó una primera versión de la UI con colores vibrantes, transformaciones agresivas en hover (saltos en el eje Y) y gradientes llamativos que no encajaban con la identidad "esports" del proyecto. El resultado era visualmente recargado y poco profesional. Tuve que pedir explícitamente un rediseño hacia una estética más seria y oscura, guiando yo la dirección de diseño.
+
+2. **Problemas con el renderizado en Angular (Zoneless).** La IA no tuvo en cuenta que al usar callbacks asíncronos (HTTP, observadores) Angular no detectaba los cambios automáticamente. La pantalla de jugadores y LFG no se actualizaba hasta que cambiabas de pestaña y volvías. Tras reportar el bug, la solución fue inyectar `ChangeDetectorRef.markForCheck()`, pero yo tuve que identificar y describir el comportamiento erróneo para que se pudiera diagnosticar.
+
+3. **Sistema de correo con Nodemailer fallaba en producción.** La IA configuró inicialmente `nodemailer` con SMTP directo, que funcionaba en local pero fallaba en Render (la capa gratuita bloquea los puertos SMTP 587 y 465). El error `SMTP connection failed: Connection timeout` obligó a migrar completamente el servicio a la API HTTP de Brevo. La IA no previó esta limitación del hosting.
+
+4. **Dockerfile del frontend no compilaba en Docker.** La IA generó un Dockerfile que ejecutaba `npm install` y `ng build` dentro del contenedor, pero fallaba con `npm error code EAI_AGAIN` por problemas DNS del daemon de Docker en local. La solución final fue compilar en el host y servir los estáticos con Nginx, un workaround que yo validé como funcional.
+
+### Código de la IA que tuve que refactorizar
+
+1. **Estilos de hover y efectos visuales.** Las tarjetas de jugadores tenían un `transform: translateY(-8px)` en hover que era visualmente agresivo. Lo sustituí por transiciones sutiles de `border-color` y `filter: brightness()`, mucho más elegantes y coherentes con la estética "Dark Esports" que yo buscaba.
+
+2. **Layout de grids multi-columna.** La IA propuso inicialmente grids de 3-4 columnas para las secciones de jugadores y LFG, pero dejaban mucho espacio vacío y no daban sensación de red social. Pedí cambiar a un diseño tipo "feed" de columna única centrada (720px), similar a un timeline, que mejoró enormemente la experiencia de usuario.
+
+3. **Navbar con espaciado excesivo.** La barra de navegación que generó la IA tenía demasiado espacio entre la marca y los enlaces, y el avatar de perfil era demasiado pequeño. Tuve que ajustar manualmente los estilos para que el layout fuera compacto y el avatar fuera visible a primera vista.
+
+### Decisiones arquitectónicas que tomé yo frente a las sugerencias de la IA
+
+1. **MongoDB en vez de SQL.** La IA me presentó ambas opciones y yo decidí MongoDB porque los datos de jugadores (agentes favoritos, disponibilidad por día, enlaces sociales) son documentos JSON naturales que encajan mejor en un esquema flexible de NoSQL que en tablas SQL rígidas.
+
+2. **TTL de 24 horas en posts LFG en vez de horarios manuales.** La IA inicialmente planteó un sistema donde el usuario introducía horarios de inicio y fin para los posts. Yo propuse eliminar eso y usar un TTL de MongoDB de 24 horas: el post se publica, dura un día, y caduca automáticamente. Esto simplificó tanto el backend como la UI.
+
+3. **Migración de Nodemailer a Brevo SDK (decisión forzada por Render).** Ante la limitación de SMTP en Render, yo investigué alternativas y decidí usar la API HTTP de Brevo (`@getbrevo/brevo`) porque permite enviar correos a cualquier dirección sin necesidad de un dominio propio y sin depender de puertos SMTP.
+
+4. **Diseño visual "Dark Esports" frente al propuesto por la IA.** La IA propuso paletas coloridas y llamativas. Yo decidí que la identidad del proyecto debía ser oscura, profesional y mínima, con un único color de acento rojo (`#dc3545`) y tonos neutros. Esta dirección artística fue 100% mía y la mantuve a lo largo de todas las fases del proyecto.
+
+5. **Polling con Signals en vez de WebSockets para notificaciones.** Aunque el proyecto ya usa Socket.IO para los chats, yo decidí que las notificaciones usaran un sistema de polling con Angular Signals por simplicidad y para evitar complejidad innecesaria en un componente que no requiere latencia en tiempo real estricta.
