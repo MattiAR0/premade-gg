@@ -1,4 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
@@ -8,7 +10,7 @@ import { RankBadgeComponent } from '../../shared/rank-badge/rank-badge.component
 @Component({
   selector: 'app-team-detail',
   standalone: true,
-  imports: [RouterLink, RankBadgeComponent],
+  imports: [CommonModule, FormsModule, RouterLink, RankBadgeComponent],
   templateUrl: './team-detail.component.html',
   styleUrl: './team-detail.component.scss',
 })
