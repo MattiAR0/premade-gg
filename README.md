@@ -5,6 +5,9 @@
 ## Visión del Proyecto
 Una plataforma "Looking For Group" (LFG) que penaliza la toxicidad. Los usuarios con Karma < 3 son filtrados del matchmaking principal.
 
+## 🎬 Video Explicativo
+[![Ver Video](https://img.shields.io/badge/Ver%20Video%20Explicativo-Google%20Drive-blue?style=for-the-badge&logo=googledrive)](https://drive.google.com/file/d/1ghoKyXdTBNtKZwR7niyRDcn0XRcBcAn9/view?usp=sharing)
+
 ## Stack Tecnológico (MEAN)
 - **MongoDB**: Base de datos NoSQL con Mongoose.
 - **Express**: Framework backend con arquitectura MVC estricta.
