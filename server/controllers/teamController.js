@@ -180,7 +180,7 @@ const createTeam = async (req, res, next) => {
     const teamConversation = await Conversation.create({
       type: 'group',
       name: `Team ${name}`,
-      participants: [userId, ...initialPlayersList.filter(id => id !== userId)],
+      participants: [userId, ...initialPlayersList.filter((id) => id !== userId)],
       admin: userId,
       teamId: team._id,
     });
@@ -352,12 +352,16 @@ const addPlayer = async (req, res, next) => {
     const conversation = await Conversation.findOneAndUpdate(
       { teamId: team._id },
       { $addToSet: { participants: userId } },
-      { new: true }
+      { new: true },
     );
     if (conversation) {
       socketService.joinUserToConversation(userId, conversation._id.toString());
       socketService.emitToUser(userId, 'conversation:new', conversation);
-      socketService.emitToConversation(conversation._id.toString(), 'conversation:updated', conversation);
+      socketService.emitToConversation(
+        conversation._id.toString(),
+        'conversation:updated',
+        conversation,
+      );
     }
 
     await team.populate('players.user', POPULATE_FIELDS);
@@ -404,13 +408,19 @@ const removePlayer = async (req, res, next) => {
     const conversation = await Conversation.findOneAndUpdate(
       { teamId: team._id },
       { $pull: { participants: targetUserId } },
-      { new: true }
+      { new: true },
     );
     if (conversation) {
       // It's harder to force a socket to leave a room from outside, but we can emit an update
-      socketService.emitToConversation(conversation._id.toString(), 'conversation:updated', conversation);
+      socketService.emitToConversation(
+        conversation._id.toString(),
+        'conversation:updated',
+        conversation,
+      );
       // Optional: Inform the removed user
-      socketService.emitToUser(targetUserId, 'conversation:removed', { conversationId: conversation._id });
+      socketService.emitToUser(targetUserId, 'conversation:removed', {
+        conversationId: conversation._id,
+      });
     }
 
     res.json({ message: isSelf ? 'Has abandonado el equipo' : 'Jugador removido' });
@@ -446,12 +456,16 @@ const addStaff = async (req, res, next) => {
     const conversation = await Conversation.findOneAndUpdate(
       { teamId: team._id },
       { $addToSet: { participants: userId } },
-      { new: true }
+      { new: true },
     );
     if (conversation) {
       socketService.joinUserToConversation(userId, conversation._id.toString());
       socketService.emitToUser(userId, 'conversation:new', conversation);
-      socketService.emitToConversation(conversation._id.toString(), 'conversation:updated', conversation);
+      socketService.emitToConversation(
+        conversation._id.toString(),
+        'conversation:updated',
+        conversation,
+      );
     }
 
     await team.populate('staff.user', POPULATE_FIELDS);
@@ -487,11 +501,17 @@ const removeStaff = async (req, res, next) => {
     const conversation = await Conversation.findOneAndUpdate(
       { teamId: team._id },
       { $pull: { participants: req.params.userId } },
-      { new: true }
+      { new: true },
     );
     if (conversation) {
-      socketService.emitToConversation(conversation._id.toString(), 'conversation:updated', conversation);
-      socketService.emitToUser(req.params.userId, 'conversation:removed', { conversationId: conversation._id });
+      socketService.emitToConversation(
+        conversation._id.toString(),
+        'conversation:updated',
+        conversation,
+      );
+      socketService.emitToUser(req.params.userId, 'conversation:removed', {
+        conversationId: conversation._id,
+      });
     }
 
     res.json({ message: 'Staff removido' });
@@ -519,9 +539,13 @@ const requestToJoin = async (req, res, next) => {
     }
 
     // Check if there is already a pending request
-    const existingReq = team.joinRequests.find((r) => r.user.toString() === req.user.id && r.status === 'pending');
+    const existingReq = team.joinRequests.find(
+      (r) => r.user.toString() === req.user.id && r.status === 'pending',
+    );
     if (existingReq) {
-      return res.status(400).json({ message: 'Ya tienes una solicitud pendiente para este equipo' });
+      return res
+        .status(400)
+        .json({ message: 'Ya tienes una solicitud pendiente para este equipo' });
     }
 
     const { message } = req.body;
@@ -557,14 +581,14 @@ const reviewJoinRequest = async (req, res, next) => {
     }
 
     const requestIndex = team.joinRequests.findIndex(
-      (r) => r.user.toString() === requestUser && r.status === 'pending'
+      (r) => r.user.toString() === requestUser && r.status === 'pending',
     );
 
     if (requestIndex === -1) {
       return res.status(404).json({ message: 'Solicitud no encontrada o ya procesada' });
     }
 
-    // Actualizamos el estado en memoria para el histórico o lo borramos. 
+    // Actualizamos el estado en memoria para el histórico o lo borramos.
     // Optaremos por borrarlo de la lista para no llenar la base de datos de "rejected" o "accepted" antiguos.
     team.joinRequests.splice(requestIndex, 1);
 
@@ -574,12 +598,16 @@ const reviewJoinRequest = async (req, res, next) => {
       const conversation = await Conversation.findOneAndUpdate(
         { teamId: team._id },
         { $addToSet: { participants: requestUser } },
-        { new: true }
+        { new: true },
       );
       if (conversation) {
         socketService.joinUserToConversation(requestUser, conversation._id.toString());
         socketService.emitToUser(requestUser, 'conversation:new', conversation);
-        socketService.emitToConversation(conversation._id.toString(), 'conversation:updated', conversation);
+        socketService.emitToConversation(
+          conversation._id.toString(),
+          'conversation:updated',
+          conversation,
+        );
       }
     }
 

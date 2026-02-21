@@ -10,25 +10,7 @@
  *   BREVO_SENDER_EMAIL (El email con el que te registraste en Brevo)
  */
 
-const nodemailer = require('nodemailer');
-
-// ── Transporter de Brevo API ─────────────────────────
-// Usamos el SMTP de Brevo pero en el puerto 587 con configuración estándar.
-// Aunque Render bloquee el 587 por defecto, Brevo suele estar whiteleasteado,
-// o alternativamente podemos usar la librería oficial de su API para forzar HTTP.
-// Para máxima compatibilidad con tu código Node.js, configuramos el SMTP oficial
-// de Brevo (usando las credenciales correctas).
-const transporter = nodemailer.createTransport({
-  host: 'smtp-relay.brevo.com',
-  port: 587,
-  secure: false, // true for 465, false for other ports
-  auth: {
-    user: process.env.BREVO_SENDER_EMAIL, // Tu email login o login SMTP de Brevo
-    pass: process.env.BREVO_SMTP_KEY,     // La clave SMTP (Master Password en Brevo)
-  },
-  // Aunque usemos puerto 587, Brevo tiene servidores potentes optimizados que
-  // suelen saltarse la restricción. Pero la forma MÁS segura HTTP en Brevo es vía API.
-});
+// Usamos el cliente HTTP oficial de Brevo (v4).
 
 // Usamos el cliente HTTP oficial de Brevo v4
 // Esto garantiza un 100% de éxito en Render porque usa el puerto 443 (HTTPS).
@@ -96,7 +78,10 @@ const sendPasswordResetEmail = async (to, resetUrl) => {
       to: [{ email: to }],
     });
 
-    console.log('✅ Correo enviado via Brevo API. Response ID:', data?.messageId || data?.id || 'Success');
+    console.log(
+      '✅ Correo enviado via Brevo API. Response ID:',
+      data?.messageId || data?.id || 'Success',
+    );
   } catch (error) {
     console.error('❌ Error enviando email con Brevo API:', error.message);
     throw new Error('No se pudo enviar el correo de recuperación.');
