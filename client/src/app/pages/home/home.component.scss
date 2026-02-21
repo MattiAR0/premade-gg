@@ -5,8 +5,12 @@
 .c-hero {
   position: relative;
   text-align: center;
-  padding-block: v.$spacing-4xl v.$spacing-3xl;
+  padding-block: v.$spacing-2xl v.$spacing-xl;
   overflow: hidden;
+
+  @include m.respond-to(sm) {
+    padding-block: v.$spacing-4xl v.$spacing-3xl;
+  }
 
   @include m.respond-to(md) {
     padding-block: 6rem v.$spacing-4xl;
@@ -42,11 +46,15 @@
   }
 
   &__title {
-    font-size: 2.75rem;
+    font-size: 2rem;
     font-weight: 800;
     line-height: 1.1;
     letter-spacing: -0.03em;
     margin-bottom: v.$spacing-lg;
+
+    @include m.respond-to(sm) {
+      font-size: 2.75rem;
+    }
 
     @include m.respond-to(md) {
       font-size: 4rem;
@@ -86,17 +94,22 @@
   &__stats {
     display: inline-flex;
     align-items: center;
-    gap: v.$spacing-lg;
-    padding: v.$spacing-lg v.$spacing-2xl;
+    gap: v.$spacing-md;
+    padding: v.$spacing-md v.$spacing-lg;
     background: v.$color-bg-card;
     border: 1px solid v.$color-border;
     border-radius: v.$radius-2xl;
     box-shadow: v.$shadow-float;
 
+    @include m.respond-to(sm) {
+      gap: v.$spacing-lg;
+      padding: v.$spacing-lg v.$spacing-2xl;
+    }
+
     @include m.respond-below(sm) {
       flex-direction: column;
       gap: v.$spacing-md;
-      padding: v.$spacing-lg;
+      padding: v.$spacing-md;
       width: 100%;
     }
   }
@@ -144,8 +157,15 @@
 }
 
 @keyframes hero-pulse {
-  0% { opacity: 0.6; transform: scale(1); }
-  100% { opacity: 1; transform: scale(1.05); }
+  0% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
 }
 
 // ── Features Section ─────────────────────────────────

@@ -37,8 +37,17 @@
   &__form {
     display: flex;
     align-items: flex-end;
-    gap: v.$spacing-md;
+    gap: v.$spacing-sm;
     flex-wrap: wrap;
+
+    @include m.respond-to(sm) {
+      gap: v.$spacing-md;
+    }
+
+    @include m.respond-below(sm) {
+      flex-direction: column;
+      align-items: stretch;
+    }
   }
 
   &__row {
@@ -47,6 +56,10 @@
     flex-wrap: wrap;
     flex: 1;
     min-width: 0;
+
+    @include m.respond-below(sm) {
+      flex-direction: column;
+    }
   }
 
   &__field {
@@ -54,7 +67,12 @@
     flex-direction: column;
     gap: 0.2rem;
     flex: 1;
-    min-width: 120px;
+    min-width: 100px;
+
+    @include m.respond-below(sm) {
+      min-width: 0;
+      width: 100%;
+    }
   }
 
   &__label {
@@ -203,12 +221,10 @@
 }
 
 .c-skeleton {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.03) 25%,
-    rgba(255, 255, 255, 0.07) 50%,
-    rgba(255, 255, 255, 0.03) 75%
-  );
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.03) 25%,
+      rgba(255, 255, 255, 0.07) 50%,
+      rgba(255, 255, 255, 0.03) 75%);
   background-size: 200% 100%;
   animation: skeleton-pulse 1.5s ease-in-out infinite;
   border-radius: v.$radius-md;
@@ -241,8 +257,13 @@
 }
 
 @keyframes skeleton-pulse {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 // ── Infinite Scroll ───────────────────────────────────
@@ -266,7 +287,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .c-end-of-list {

@@ -95,6 +95,8 @@
     justify-content: space-between;
     padding: v.$spacing-sm v.$spacing-lg;
     border-top: 1px solid v.$color-border;
+    gap: v.$spacing-sm;
+    flex-wrap: wrap;
 
     @include m.respond-below(md) {
       padding: v.$spacing-sm v.$spacing-md;

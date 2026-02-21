@@ -10,12 +10,10 @@
 }
 
 .c-skeleton {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.03) 25%,
-    rgba(255, 255, 255, 0.07) 50%,
-    rgba(255, 255, 255, 0.03) 75%
-  );
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.03) 25%,
+      rgba(255, 255, 255, 0.07) 50%,
+      rgba(255, 255, 255, 0.03) 75%);
   background-size: 200% 100%;
   animation: skeleton-pulse 1.5s ease-in-out infinite;
   border-radius: v.$radius-md;
@@ -36,8 +34,13 @@
 }
 
 @keyframes skeleton-pulse {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 // ── Error ───────────────────────────────────────────
@@ -57,11 +60,15 @@
   background: v.$color-bg-card;
   border: 1px solid v.$color-border;
   border-radius: v.$radius-xl;
-  padding: v.$spacing-2xl;
+  padding: v.$spacing-lg;
   margin-bottom: v.$spacing-xl;
 
+  @include m.respond-to(md) {
+    padding: v.$spacing-2xl;
+  }
+
   @include m.respond-below(sm) {
-    padding: v.$spacing-lg;
+    padding: v.$spacing-md;
   }
 
   &__header {
@@ -217,8 +224,12 @@
   // ── Availability ────────────────────────────────
   &__availability {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: 1fr;
     gap: v.$spacing-sm;
+
+    @include m.respond-to(sm) {
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
   }
 
   &__day {

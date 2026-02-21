@@ -7,10 +7,10 @@
   align-items: center;
   justify-content: center;
   gap: v.$spacing-sm;
-  padding: v.$spacing-sm v.$spacing-xl;
+  padding: v.$spacing-xs v.$spacing-lg;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   letter-spacing: 0;
   border-radius: v.$radius-full;
   transition:
@@ -18,6 +18,11 @@
   cursor: pointer;
   position: relative;
   overflow: hidden;
+
+  @include m.respond-to(sm) {
+    padding: v.$spacing-sm v.$spacing-xl;
+    font-size: 0.9rem;
+  }
 
   &--primary {
     background: v.$gradient-primary;

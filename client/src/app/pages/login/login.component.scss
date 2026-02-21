@@ -7,7 +7,11 @@
   justify-content: center;
   align-items: flex-start;
   min-height: calc(100vh - 200px);
-  padding-top: v.$spacing-3xl;
+  padding-top: v.$spacing-xl;
+
+  @include m.respond-to(sm) {
+    padding-top: v.$spacing-3xl;
+  }
 }
 
 .c-auth-card {
@@ -29,11 +33,15 @@
   }
 
   &__title {
-    font-size: 1.6rem;
+    font-size: 1.3rem;
     font-weight: 800;
     letter-spacing: -0.02em;
     color: v.$color-text-heading;
     margin-bottom: v.$spacing-xs;
+
+    @include m.respond-to(sm) {
+      font-size: 1.6rem;
+    }
   }
 
   &__subtitle {

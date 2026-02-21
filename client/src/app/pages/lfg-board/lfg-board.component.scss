@@ -11,6 +11,11 @@
     gap: v.$spacing-lg;
     padding: v.$spacing-xl 0;
     flex-wrap: wrap;
+
+    @include m.respond-below(sm) {
+      gap: v.$spacing-md;
+      padding: v.$spacing-md 0;
+    }
   }
 
   &__icon {
@@ -83,13 +88,20 @@
   margin-bottom: v.$spacing-lg;
   border-bottom: 2px solid v.$color-border;
   padding-bottom: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   &__btn {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.15rem;
-    padding: v.$spacing-sm v.$spacing-lg;
+    padding: v.$spacing-xs v.$spacing-md;
     background: none;
     border: none;
     border-bottom: 2px solid transparent;
@@ -99,6 +111,12 @@
     transition: all v.$transition-fast;
     font-family: inherit;
     position: relative;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    @include m.respond-to(sm) {
+      padding: v.$spacing-sm v.$spacing-lg;
+    }
 
     &:hover {
       color: v.$color-text-primary;
@@ -155,8 +173,17 @@
   &__form {
     display: flex;
     align-items: flex-end;
-    gap: v.$spacing-md;
+    gap: v.$spacing-sm;
     flex-wrap: wrap;
+
+    @include m.respond-to(sm) {
+      gap: v.$spacing-md;
+    }
+
+    @include m.respond-below(sm) {
+      flex-direction: column;
+      align-items: stretch;
+    }
   }
 
   &__row {
@@ -172,7 +199,12 @@
     flex-direction: column;
     gap: 0.2rem;
     flex: 1;
-    min-width: 140px;
+    min-width: 100px;
+
+    @include m.respond-below(sm) {
+      min-width: 0;
+      width: 100%;
+    }
   }
 
   &__label {
@@ -212,7 +244,7 @@
 
 // ── Feed layout ──────────────────────────────────────
 .c-feed {
-  // container ya limita el ancho
+  min-height: 200px;
 }
 
 // ── Results bar ──────────────────────────────────────
@@ -307,12 +339,10 @@
 }
 
 .c-skeleton {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.03) 25%,
-    rgba(255, 255, 255, 0.07) 50%,
-    rgba(255, 255, 255, 0.03) 75%
-  );
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.03) 25%,
+      rgba(255, 255, 255, 0.07) 50%,
+      rgba(255, 255, 255, 0.03) 75%);
   background-size: 200% 100%;
   animation: skeleton-pulse 1.5s ease-in-out infinite;
   border-radius: v.$radius-md;
@@ -345,8 +375,13 @@
 }
 
 @keyframes skeleton-pulse {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 // ── Infinite scroll ──────────────────────────────────
@@ -370,7 +405,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .c-end-of-list {
@@ -400,8 +437,13 @@
 }
 
 @keyframes overlay-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .c-modal {
@@ -565,6 +607,7 @@
     opacity: 0;
     transform: translateY(16px) scale(0.97);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);

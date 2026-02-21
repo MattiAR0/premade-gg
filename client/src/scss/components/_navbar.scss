@@ -17,15 +17,23 @@
     padding: v.$spacing-md;
   }
 
+  @include m.respond-below(sm) {
+    padding: v.$spacing-sm v.$spacing-md;
+  }
+
   &__brand {
     display: flex;
     align-items: center;
     gap: v.$spacing-sm;
     font-family: 'Inter', sans-serif;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: 800;
     letter-spacing: -0.03em;
     color: v.$color-text-heading;
+
+    @include m.respond-to(sm) {
+      font-size: 1.5rem;
+    }
   }
 
   &__accent {
@@ -40,10 +48,9 @@
     margin-left: v.$spacing-xl;
     padding-left: v.$spacing-xl;
     border-left: 1px solid v.$color-border;
-    flex: 1;
 
     @include m.respond-below(lg) {
-      display: none; // Ocultar en pantallas pequeñas para evitar clutter, o mover al menú hamburguesa
+      display: none;
     }
   }
 
@@ -167,7 +174,9 @@
   // ── Navigation links ──────────────────────────────
   &__nav {
     display: flex;
+    align-items: center;
     gap: v.$spacing-sm;
+    margin-left: auto;
 
     @include m.respond-below(md) {
       position: fixed;
@@ -247,22 +256,22 @@
   }
 
   &__avatar {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: v.$radius-md;
     object-fit: cover;
     object-position: center top;
   }
 
   &__avatar-placeholder {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: v.$radius-md;
     background: v.$gradient-primary;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 700;
     color: #fff;
   }

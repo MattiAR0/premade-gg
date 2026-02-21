@@ -9,20 +9,23 @@
 }
 
 .c-skeleton {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.03) 25%,
-    rgba(255, 255, 255, 0.07) 50%,
-    rgba(255, 255, 255, 0.03) 75%
-  );
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.03) 25%,
+      rgba(255, 255, 255, 0.07) 50%,
+      rgba(255, 255, 255, 0.03) 75%);
   background-size: 200% 100%;
   animation: skeleton-pulse 1.5s ease-in-out infinite;
   border-radius: v.$radius-md;
 }
 
 @keyframes skeleton-pulse {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 // ── Error page ──────────────────────────────────────
@@ -127,8 +130,12 @@
 
   &__badges {
     display: flex;
-    gap: v.$spacing-xl;
+    gap: v.$spacing-md;
     flex-wrap: wrap;
+
+    @include m.respond-below(sm) {
+      gap: v.$spacing-sm;
+    }
   }
 
   &__badge-group {

@@ -10,6 +10,10 @@
     align-items: flex-start;
     gap: v.$spacing-lg;
     padding: v.$spacing-xl 0;
+
+    @include m.respond-below(md) {
+      flex-direction: column;
+    }
   }
 
   &__icon {
@@ -67,8 +71,17 @@
   &__form {
     display: flex;
     align-items: flex-end;
-    gap: v.$spacing-md;
+    gap: v.$spacing-sm;
     flex-wrap: wrap;
+
+    @include m.respond-to(sm) {
+      gap: v.$spacing-md;
+    }
+
+    @include m.respond-below(sm) {
+      flex-direction: column;
+      align-items: stretch;
+    }
   }
 
   &__field {
@@ -76,11 +89,20 @@
     flex-direction: column;
     gap: 0.2rem;
     flex: 1;
-    min-width: 140px;
+    min-width: 100px;
+
+    @include m.respond-below(sm) {
+      min-width: 0;
+      width: 100%;
+    }
 
     &--search {
       flex: 2;
-      min-width: 200px;
+      min-width: 140px;
+
+      @include m.respond-below(sm) {
+        min-width: 0;
+      }
     }
   }
 

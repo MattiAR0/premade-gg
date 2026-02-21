@@ -79,6 +79,12 @@
       padding: v.$spacing-md;
       gap: v.$spacing-md;
     }
+
+    @include m.respond-below(sm) {
+      flex-direction: column;
+      text-align: center;
+      padding: v.$spacing-md;
+    }
   }
 
   &__logo {
@@ -94,6 +100,11 @@
     @include m.respond-below(md) {
       width: 56px;
       height: 56px;
+    }
+
+    @include m.respond-below(sm) {
+      width: 48px;
+      height: 48px;
     }
   }
 
@@ -146,6 +157,10 @@
     align-items: center;
     gap: v.$spacing-sm;
     flex-wrap: wrap;
+
+    @include m.respond-below(sm) {
+      justify-content: center;
+    }
   }
 
   // ── Sections ──────────────────────────────────────

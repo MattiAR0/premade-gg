@@ -41,7 +41,13 @@
 
   &__links {
     display: flex;
-    gap: v.$spacing-xl;
+    gap: v.$spacing-md;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    @include m.respond-to(sm) {
+      gap: v.$spacing-xl;
+    }
   }
 
   &__link {

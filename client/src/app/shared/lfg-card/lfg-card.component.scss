@@ -140,13 +140,14 @@
     align-items: center;
     justify-content: space-between;
     gap: v.$spacing-sm;
+    flex-wrap: wrap;
   }
 
   &__avatars {
     display: flex;
     gap: 0;
 
-    > * + * {
+    >*+* {
       margin-left: -6px;
     }
   }
@@ -266,6 +267,13 @@
 }
 
 @keyframes pulse-badge {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
 }

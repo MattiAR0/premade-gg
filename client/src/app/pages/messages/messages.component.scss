@@ -462,12 +462,16 @@
   &__chat-body {
     flex: 1;
     overflow-y: auto;
-    padding: v.$spacing-md v.$spacing-lg;
+    padding: v.$spacing-sm v.$spacing-md;
     display: flex;
     flex-direction: column;
     gap: v.$spacing-xs;
     scrollbar-width: thin;
     scrollbar-color: v.$color-border transparent;
+
+    @include m.respond-to(sm) {
+      padding: v.$spacing-md v.$spacing-lg;
+    }
   }
 
   &__chat-loading {
@@ -515,7 +519,11 @@
   &__bubble-wrap {
     display: flex;
     gap: v.$spacing-xs;
-    max-width: 75%;
+    max-width: 90%;
+
+    @include m.respond-to(sm) {
+      max-width: 75%;
+    }
 
     &--own {
       align-self: flex-end;
@@ -617,9 +625,13 @@
 
   // ── Chat footer (input) ─────────────────────────
   &__chat-footer {
-    padding: v.$spacing-sm v.$spacing-lg;
+    padding: v.$spacing-xs v.$spacing-md;
     border-top: 1px solid v.$color-border;
     background: v.$color-bg-card;
+
+    @include m.respond-to(sm) {
+      padding: v.$spacing-sm v.$spacing-lg;
+    }
   }
 
   &__input-wrap {
