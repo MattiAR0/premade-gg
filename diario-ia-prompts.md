@@ -382,3 +382,19 @@ El build de producción es exitoso, sin errores ni advertencias, y la base de c�
 - El sistema de comunicación cuenta ahora con canales tanto directos como para escuadras formadas.
 - La administración de Equipos fluye sin tropiezos, logrando reclutar, expulsar y disolver formaciones bajo un entorno interactivo y estéticamente afín al resto de preMadeGG.
 - Vercel y el contenedor de producción ya erigen el bundle libre de problemas en las plantillas HTML o en los Mixins de CSS.
+
+---
+
+## 17. Chat sobre datos de prueba por defecto (Usuarios, Equipos y LFG) (feb 2026)
+
+**Prompts clave:**
+- "Me gustaria que haya usuarios, equipos y posts de prueba por defecto en la aplicacion, tanto para el sistema en local con docker como para la app subida en la nube"
+
+**Acciones:**
+- Se analizó el ciclo de vida del arranque del backend en `app.js`.
+- Se creó un script de autoseeding `seedDefaults.js` que se ejecuta en el inicio de BD (`app.js`) para inyectar 3 usuarios de prueba (contraseña común `password123`), 2 equipos y 2 publicaciones LFG en caso de que no existan.
+- Proceso configurado para ser persistente pero no destructivo (usa `findOne` para solo crear si no existen).
+- Se redactó paso a paso la verificación en el log y base de datos para corroborar que los datos default están listos.
+
+**Resultado:**
+- El entorno ahora garantiza usuarios, equipos y LFG de prueba disponibles desde el primer segundo sin scripts manuales, útil para agilizar simulaciones en Vercel, Render o Docker.

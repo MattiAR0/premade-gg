@@ -63,6 +63,12 @@ Para eliminar también los datos de MongoDB:
 docker-compose down -v
 ```
 
+### 5. Cuentas de Prueba por Defecto
+El servidor inyecta automáticamente cuentas y datos (equipos, posts LFG) de prueba en la base de datos cada vez que arranca. Puedes probar la aplicación interactuando con los siguientes usuarios (todos tienen la contraseña **`password123`**):
+- **Duelist**: `test1@premade.gg` (Dueño del "Test Team Alpha")
+- **Controller**: `test2@premade.gg` (Dueño del "Test Team Beta")
+- **Initiator**: `test3@premade.gg` (Autor de publicaciones LFG)
+
 ## Scripts Disponibles (Server)
 
 | Script          | Comando                    | Descripción                          |
