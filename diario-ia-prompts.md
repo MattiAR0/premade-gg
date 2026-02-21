@@ -482,3 +482,24 @@ El build de producción es exitoso, sin errores ni advertencias, y la base de c�
 **Resultado:**
 - La carga de jugadores y posts LFG se muestra correctamente en la **primera visita** a cada pestaña, sin necesidad de cambiar de pestaña y volver.
 - El comportamiento queda documentado para futuros componentes que dependan de HTTP o APIs nativas (IntersectionObserver, etc.) en modo zoneless: hay que notificar cambios con `ChangeDetectorRef.markForCheck()` (o usar signals/async pipe).
+
+---
+
+## 21. Chat sobre formateo Prettier, limpieza ESLint y código muerto (feb 2026)
+
+**Prompts clave:**
+- "podrias runnear un npm run format en /server para arreglar los errores de Prettier"
+- "puedes comprobar si hay algun error"
+- "se puede arreglar ese warning?"
+
+**Acciones:**
+- Se ejecutó `npm run format` (Prettier) en `/server`, formateando 5 archivos que tenían desviaciones de estilo: `teamController.js`, `Team.js`, `render.yaml`, `emailService.js` y `seedDefaults.js`.
+- Se ejecutó `npm run lint` (ESLint) en `/server` para comprobar errores. Resultado: 0 errores, 1 warning.
+- El warning era `no-unused-vars` en `services/emailService.js` línea 21: la variable `transporter` (creada con `nodemailer.createTransport`) estaba asignada pero nunca se usaba, ya que el servicio de email había migrado a la API HTTP de Brevo.
+- Se eliminó el `require('nodemailer')` y todo el bloque del `transporter` SMTP, dejando únicamente el cliente HTTP de Brevo (`@getbrevo/brevo`) que es el que realmente se usa en producción.
+- Se verificó con `npm run lint` que el warning desapareció: **0 errores, 0 warnings**.
+- Se comprobó que el client (`/client`) no tiene ESLint configurado (`ng lint` no disponible).
+
+**Resultado:**
+- El código del servidor está completamente limpio: sin errores de formato (Prettier) ni de linting (ESLint).
+- Se eliminó código muerto (nodemailer/transporter) que era un residuo de la migración a Brevo API, reduciendo dependencias innecesarias y mejorando la claridad del módulo `emailService.js`.
