@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { MessageService } from '../../services/message.service';
+import { AgentIconsService } from '../../services/agent-icons.service';
 import { User, DAYS_OF_WEEK, DAYS_LABELS } from '../../models/user.model';
 import { Reputation, ReviewEligibility } from '../../models/reputation.model';
 import { LfgPost } from '../../models/lfg-post.model';
@@ -48,7 +49,10 @@ export class ProfileComponent implements OnInit {
     readonly authService: AuthService,
     private readonly messageService: MessageService,
     private readonly cdr: ChangeDetectorRef,
-  ) {}
+    readonly agentIcons: AgentIconsService,
+  ) {
+    this.agentIcons.load();
+  }
 
   /** Puede enviar mensaje (logueado y no es su propio perfil) */
   get canMessage(): boolean {

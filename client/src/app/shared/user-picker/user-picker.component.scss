@@ -17,8 +17,8 @@
     align-items: center;
     gap: 0.4rem;
     padding: 0.25rem 0.35rem 0.25rem 0.6rem;
-    background: rgba(255, 70, 85, 0.1);
-    border: 1px solid rgba(255, 70, 85, 0.35);
+    background: rgba(236, 232, 225, 0.06);
+    border: 1px solid v.$color-border-light;
     font-size: 0.88rem;
     color: v.$color-text-heading;
   }
@@ -69,7 +69,7 @@
     height: 14px;
     margin-top: -7px;
     border: 2px solid v.$color-border;
-    border-top-color: v.$color-accent-red;
+    border-top-color: v.$color-text-heading;
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
   }

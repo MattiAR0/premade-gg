@@ -1,1 +1,3 @@
-// Badge styles are in src/scss/_components/_badges.scss (BEM architecture)
+:host {
+  display: inline-flex;
+}

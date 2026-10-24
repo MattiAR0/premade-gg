@@ -1,1 +1,16 @@
-<span class="c-badge" [class]="karmaClass">{{ karma | number: '1.1-1' }}</span>
+<span
+  class="c-karma c-karma--{{ level }} c-karma--{{ size }}"
+  role="img"
+  [attr.aria-label]="ariaLabel"
+  title="Reputación según las valoraciones de otros jugadores (0–5)"
+>
+  <span class="c-karma__head" aria-hidden="true">
+    <span class="c-karma__label">Karma</span>
+    <span class="c-karma__value">{{ karma | number: '1.1-1' }}</span>
+  </span>
+  <span class="c-karma__bar" aria-hidden="true">
+    @for (fill of segments; track $index) {
+      <span class="c-karma__seg" [style.--fill]="fill"></span>
+    }
+  </span>
+</span>

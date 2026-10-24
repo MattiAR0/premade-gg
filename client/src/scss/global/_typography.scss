@@ -91,12 +91,12 @@ p {
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: v.$color-accent-red;
+  color: v.$color-text-muted;
 
   &::before {
     content: '';
     width: 18px;
     height: 2px;
-    background: currentColor;
+    background: v.$color-brand;
   }
 }

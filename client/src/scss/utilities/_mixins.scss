@@ -102,8 +102,8 @@
 
   &:focus {
     outline: none;
-    border-color: v.$color-accent-red;
-    box-shadow: 0 0 0 3px rgba(255, 70, 85, 0.12);
+    border-color: v.$color-focus;
+    box-shadow: 0 0 0 1px v.$color-focus;
   }
 }
 

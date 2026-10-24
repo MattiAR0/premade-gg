@@ -72,6 +72,9 @@
         (click)="$event.stopPropagation()">
         por {{ post.author.riotId }}
       </a>
+      @if (post.author.karma != null) {
+        <app-karma-badge [karma]="post.author.karma" size="sm" />
+      }
     }
   </footer>
 </article>

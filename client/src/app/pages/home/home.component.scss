@@ -88,7 +88,7 @@
     display: flex;
     flex-direction: column;
     padding-left: v.$spacing-md;
-    border-left: 2px solid v.$color-accent-red;
+    border-left: 1px solid v.$color-border-light;
   }
 
   &__stat-number {
@@ -162,7 +162,7 @@
     transition: color v.$transition-fast;
 
     &:hover {
-      color: v.$color-accent-red;
+      color: v.$color-text-heading;
     }
   }
 }
@@ -204,7 +204,7 @@
     font-family: v.$font-display;
     font-size: 2.5rem;
     line-height: 1;
-    color: v.$color-accent-red;
+    color: v.$color-text-subtle;
   }
 
   &__title {
@@ -219,7 +219,7 @@
     display: flex;
     justify-content: center;
     padding: v.$spacing-lg;
-    background: v.$color-accent-red;
+    background: v.$color-bg-card;
 
     @include m.respond-to(md) {
       grid-column: 1 / -1;

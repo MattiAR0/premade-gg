@@ -23,7 +23,6 @@
           <h1 class="c-profile__name">{{ user.riotId }}</h1>
           <div class="c-profile__badges">
             <app-rank-badge [rank]="user.rank" />
-            <app-karma-badge [karma]="user.karma" />
             <span class="c-badge c-badge--role">{{ user.role }}</span>
             <span class="c-badge c-badge--region">{{ user.region | uppercase }}</span>
             @if (user.lookingForTeam) {
@@ -52,6 +51,8 @@
             </button>
           }
         </div>
+
+        <app-karma-badge class="c-profile__karma" [karma]="user.karma" size="lg" />
       </header>
 
       <!-- Favorite Agents -->
@@ -60,7 +61,12 @@
           <h2 class="c-profile__section-title">Agentes favoritos</h2>
           <div class="c-profile__agents">
             @for (agent of user.favoriteAgents; track agent) {
-              <span class="c-badge c-badge--agent">{{ agent }}</span>
+              <span class="c-agent">
+                @if (agentIcons.iconFor(agent); as icon) {
+                  <img class="c-agent__icon" [src]="icon" alt="" width="40" height="40" loading="lazy" />
+                }
+                <span class="c-agent__name">{{ agent }}</span>
+              </span>
             }
           </div>
         </section>

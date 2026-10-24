@@ -39,8 +39,8 @@
     height: 18px;
     padding: 0 5px;
     border-radius: v.$radius-full;
-    background: v.$color-accent-red;
-    color: #fff;
+    background: v.$color-brand;
+    color: v.$color-on-brand;
     font-size: 0.65rem;
     font-weight: 700;
     display: flex;
@@ -95,7 +95,7 @@
   &__mark-all {
     font-size: 0.75rem;
     font-weight: 600;
-    color: v.$color-accent-red;
+    color: v.$color-text-heading;
     background: none;
     border: none;
     cursor: pointer;
@@ -105,7 +105,7 @@
     font-family: inherit;
 
     &:hover {
-      background: rgba(255, 70, 85, 0.08);
+      background: rgba(236, 232, 225, 0.06);
     }
   }
 
@@ -150,11 +150,10 @@
     }
 
     &--unread {
-      background: rgba(255, 70, 85, 0.04);
-      border-left: 3px solid v.$color-accent-red;
+      background: rgba(236, 232, 225, 0.05);
 
       &:hover {
-        background: rgba(255, 70, 85, 0.07);
+        background: rgba(236, 232, 225, 0.08);
       }
     }
   }
@@ -189,11 +188,11 @@
     margin-top: v.$spacing-xs;
     font-size: 0.75rem;
     font-weight: 600;
-    color: v.$color-accent-red;
+    color: v.$color-text-heading;
     transition: color v.$transition-fast;
 
     &:hover {
-      color: v.$color-accent-red-hover;
+      color: #fff;
     }
   }
 

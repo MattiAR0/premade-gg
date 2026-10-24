@@ -30,7 +30,7 @@
     <!-- Auth section -->
     @if (authService.isAuthenticated()) {
     <div class="c-navbar__actions">
-      <a class="c-btn c-btn--primary c-btn--sm c-navbar__cta" routerLink="/lfg" [queryParams]="{ create: 1 }"
+      <a class="c-btn c-btn--secondary c-btn--sm c-navbar__cta" routerLink="/lfg" [queryParams]="{ create: 1 }"
         (click)="closeMenu()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
           stroke-linecap="round" aria-hidden="true">
@@ -100,7 +100,7 @@
     } @else {
     <div class="c-navbar__auth-buttons">
       <a class="c-btn c-btn--ghost c-btn--sm" routerLink="/login" (click)="closeMenu()">Iniciar sesión</a>
-      <a class="c-btn c-btn--primary c-btn--sm" routerLink="/register" (click)="closeMenu()">Registrarse</a>
+      <a class="c-btn c-btn--secondary c-btn--sm" routerLink="/register" (click)="closeMenu()">Registrarse</a>
     </div>
     }
   </nav>

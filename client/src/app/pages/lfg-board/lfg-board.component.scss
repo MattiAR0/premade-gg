@@ -36,7 +36,7 @@
 
     &--active {
       color: v.$color-text-heading;
-      border-bottom-color: v.$color-accent-red;
+      border-bottom-color: v.$color-selected;
     }
   }
 
@@ -55,7 +55,7 @@
   }
 
   &__btn--active &__size {
-    color: v.$color-accent-red;
+    color: v.$color-text-muted;
   }
 }
 

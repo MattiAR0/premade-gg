@@ -27,7 +27,19 @@ $color-accent-blue: #5aa9ff;
 $color-text-primary: #d6d2cb;
 $color-text-muted: #8a96a3;
 $color-text-heading: #ece8e1;
-$color-text-subtle: #56646f;
+$color-text-subtle: #7d8a96; // ≥4.5:1 sobre bg-card; no bajar
+
+// ── Roles de color ───────────────────────────────────
+// El rojo es la marca: logo, un CTA principal por vista y peligro/error.
+// Selección y foco van en hueso; estados positivos (abierto, progreso) en cian.
+$color-brand: $color-accent-red;
+$color-on-brand: #0f1923; // texto sobre rojo: 5.3:1 (el blanco solo da 3.4:1)
+$color-selected: #ece8e1;
+$color-on-selected: #0f1923;
+$color-focus: #ece8e1;
+$color-positive: $color-accent-cyan;
+$color-danger: $color-accent-red;
+$color-hover-border: rgba(236, 232, 225, 0.3);
 
 // Borders & Surfaces
 $color-border: #233240;
@@ -46,6 +58,20 @@ $karma-colors: (
   'high': $color-karma-high,
   'mid': $color-karma-mid,
   'low': $color-karma-low,
+);
+
+// Rangos de Valorant — un color por tier (todos ≥4.4:1 sobre bg-card/elevated)
+$rank-colors: (
+  'unranked': #8a96a3,
+  'iron': #8f9399,
+  'bronze': #c4935b,
+  'silver': #c9d2d8,
+  'gold': #e8c25a,
+  'platinum': #4cc3d4,
+  'diamond': #c58bf2,
+  'ascendant': #4fd88a,
+  'immortal': #ec6c84,
+  'radiant': #ffe9a8,
 );
 
 // Typography

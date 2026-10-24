@@ -29,7 +29,6 @@
   position: relative;
   background: v.$color-bg-elevated;
   border: 1px solid v.$color-border-light;
-  border-top: 3px solid v.$color-accent-red;
   width: 100%;
   max-width: 560px;
   max-height: 92vh;
@@ -181,7 +180,7 @@
     input {
       width: 18px;
       height: 18px;
-      accent-color: v.$color-accent-red;
+      accent-color: v.$color-selected;
       cursor: pointer;
     }
   }
@@ -235,8 +234,8 @@
     display: inline-block;
     width: 14px;
     height: 14px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-top-color: #fff;
+    border: 2px solid rgba(15, 25, 35, 0.3);
+    border-top-color: v.$color-on-brand;
     border-radius: 50%;
     animation: spin 0.6s linear infinite;
   }

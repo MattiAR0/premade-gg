@@ -8,8 +8,8 @@
   transition: border-color v.$transition-fast, box-shadow v.$transition-fast, transform v.$transition-fast;
 
   &:hover {
-    border-color: v.$color-accent-red;
-    box-shadow: v.$shadow-glow-red;
+    border-color: v.$color-hover-border;
+    box-shadow: v.$shadow-card-hover;
     transform: translateY(-2px);
   }
 
@@ -46,7 +46,7 @@
   &__logo-text {
     font-family: v.$font-display;
     font-size: 1.1rem;
-    color: v.$color-accent-red;
+    color: v.$color-text-heading;
     text-transform: uppercase;
     letter-spacing: 0.03em;
   }
@@ -71,7 +71,7 @@
     font-family: v.$font-heading;
     font-size: 0.85rem;
     font-weight: 700;
-    color: v.$color-accent-red;
+    color: v.$color-text-muted;
     white-space: nowrap;
   }
 
@@ -186,7 +186,7 @@
     white-space: nowrap;
 
     &:hover {
-      color: v.$color-accent-red;
+      color: v.$color-text-heading;
     }
   }
 }

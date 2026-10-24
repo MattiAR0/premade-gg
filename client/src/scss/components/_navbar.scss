@@ -151,7 +151,7 @@
       right: v.$spacing-md;
       bottom: -1px;
       height: 3px;
-      background: v.$color-accent-red;
+      background: v.$color-selected;
       transform: scaleX(0);
       transform-origin: left;
       transition: transform v.$transition-base;
@@ -272,11 +272,12 @@
 
   &__avatar-placeholder {
     @include m.flex-center;
-    background: v.$color-accent-red;
+    background: v.$color-bg-elevated;
+    border: 1px solid v.$color-border-light;
     font-family: v.$font-heading;
     font-size: 1rem;
     font-weight: 700;
-    color: #fff;
+    color: v.$color-text-heading;
   }
 
   &__username {
@@ -312,7 +313,6 @@
     min-width: 210px;
     background: v.$color-bg-elevated;
     border: 1px solid v.$color-border-light;
-    border-top: 2px solid v.$color-accent-red;
     padding: v.$spacing-xs;
     box-shadow: v.$shadow-float;
     z-index: v.$z-dropdown;

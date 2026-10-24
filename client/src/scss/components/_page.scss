@@ -11,16 +11,6 @@
   border-bottom: 1px solid v.$color-border;
   position: relative;
 
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -1px;
-    width: 64px;
-    height: 3px;
-    background: v.$color-accent-red;
-  }
-
   @include m.respond-to(md) {
     flex-direction: row;
     align-items: flex-end;
@@ -61,7 +51,6 @@
   padding: v.$spacing-md;
   background: v.$color-bg-surface;
   border: 1px solid v.$color-border;
-  border-left: 3px solid v.$color-accent-red;
 
   @include m.respond-to(md) {
     padding: v.$spacing-md v.$spacing-lg;
@@ -138,12 +127,14 @@
 
   &__clear {
     @include m.ui-label;
-    color: v.$color-accent-red;
+    color: v.$color-text-heading;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: v.$color-border-light;
     cursor: pointer;
 
     &:hover {
-      color: v.$color-accent-red-hover;
-      text-decoration: underline;
+      text-decoration-color: currentColor;
     }
   }
 }
@@ -181,9 +172,9 @@
 
   &--active,
   &--active:hover {
-    color: #fff;
-    background: v.$color-accent-red;
-    border-color: v.$color-accent-red;
+    color: v.$color-on-selected;
+    background: v.$color-selected;
+    border-color: v.$color-selected;
   }
 
   &--toggle#{&}--active {
@@ -223,8 +214,8 @@
 
     &--active,
     &--active:hover {
-      color: #fff;
-      background: v.$color-accent-red;
+      color: v.$color-on-selected;
+      background: v.$color-selected;
     }
   }
 
@@ -400,7 +391,7 @@
     width: 18px;
     height: 18px;
     border: 2px solid v.$color-border;
-    border-top-color: v.$color-accent-red;
+    border-top-color: v.$color-text-heading;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }

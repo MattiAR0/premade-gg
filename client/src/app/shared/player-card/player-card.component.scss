@@ -6,22 +6,16 @@
   overflow: hidden;
   cursor: pointer;
   position: relative;
+  transition:
+    border-color v.$transition-fast,
+    background-color v.$transition-fast,
+    box-shadow v.$transition-fast,
+    transform v.$transition-fast;
 
-  // Acento lateral rojo al pasar el ratón
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    background: v.$color-accent-red;
-    transform: scaleY(0);
-    transition: transform v.$transition-base;
-  }
-
-  &:hover::before {
-    transform: scaleY(1);
+  &:hover {
+    border-color: v.$color-hover-border;
+    box-shadow: v.$shadow-card-hover;
+    transform: translateY(-2px);
   }
 
   &__header {
@@ -29,7 +23,7 @@
     align-items: center;
     gap: v.$spacing-sm;
     padding: v.$spacing-md v.$spacing-lg;
-    background: linear-gradient(115deg, rgba(255, 70, 85, 0.06), transparent 55%);
+    background: linear-gradient(115deg, rgba(236, 232, 225, 0.04), transparent 55%);
     border-bottom: 1px solid v.$color-border;
 
     @include m.respond-below(md) {
@@ -65,6 +59,10 @@
   &__info {
     flex: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
   }
 
   &__name {
@@ -73,29 +71,41 @@
     font-weight: 700;
     letter-spacing: 0.02em;
     color: v.$color-text-heading;
-    margin-bottom: 0.15rem;
+    max-width: 100%;
     @include m.text-truncate;
   }
 
-  &__meta-row {
-    display: flex;
-    align-items: center;
-    gap: v.$spacing-sm;
-    flex-wrap: wrap;
+  &__karma {
+    flex-shrink: 0;
+    align-self: flex-start;
   }
 
   &__body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: v.$spacing-sm;
     padding: v.$spacing-sm v.$spacing-lg;
+    min-height: 2.5rem;
 
     @include m.respond-below(md) {
       padding: v.$spacing-sm v.$spacing-md;
     }
   }
 
-  &__tags {
+  // Rol · región · nivel en una línea discreta
+  &__facts {
+    @include m.ui-label;
     display: flex;
-    gap: v.$spacing-xs;
     flex-wrap: wrap;
+    gap: 0.25rem 0;
+    margin: 0;
+
+    > span + span::before {
+      content: '·';
+      margin-inline: 0.5rem;
+      color: v.$color-text-subtle;
+    }
   }
 
   &__footer {
@@ -138,8 +148,8 @@
     transition: color v.$transition-fast, background v.$transition-fast;
 
     &:hover {
-      color: v.$color-accent-red;
-      background: rgba(255, 70, 85, 0.1);
+      color: v.$color-text-heading;
+      background: rgba(236, 232, 225, 0.08);
     }
   }
 }

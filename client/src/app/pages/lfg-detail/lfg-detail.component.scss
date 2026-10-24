@@ -111,7 +111,7 @@
     transition: color v.$transition-fast;
 
     &:hover {
-      color: v.$color-accent-red;
+      color: v.$color-text-heading;
     }
   }
 
@@ -305,8 +305,8 @@
     width: 36px;
     height: 36px;
     border-radius: v.$radius-md;
-    background: v.$gradient-primary;
-    color: #fff;
+    background: v.$color-bg-elevated;
+    color: v.$color-text-heading;
     font-weight: 700;
     font-size: 0.85rem;
     text-transform: uppercase;
@@ -334,7 +334,7 @@
     transition: color v.$transition-fast;
 
     .c-member__link:hover & {
-      color: v.$color-accent-red;
+      color: v.$color-text-heading;
     }
   }
 

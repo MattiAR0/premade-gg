@@ -9,8 +9,8 @@
   position: relative;
 
   &:hover {
-    border-color: v.$color-accent-red;
-    box-shadow: v.$shadow-glow-red;
+    border-color: v.$color-hover-border;
+    box-shadow: v.$shadow-card-hover;
     transform: translateY(-2px);
   }
 
@@ -40,7 +40,7 @@
     width: 100%;
 
     &--open {
-      background: v.$color-accent-red;
+      background: v.$color-positive;
     }
 
     &--full {
@@ -127,7 +127,7 @@
 
   &__progress-fill {
     height: 100%;
-    background: v.$color-accent-red;
+    background: v.$color-positive;
     transition: width 0.4s ease;
     min-width: 4px;
   }
@@ -216,7 +216,7 @@
     transition: color v.$transition-fast;
 
     &:hover {
-      color: v.$color-accent-red;
+      color: v.$color-text-heading;
     }
   }
 }

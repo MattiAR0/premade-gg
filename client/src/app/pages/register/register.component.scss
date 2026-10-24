@@ -24,8 +24,8 @@
   max-width: 520px;
   background: v.$color-bg-card;
   border: 1px solid v.$color-border;
-  border-top: 3px solid v.$color-accent-red;
-  border-radius: v.$radius-xl;
+  border-radius: 0;
+  @include m.cut-corners(v.$cut-lg);
   padding: v.$spacing-2xl;
 
   @include m.respond-below(sm) {
@@ -55,7 +55,7 @@
   }
 
   &__accent {
-    @include m.gradient-text(v.$gradient-primary);
+    color: v.$color-brand;
   }
 
   &__section-title {
@@ -131,8 +131,8 @@
 
     &:focus {
       outline: none;
-      border-color: v.$color-accent-red;
-      box-shadow: 0 0 0 3px rgba(255, 70, 85, 0.08);
+      border-color: v.$color-focus;
+      box-shadow: 0 0 0 1px v.$color-focus;
     }
   }
 
@@ -174,8 +174,8 @@
     display: inline-block;
     width: 16px;
     height: 16px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-top-color: #fff;
+    border: 2px solid rgba(15, 25, 35, 0.3);
+    border-top-color: v.$color-on-brand;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }
@@ -188,12 +188,15 @@
   }
 
   &__link {
-    color: v.$color-accent-red;
+    color: v.$color-text-heading;
     font-weight: 600;
-    transition: color v.$transition-fast;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: v.$color-border-light;
+    transition: text-decoration-color v.$transition-fast;
 
     &:hover {
-      color: v.$color-accent-red-hover;
+      text-decoration-color: currentColor;
     }
   }
 }

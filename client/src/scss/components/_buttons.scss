@@ -39,8 +39,8 @@
   }
 
   &--primary {
-    background: v.$color-accent-red;
-    color: #fff;
+    background: v.$color-brand;
+    color: v.$color-on-brand;
     border: none;
     @include m.cut-corner-br(v.$cut-md);
 

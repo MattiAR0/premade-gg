@@ -177,8 +177,8 @@
     }
 
     &--recruiting {
-      background: rgba(47, 216, 176, 0.03);
-      border-left: 3px solid rgba(47, 216, 176, 0.4);
+      background: rgba(47, 216, 176, 0.04);
+      box-shadow: inset 0 0 0 1px rgba(47, 216, 176, 0.25);
     }
   }
 
@@ -363,8 +363,8 @@
     width: 36px;
     height: 36px;
     border-radius: v.$radius-md;
-    background: v.$gradient-primary;
-    color: #fff;
+    background: v.$color-bg-elevated;
+    color: v.$color-text-heading;
     font-weight: 700;
     font-size: 0.85rem;
     text-transform: uppercase;

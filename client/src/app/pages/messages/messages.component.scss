@@ -80,7 +80,7 @@
     transition: border-color v.$transition-fast;
 
     &:focus {
-      border-color: v.$color-accent-red;
+      border-color: v.$color-focus;
     }
 
     &::placeholder {
@@ -156,8 +156,8 @@
     align-items: center;
     gap: 4px;
     padding: 2px 8px;
-    background: rgba(255, 70, 85, 0.15);
-    border: 1px solid rgba(255, 70, 85, 0.3);
+    background: rgba(236, 232, 225, 0.06);
+    border: 1px solid v.$color-border-light;
     border-radius: v.$radius-full;
     color: v.$color-text-primary;
     font-size: 0.75rem;
@@ -170,8 +170,8 @@
     }
 
     &:hover {
-      background: rgba(255, 70, 85, 0.25);
-      border-color: rgba(255, 70, 85, 0.5);
+      background: rgba(236, 232, 225, 0.1);
+      border-color: v.$color-hover-border;
 
       svg {
         opacity: 1;
@@ -240,16 +240,16 @@
     }
 
     &--active {
-      background: rgba(255, 70, 85, 0.06);
-      border-left: 3px solid v.$color-accent-red;
+      background: v.$color-bg-elevated;
+      box-shadow: inset 0 0 0 1px v.$color-border-light;
 
       &:hover {
-        background: rgba(255, 70, 85, 0.08);
+        background: v.$color-bg-elevated;
       }
     }
 
     &--unread {
-      background: rgba(255, 70, 85, 0.03);
+      background: rgba(236, 232, 225, 0.03);
     }
   }
 
@@ -301,7 +301,7 @@
     height: 18px;
     border-radius: 50%;
     background: v.$color-accent-cyan;
-    color: #fff;
+    color: v.$color-on-selected;
     border: 2px solid v.$color-bg-card;
 
     &--team {
@@ -357,8 +357,8 @@
     height: 20px;
     padding: 0 6px;
     border-radius: v.$radius-full;
-    background: v.$color-accent-red;
-    color: #fff;
+    background: v.$color-brand;
+    color: v.$color-on-brand;
     font-size: 0.65rem;
     font-weight: 700;
     display: flex;
@@ -489,7 +489,7 @@
   &__load-more-btn {
     font-family: inherit;
     font-size: 0.75rem;
-    color: v.$color-accent-red;
+    color: v.$color-text-heading;
     background: none;
     border: none;
     cursor: pointer;
@@ -497,7 +497,7 @@
     border-radius: v.$radius-sm;
 
     &:hover {
-      background: rgba(255, 70, 85, 0.08);
+      background: rgba(236, 232, 225, 0.06);
     }
   }
 
@@ -557,8 +557,8 @@
     min-width: 60px;
 
     &--own {
-      background: rgba(255, 70, 85, 0.12);
-      border-color: rgba(255, 70, 85, 0.2);
+      background: rgba(236, 232, 225, 0.09);
+      border-color: rgba(236, 232, 225, 0.16);
     }
   }
 
@@ -645,7 +645,7 @@
     transition: border-color v.$transition-fast;
 
     &:focus-within {
-      border-color: v.$color-accent-red;
+      border-color: v.$color-focus;
     }
   }
 
@@ -670,8 +670,8 @@
     height: 36px;
     border: none;
     border-radius: v.$radius-md;
-    background: v.$color-accent-red;
-    color: #fff;
+    background: v.$color-brand;
+    color: v.$color-on-brand;
     cursor: pointer;
     transition: background v.$transition-fast, transform v.$transition-fast;
     flex-shrink: 0;

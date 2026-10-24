@@ -101,19 +101,34 @@
     width: 96px;
     height: 96px;
     border-radius: v.$radius-xl;
-    background: v.$gradient-primary;
+    background: v.$color-bg-elevated;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 2rem;
     font-weight: 800;
-    color: #fff;
+    color: v.$color-text-heading;
   }
 
   &__info {
     display: flex;
     flex-direction: column;
     gap: v.$spacing-sm;
+    flex: 1;
+    min-width: 0;
+  }
+
+  // El karma es la cifra que define a un jugador en PremadeGG: va aparte y grande
+  &__karma {
+    flex-shrink: 0;
+    padding: v.$spacing-md v.$spacing-lg;
+    background: v.$color-bg-surface;
+    border: 1px solid v.$color-border;
+    @include m.cut-corners(v.$cut-md);
+
+    @include m.respond-below(sm) {
+      align-self: stretch;
+    }
   }
 
   &__name {
@@ -198,6 +213,38 @@
     gap: v.$spacing-sm;
   }
 
+  // Agente favorito: retrato + nombre
+  .c-agent {
+    display: inline-flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+    padding: 0.25rem 0.75rem 0.25rem 0.25rem;
+    background: v.$color-bg-surface;
+    border: 1px solid v.$color-border;
+    @include m.cut-corner-br(v.$cut-sm);
+
+    // sin icono (API caída): vuelve al chip de texto
+    &:not(:has(.c-agent__icon)) {
+      padding: 0.4rem 0.75rem;
+    }
+
+    &__icon {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      background: v.$color-bg-elevated;
+    }
+
+    &__name {
+      font-family: v.$font-heading;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: v.$color-text-heading;
+    }
+  }
+
   // ── Social Links ────────────────────────────────
   &__socials {
     display: flex;
@@ -216,7 +263,7 @@
       transition: color v.$transition-fast;
 
       &:hover {
-        color: v.$color-accent-red;
+        color: v.$color-text-heading;
       }
     }
   }
@@ -403,8 +450,8 @@
 
     &:focus {
       outline: none;
-      border-color: v.$color-accent-red;
-      box-shadow: 0 0 0 3px rgba(255, 70, 85, 0.08);
+      border-color: v.$color-focus;
+      box-shadow: 0 0 0 1px v.$color-focus;
     }
   }
 
@@ -441,11 +488,11 @@
   &__author {
     font-size: 0.85rem;
     font-weight: 600;
-    color: v.$color-accent-red;
+    color: v.$color-text-heading;
     transition: color v.$transition-fast;
 
     &:hover {
-      color: v.$color-accent-red-hover;
+      color: #fff;
     }
   }
 

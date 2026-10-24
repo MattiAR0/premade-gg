@@ -58,7 +58,7 @@ button {
 
 // ── Focus visible for accessibility ───────────────────
 :focus-visible {
-  outline: 2px solid v.$color-accent-red;
+  outline: 2px solid v.$color-focus;
   outline-offset: 2px;
 }
 

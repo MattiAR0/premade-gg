@@ -15,34 +15,24 @@
     </div>
     <div class="c-player-card__info">
       <h3 class="c-player-card__name">{{ player.riotId }}</h3>
-      <div class="c-player-card__meta-row">
-        <app-rank-badge [rank]="player.rank" />
-        <app-karma-badge [karma]="player.karma" />
-      </div>
+      <app-rank-badge [rank]="player.rank" />
     </div>
+    <app-karma-badge class="c-player-card__karma" [karma]="player.karma" />
   </header>
 
   <section class="c-player-card__body">
-    <ul class="c-player-card__tags">
-      <li>
-        <span class="c-badge c-badge--role">{{ player.role }}</span>
-      </li>
+    <p class="c-player-card__facts">
+      <span>{{ player.role }}</span>
       @if (player.region) {
-        <li>
-          <span class="c-badge c-badge--region">{{ player.region | uppercase }}</span>
-        </li>
+        <span>{{ player.region | uppercase }}</span>
       }
       @if (player.accountLevel) {
-        <li>
-          <span class="c-badge c-badge--count">Lv. {{ player.accountLevel }}</span>
-        </li>
+        <span>Lv. {{ player.accountLevel }}</span>
       }
-      @if (player.lookingForTeam) {
-        <li>
-          <span class="c-badge c-badge--lft">LFT</span>
-        </li>
-      }
-    </ul>
+    </p>
+    @if (player.lookingForTeam) {
+      <span class="c-badge c-badge--lft" title="Busca equipo">LFT</span>
+    }
   </section>
 
   <footer class="c-player-card__footer">
