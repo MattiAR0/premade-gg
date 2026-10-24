@@ -23,12 +23,12 @@
           <h1 class="c-profile__name">{{ user.riotId }}</h1>
           <div class="c-profile__badges">
             <app-rank-badge [rank]="user.rank" />
-            <span class="c-badge c-badge--role">{{ user.role }}</span>
+            <span class="c-badge c-badge--role">{{ user.role | label: 'role' }}</span>
             <span class="c-badge c-badge--region">{{ user.region | uppercase }}</span>
             @if (user.lookingForTeam) {
-              <span class="c-badge c-badge--lft" title="Looking For Team — Busca equipo competitivo amateur">
+              <span class="c-badge c-badge--lft" title="Busca un equipo competitivo amateur">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                LFT
+                Busca equipo
               </span>
             }
           </div>
@@ -75,7 +75,7 @@
       @if (user.favoriteRole) {
         <section class="c-profile__section">
           <h2 class="c-profile__section-title">Rol favorito</h2>
-          <span class="c-badge c-badge--role">{{ user.favoriteRole }}</span>
+          <span class="c-badge c-badge--role">{{ user.favoriteRole | label: 'role' }}</span>
         </section>
       }
 
@@ -84,7 +84,7 @@
         <section class="c-profile__section">
           <h2 class="c-profile__section-title">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            Buscando equipo (LFT)
+            Busca equipo
           </h2>
           <p class="c-profile__lft-details">{{ user.lftDetails }}</p>
         </section>
@@ -139,7 +139,7 @@
         <h2 class="c-profile__section-title">Horario general</h2>
         <div class="c-profile__schedule">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          {{ user.schedule }}
+          {{ user.schedule | label: 'schedule' }}
         </div>
       </section>
 
@@ -155,17 +155,17 @@
     <!-- Reviews -->
     <section class="c-profile__section-block">
       <div class="c-profile__block-header">
-        <h2 class="c-profile__block-title">Reviews ({{ reviews.length }})</h2>
+        <h2 class="c-profile__block-title">Valoraciones ({{ reviews.length }})</h2>
 
         <!-- Botón para dejar review (solo si está logueado, no es su perfil, y puede) -->
         @if (eligibility?.canReview) {
           <button class="c-btn c-btn--primary c-btn--sm" (click)="toggleReviewForm()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            {{ showReviewForm ? 'Cancelar' : 'Dejar review' }}
+            {{ showReviewForm ? 'Cancelar' : 'Valorar' }}
           </button>
         }
         @if (eligibility && !eligibility.canReview && eligibility.reason === 'already_reviewed') {
-          <span class="c-badge c-badge--subtle">Ya dejaste una review</span>
+          <span class="c-badge c-badge--subtle">Ya le has valorado</span>
         }
       </div>
 
@@ -173,13 +173,13 @@
       @if (eligibility && !eligibility.playedTogether && eligibility.canReview) {
         <div class="c-review-notice c-review-notice--info">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-          No se detectó historial de partidas juntos (LFG o equipo). Aún puedes dejar una review.
+          No se detectó historial de partidas juntos (LFG o equipo). Aún puedes valorarle.
         </div>
       }
       @if (eligibility?.playedTogether && eligibility?.canReview) {
         <div class="c-review-notice c-review-notice--success">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          Habéis jugado juntos — tu review se marcará como verificada.
+          Habéis jugado juntos — tu valoración se marcará como verificada.
         </div>
       }
 
@@ -227,7 +227,7 @@
             class="c-btn c-btn--primary c-btn--sm"
             [disabled]="reviewRating === 0 || reviewSubmitting"
             (click)="submitReview()">
-            {{ reviewSubmitting ? 'Enviando...' : 'Publicar review' }}
+            {{ reviewSubmitting ? 'Enviando...' : 'Publicar valoración' }}
           </button>
         </div>
       }
@@ -278,7 +278,7 @@
           }
         </div>
       } @else if (!showReviewForm) {
-        <p class="c-profile__empty">Aún no hay reviews.</p>
+        <p class="c-profile__empty">Aún no tiene valoraciones.</p>
       }
     </section>
 

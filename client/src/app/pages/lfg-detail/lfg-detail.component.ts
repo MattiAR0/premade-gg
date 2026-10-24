@@ -5,11 +5,12 @@ import { AuthService } from '../../services/auth.service';
 import { LfgPost, LfgMember, TEAM_SIZE_LABELS } from '../../models/lfg-post.model';
 import { RankBadgeComponent } from '../../shared/rank-badge/rank-badge.component';
 import { KarmaBadgeComponent } from '../../shared/karma-badge/karma-badge.component';
+import { LabelPipe } from '../../shared/pipes/label.pipe';
 
 @Component({
   selector: 'app-lfg-detail',
   standalone: true,
-  imports: [RouterLink, RankBadgeComponent, KarmaBadgeComponent],
+  imports: [RouterLink, RankBadgeComponent, KarmaBadgeComponent, LabelPipe],
   templateUrl: './lfg-detail.component.html',
   styleUrl: './lfg-detail.component.scss',
 })

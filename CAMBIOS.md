@@ -4,9 +4,38 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
-## 2026-10-24 · Invitados y primer uso (paso 5 de la revisión de diseño)
+## 2026-10-24 · Textos e idioma (paso 6 de la revisión de diseño)
 
 **Commit:** sin commitear
+
+**Qué y por qué:** la UI mezclaba inglés y español: rangos ("Platinum"), roles ("Duelist"), horarios ("Evenings"), meses ("October 2026"), "Reviews", "Lv.", "LFT", "Looking for group"… y un texto de desarrollo en un estado vacío.
+
+**Cambios:**
+- `shared/pipes/label.pipe.ts` (nuevo): el pipe `label` traduce rango, rol y horario solo al mostrarlos. Los valores de la base de datos y de los filtros siguen en inglés, así que el backend no cambia.
+  - Ejemplos: "Gold 2" → "Oro 2"; "Duelist" → "Duelista"; "Late Night" → "Noches".
+  - Los valores desconocidos se muestran tal cual.
+- Se aplica en: `rank-badge`, tarjetas de jugador y LFG, perfil, editar perfil, registro, onboarding, team-detail, `user-picker` y los selectores y chips de filtro de portada, LFG, jugadores y equipos.
+- `app.config.ts`: `LOCALE_ID 'es'` con `registerLocaleData`. Las fechas salen en español ("octubre 2026") y los decimales con coma (karma "4,7").
+- Textos:
+  - "Reviews" pasa a "Valoraciones" en el título, los botones, los avisos y los mensajes de éxito y error.
+  - "Lv." pasa a "Nv." y "Min:" a "Mín.".
+  - El badge "LFT" pasa a "Busca equipo", en la tarjeta y en el perfil.
+  - "Looking For Team (LFT)" pasa a "Busco equipo" en editar perfil.
+  - El eyebrow "Looking for group" pasa a "Busca grupo".
+  - El estado vacío de jugadores ya no dice "ejecuta el seed…".
+
+**Verificación:**
+- Navegador: chips "Duelista, Controlador, Iniciador, Centinela, Flex"; opciones de rango "Hierro…" con `value` en inglés; rango "Platino"/"Radiante"; "Busca equipo"; "Nv. 80".
+- Perfil: "Miembro desde octubre 2026", "Valoraciones (1)", karma "2,0" con `aria-label` "Karma 2,0 de 5".
+- Build sin errores.
+
+**Pendiente:** los nombres de los agentes y "Duo/Trio/5-Stack" se dejan como en el juego.
+
+---
+
+## 2026-10-24 · Invitados y primer uso (paso 5 de la revisión de diseño)
+
+**Commit:** `7ad796d`
 
 **Qué y por qué:** quien entraba sin cuenta se encontraba con varios tropiezos:
 - El detalle de un grupo LFG era un callejón sin salida, sin ningún botón.

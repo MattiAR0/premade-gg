@@ -100,7 +100,7 @@
           <select class="c-settings__select" [(ngModel)]="favoriteRole" name="favoriteRole">
             <option value="">Sin preferencia</option>
             @for (r of roles; track r) {
-            <option [value]="r">{{ r }}</option>
+            <option [value]="r">{{ r | label: 'role' }}</option>
             }
           </select>
         </label>
@@ -108,7 +108,7 @@
           <span class="c-settings__label">Horario de juego</span>
           <select class="c-settings__select" [(ngModel)]="schedule" name="schedule">
             @for (s of schedules; track s) {
-            <option [value]="s">{{ s }}</option>
+            <option [value]="s">{{ s | label: 'schedule' }}</option>
             }
           </select>
         </label>
@@ -137,7 +137,7 @@
       </div>
     </section>
 
-    <!-- Looking For Team (LFT) -->
+    <!-- Busco equipo -->
     <section class="c-settings__section">
       <h2 class="c-settings__section-title">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -147,7 +147,7 @@
           <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
           <path d="M16 3.13a4 4 0 0 1 0 7.75" />
         </svg>
-        Looking For Team (LFT)
+        Busco equipo
       </h2>
       <p class="c-settings__hint" style="margin-bottom: 12px">Activa esta opción si buscas un equipo amateur para
         competir de forma estable, no solo una partida puntual.</p>

@@ -5,6 +5,7 @@ import { Subject, catchError, debounceTime, distinctUntilChanged, of, switchMap,
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/user.model';
+import { LabelPipe } from '../pipes/label.pipe';
 
 /**
  * Buscador de jugadores con autocompletado y chips de seleccionados.
@@ -13,7 +14,7 @@ import { User } from '../../models/user.model';
 @Component({
   selector: 'app-user-picker',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, LabelPipe],
   templateUrl: './user-picker.component.html',
   styleUrl: './user-picker.component.scss',
 })

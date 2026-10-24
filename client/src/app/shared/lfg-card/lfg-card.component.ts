@@ -3,11 +3,12 @@ import { RouterLink } from '@angular/router';
 import { RankBadgeComponent } from '../rank-badge/rank-badge.component';
 import { KarmaBadgeComponent } from '../karma-badge/karma-badge.component';
 import { LfgPost } from '../../models/lfg-post.model';
+import { LabelPipe } from '../pipes/label.pipe';
 
 @Component({
   selector: 'app-lfg-card',
   standalone: true,
-  imports: [RankBadgeComponent, KarmaBadgeComponent, RouterLink],
+  imports: [RankBadgeComponent, KarmaBadgeComponent, RouterLink, LabelPipe],
   templateUrl: './lfg-card.component.html',
   styleUrl: './lfg-card.component.scss',
 })

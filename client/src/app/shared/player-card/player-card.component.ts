@@ -6,11 +6,12 @@ import { RankBadgeComponent } from '../rank-badge/rank-badge.component';
 import { User } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
 import { MessageService } from '../../services/message.service';
+import { LabelPipe } from '../pipes/label.pipe';
 
 @Component({
   selector: 'app-player-card',
   standalone: true,
-  imports: [KarmaBadgeComponent, RankBadgeComponent, UpperCasePipe, RouterLink],
+  imports: [KarmaBadgeComponent, RankBadgeComponent, UpperCasePipe, RouterLink, LabelPipe],
   templateUrl: './player-card.component.html',
   styleUrl: './player-card.component.scss',
 })

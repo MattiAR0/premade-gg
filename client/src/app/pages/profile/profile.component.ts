@@ -12,6 +12,7 @@ import { LfgPost } from '../../models/lfg-post.model';
 import { RankBadgeComponent } from '../../shared/rank-badge/rank-badge.component';
 import { KarmaBadgeComponent } from '../../shared/karma-badge/karma-badge.component';
 import { LfgCardComponent } from '../../shared/lfg-card/lfg-card.component';
+import { LabelPipe } from '../../shared/pipes/label.pipe';
 
 @Component({
   selector: 'app-profile',
@@ -19,6 +20,7 @@ import { LfgCardComponent } from '../../shared/lfg-card/lfg-card.component';
   imports: [
     RouterLink, UpperCasePipe, DatePipe, FormsModule,
     RankBadgeComponent, KarmaBadgeComponent, LfgCardComponent,
+    LabelPipe,
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
@@ -182,7 +184,7 @@ export class ProfileComponent implements OnInit {
       next: (review) => {
         this.reviews = [review, ...this.reviews];
         this.reviewSubmitting = false;
-        this.reviewSuccess = 'Review publicada correctamente';
+        this.reviewSuccess = 'Valoración publicada';
         this.showReviewForm = false;
         // Actualizar el karma mostrado
         if (this.user) {
@@ -201,7 +203,7 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         this.reviewSubmitting = false;
-        this.reviewError = err.error?.message || 'Error al publicar la review';
+        this.reviewError = err.error?.message || 'No se pudo publicar la valoración';
         this.cdr.markForCheck();
       },
     });

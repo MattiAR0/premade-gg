@@ -15,7 +15,7 @@
         <div class="c-chips">
           <button type="button" class="c-chip" [class.c-chip--active]="!filterRole" [attr.aria-pressed]="!filterRole" (click)="setRole('')">Todos</button>
           @for (role of roles; track role) {
-            <button type="button" class="c-chip" [class.c-chip--active]="filterRole === role" [attr.aria-pressed]="filterRole === role" (click)="setRole(role)">{{ role }}</button>
+            <button type="button" class="c-chip" [class.c-chip--active]="filterRole === role" [attr.aria-pressed]="filterRole === role" (click)="setRole(role)">{{ role | label: 'role' }}</button>
           }
         </div>
       </div>
@@ -27,7 +27,7 @@
         <select class="c-filters__select" [(ngModel)]="filterRank" (ngModelChange)="applyFilters()" name="rank">
           <option value="">Todos los rangos</option>
           @for (rank of ranks; track rank) {
-            <option [value]="rank">{{ rank }}</option>
+            <option [value]="rank">{{ rank | label: 'rank' }}</option>
           }
         </select>
       </label>
@@ -95,7 +95,7 @@
             <button class="c-btn c-btn--ghost c-btn--sm" type="button" (click)="clearFilters()">Limpiar filtros</button>
           </div>
         } @else {
-          <p class="c-empty__hint">Si la base de datos está vacía, ejecuta el seed para generar datos de prueba.</p>
+          <p class="c-empty__hint">Todavía no hay jugadores registrados. Vuelve en un rato.</p>
         }
       </div>
     } @else {

@@ -7,7 +7,7 @@
         <span class="c-eyebrow">Hola, {{ user.riotId }}</span>
         <h1 class="c-hero__title">¿A qué<br /><span class="c-hero__accent">jugamos</span> hoy?</h1>
         } @else {
-        <span class="c-eyebrow">Valorant · Looking for group</span>
+        <span class="c-eyebrow">Valorant · Busca grupo</span>
         <h1 class="c-hero__title">Encuentra tu<br /><span class="c-hero__accent">premade</span></h1>
         }
         <p class="c-hero__subtitle">
@@ -62,7 +62,7 @@
           <div class="c-chips">
             @for (role of roles; track role) {
             <button type="button" class="c-chip" [class.c-chip--active]="finderRole === role" [attr.aria-pressed]="finderRole === role"
-              (click)="toggleFinderRole(role)">{{ role }}</button>
+              (click)="toggleFinderRole(role)">{{ role | label: 'role' }}</button>
             }
           </div>
         </div>
@@ -71,7 +71,7 @@
           <select class="c-filters__select" [(ngModel)]="finderRank" name="rank">
             <option value="">Cualquier rango</option>
             @for (rank of ranks; track rank) {
-            <option [value]="rank">{{ rank }}</option>
+            <option [value]="rank">{{ rank | label: 'rank' }}</option>
             }
           </select>
         </label>

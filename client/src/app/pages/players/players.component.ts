@@ -5,11 +5,12 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { PlayerCardComponent } from '../../shared/player-card/player-card.component';
 import { User, VALORANT_RANKS, VALORANT_ROLES } from '../../models/user.model';
+import { LabelPipe } from '../../shared/pipes/label.pipe';
 
 @Component({
   selector: 'app-players',
   standalone: true,
-  imports: [FormsModule, PlayerCardComponent],
+  imports: [FormsModule, PlayerCardComponent, LabelPipe],
   templateUrl: './players.component.html',
   styleUrl: './players.component.scss',
 })

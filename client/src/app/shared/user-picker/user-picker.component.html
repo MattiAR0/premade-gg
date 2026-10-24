@@ -5,7 +5,7 @@
     <li class="c-user-picker__chip">
       <span class="c-user-picker__chip-name">{{ user.riotId }}</span>
       @if (user.rank) {
-      <span class="c-user-picker__chip-rank">{{ user.rank }}</span>
+      <span class="c-user-picker__chip-rank">{{ user.rank | label: 'rank' }}</span>
       }
       <button class="c-user-picker__chip-remove" type="button" (click)="remove(user)"
         [attr.aria-label]="'Quitar a ' + user.riotId">
@@ -40,10 +40,10 @@
           }
           <span class="c-user-picker__result-name">{{ user.riotId }}</span>
           @if (user.rank) {
-          <span class="c-user-picker__result-meta">{{ user.rank }}</span>
+          <span class="c-user-picker__result-meta">{{ user.rank | label: 'rank' }}</span>
           }
           @if (user.role) {
-          <span class="c-user-picker__result-meta">{{ user.role }}</span>
+          <span class="c-user-picker__result-meta">{{ user.role | label: 'role' }}</span>
           }
         </button>
       </li>

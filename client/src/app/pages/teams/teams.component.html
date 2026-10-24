@@ -38,7 +38,7 @@
         <select class="c-filters__select" [(ngModel)]="filterRank" (ngModelChange)="applyFilters()" name="rank">
           <option value="">Todos los rangos</option>
           @for (rank of ranks; track rank) {
-          <option [value]="rank">{{ rank }}</option>
+          <option [value]="rank">{{ rank | label: 'rank' }}</option>
           }
         </select>
       </label>
@@ -192,7 +192,7 @@
           <span class="c-modal__label">Rango objetivo</span>
           <select class="c-modal__select" [(ngModel)]="newTeam.targetRank" name="targetRank">
             @for (rank of ranks; track rank) {
-            <option [value]="rank">{{ rank }}</option>
+            <option [value]="rank">{{ rank | label: 'rank' }}</option>
             }
           </select>
         </label>

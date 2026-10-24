@@ -163,7 +163,7 @@
             <div class="c-member__avatar">{{ player.user.riotId.charAt(0) }}</div>
             <div class="c-member__info">
               <span class="c-member__name">{{ player.user.riotId }}</span>
-              <span class="c-member__role-tag">{{ player.role }}</span>
+              <span class="c-member__role-tag">{{ player.role | label: 'role' }}</span>
               @if (player.user.rank) {
               <app-rank-badge [rank]="player.user.rank" />
               }
@@ -308,7 +308,7 @@
         <span class="c-team-detail__label">Roles buscados:</span>
         <div class="c-team-detail__role-chips">
           @for (role of team.recruitingRoles; track role) {
-          <span class="c-badge c-badge--role">{{ role }}</span>
+          <span class="c-badge c-badge--role">{{ role | label: 'role' }}</span>
           }
         </div>
       </div>

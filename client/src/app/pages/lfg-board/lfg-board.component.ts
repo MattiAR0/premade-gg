@@ -9,13 +9,14 @@ import { UserPickerComponent } from '../../shared/user-picker/user-picker.compon
 import { LfgPost, TeamSizeTab, TEAM_SIZE_LABELS } from '../../models/lfg-post.model';
 import { User, VALORANT_RANKS } from '../../models/user.model';
 import { DialogDirective } from '../../shared/dialog/dialog.directive';
+import { LabelPipe } from '../../shared/pipes/label.pipe';
 
 type LfgStatus = 'open' | 'full' | 'closed';
 
 @Component({
   selector: 'app-lfg-board',
   standalone: true,
-  imports: [FormsModule, LfgCardComponent, UserPickerComponent, DialogDirective],
+  imports: [FormsModule, LfgCardComponent, UserPickerComponent, DialogDirective, LabelPipe],
   templateUrl: './lfg-board.component.html',
   styleUrl: './lfg-board.component.scss',
 })

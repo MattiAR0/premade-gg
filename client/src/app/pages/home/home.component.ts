@@ -9,13 +9,14 @@ import { TeamCardComponent } from '../../shared/team-card/team-card.component';
 import { User, VALORANT_ROLES, VALORANT_RANKS } from '../../models/user.model';
 import { LfgPost, TeamSizeTab, TEAM_SIZE_LABELS } from '../../models/lfg-post.model';
 import { Team } from '../../models/team.model';
+import { LabelPipe } from '../../shared/pipes/label.pipe';
 
 type FinderMode = 'lfg' | 'players';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, FormsModule, PlayerCardComponent, LfgCardComponent, TeamCardComponent],
+  imports: [RouterLink, FormsModule, PlayerCardComponent, LfgCardComponent, TeamCardComponent, LabelPipe],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })

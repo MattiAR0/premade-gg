@@ -10,11 +10,12 @@ import { UserPickerComponent } from '../../shared/user-picker/user-picker.compon
 import { Team } from '../../models/team.model';
 import { User, VALORANT_RANKS } from '../../models/user.model';
 import { DialogDirective } from '../../shared/dialog/dialog.directive';
+import { LabelPipe } from '../../shared/pipes/label.pipe';
 
 @Component({
   selector: 'app-teams',
   standalone: true,
-  imports: [FormsModule, TeamCardComponent, UserPickerComponent, DialogDirective],
+  imports: [FormsModule, TeamCardComponent, UserPickerComponent, DialogDirective, LabelPipe],
   templateUrl: './teams.component.html',
   styleUrl: './teams.component.scss',
 })

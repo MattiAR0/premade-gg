@@ -29,7 +29,7 @@
       }
       <span class="c-badge c-badge--region">{{ regionLabel }}</span>
       @if (post.minRank) {
-        <span class="c-lfg-card__req">Min: {{ post.minRank }}</span>
+        <span class="c-lfg-card__req">Mín. {{ post.minRank | label: 'rank' }}</span>
       }
     </div>
 

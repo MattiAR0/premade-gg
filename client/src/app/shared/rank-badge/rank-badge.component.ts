@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { LabelPipe } from '../pipes/label.pipe';
 
 const TIERS = [
   'iron', 'bronze', 'silver', 'gold', 'platinum',
@@ -8,6 +9,7 @@ const TIERS = [
 @Component({
   selector: 'app-rank-badge',
   standalone: true,
+  imports: [LabelPipe],
   templateUrl: './rank-badge.component.html',
   styleUrl: './rank-badge.component.scss',
 })

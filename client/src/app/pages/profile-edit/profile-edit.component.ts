@@ -6,6 +6,7 @@ import {
   User, VALORANT_AGENTS, VALORANT_ROLES,
   DAYS_OF_WEEK, DAYS_LABELS,
 } from '../../models/user.model';
+import { LabelPipe } from '../../shared/pipes/label.pipe';
 
 /** Avatares predefinidos basados en agentes de Valorant */
 const PRESET_AVATARS = [
@@ -42,7 +43,7 @@ const PRESET_AVATARS = [
 @Component({
   selector: 'app-profile-edit',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, LabelPipe],
   templateUrl: './profile-edit.component.html',
   styleUrl: './profile-edit.component.scss',
 })

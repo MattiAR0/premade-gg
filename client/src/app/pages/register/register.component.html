@@ -102,7 +102,7 @@
           <select class="c-auth-card__select" [(ngModel)]="role" name="role" required>
             <option value="" disabled>Seleccionar</option>
             @for (r of roles; track r) {
-              <option [value]="r">{{ r }}</option>
+              <option [value]="r">{{ r | label: 'role' }}</option>
             }
           </select>
         </label>
