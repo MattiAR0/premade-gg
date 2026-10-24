@@ -169,6 +169,22 @@
             }
           </button>
         </section>
+      } @else if (!auth.isAuthenticated() && post.status === 'open') {
+        <!-- Invitado: explicar el siguiente paso en vez de dejar la página sin salida -->
+        <section class="c-detail__action c-detail__action--guest">
+          <p class="c-detail__guest-text">
+            Para unirte necesitas una cuenta de PremadeGG y karma {{ post.minKarma }} o más.
+            Todas las cuentas empiezan con 5 de karma.
+          </p>
+          <div class="c-detail__guest-actions">
+            <a class="c-btn c-btn--primary" routerLink="/login" [queryParams]="{ returnUrl: currentUrl }">
+              Inicia sesión para unirte
+            </a>
+            <a class="c-btn c-btn--secondary" routerLink="/register" [queryParams]="{ returnUrl: currentUrl }">
+              Crear cuenta
+            </a>
+          </div>
+        </section>
       }
 
       @if (currentMemberStatus === 'pending') {

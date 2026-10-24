@@ -37,6 +37,11 @@ export class LfgDetailComponent implements OnInit {
     });
   }
 
+  /** URL actual, para volver aquí después de iniciar sesión o registrarse */
+  get currentUrl(): string {
+    return this.router.url;
+  }
+
   /** Es el creador del post? */
   get isCreator(): boolean {
     return !!this.post && this.auth.isAuthenticated() &&

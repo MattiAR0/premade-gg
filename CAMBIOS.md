@@ -4,9 +4,45 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
-## 2026-10-24 · Accesibilidad (paso 4 de la revisión de diseño)
+## 2026-10-24 · Invitados y primer uso (paso 5 de la revisión de diseño)
 
 **Commit:** sin commitear
+
+**Qué y por qué:** quien entraba sin cuenta se encontraba con varios tropiezos:
+- El detalle de un grupo LFG era un callejón sin salida, sin ningún botón.
+- Las páginas nuevas se abrían con el scroll de la anterior.
+- "Cómo funciona" estaba al final de la portada.
+- El registro pedía 8 campos.
+
+**Cambios:**
+- `lfg-detail`: bloque para invitados cuando el grupo está abierto.
+  - Explica que hace falta una cuenta y el karma mínimo del grupo, y que todas las cuentas empiezan con 5.
+  - Botones "Inicia sesión para unirte" (principal) y "Crear cuenta", los dos con `returnUrl` al mismo grupo.
+- `app.ts`: al cambiar de ruta se vuelve arriba al instante. Solo si cambia la ruta: los filtros cambian los query params y no mueven el scroll.
+  - Se descartó `withInMemoryScrolling`, porque también subía la página con cada clic en un filtro.
+- `home`:
+  - "Cómo funciona" pasa justo detrás del hero, con un título visible.
+  - Su botón "Crear cuenta gratis" pasa a secundario, para no competir con "Buscar grupos".
+- `register`:
+  - Fuera el campo "Horario de juego": por defecto es "Flexible" y se cambia en el perfil.
+  - Se mantiene "Rol principal": no se puede editar después (el RPC `update_profile` no acepta `role`).
+  - Tras registrarse se respeta `returnUrl` (solo rutas internas, contra redirecciones abiertas), también cuando termina en `/onboarding`.
+- `login` ↔ `register`: los enlaces entre ambas páginas conservan `returnUrl` (`queryParamsHandling="preserve"`).
+
+**Verificación:**
+- Navegador: un invitado en `/lfg/:id` ve el bloque y los enlaces llevan a `/login?returnUrl=%2Flfg%2F…` y `/register?returnUrl=…`.
+- Scroll medido: al abrir un perfil desde y=400 se pasa a y=0; un filtro de jugadores mantiene y=400.
+- Portada: "Cómo funciona" está a 683px (antes, unos 1900).
+- Registro: 7 campos y el enlace a login conserva `returnUrl`.
+- Build sin errores.
+
+**Pendiente:** no se ha probado un registro real de principio a fin (crea una cuenta en Supabase local); se ha revisado el código y la compilación.
+
+---
+
+## 2026-10-24 · Accesibilidad (paso 4 de la revisión de diseño)
+
+**Commit:** `e48f476`
 
 **Qué y por qué:** las tarjetas no se podían abrir con el teclado y no había forma de saltarse el navbar. Además, nada respetaba `prefers-reduced-motion`, los filtros no anunciaban su estado y los menús y modales no se cerraban con Esc.
 
@@ -46,7 +82,7 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ## 2026-10-24 · Móvil y tablet (paso 3 de la revisión de diseño)
 
-**Commit:** sin commitear
+**Commit:** `e48f476`
 
 **Qué y por qué:** a 375px la página se desbordaba y se recortaba por la derecha. Además, la pestaña 5-STACK quedaba oculta, el CTA de la portada salía de la pantalla y había 29 áreas táctiles por debajo de 44px.
 

@@ -82,7 +82,7 @@
         </label>
       </div>
 
-      <!-- Region & Role -->
+      <!-- Región (necesaria para validar el Riot ID) y rol -->
       <div class="c-auth-card__row">
         <label class="c-auth-card__field">
           <span class="c-auth-card__label">Región</span>
@@ -108,16 +108,7 @@
         </label>
       </div>
 
-      <!-- Schedule -->
-      <label class="c-auth-card__field">
-        <span class="c-auth-card__label">Horario de juego</span>
-        <select class="c-auth-card__select" [(ngModel)]="schedule" name="schedule" required>
-          <option value="" disabled>Seleccionar</option>
-          @for (s of schedules; track s) {
-            <option [value]="s">{{ s }}</option>
-          }
-        </select>
-      </label>
+      <p class="c-auth-card__hint">El horario y tus agentes favoritos los eliges luego en tu perfil.</p>
 
       <button
         class="c-btn c-btn--primary c-auth-card__submit"
@@ -135,7 +126,7 @@
 
     <footer class="c-auth-card__footer">
       <p>¿Ya tienes cuenta?
-        <a class="c-auth-card__link" routerLink="/login">Inicia sesión</a>
+        <a class="c-auth-card__link" routerLink="/login" queryParamsHandling="preserve">Inicia sesión</a>
       </p>
     </footer>
   </div>

@@ -247,6 +247,27 @@
     @include m.respond-below(md) {
       padding: v.$spacing-md;
     }
+
+    &--guest {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: v.$spacing-md;
+      border-top: 1px solid v.$color-border;
+    }
+  }
+
+  &__guest-text {
+    max-width: 48ch;
+    font-size: 0.95rem;
+    color: v.$color-text-primary;
+  }
+
+  &__guest-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: v.$spacing-sm;
   }
 
   &__pending-msg {

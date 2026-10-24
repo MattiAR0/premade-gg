@@ -1,6 +1,6 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
 
@@ -20,7 +20,8 @@ export class RegisterComponent {
   tagLine = '';
   region = 'eu';
   role = '';
-  schedule = '';
+  // Por defecto: se cambia después en el perfil (un campo menos en el registro)
+  schedule = 'Flexible';
 
   // Validation state
   riotValidated = false;
@@ -40,14 +41,20 @@ export class RegisterComponent {
   ];
 
   readonly roles = ['Duelist', 'Controller', 'Initiator', 'Sentinel', 'Flex'];
-  readonly schedules = ['Weekends', 'Evenings', 'Late Night', 'Mornings', 'Flexible'];
 
   constructor(
     private readonly authService: AuthService,
     private readonly apiService: ApiService,
     private readonly router: Router,
+    private readonly route: ActivatedRoute,
     private readonly cdr: ChangeDetectorRef,
   ) { }
+
+  /** Ruta interna a la que volver tras registrarse (solo rutas relativas, evita open redirects) */
+  private get returnUrl(): string {
+    const url = this.route.snapshot.queryParamMap.get('returnUrl') || '/';
+    return url.startsWith('/') && !url.startsWith('//') ? url : '/';
+  }
 
   /** Resetea la validación cuando cambian los campos de Riot */
   onRiotFieldChange(): void {
@@ -80,8 +87,8 @@ export class RegisterComponent {
       return;
     }
 
-    if (!this.role || !this.schedule) {
-      this.errorMessage = 'Selecciona tu rol y horario de juego';
+    if (!this.role) {
+      this.errorMessage = 'Selecciona tu rol principal';
       return;
     }
 
@@ -110,7 +117,7 @@ export class RegisterComponent {
       schedule: this.schedule,
     }).subscribe({
       next: () => {
-        this.router.navigate(['/']);
+        this.router.navigateByUrl(this.returnUrl);
       },
       error: (err) => {
         this.loading = false;

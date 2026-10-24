@@ -91,6 +91,35 @@
     </div>
   </section>
 
+  <!-- ── Cómo funciona (solo invitados) ─────────────── -->
+  @if (!auth.isAuthenticated()) {
+  <section class="l-section l-container" aria-labelledby="how-title">
+    <div class="c-section-head">
+      <h2 id="how-title" class="c-section-head__title">Cómo funciona</h2>
+    </div>
+    <ol class="c-steps">
+      <li class="c-steps__item">
+        <span class="c-steps__num">01</span>
+        <h3 class="c-steps__title">Vincula tu Riot ID</h3>
+        <p class="c-steps__desc">Tu rango y nivel se sincronizan con tu cuenta real de Valorant.</p>
+      </li>
+      <li class="c-steps__item">
+        <span class="c-steps__num">02</span>
+        <h3 class="c-steps__title">Únete o crea un grupo</h3>
+        <p class="c-steps__desc">Duo, trio o 5-stack. Filtra por rol, rango y karma mínimo.</p>
+      </li>
+      <li class="c-steps__item">
+        <span class="c-steps__num">03</span>
+        <h3 class="c-steps__title">Valora a tus compañeros</h3>
+        <p class="c-steps__desc">Cada partida suma o resta karma. Con menos de 3 no puedes publicar.</p>
+      </li>
+      <li class="c-steps__cta">
+        <a class="c-btn c-btn--secondary" routerLink="/register">Crear cuenta gratis</a>
+      </li>
+    </ol>
+  </section>
+  }
+
   @if (errorMessage) {
   <section class="l-container l-section">
     <p class="c-error">{{ errorMessage }}</p>
@@ -177,29 +206,4 @@
   </section>
   }
 
-  <!-- ── Cómo funciona (solo invitados) ─────────────── -->
-  @if (!auth.isAuthenticated()) {
-  <section class="l-section l-container">
-    <ol class="c-steps">
-      <li class="c-steps__item">
-        <span class="c-steps__num">01</span>
-        <h3 class="c-steps__title">Vincula tu Riot ID</h3>
-        <p class="c-steps__desc">Tu rango y nivel se sincronizan con tu cuenta real de Valorant.</p>
-      </li>
-      <li class="c-steps__item">
-        <span class="c-steps__num">02</span>
-        <h3 class="c-steps__title">Únete o crea un grupo</h3>
-        <p class="c-steps__desc">Duo, trio o 5-stack. Filtra por rol, rango y karma mínimo.</p>
-      </li>
-      <li class="c-steps__item">
-        <span class="c-steps__num">03</span>
-        <h3 class="c-steps__title">Valora a tus compañeros</h3>
-        <p class="c-steps__desc">Cada partida suma o resta karma. Con menos de 3 no puedes publicar.</p>
-      </li>
-      <li class="c-steps__cta">
-        <a class="c-btn c-btn--primary" routerLink="/register">Crear cuenta gratis</a>
-      </li>
-    </ol>
-  </section>
-  }
 </main>
