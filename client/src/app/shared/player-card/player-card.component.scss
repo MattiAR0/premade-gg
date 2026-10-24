@@ -147,6 +147,12 @@
     cursor: pointer;
     transition: color v.$transition-fast, background v.$transition-fast;
 
+    @include m.touch {
+      width: 44px;
+      height: 44px;
+      margin: -7px;
+    }
+
     &:hover {
       color: v.$color-text-heading;
       background: rgba(236, 232, 225, 0.08);

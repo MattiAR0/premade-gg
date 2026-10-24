@@ -7,8 +7,8 @@
     <span class="c-navbar__brand-text">Premade<span class="c-navbar__accent">GG</span></span>
   </a>
 
-  <button class="c-navbar__toggle" [class.c-navbar__toggle--open]="menuOpen" (click)="toggleMenu()"
-    aria-label="Abrir menú" [attr.aria-expanded]="menuOpen">
+  <button #menuToggle class="c-navbar__toggle" [class.c-navbar__toggle--open]="menuOpen" (click)="toggleMenu()"
+    [attr.aria-label]="menuOpen ? 'Cerrar menú' : 'Abrir menú'" [attr.aria-expanded]="menuOpen">
     <span class="c-navbar__toggle-line"></span>
     <span class="c-navbar__toggle-line"></span>
     <span class="c-navbar__toggle-line"></span>
@@ -44,7 +44,7 @@
         <app-notification-bell />
       </div>
       <div class="c-navbar__user-wrap">
-        <button class="c-navbar__user" type="button" (click)="toggleUserMenu()" [attr.aria-expanded]="userMenuOpen">
+        <button #userButton class="c-navbar__user" type="button" (click)="toggleUserMenu()" [attr.aria-expanded]="userMenuOpen">
           @if (avatarUrl) {
           <img class="c-navbar__avatar" [src]="avatarUrl" alt="" />
           } @else {

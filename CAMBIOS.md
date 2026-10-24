@@ -4,6 +4,81 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-10-24 · Accesibilidad (paso 4 de la revisión de diseño)
+
+**Commit:** sin commitear
+
+**Qué y por qué:** las tarjetas no se podían abrir con el teclado y no había forma de saltarse el navbar. Además, nada respetaba `prefers-reduced-motion`, los filtros no anunciaban su estado y los menús y modales no se cerraban con Esc.
+
+**Cambios:**
+- Tarjetas LFG, de jugador y de equipo:
+  - El `routerLink` sale del `<article>` y pasa a un `<a class="c-card__link">` en el título. Su `::after` cubre toda la tarjeta (`_cards.scss`).
+  - Ahora funcionan Enter, el clic central y "abrir en pestaña nueva".
+  - La tarjeta muestra el anillo de foco cuando su enlace lo recibe.
+  - Los enlaces y botones internos quedan por encima.
+- `app.html` / `app.ts`: enlace "Saltar al contenido", visible solo con foco. Mueve el foco con JS porque `<base href>` haría que `#contenido` navegase a la portada.
+- `_reset.scss`:
+  - `prefers-reduced-motion: reduce` desactiva animaciones, transiciones y el scroll suave.
+  - Nueva utilidad `.u-sr-only`.
+- `aria-pressed` en todos los chips, segmentos y pestañas de filtro (portada, LFG, jugadores, equipos). El buscador de la portada deja de usar `role="tab"` sin paneles.
+- Navbar:
+  - Esc cierra el menú de usuario o el cajón móvil y devuelve el foco a su botón.
+  - La etiqueta del botón alterna entre "Abrir menú" y "Cerrar menú".
+- `shared/dialog/dialog.directive.ts` (nuevo, `appDialog`): al abrir un modal mete el foco dentro y lo atrapa con Tab. Esc lo cierra y, al cerrarse, el foco vuelve a donde estaba.
+  - Se aplica a los modales de crear grupo, crear equipo, unirse a un equipo y eliminar equipo.
+  - Los dos de team-detail ganan `role="dialog"` / `alertdialog` y `aria-modal`.
+- `h2` solo para lectores de pantalla en las listas de LFG, jugadores y equipos, para no saltar del h1 al h3.
+- Fuera las curvas con rebote: `$transition-spring` y el modal de team-detail usan `$ease-out-expo`.
+- El título "Eliminar equipo" deja el `style` en línea y usa `.c-modal__title--danger`.
+
+**Verificación:**
+- Navegador, con el teclado:
+  - El primer Tab muestra "Saltar al contenido". Enter lo activa sin cambiar de ruta y el siguiente Tab cae en "Crear grupo".
+  - Tab llega al enlace de la tarjeta, la tarjeta muestra el anillo y Enter abre `/lfg/:id`.
+  - Con `elementFromPoint` se comprobó que un clic en zonas vacías de la tarjeta va al enlace principal, y que el creador y los avatares siguen siendo enlaces propios.
+  - Esc en el cajón móvil lo cierra y devuelve el foco.
+- Detector: solo quedan falsos positivos (los `[src]` de Angular y la animación de "escribiendo…").
+- Build sin errores.
+
+**Pendiente:** los modales y el menú de usuario necesitan sesión iniciada; están comprobados compilando, no en pantalla. Tampoco se ha probado con un lector de pantalla real (NVDA o VoiceOver).
+
+---
+
+## 2026-10-24 · Móvil y tablet (paso 3 de la revisión de diseño)
+
+**Commit:** sin commitear
+
+**Qué y por qué:** a 375px la página se desbordaba y se recortaba por la derecha. Además, la pestaña 5-STACK quedaba oculta, el CTA de la portada salía de la pantalla y había 29 áreas táctiles por debajo de 44px.
+
+**Cambios:**
+- `scss/global/_grid.scss`: las columnas usan `minmax(0, 1fr)`, así que un título largo ya no ensancha la columna (era la causa del desbordamiento). El margen lateral mínimo pasa de 8px a 16px.
+- `scss/utilities/_mixins.scss`: nuevos mixins `touch` (`@media (pointer: coarse)`) y `touch-hit` (amplía la zona pulsable de un enlace sin mover el layout).
+- En pantallas táctiles (`pointer: coarse`), 44px como mínimo en:
+  - botones, chips y segmentos;
+  - el botón de menú (antes 28×28) y el logo;
+  - el botón de mensaje de la tarjeta de jugador;
+  - los enlaces "por X" de las tarjetas, los del footer y "o publica tu propio grupo".
+- En escritorio no cambia nada.
+- `lfg-board`: por debajo de 576px las 4 pestañas (Todos/Duo/Trio/5-Stack) van en una rejilla de 4 columnas y siempre se ven.
+- `home`:
+  - En móvil, las tres cifras del hero van en una fila y los chips de tamaño en una rejilla de 4.
+  - El hero tiene menos padding.
+  - El botón "Buscar grupos" pasa de y=831 (fuera de pantalla) a y=706 en 375×812.
+- `_navbar.scss`: entre 768 y 1023px los enlaces no se parten ("GRUPOS LFG" ya no salta de línea) y tienen menos aire.
+
+**Verificación:**
+- Navegador a 375×812 (móvil emulado con `pointer: coarse`): sin desbordamiento horizontal en `/`, `/lfg`, `/players`, `/teams`, `/login`, `/register` ni un perfil.
+- Áreas táctiles medidas con JavaScript.
+- Navbar comprobado a 800px.
+- Escritorio a 1280px sin cambios (chips 35px, botones 33px).
+- Build sin errores.
+
+**Pendiente:**
+- Los mini-avatares de 28px de la tarjeta LFG siguen por debajo de 44px. Se solapan entre sí y la tarjeta entera ya es pulsable.
+- Falta probar en un móvil real (iOS/Android): esto es emulación de Chromium.
+
+---
+
 ## 2026-10-24 · Reglas para Claude y registro de cambios
 
 **Commit:** el mismo que añade este archivo.

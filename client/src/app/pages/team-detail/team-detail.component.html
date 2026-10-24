@@ -362,9 +362,9 @@
 <!-- Modal Eliminar Equipo -->
 @if (showDeleteModal) {
 <div class="c-modal-overlay" (click)="closeDeleteModal()">
-  <div class="c-modal c-modal--small" (click)="$event.stopPropagation()">
+  <div class="c-modal c-modal--small" role="alertdialog" aria-modal="true" aria-label="Eliminar equipo" appDialog (dismiss)="closeDeleteModal()" (click)="$event.stopPropagation()">
     <header class="c-modal__header">
-      <h2 class="c-modal__title" style="color: #e05555;">Eliminar Equipo</h2>
+      <h2 class="c-modal__title c-modal__title--danger">Eliminar Equipo</h2>
     </header>
 
     @if (actionError) {
@@ -397,10 +397,10 @@
 <!-- Modal Unirse (Ya existente) -->
 @if (showJoinModal) {
 <div class="c-modal-overlay" (click)="closeJoinModal()">
-  <div class="c-modal c-modal--small" (click)="$event.stopPropagation()">
+  <div class="c-modal c-modal--small" role="dialog" aria-modal="true" aria-label="Solicitar unirse" appDialog (dismiss)="closeJoinModal()" (click)="$event.stopPropagation()">
     <header class="c-modal__header">
       <h2 class="c-modal__title">Solicitar Unirse a {{ team?.name }}</h2>
-      <button class="c-modal__close" (click)="closeJoinModal()">
+      <button class="c-modal__close" type="button" (click)="closeJoinModal()" aria-label="Cerrar">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="18" y1="6" x2="6" y2="18" />
           <line x1="6" y1="6" x2="18" y2="18" />

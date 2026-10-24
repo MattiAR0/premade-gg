@@ -15,11 +15,11 @@
 
   <!-- Tabs por tamaño de grupo -->
   <nav class="c-tabs" aria-label="Tamaño de grupo">
-    <button type="button" class="c-tabs__btn" [class.c-tabs__btn--active]="activeSize === null" (click)="setSize(null)">
+    <button type="button" class="c-tabs__btn" [class.c-tabs__btn--active]="activeSize === null" [attr.aria-pressed]="activeSize === null" (click)="setSize(null)">
       <span class="c-tabs__label">Todos</span>
     </button>
     @for (size of sizes; track size) {
-      <button type="button" class="c-tabs__btn" [class.c-tabs__btn--active]="activeSize === size" (click)="setSize(size)">
+      <button type="button" class="c-tabs__btn" [class.c-tabs__btn--active]="activeSize === size" [attr.aria-pressed]="activeSize === size" (click)="setSize(size)">
         <span class="c-tabs__label">{{ sizeLabels[size] }}</span>
         <span class="c-tabs__size">{{ size }} jugadores</span>
       </button>
@@ -32,7 +32,7 @@
         <span class="c-filters__label">Estado</span>
         <div class="c-segmented">
           @for (opt of statusOptions; track opt.value) {
-            <button type="button" class="c-segmented__btn" [class.c-segmented__btn--active]="activeStatus === opt.value" (click)="setStatus(opt.value)">{{ opt.label }}</button>
+            <button type="button" class="c-segmented__btn" [class.c-segmented__btn--active]="activeStatus === opt.value" [attr.aria-pressed]="activeStatus === opt.value" (click)="setStatus(opt.value)">{{ opt.label }}</button>
           }
         </div>
       </div>
@@ -45,7 +45,8 @@
   </section>
 
   <!-- Posts Feed -->
-  <section class="c-feed">
+  <section class="c-feed" aria-labelledby="lfg-results-title">
+    <h2 id="lfg-results-title" class="u-sr-only">Grupos</h2>
     @if (errorMessage) {
       <p class="c-error">{{ errorMessage }}</p>
     } @else if (initialLoading) {
@@ -99,7 +100,7 @@
 <!-- ── Modal: Crear grupo LFG ──────────────────────── -->
 @if (showCreateModal) {
   <div class="c-modal-overlay" (click)="closeCreateModal()">
-    <div class="c-modal" role="dialog" aria-modal="true" aria-labelledby="lfg-create-title" (click)="$event.stopPropagation()">
+    <div class="c-modal" role="dialog" aria-modal="true" aria-labelledby="lfg-create-title" appDialog (dismiss)="closeCreateModal()" (click)="$event.stopPropagation()">
       <header class="c-modal__header">
         <div>
           <h2 class="c-modal__title" id="lfg-create-title">Crear grupo</h2>
@@ -119,7 +120,7 @@
           <span class="c-modal__label">¿Cuántos sois en total?</span>
           <div class="c-segmented c-segmented--block">
             @for (size of sizes; track size) {
-              <button type="button" class="c-segmented__btn" [class.c-segmented__btn--active]="newPost.teamSize === size" (click)="setNewPostSize(size)">
+              <button type="button" class="c-segmented__btn" [class.c-segmented__btn--active]="newPost.teamSize === size" [attr.aria-pressed]="newPost.teamSize === size" (click)="setNewPostSize(size)">
                 {{ sizeLabels[size] }}
               </button>
             }
@@ -157,7 +158,7 @@
             <span class="c-modal__label">Karma mínimo</span>
             <div class="c-segmented c-segmented--block">
               @for (opt of karmaOptions; track opt.value) {
-                <button type="button" class="c-segmented__btn" [class.c-segmented__btn--active]="newPost.minKarma === opt.value" (click)="newPost.minKarma = opt.value">{{ opt.label }}</button>
+                <button type="button" class="c-segmented__btn" [class.c-segmented__btn--active]="newPost.minKarma === opt.value" [attr.aria-pressed]="newPost.minKarma === opt.value" (click)="newPost.minKarma = opt.value">{{ opt.label }}</button>
               }
             </div>
           </div>

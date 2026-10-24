@@ -1,4 +1,6 @@
+<a class="c-skip-link" href="#contenido" (click)="skipToContent($event)">Saltar al contenido</a>
 <app-navbar />
+<div id="contenido" class="c-skip-target" tabindex="-1"></div>
 <router-outlet />
 <footer class="c-footer">
   <div class="c-footer__inner l-container">

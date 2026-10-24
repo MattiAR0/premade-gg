@@ -34,13 +34,13 @@
       <form class="c-finder" (ngSubmit)="search()">
         <div class="c-finder__head">
           <span class="c-finder__title">¿Qué buscas?</span>
-          <div class="c-segmented c-segmented--block" role="tablist">
-            <button type="button" class="c-segmented__btn" role="tab"
-              [class.c-segmented__btn--active]="finderMode === 'lfg'" [attr.aria-selected]="finderMode === 'lfg'"
+          <div class="c-segmented c-segmented--block">
+            <button type="button" class="c-segmented__btn"
+              [class.c-segmented__btn--active]="finderMode === 'lfg'" [attr.aria-pressed]="finderMode === 'lfg'"
               (click)="setFinderMode('lfg')">Un grupo</button>
-            <button type="button" class="c-segmented__btn" role="tab"
+            <button type="button" class="c-segmented__btn"
               [class.c-segmented__btn--active]="finderMode === 'players'"
-              [attr.aria-selected]="finderMode === 'players'" (click)="setFinderMode('players')">Jugadores</button>
+              [attr.aria-pressed]="finderMode === 'players'" (click)="setFinderMode('players')">Jugadores</button>
           </div>
         </div>
 
@@ -48,10 +48,10 @@
         <div class="c-finder__field">
           <span class="c-finder__label">Tamaño del grupo</span>
           <div class="c-chips">
-            <button type="button" class="c-chip" [class.c-chip--active]="finderSize === null"
+            <button type="button" class="c-chip" [class.c-chip--active]="finderSize === null" [attr.aria-pressed]="finderSize === null"
               (click)="finderSize = null">Cualquiera</button>
             @for (size of sizes; track size) {
-            <button type="button" class="c-chip" [class.c-chip--active]="finderSize === size"
+            <button type="button" class="c-chip" [class.c-chip--active]="finderSize === size" [attr.aria-pressed]="finderSize === size"
               (click)="finderSize = size">{{ sizeLabels[size] }}</button>
             }
           </div>
@@ -61,7 +61,7 @@
           <span class="c-finder__label">Rol</span>
           <div class="c-chips">
             @for (role of roles; track role) {
-            <button type="button" class="c-chip" [class.c-chip--active]="finderRole === role"
+            <button type="button" class="c-chip" [class.c-chip--active]="finderRole === role" [attr.aria-pressed]="finderRole === role"
               (click)="toggleFinderRole(role)">{{ role }}</button>
             }
           </div>

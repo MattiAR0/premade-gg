@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { NotificationBellComponent } from '../notification-bell/notification-bell.component';
@@ -15,7 +15,22 @@ export class NavbarComponent {
   menuOpen = false;
   userMenuOpen = false;
 
+  @ViewChild('menuToggle') private menuToggle?: ElementRef<HTMLButtonElement>;
+  @ViewChild('userButton') private userButton?: ElementRef<HTMLButtonElement>;
+
   constructor(readonly authService: AuthService) { }
+
+  /** Esc cierra el menú abierto y devuelve el foco al botón que lo abrió */
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.userMenuOpen) {
+      this.closeUserMenu();
+      this.userButton?.nativeElement.focus();
+    } else if (this.menuOpen) {
+      this.closeMenu();
+      this.menuToggle?.nativeElement.focus();
+    }
+  }
 
   toggleMenu(): void {
     this.menuOpen = !this.menuOpen;

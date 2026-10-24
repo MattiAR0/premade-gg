@@ -30,8 +30,13 @@
   &__inner {
     position: relative;
     display: grid;
-    gap: v.$spacing-2xl;
-    padding-block: v.$spacing-2xl;
+    gap: v.$spacing-xl;
+    padding-block: v.$spacing-xl;
+
+    @include m.respond-to(sm) {
+      gap: v.$spacing-2xl;
+      padding-block: v.$spacing-2xl;
+    }
 
     @include m.respond-to(md) {
       padding-block: v.$spacing-4xl;
@@ -78,25 +83,43 @@
   }
 
   &__stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: v.$spacing-lg v.$spacing-2xl;
-    margin-top: v.$spacing-md;
+    // móvil: las tres cifras en una fila para que el buscador entre antes
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: v.$spacing-md;
+    margin-top: v.$spacing-sm;
+
+    @include m.respond-to(sm) {
+      display: flex;
+      flex-wrap: wrap;
+      gap: v.$spacing-lg v.$spacing-2xl;
+      margin-top: v.$spacing-md;
+    }
   }
 
   &__stat {
     display: flex;
     flex-direction: column;
-    padding-left: v.$spacing-md;
+    min-width: 0;
+    padding-left: v.$spacing-sm;
+
+    @include m.respond-to(sm) {
+      padding-left: v.$spacing-md;
+    }
+
     border-left: 1px solid v.$color-border-light;
   }
 
   &__stat-number {
     font-family: v.$font-display;
     font-weight: 400;
-    font-size: 2rem;
+    font-size: 1.6rem;
     line-height: 1;
     color: v.$color-text-heading;
+
+    @include m.respond-to(sm) {
+      font-size: 2rem;
+    }
   }
 
   &__stat-label {
@@ -143,6 +166,21 @@
     .c-filters__select {
       width: 100%;
     }
+
+    // móvil: chips en rejilla, sin una opción huérfana en otra fila
+    @include m.respond-below(sm) {
+      .c-chips {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(68px, 1fr));
+      }
+
+      .c-chip {
+        justify-content: center;
+        padding-inline: 0.3rem;
+        font-size: 0.8rem;
+        letter-spacing: 0.02em;
+      }
+    }
   }
 
   &__label {
@@ -160,6 +198,8 @@
     font-size: 0.92rem;
     color: v.$color-text-muted;
     transition: color v.$transition-fast;
+
+    @include m.touch-hit;
 
     &:hover {
       color: v.$color-text-heading;

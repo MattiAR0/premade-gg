@@ -585,7 +585,7 @@
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  animation: modal-enter 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  animation: modal-enter 0.3s v.$ease-out-expo forwards;
 
   &--small {
     max-width: 450px;

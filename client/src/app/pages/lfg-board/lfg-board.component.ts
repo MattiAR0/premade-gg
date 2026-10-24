@@ -8,13 +8,14 @@ import { LfgCardComponent } from '../../shared/lfg-card/lfg-card.component';
 import { UserPickerComponent } from '../../shared/user-picker/user-picker.component';
 import { LfgPost, TeamSizeTab, TEAM_SIZE_LABELS } from '../../models/lfg-post.model';
 import { User, VALORANT_RANKS } from '../../models/user.model';
+import { DialogDirective } from '../../shared/dialog/dialog.directive';
 
 type LfgStatus = 'open' | 'full' | 'closed';
 
 @Component({
   selector: 'app-lfg-board',
   standalone: true,
-  imports: [FormsModule, LfgCardComponent, UserPickerComponent],
+  imports: [FormsModule, LfgCardComponent, UserPickerComponent, DialogDirective],
   templateUrl: './lfg-board.component.html',
   styleUrl: './lfg-board.component.scss',
 })

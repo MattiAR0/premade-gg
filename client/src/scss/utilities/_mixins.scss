@@ -25,6 +25,20 @@
   }
 }
 
+// ── Pantallas táctiles (dedo, no ratón) ──────────────
+// Para agrandar áreas táctiles a 44px sin cambiar el aspecto en escritorio.
+@mixin touch {
+  @media (pointer: coarse) { @content; }
+}
+
+// Amplía la zona pulsable de un enlace de texto sin mover el layout
+@mixin touch-hit($extra: 12px) {
+  @include touch {
+    padding-block: $extra;
+    margin-block: -$extra;
+  }
+}
+
 // ── Layout helpers ────────────────────────────────────
 @mixin flex-center {
   display: flex;

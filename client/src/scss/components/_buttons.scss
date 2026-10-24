@@ -33,6 +33,10 @@
     transform: translateY(1px);
   }
 
+  @include m.touch {
+    min-height: 44px;
+  }
+
   &:disabled {
     opacity: 0.55;
     cursor: not-allowed;
@@ -101,5 +105,10 @@
     width: 40px;
     height: 40px;
     padding: 0;
+
+    @include m.touch {
+      width: 44px;
+      height: 44px;
+    }
   }
 }

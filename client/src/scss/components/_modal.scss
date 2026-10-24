@@ -56,6 +56,10 @@
     font-size: 1.9rem;
     letter-spacing: 0.02em;
     color: v.$color-text-heading;
+
+    &--danger {
+      color: v.$color-danger;
+    }
   }
 
   &__subtitle {

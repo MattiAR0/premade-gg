@@ -1,4 +1,4 @@
-<article class="c-card c-player-card" [routerLink]="['/profile', player._id]">
+<article class="c-card c-player-card">
   <header class="c-player-card__header">
     <div class="c-player-card__avatar-wrap">
       @if (avatarUrl) {
@@ -14,7 +14,7 @@
       }
     </div>
     <div class="c-player-card__info">
-      <h3 class="c-player-card__name">{{ player.riotId }}</h3>
+      <h3 class="c-player-card__name"><a class="c-card__link" [routerLink]="['/profile', player._id]">{{ player.riotId }}</a></h3>
       <app-rank-badge [rank]="player.rank" />
     </div>
     <app-karma-badge class="c-player-card__karma" [karma]="player.karma" />

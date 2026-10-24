@@ -1,4 +1,4 @@
-<article class="c-card c-lfg-card" [class.c-lfg-card--full]="post.status === 'full'" [class.c-lfg-card--closed]="post.status === 'closed'" [routerLink]="['/lfg', post._id]">
+<article class="c-card c-lfg-card" [class.c-lfg-card--full]="post.status === 'full'" [class.c-lfg-card--closed]="post.status === 'closed'">
   <!-- Status indicator bar -->
   <div class="c-lfg-card__status-bar"
     [class.c-lfg-card__status-bar--open]="post.status === 'open'"
@@ -8,7 +8,7 @@
 
   <!-- Header: título + status -->
   <header class="c-lfg-card__header">
-    <h3 class="c-lfg-card__title">{{ post.title }}</h3>
+    <h3 class="c-lfg-card__title"><a class="c-card__link" [routerLink]="['/lfg', post._id]">{{ post.title }}</a></h3>
     @if (post.status === 'open') {
       <span class="c-badge c-badge--open">
         <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="6"/></svg>

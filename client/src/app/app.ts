@@ -9,4 +9,10 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App {}
+export class App {
+  /** El <base href> haría que "#contenido" navegase a la home: movemos el foco a mano */
+  skipToContent(event: Event): void {
+    event.preventDefault();
+    document.getElementById('contenido')?.focus();
+  }
+}

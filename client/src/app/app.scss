@@ -68,6 +68,8 @@
     color: v.$color-text-muted;
     transition: color v.$transition-fast;
 
+    @include m.touch-hit;
+
     &:hover {
       color: v.$color-text-heading;
     }
@@ -83,4 +85,28 @@
       border-top: 1px solid v.$color-border;
     }
   }
+}
+
+// ── Saltar al contenido (visible solo al recibir foco) ──
+.c-skip-link {
+  position: fixed;
+  top: v.$spacing-sm;
+  left: v.$spacing-sm;
+  z-index: v.$z-toast;
+  padding: v.$spacing-sm v.$spacing-md;
+  background: v.$color-selected;
+  color: v.$color-on-selected;
+  font-family: v.$font-heading;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transform: translateY(-200%);
+
+  &:focus-visible {
+    transform: none;
+  }
+}
+
+.c-skip-target:focus {
+  outline: none;
 }

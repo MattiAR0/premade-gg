@@ -6,11 +6,12 @@ import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { Team, STAFF_ROLE_LABELS } from '../../models/team.model';
 import { RankBadgeComponent } from '../../shared/rank-badge/rank-badge.component';
+import { DialogDirective } from '../../shared/dialog/dialog.directive';
 
 @Component({
   selector: 'app-team-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, RankBadgeComponent],
+  imports: [CommonModule, FormsModule, RouterLink, RankBadgeComponent, DialogDirective],
   templateUrl: './team-detail.component.html',
   styleUrl: './team-detail.component.scss',
 })

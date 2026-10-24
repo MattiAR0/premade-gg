@@ -48,9 +48,9 @@
       <div class="c-filters__group">
         <span class="c-filters__label">Región</span>
         <div class="c-chips">
-          <button type="button" class="c-chip" [class.c-chip--active]="!filterRegion" (click)="setRegion('')">Todas</button>
+          <button type="button" class="c-chip" [class.c-chip--active]="!filterRegion" [attr.aria-pressed]="!filterRegion" (click)="setRegion('')">Todas</button>
           @for (r of regions; track r) {
-          <button type="button" class="c-chip" [class.c-chip--active]="filterRegion === r" [title]="regionLabels[r]"
+          <button type="button" class="c-chip" [class.c-chip--active]="filterRegion === r" [attr.aria-pressed]="filterRegion === r" [title]="regionLabels[r]"
             (click)="setRegion(r)">{{ r.toUpperCase() }}</button>
           }
         </div>
@@ -74,7 +74,8 @@
   </section>
 
   <!-- Teams Feed -->
-  <section class="c-feed">
+  <section class="c-feed" aria-labelledby="teams-results-title">
+    <h2 id="teams-results-title" class="u-sr-only">Equipos</h2>
     @if (errorMessage) {
     <p class="c-error">{{ errorMessage }}</p>
     } @else if (initialLoading) {
@@ -142,7 +143,7 @@
 <!-- ── Modal: Crear equipo ─────────────────────────── -->
 @if (showCreateModal) {
 <div class="c-modal-overlay" (click)="closeCreateModal()">
-  <div class="c-modal" role="dialog" aria-modal="true" aria-labelledby="team-create-title"
+  <div class="c-modal" role="dialog" aria-modal="true" aria-labelledby="team-create-title" appDialog (dismiss)="closeCreateModal()"
     (click)="$event.stopPropagation()">
     <header class="c-modal__header">
       <div>

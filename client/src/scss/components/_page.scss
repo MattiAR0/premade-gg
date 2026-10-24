@@ -165,6 +165,11 @@
     border-color v.$transition-fast,
     background-color v.$transition-fast;
 
+  @include m.touch {
+    min-height: 44px;
+    padding-inline: 0.9rem;
+  }
+
   &:hover {
     color: v.$color-text-heading;
     border-color: v.$color-border-light;
@@ -206,6 +211,10 @@
 
     & + & {
       border-left: 1px solid v.$color-border;
+    }
+
+    @include m.touch {
+      min-height: 44px;
     }
 
     &:hover {

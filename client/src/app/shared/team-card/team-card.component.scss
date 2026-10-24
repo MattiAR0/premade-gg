@@ -185,6 +185,8 @@
     transition: color v.$transition-fast;
     white-space: nowrap;
 
+    @include m.touch-hit;
+
     &:hover {
       color: v.$color-text-heading;
     }

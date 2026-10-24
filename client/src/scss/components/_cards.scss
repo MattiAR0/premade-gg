@@ -44,4 +44,33 @@
     flex-wrap: wrap;
     align-items: center;
   }
+
+  // Enlace principal de la tarjeta: va en el título y su ::after cubre toda la tarjeta.
+  // Así la tarjeta entera es clicable pero sigue siendo un <a> real (Enter, clic central, nueva pestaña).
+  &__link {
+    color: inherit;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+  &:has(.c-card__link:focus-visible) {
+    outline: 2px solid v.$color-focus;
+    outline-offset: 2px;
+  }
+
+  // Otros enlaces y botones de la tarjeta quedan por encima del enlace principal
+  a:not(.c-card__link),
+  button {
+    position: relative;
+    z-index: 1;
+  }
 }

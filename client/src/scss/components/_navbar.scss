@@ -29,6 +29,10 @@
     gap: v.$spacing-sm;
     color: v.$color-accent-red;
     flex-shrink: 0;
+
+    @include m.touch {
+      min-height: 44px;
+    }
   }
 
   &__logo {
@@ -53,9 +57,12 @@
     display: none;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     gap: 5px;
-    width: 28px;
-    height: 28px;
+    // 44px de zona táctil; las líneas siguen midiendo 26px
+    width: 44px;
+    height: 44px;
+    margin-right: -8px;
     cursor: pointer;
     z-index: v.$z-overlay + 1;
 
@@ -65,7 +72,7 @@
 
     &-line {
       display: block;
-      width: 100%;
+      width: 26px;
       height: 2px;
       background: v.$color-text-heading;
       transition: all v.$transition-base;
@@ -142,6 +149,7 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: v.$color-text-muted;
+    white-space: nowrap;
     transition: color v.$transition-fast;
 
     &::after {
@@ -166,6 +174,18 @@
 
       &::after {
         transform: scaleX(1);
+      }
+    }
+
+    // Tablet: menos aire para que enlaces y botones quepan en una línea
+    @media (min-width: v.$breakpoint-md) and (max-width: (v.$breakpoint-lg - 1px)) {
+      padding-inline: v.$spacing-sm;
+      font-size: 0.92rem;
+      letter-spacing: 0.06em;
+
+      &::after {
+        left: v.$spacing-sm;
+        right: v.$spacing-sm;
       }
     }
 

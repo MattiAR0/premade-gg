@@ -6,11 +6,8 @@
   width: 100%;
   max-width: v.$breakpoint-xl;
   margin-inline: auto;
-  padding-inline: v.$spacing-sm;
-
-  @include m.respond-to(sm) {
-    padding-inline: v.$spacing-md;
-  }
+  // 16px mínimo en móvil; nunca menos
+  padding-inline: v.$spacing-md;
 
   @include m.respond-to(md) {
     padding-inline: v.$spacing-xl;
@@ -40,45 +37,45 @@
   }
 
   &--1col {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     max-width: 720px;
   }
 
   &--2col {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
 
     @include m.respond-to(md) {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
   &--3col {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
 
     @include m.respond-to(sm) {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     @include m.respond-to(lg) {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 
   &--4col {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
 
     @include m.respond-to(sm) {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     @include m.respond-to(lg) {
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
 
   // Social feed layout - single column
   &--feed {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
