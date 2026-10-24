@@ -47,9 +47,9 @@
 .c-error {
   text-align: center;
   padding: v.$spacing-lg;
-  color: #e05555;
-  background: rgba(220, 53, 69, 0.06);
-  border: 1px solid rgba(220, 53, 69, 0.18);
+  color: #ff6b76;
+  background: rgba(255, 70, 85, 0.06);
+  border: 1px solid rgba(255, 70, 85, 0.18);
   border-radius: v.$radius-xl;
   font-size: 0.95rem;
   margin-block: v.$spacing-lg;
@@ -119,7 +119,7 @@
   &__name {
     font-size: 1.6rem;
     font-weight: 800;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.02em;
     color: v.$color-text-heading;
   }
 
@@ -186,8 +186,8 @@
     color: v.$color-text-primary;
     line-height: 1.6;
     padding: v.$spacing-sm v.$spacing-md;
-    background: rgba(168, 85, 247, 0.05);
-    border: 1px solid rgba(168, 85, 247, 0.15);
+    background: rgba(154, 140, 255, 0.05);
+    border: 1px solid rgba(154, 140, 255, 0.15);
     border-radius: v.$radius-md;
   }
 
@@ -323,21 +323,21 @@
   margin-bottom: v.$spacing-md;
 
   &--info {
-    color: #93bbdc;
+    color: #5aa9ff;
     background: rgba(59, 130, 246, 0.06);
     border: 1px solid rgba(59, 130, 246, 0.18);
   }
 
   &--success {
-    color: #6ec87a;
+    color: #2fd8b0;
     background: rgba(34, 197, 94, 0.06);
     border: 1px solid rgba(34, 197, 94, 0.18);
   }
 
   &--error {
-    color: #e05555;
-    background: rgba(220, 53, 69, 0.06);
-    border: 1px solid rgba(220, 53, 69, 0.18);
+    color: #ff6b76;
+    background: rgba(255, 70, 85, 0.06);
+    border: 1px solid rgba(255, 70, 85, 0.18);
   }
 }
 
@@ -404,7 +404,7 @@
     &:focus {
       outline: none;
       border-color: v.$color-accent-red;
-      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.08);
+      box-shadow: 0 0 0 3px rgba(255, 70, 85, 0.08);
     }
   }
 
@@ -470,8 +470,8 @@
     border-radius: v.$radius-sm;
 
     &:hover {
-      color: #e05555;
-      background: rgba(220, 53, 69, 0.1);
+      color: #ff6b76;
+      background: rgba(255, 70, 85, 0.1);
     }
   }
 
@@ -496,7 +496,7 @@
   gap: 4px;
   font-size: 0.7rem;
   font-weight: 600;
-  color: #6ec87a;
+  color: #2fd8b0;
   background: rgba(34, 197, 94, 0.08);
   border: 1px solid rgba(34, 197, 94, 0.2);
   padding: 2px 8px;

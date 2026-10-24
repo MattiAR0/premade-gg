@@ -1,17 +1,19 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { TeamCardComponent } from '../../shared/team-card/team-card.component';
+import { UserPickerComponent } from '../../shared/user-picker/user-picker.component';
 import { Team } from '../../models/team.model';
-import { User } from '../../models/user.model';
-import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+import { User, VALORANT_RANKS } from '../../models/user.model';
 
 @Component({
   selector: 'app-teams',
   standalone: true,
-  imports: [FormsModule, TeamCardComponent],
+  imports: [FormsModule, TeamCardComponent, UserPickerComponent],
   templateUrl: './teams.component.html',
   styleUrl: './teams.component.scss',
 })
@@ -22,42 +24,32 @@ export class TeamsComponent implements OnInit, AfterViewInit, OnDestroy {
   errorMessage = '';
 
   private nextCursor: string | null = null;
+  // Descarta respuestas de peticiones antiguas cuando los filtros cambian rápido
+  private requestId = 0;
   totalTeams = 0;
   readonly pageSize = 12;
 
-  // Filtros
+  // Filtros (sincronizados con la URL: ?q=&region=&rank=&recruiting=1)
   filterRegion = '';
   filterRank = '';
   filterRecruiting = false;
   searchQuery = '';
+  private readonly searchInput$ = new Subject<string>();
 
-  readonly regions = ['eu', 'na', 'ap', 'kr'];
+  readonly regions = ['eu', 'na', 'ap', 'kr'] as const;
   readonly regionLabels: Record<string, string> = {
     eu: 'Europa', na: 'Norteamérica', ap: 'Asia Pacífico', kr: 'Corea',
   };
-  readonly ranks = [
-    'Iron', 'Bronze', 'Silver', 'Gold', 'Platinum',
-    'Diamond', 'Ascendant', 'Immortal', 'Radiant',
-  ];
+  readonly ranks = VALORANT_RANKS;
 
   // ── Crear equipo ──────────────────────────────────────
   showCreateModal = false;
   creatingTeam = false;
   createError = '';
-  newTeam = {
-    name: '',
-    tag: '',
-    description: '',
-    region: 'eu',
-    targetRank: 'Gold',
-    recruiting: false,
-  };
-
-  // Búsqueda de usuarios iniciales
-  memberSearchQuery = '';
-  memberSearchResults: User[] = [];
+  newTeam = this.emptyTeam();
+  /** true cuando el usuario ha escrito el tag a mano (dejamos de autogenerarlo) */
+  private tagEdited = false;
   selectedInitialMembers: User[] = [];
-  private readonly searchSubject = new Subject<string>();
 
   @ViewChild('scrollSentinel') scrollSentinel!: ElementRef<HTMLDivElement>;
   private observer: IntersectionObserver | null = null;
@@ -65,29 +57,37 @@ export class TeamsComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private readonly api: ApiService,
     private readonly cdr: ChangeDetectorRef,
+    private readonly route: ActivatedRoute,
     private readonly router: Router,
+    private readonly destroyRef: DestroyRef,
     readonly auth: AuthService,
-  ) {
-    this.searchSubject.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      switchMap(query => {
-        if (!query.trim()) {
-          return [[]]; // empty array as observable
-        }
-        return this.api.searchUsers(query);
-      })
-    ).subscribe(results => {
-      const myId = this.auth.currentUser()?._id;
-      this.memberSearchResults = results.filter(u =>
-        u._id !== myId && !this.selectedInitialMembers.some(sm => sm._id === u._id)
-      );
-      this.cdr.markForCheck();
-    });
-  }
+  ) {}
 
   ngOnInit(): void {
-    this.loadTeams();
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        if (params.get('create') === '1') {
+          this.auth.whenSessionRestored.then(() => {
+            this.openCreateModal();
+            this.cdr.markForCheck();
+          });
+          this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: { create: null },
+            queryParamsHandling: 'merge',
+            replaceUrl: true,
+          });
+          return;
+        }
+        this.readFilters(params);
+        this.loadTeams();
+      });
+
+    // La búsqueda por texto se aplica sola tras dejar de escribir
+    this.searchInput$
+      .pipe(debounceTime(350), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.applyFilters());
   }
 
   ngAfterViewInit(): void {
@@ -98,7 +98,50 @@ export class TeamsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.observer?.disconnect();
   }
 
+  private readFilters(params: ParamMap): void {
+    const region = params.get('region') || '';
+    const rank = params.get('rank') || '';
+    this.filterRegion = (this.regions as readonly string[]).includes(region) ? region : '';
+    this.filterRank = (this.ranks as readonly string[]).includes(rank) ? rank : '';
+    this.filterRecruiting = params.get('recruiting') === '1';
+    // No pisamos lo que se está escribiendo si solo difiere en espacios
+    const q = params.get('q') || '';
+    if (q !== this.searchQuery.trim()) this.searchQuery = q;
+  }
+
+  applyFilters(): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        q: this.searchQuery.trim() || null,
+        region: this.filterRegion || null,
+        rank: this.filterRank || null,
+        recruiting: this.filterRecruiting ? 1 : null,
+      },
+      replaceUrl: true,
+    });
+  }
+
+  onSearchInput(): void {
+    this.searchInput$.next(this.searchQuery.trim());
+  }
+
+  setRegion(region: string): void {
+    this.filterRegion = this.filterRegion === region ? '' : region;
+    this.applyFilters();
+  }
+
+  toggleRecruiting(): void {
+    this.filterRecruiting = !this.filterRecruiting;
+    this.applyFilters();
+  }
+
+  get activeFilterCount(): number {
+    return [this.searchQuery.trim(), this.filterRegion, this.filterRank, this.filterRecruiting].filter(Boolean).length;
+  }
+
   loadTeams(): void {
+    this.requestId++;
     this.initialLoading = true;
     this.errorMessage = '';
     this.teams = [];
@@ -113,6 +156,7 @@ export class TeamsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private fetchPage(): void {
+    const requestId = this.requestId;
     const filters: Record<string, string | number | boolean> = {
       limit: this.pageSize,
     };
@@ -124,6 +168,7 @@ export class TeamsComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.api.getTeams(filters).subscribe({
       next: (res) => {
+        if (requestId !== this.requestId) return;
         this.teams = [...this.teams, ...res.data];
         if (res.total >= 0) this.totalTeams = res.total;
         this.nextCursor = res.nextCursor;
@@ -133,6 +178,7 @@ export class TeamsComponent implements OnInit, AfterViewInit, OnDestroy {
         this.checkAutoFill();
       },
       error: (err) => {
+        if (requestId !== this.requestId) return;
         this.errorMessage = 'Error al cargar los equipos.';
         console.error('Error loading teams:', err);
         this.initialLoading = false;
@@ -175,54 +221,62 @@ export class TeamsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filterRank = '';
     this.filterRecruiting = false;
     this.searchQuery = '';
-    this.loadTeams();
+    this.applyFilters();
   }
 
   // ── Create team modal ─────────────────────────────────
-  openCreateModal(): void {
-    this.showCreateModal = true;
-    this.createError = '';
-    this.memberSearchQuery = '';
-    this.memberSearchResults = [];
-    this.selectedInitialMembers = [];
-    this.newTeam = {
+  private emptyTeam() {
+    return {
       name: '',
       tag: '',
       description: '',
-      region: 'eu',
-      targetRank: 'Gold',
-      recruiting: false,
+      region: 'eu' as string,
+      targetRank: 'Gold' as string,
+      recruiting: true,
     };
+  }
+
+  openCreateModal(): void {
+    if (!this.auth.isAuthenticated()) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: '/teams?create=1' } });
+      return;
+    }
+    // Región y rango por defecto: los del propio usuario
+    const user = this.auth.currentUser();
+    this.newTeam = {
+      ...this.emptyTeam(),
+      region: user?.region || 'eu',
+      targetRank: user?.rank && (this.ranks as readonly string[]).includes(user.rank) ? user.rank : 'Gold',
+    };
+    this.tagEdited = false;
+    this.selectedInitialMembers = [];
+    this.createError = '';
+    this.showCreateModal = true;
   }
 
   closeCreateModal(): void {
     this.showCreateModal = false;
   }
 
-  onMemberSearchChange(query: string): void {
-    this.memberSearchQuery = query;
-    this.searchSubject.next(query);
+  /** Autogenera el tag a partir de las iniciales del nombre ("Phantom Esports" → "PE") */
+  onNameChange(name: string): void {
+    this.newTeam.name = name;
+    if (this.tagEdited) return;
+    const words = name.trim().split(/\s+/).filter(Boolean);
+    const tag = words.length > 1
+      ? words.map((w) => w[0]).join('')
+      : (words[0] || '').slice(0, 3);
+    this.newTeam.tag = tag.replace(/[^a-z0-9]/gi, '').slice(0, 6).toUpperCase();
   }
 
-  selectInitialMember(user: User): void {
-    if (this.selectedInitialMembers.length >= 9) {
-      return; // Max 9 additional members limits
-    }
-    if (!this.selectedInitialMembers.some(u => u._id === user._id)) {
-      this.selectedInitialMembers.push(user);
-    }
-    this.memberSearchQuery = '';
-    this.memberSearchResults = [];
-    this.searchSubject.next('');
-  }
-
-  removeInitialMember(user: User): void {
-    this.selectedInitialMembers = this.selectedInitialMembers.filter(u => u._id !== user._id);
+  onTagChange(tag: string): void {
+    this.newTeam.tag = tag.toUpperCase();
+    this.tagEdited = tag.length > 0;
   }
 
   submitNewTeam(): void {
     if (!this.newTeam.name.trim()) {
-      this.createError = 'El nombre del equipo es obligatorio.';
+      this.createError = 'Ponle un nombre al equipo.';
       return;
     }
     if (!this.newTeam.tag.trim()) {
@@ -243,10 +297,10 @@ export class TeamsComponent implements OnInit, AfterViewInit, OnDestroy {
       payload['description'] = this.newTeam.description.trim();
     }
     if (this.selectedInitialMembers.length > 0) {
-      payload['initialPlayers'] = this.selectedInitialMembers.map(u => u._id);
+      payload['initialPlayers'] = this.selectedInitialMembers.map((u) => u._id);
     }
 
-    this.api.createTeam(payload as any).subscribe({
+    this.api.createTeam(payload as Partial<Team>).subscribe({
       next: (team) => {
         this.creatingTeam = false;
         this.showCreateModal = false;

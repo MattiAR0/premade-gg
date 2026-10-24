@@ -1,0 +1,255 @@
+@use '../utilities/variables' as v;
+@use '../utilities/mixins' as m;
+
+// ── Modal ────────────────────────────────────────────
+.c-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(5, 10, 15, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: v.$spacing-md;
+  animation: overlay-in 0.2s ease;
+}
+
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.c-modal {
+  position: relative;
+  background: v.$color-bg-elevated;
+  border: 1px solid v.$color-border-light;
+  border-top: 3px solid v.$color-accent-red;
+  width: 100%;
+  max-width: 560px;
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: v.$spacing-xl;
+  box-shadow: v.$shadow-float;
+  animation: modal-in 0.25s ease;
+  @include m.custom-scrollbar;
+
+  @include m.respond-below(md) {
+    padding: v.$spacing-lg;
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: v.$spacing-md;
+    margin-bottom: v.$spacing-lg;
+  }
+
+  &__title {
+    font-family: v.$font-display;
+    font-weight: 400;
+    font-size: 1.9rem;
+    letter-spacing: 0.02em;
+    color: v.$color-text-heading;
+  }
+
+  &__subtitle {
+    font-size: 0.92rem;
+    margin-top: 0.2rem;
+  }
+
+  &__close {
+    @include m.flex-center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    color: v.$color-text-muted;
+    border: 1px solid v.$color-border;
+    transition:
+      color v.$transition-fast,
+      border-color v.$transition-fast;
+
+    &:hover {
+      color: v.$color-text-heading;
+      border-color: v.$color-border-light;
+    }
+  }
+
+  &__error {
+    padding: v.$spacing-sm v.$spacing-md;
+    background: rgba(255, 70, 85, 0.08);
+    border: 1px solid rgba(255, 70, 85, 0.3);
+    color: #ff6b76;
+    font-size: 0.9rem;
+    margin-bottom: v.$spacing-md;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-lg;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 0;
+
+    &--grow {
+      flex: 1;
+    }
+
+    &--tag {
+      max-width: 120px;
+    }
+  }
+
+  &__label {
+    @include m.ui-label;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: v.$spacing-sm;
+  }
+
+  &__label-hint {
+    font-family: v.$font-body;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+    color: v.$color-text-subtle;
+    font-size: 0.8rem;
+  }
+
+  &__input,
+  &__select,
+  &__textarea {
+    @include m.form-control;
+  }
+
+  &__select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a96a3' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 32px;
+    cursor: pointer;
+  }
+
+  &__textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  &__input--upper {
+    text-transform: uppercase;
+  }
+
+  &__hint {
+    font-size: 0.8rem;
+    color: v.$color-text-subtle;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: v.$spacing-md;
+
+    @include m.respond-below(sm) {
+      grid-template-columns: 1fr;
+    }
+
+    &--name-tag {
+      grid-template-columns: 1fr 120px;
+    }
+  }
+
+  &__toggle {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: v.$color-text-primary;
+
+    input {
+      width: 18px;
+      height: 18px;
+      accent-color: v.$color-accent-red;
+      cursor: pointer;
+    }
+  }
+
+  // Bloque plegable "Más opciones"
+  &__more {
+    border: 1px solid v.$color-border;
+    background: rgba(11, 19, 27, 0.5);
+
+    &[open] > .c-modal__more-summary svg {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__more-summary {
+    @include m.ui-label;
+    @include m.flex-between;
+    padding: v.$spacing-sm v.$spacing-md;
+    cursor: pointer;
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &:hover {
+      color: v.$color-text-heading;
+    }
+
+    svg {
+      transition: transform v.$transition-fast;
+    }
+  }
+
+  &__more-body {
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-lg;
+    padding: v.$spacing-sm v.$spacing-md v.$spacing-md;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: v.$spacing-sm;
+    padding-top: v.$spacing-md;
+    border-top: 1px solid v.$color-border;
+  }
+
+  &__spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

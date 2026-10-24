@@ -1,0 +1,425 @@
+@use '../utilities/variables' as v;
+@use '../utilities/mixins' as m;
+
+// ── Page header (listados: jugadores, LFG, equipos) ──
+.c-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-md;
+  padding-bottom: v.$spacing-lg;
+  margin-bottom: v.$spacing-lg;
+  border-bottom: 1px solid v.$color-border;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 64px;
+    height: 3px;
+    background: v.$color-accent-red;
+  }
+
+  @include m.respond-to(md) {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-xs;
+    min-width: 0;
+  }
+
+  &__title {
+    margin: 0;
+  }
+
+  &__desc {
+    font-size: 1rem;
+    color: v.$color-text-muted;
+    max-width: 56ch;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+    flex-shrink: 0;
+  }
+}
+
+// ── Filters toolbar ──────────────────────────────────
+.c-filters {
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-md;
+  margin-bottom: v.$spacing-lg;
+  padding: v.$spacing-md;
+  background: v.$color-bg-surface;
+  border: 1px solid v.$color-border;
+  border-left: 3px solid v.$color-accent-red;
+
+  @include m.respond-to(md) {
+    padding: v.$spacing-md v.$spacing-lg;
+  }
+
+  &__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: v.$spacing-md v.$spacing-xl;
+    align-items: flex-end;
+  }
+
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 0;
+
+    &--grow {
+      flex: 1 1 240px;
+    }
+  }
+
+  &__label {
+    @include m.ui-label;
+  }
+
+  &__select,
+  &__input {
+    @include m.form-control;
+    padding-block: 0.45rem;
+    min-width: 160px;
+  }
+
+  &__select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a96a3' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 32px;
+    cursor: pointer;
+  }
+
+  &__search {
+    position: relative;
+
+    .c-filters__input {
+      padding-left: 2.25rem;
+    }
+  }
+
+  &__search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: v.$color-text-subtle;
+    pointer-events: none;
+  }
+
+  &__footer {
+    @include m.flex-between;
+    gap: v.$spacing-md;
+    padding-top: v.$spacing-sm;
+    border-top: 1px dashed v.$color-border;
+    font-size: 0.9rem;
+    color: v.$color-text-muted;
+  }
+
+  &__count strong {
+    color: v.$color-text-heading;
+    font-family: v.$font-heading;
+    font-size: 1.05rem;
+  }
+
+  &__clear {
+    @include m.ui-label;
+    color: v.$color-accent-red;
+    cursor: pointer;
+
+    &:hover {
+      color: v.$color-accent-red-hover;
+      text-decoration: underline;
+    }
+  }
+}
+
+// ── Chips (selección rápida: roles, rangos…) ─────────
+.c-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.c-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  font-family: v.$font-heading;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: v.$color-text-muted;
+  background: v.$color-bg-input;
+  border: 1px solid v.$color-border;
+  cursor: pointer;
+  transition:
+    color v.$transition-fast,
+    border-color v.$transition-fast,
+    background-color v.$transition-fast;
+
+  &:hover {
+    color: v.$color-text-heading;
+    border-color: v.$color-border-light;
+  }
+
+  &--active,
+  &--active:hover {
+    color: #fff;
+    background: v.$color-accent-red;
+    border-color: v.$color-accent-red;
+  }
+
+  &--toggle#{&}--active {
+    background: rgba(47, 216, 176, 0.12);
+    border-color: v.$color-accent-cyan;
+    color: v.$color-accent-cyan;
+  }
+}
+
+// ── Segmented control (opciones excluyentes) ─────────
+.c-segmented {
+  display: inline-flex;
+  border: 1px solid v.$color-border;
+  background: v.$color-bg-input;
+
+  &__btn {
+    flex: 1;
+    padding: 0.45rem 0.9rem;
+    font-family: v.$font-heading;
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: v.$color-text-muted;
+    white-space: nowrap;
+    transition:
+      color v.$transition-fast,
+      background-color v.$transition-fast;
+
+    & + & {
+      border-left: 1px solid v.$color-border;
+    }
+
+    &:hover {
+      color: v.$color-text-heading;
+    }
+
+    &--active,
+    &--active:hover {
+      color: #fff;
+      background: v.$color-accent-red;
+    }
+  }
+
+  &--block {
+    display: flex;
+    width: 100%;
+  }
+}
+
+// ── Section heading (home y otras secciones) ─────────
+.c-section-head {
+  @include m.flex-between;
+  gap: v.$spacing-md;
+  margin-bottom: v.$spacing-lg;
+
+  &__title {
+    margin: 0;
+  }
+
+  &__desc {
+    font-size: 0.95rem;
+    margin-top: 0.15rem;
+  }
+}
+
+// ── Empty state ──────────────────────────────────────
+.c-empty {
+  text-align: center;
+  padding: v.$spacing-3xl v.$spacing-xl;
+  border: 1px dashed v.$color-border;
+
+  &__icon {
+    color: v.$color-text-subtle;
+    margin-bottom: v.$spacing-md;
+
+    &-svg {
+      margin-inline: auto;
+    }
+  }
+
+  &__title {
+    font-family: v.$font-heading;
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: v.$color-text-heading;
+    margin-bottom: v.$spacing-xs;
+  }
+
+  &__hint {
+    font-size: 0.95rem;
+    color: v.$color-text-muted;
+    margin-top: v.$spacing-xs;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: center;
+    gap: v.$spacing-sm;
+    margin-top: v.$spacing-lg;
+  }
+}
+
+// ── Error ────────────────────────────────────────────
+.c-error {
+  text-align: center;
+  padding: v.$spacing-lg;
+  color: #ff6b76;
+  background: rgba(255, 70, 85, 0.06);
+  border: 1px solid rgba(255, 70, 85, 0.25);
+  font-size: 0.95rem;
+  margin-block: v.$spacing-lg;
+}
+
+// ── Staggered fade-in animation ───────────────────────
+.c-fade-in {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fade-in-up 0.35s ease-out forwards;
+}
+
+@keyframes fade-in-up {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ── Skeleton Loading ──────────────────────────────────
+.c-skeleton-card {
+  background: v.$color-bg-card;
+  border: 1px solid v.$color-border;
+  padding: v.$spacing-md v.$spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-sm;
+  min-height: 140px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-md;
+  }
+
+  &__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-sm;
+  }
+}
+
+.c-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(236, 232, 225, 0.03) 25%,
+    rgba(236, 232, 225, 0.07) 50%,
+    rgba(236, 232, 225, 0.03) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  border-radius: v.$radius-sm;
+
+  &--avatar,
+  &--avatar-sm {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+  }
+
+  &--title {
+    height: 1.2rem;
+    width: 60%;
+  }
+
+  &--text {
+    height: 0.9rem;
+    width: 100%;
+  }
+
+  &--short {
+    width: 40%;
+  }
+
+  &--badges {
+    height: 1.5rem;
+    width: 50%;
+  }
+}
+
+@keyframes skeleton-pulse {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+// ── Infinite Scroll ───────────────────────────────────
+.c-loading-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: v.$spacing-sm;
+  padding: v.$spacing-xl;
+  color: v.$color-text-muted;
+  font-size: 0.9rem;
+
+  &__spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid v.$color-border;
+    border-top-color: v.$color-accent-red;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.c-end-of-list {
+  @include m.ui-label;
+  text-align: center;
+  padding: v.$spacing-xl;
+  color: v.$color-text-subtle;
+}
+
+.c-scroll-sentinel {
+  height: 1px;
+  visibility: hidden;
+}

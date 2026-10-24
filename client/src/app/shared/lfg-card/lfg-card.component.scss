@@ -10,7 +10,7 @@
 
   &:hover {
     border-color: v.$color-accent-red;
-    box-shadow: 0 0 0 1px rgba(220, 53, 69, 0.15), v.$shadow-glow-red;
+    box-shadow: v.$shadow-glow-red;
     transform: translateY(-2px);
   }
 
@@ -40,11 +40,11 @@
     width: 100%;
 
     &--open {
-      background: v.$gradient-primary;
+      background: v.$color-accent-red;
     }
 
     &--full {
-      background: linear-gradient(90deg, #f59e0b, #d97706);
+      background: v.$color-accent-gold;
     }
 
     &--closed {
@@ -65,11 +65,12 @@
   }
 
   &__title {
-    font-family: 'Inter', sans-serif;
-    font-size: 1rem;
+    font-family: v.$font-heading;
+    font-size: 1.2rem;
     font-weight: 700;
     color: v.$color-text-heading;
-    letter-spacing: -0.01em;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
     flex: 1;
     min-width: 0;
     overflow: hidden;
@@ -97,16 +98,14 @@
   }
 
   &__req {
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: v.$color-text-subtle;
-    padding: 0.1rem 0.4rem;
-    background: v.$color-bg-elevated;
-    border-radius: v.$radius-sm;
+    @include m.ui-label;
+    font-size: 0.72rem;
+    padding: 0.15rem 0.45rem;
+    border: 1px dashed v.$color-border-light;
   }
 
   &__desc {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     color: v.$color-text-muted;
     line-height: 1.45;
     @include m.line-clamp(2);
@@ -122,15 +121,13 @@
   &__progress-bar {
     width: 100%;
     height: 4px;
-    background: v.$color-bg-elevated;
-    border-radius: v.$radius-full;
+    background: v.$color-bg-input;
     overflow: hidden;
   }
 
   &__progress-fill {
     height: 100%;
-    background: v.$gradient-primary;
-    border-radius: v.$radius-full;
+    background: v.$color-accent-red;
     transition: width 0.4s ease;
     min-width: 4px;
   }
@@ -156,11 +153,11 @@
     @include m.flex-center;
     width: 28px;
     height: 28px;
-    border-radius: 50%;
-    background: v.$gradient-primary;
-    color: #fff;
+    background: v.$color-bg-elevated;
+    color: v.$color-text-heading;
+    font-family: v.$font-heading;
     font-weight: 700;
-    font-size: 0.7rem;
+    font-size: 0.85rem;
     text-transform: uppercase;
     border: 2px solid v.$color-bg-card;
     transition: transform v.$transition-fast;
@@ -181,8 +178,10 @@
     white-space: nowrap;
 
     &-value {
-      font-weight: 700;
-      color: v.$color-text-primary;
+      font-family: v.$font-display;
+      font-weight: 400;
+      font-size: 1.1rem;
+      color: v.$color-text-heading;
     }
   }
 
@@ -225,55 +224,20 @@
 // ── Badges específicos ──────────────────────────────
 .c-badge {
   &--open {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    background: rgba(52, 211, 153, 0.1);
-    color: #34d399;
-    padding: 0.15rem 0.5rem;
-    border-radius: v.$radius-sm;
-    font-size: 0.7rem;
-    font-weight: 600;
-    animation: pulse-badge 2s ease-in-out infinite;
-  }
-
-  &--region {
-    background: rgba(99, 102, 241, 0.1);
-    color: #818cf8;
-    padding: 0.15rem 0.5rem;
-    border-radius: v.$radius-sm;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
+    background: rgba(47, 216, 176, 0.1);
+    color: v.$color-accent-cyan;
+    border: 1px solid rgba(47, 216, 176, 0.25);
   }
 
   &--full {
-    background: rgba(245, 158, 11, 0.12);
-    color: #f59e0b;
-    padding: 0.15rem 0.5rem;
-    border-radius: v.$radius-sm;
-    font-size: 0.7rem;
-    font-weight: 600;
+    background: rgba(245, 196, 81, 0.1);
+    color: v.$color-accent-gold;
+    border: 1px solid rgba(245, 196, 81, 0.25);
   }
 
   &--closed {
-    background: rgba(107, 114, 128, 0.12);
-    color: #9ca3af;
-    padding: 0.15rem 0.5rem;
-    border-radius: v.$radius-sm;
-    font-size: 0.7rem;
-    font-weight: 600;
-  }
-}
-
-@keyframes pulse-badge {
-
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.7;
+    background: rgba(138, 150, 163, 0.1);
+    color: v.$color-text-muted;
+    border: 1px solid v.$color-border;
   }
 }

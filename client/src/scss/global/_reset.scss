@@ -58,12 +58,12 @@ button {
 
 // ── Focus visible for accessibility ───────────────────
 :focus-visible {
-  outline: 2px solid v.$color-accent-cyan;
+  outline: 2px solid v.$color-accent-red;
   outline-offset: 2px;
 }
 
 // ── Selection color ───────────────────────────────────
 ::selection {
-  background: rgba(220, 53, 69, 0.25);
+  background: rgba(255, 70, 85, 0.25);
   color: v.$color-text-heading;
 }

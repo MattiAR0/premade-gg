@@ -8,8 +8,8 @@
   transition: border-color v.$transition-fast, box-shadow v.$transition-fast, transform v.$transition-fast;
 
   &:hover {
-    border-color: v.$color-accent-cyan;
-    box-shadow: 0 0 0 1px rgba(90, 158, 144, 0.15), v.$shadow-glow-cyan;
+    border-color: v.$color-accent-red;
+    box-shadow: v.$shadow-glow-red;
     transform: translateY(-2px);
   }
 
@@ -31,11 +31,10 @@
     @include m.flex-center;
     width: 44px;
     height: 44px;
-    border-radius: v.$radius-md;
-    background: v.$gradient-accent;
-    border: 1px solid v.$color-border-light;
+    background: v.$color-bg-elevated;
     flex-shrink: 0;
     overflow: hidden;
+    @include m.cut-corner-br(8px);
   }
 
   &__logo-img {
@@ -45,11 +44,11 @@
   }
 
   &__logo-text {
-    font-weight: 800;
-    font-size: 0.85rem;
-    color: v.$color-accent-cyan;
+    font-family: v.$font-display;
+    font-size: 1.1rem;
+    color: v.$color-accent-red;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.03em;
   }
 
   &__identity {
@@ -61,17 +60,18 @@
   }
 
   &__name {
-    font-size: 1rem;
+    font-size: 1.2rem;
     font-weight: 700;
+    letter-spacing: 0.02em;
     color: v.$color-text-heading;
     @include m.text-truncate;
   }
 
   &__tag {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: v.$color-accent-cyan;
-    opacity: 0.8;
+    font-family: v.$font-heading;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: v.$color-accent-red;
     white-space: nowrap;
   }
 
@@ -88,7 +88,7 @@
   }
 
   &__desc {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     color: v.$color-text-muted;
     line-height: 1.5;
     @include m.line-clamp(2);
@@ -122,12 +122,12 @@
     @include m.flex-center;
     width: 28px;
     height: 28px;
-    border-radius: 50%;
-    background: v.$gradient-secondary;
+    background: v.$color-bg-elevated;
     border: 2px solid v.$color-bg-card;
-    color: v.$color-accent-cyan;
+    color: v.$color-text-heading;
+    font-family: v.$font-heading;
     font-weight: 700;
-    font-size: 0.7rem;
+    font-size: 0.85rem;
     text-transform: uppercase;
     position: relative;
     z-index: 1;
@@ -186,46 +186,14 @@
     white-space: nowrap;
 
     &:hover {
-      color: v.$color-accent-cyan;
+      color: v.$color-accent-red;
     }
   }
 }
 
 // ── Badges ──────────────────────────────────────────
-.c-badge {
-  &--recruiting {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    background: rgba(52, 211, 153, 0.1);
-    color: #34d399;
-    padding: 0.15rem 0.55rem;
-    border-radius: v.$radius-sm;
-    font-size: 0.7rem;
-    font-weight: 600;
-    white-space: nowrap;
-    animation: pulse-dot 2s ease-in-out infinite;
-  }
-
-  &--region {
-    background: rgba(99, 102, 241, 0.1);
-    color: #818cf8;
-    padding: 0.15rem 0.5rem;
-    border-radius: v.$radius-sm;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-  }
-}
-
-@keyframes pulse-dot {
-
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.7;
-  }
+.c-badge--recruiting {
+  background: rgba(47, 216, 176, 0.1);
+  color: v.$color-accent-cyan;
+  border: 1px solid rgba(47, 216, 176, 0.25);
 }

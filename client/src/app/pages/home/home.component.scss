@@ -1,275 +1,228 @@
 @use 'utilities/variables' as v;
 @use 'utilities/mixins' as m;
 
-// ── Hero Section ─────────────────────────────────────
+// ── Hero ─────────────────────────────────────────────
 .c-hero {
   position: relative;
-  text-align: center;
-  padding-block: v.$spacing-2xl v.$spacing-xl;
   overflow: hidden;
+  border-bottom: 1px solid v.$color-border;
+  background:
+    linear-gradient(115deg, rgba(255, 70, 85, 0.14) 0%, rgba(255, 70, 85, 0) 45%),
+    v.$color-bg-dark;
 
-  @include m.respond-to(sm) {
-    padding-block: v.$spacing-4xl v.$spacing-3xl;
-  }
-
-  @include m.respond-to(md) {
-    padding-block: 6rem v.$spacing-4xl;
-  }
-
-  &__bg {
+  // Bloque diagonal decorativo
+  &::before {
+    content: '';
     position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse at 30% 20%, rgba(220, 53, 69, 0.07) 0%, transparent 50%),
-      radial-gradient(ellipse at 70% 80%, rgba(26, 33, 44, 0.08) 0%, transparent 50%);
-    animation: hero-pulse 8s ease-in-out infinite alternate;
-    z-index: -1;
-  }
+    top: 0;
+    right: -10%;
+    width: 55%;
+    height: 100%;
+    background: v.$color-bg-surface;
+    clip-path: polygon(22% 0, 100% 0, 100% 100%, 0 100%);
+    opacity: 0.8;
 
-  &__content {
-    max-width: 720px;
-    margin-inline: auto;
-  }
-
-  &__badge {
-    display: inline-block;
-    padding: v.$spacing-xs v.$spacing-lg;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: v.$color-accent-red;
-    background: rgba(220, 53, 69, 0.06);
-    border: 1px solid rgba(220, 53, 69, 0.15);
-    border-radius: v.$radius-full;
-    margin-bottom: v.$spacing-xl;
-  }
-
-  &__title {
-    font-size: 2rem;
-    font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -0.03em;
-    margin-bottom: v.$spacing-lg;
-
-    @include m.respond-to(sm) {
-      font-size: 2.75rem;
+    @include m.respond-below(lg) {
+      display: none;
     }
+  }
+
+  &__inner {
+    position: relative;
+    display: grid;
+    gap: v.$spacing-2xl;
+    padding-block: v.$spacing-2xl;
 
     @include m.respond-to(md) {
-      font-size: 4rem;
+      padding-block: v.$spacing-4xl;
     }
 
     @include m.respond-to(lg) {
+      grid-template-columns: 1.15fr 1fr;
+      align-items: center;
+      gap: v.$spacing-3xl;
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-md;
+  }
+
+  &__title {
+    font-family: v.$font-display;
+    font-weight: 400;
+    font-size: 3.25rem;
+    line-height: 0.95;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+
+    @include m.respond-to(sm) {
       font-size: 4.5rem;
+    }
+
+    @include m.respond-to(xl) {
+      font-size: 6rem;
     }
   }
 
   &__accent {
-    @include m.gradient-text(v.$gradient-primary);
+    color: v.$color-accent-red;
   }
 
   &__subtitle {
     font-size: 1.1rem;
-    color: v.$color-text-muted;
-    margin-bottom: v.$spacing-2xl;
-    line-height: 1.7;
-    max-width: 540px;
-    margin-inline: auto;
-
-    @include m.respond-to(md) {
-      font-size: 1.2rem;
-    }
+    color: v.$color-text-primary;
+    max-width: 44ch;
   }
 
-  &__actions {
-    display: flex;
-    gap: v.$spacing-md;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-bottom: v.$spacing-3xl;
-  }
-
-  // ── Floating stats bar ────────────────────────────
   &__stats {
-    display: inline-flex;
-    align-items: center;
-    gap: v.$spacing-md;
-    padding: v.$spacing-md v.$spacing-lg;
-    background: v.$color-bg-card;
-    border: 1px solid v.$color-border;
-    border-radius: v.$radius-2xl;
-    box-shadow: v.$shadow-float;
-
-    @include m.respond-to(sm) {
-      gap: v.$spacing-lg;
-      padding: v.$spacing-lg v.$spacing-2xl;
-    }
-
-    @include m.respond-below(sm) {
-      flex-direction: column;
-      gap: v.$spacing-md;
-      padding: v.$spacing-md;
-      width: 100%;
-    }
+    display: flex;
+    flex-wrap: wrap;
+    gap: v.$spacing-lg v.$spacing-2xl;
+    margin-top: v.$spacing-md;
   }
 
   &__stat {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: v.$spacing-xs;
+    padding-left: v.$spacing-md;
+    border-left: 2px solid v.$color-accent-red;
   }
 
   &__stat-number {
-    font-family: 'Inter', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 800;
+    font-family: v.$font-display;
+    font-weight: 400;
+    font-size: 2rem;
+    line-height: 1;
     color: v.$color-text-heading;
-
-    &--cyan {
-      color: v.$color-text-heading;
-    }
-
-    &--gold {
-      color: v.$color-text-heading;
-    }
   }
 
   &__stat-label {
-    font-size: 0.75rem;
-    color: v.$color-text-muted;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-weight: 500;
+    @include m.ui-label;
+    font-size: 0.72rem;
+    margin-top: 0.3rem;
+  }
+}
+
+// ── Buscador rápido ──────────────────────────────────
+.c-finder {
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-lg;
+  padding: v.$spacing-lg;
+  background: v.$color-bg-card;
+  border: 1px solid v.$color-border-light;
+  box-shadow: v.$shadow-float;
+  @include m.cut-corners(v.$cut-lg);
+
+  @include m.respond-to(md) {
+    padding: v.$spacing-xl;
   }
 
-  &__stat-divider {
-    width: 1px;
-    height: 32px;
-    background: v.$color-border;
+  &__head {
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-sm;
+  }
 
-    @include m.respond-below(sm) {
-      width: 60px;
-      height: 1px;
+  &__title {
+    font-family: v.$font-display;
+    font-size: 1.75rem;
+    text-transform: uppercase;
+    color: v.$color-text-heading;
+    line-height: 1;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .c-filters__select {
+      width: 100%;
+    }
+  }
+
+  &__label {
+    @include m.ui-label;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: v.$spacing-sm;
+  }
+
+  &__alt {
+    font-size: 0.92rem;
+    color: v.$color-text-muted;
+    transition: color v.$transition-fast;
+
+    &:hover {
+      color: v.$color-accent-red;
     }
   }
 }
 
-@keyframes hero-pulse {
-  0% {
-    opacity: 0.6;
-    transform: scale(1);
+// ── Dos columnas: top jugadores / equipos ────────────
+.c-home-split {
+  display: grid;
+  gap: v.$spacing-2xl;
+
+  @include m.respond-to(lg) {
+    grid-template-columns: 1fr 1fr;
   }
 
-  100% {
-    opacity: 1;
-    transform: scale(1.05);
+  &__col {
+    min-width: 0;
   }
 }
 
-// ── Features Section ─────────────────────────────────
-.c-features {
-  text-align: center;
+// ── Pasos (invitados) ────────────────────────────────
+.c-steps {
+  display: grid;
+  gap: 1px;
+  background: v.$color-border;
+  border: 1px solid v.$color-border;
 
-  &__title {
-    margin-bottom: v.$spacing-sm;
-  }
-
-  &__subtitle {
-    color: v.$color-text-muted;
-    margin-bottom: v.$spacing-2xl;
-    font-size: 1.05rem;
-  }
-
-  &__grid {
-    text-align: left;
+  @include m.respond-to(md) {
+    grid-template-columns: repeat(3, 1fr);
   }
 
   &__item {
-    background: v.$color-bg-card;
-    border: 1px solid v.$color-border;
-    border-radius: v.$radius-xl;
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-sm;
     padding: v.$spacing-xl;
-    transition: border-color v.$transition-base, background-color v.$transition-base;
+    background: v.$color-bg-surface;
+  }
 
-    &:hover {
-      border-color: v.$color-border-light;
-      background: #1a212c;
+  &__num {
+    font-family: v.$font-display;
+    font-size: 2.5rem;
+    line-height: 1;
+    color: v.$color-accent-red;
+  }
+
+  &__title {
+    font-size: 1.25rem;
+  }
+
+  &__desc {
+    font-size: 0.95rem;
+  }
+
+  &__cta {
+    display: flex;
+    justify-content: center;
+    padding: v.$spacing-lg;
+    background: v.$color-accent-red;
+
+    @include m.respond-to(md) {
+      grid-column: 1 / -1;
     }
   }
-
-  &__icon {
-    @include m.flex-center;
-    width: 48px;
-    height: 48px;
-    border-radius: v.$radius-lg;
-    margin-bottom: v.$spacing-lg;
-
-    &--red {
-      background: rgba(220, 53, 69, 0.08);
-      color: v.$color-accent-red;
-    }
-
-    &--cyan {
-      background: rgba(90, 158, 144, 0.08);
-      color: v.$color-accent-cyan;
-    }
-
-    &--purple {
-      background: rgba(122, 127, 158, 0.08);
-      color: v.$color-accent-purple;
-    }
-  }
-
-  &__item-title {
-    font-size: 1.15rem;
-    font-weight: 700;
-    margin-bottom: v.$spacing-sm;
-  }
-
-  &__item-desc {
-    font-size: 0.9rem;
-    color: v.$color-text-muted;
-    line-height: 1.6;
-  }
-}
-
-// ── Top Players Section ──────────────────────────────
-.c-top-players {
-  &__header {
-    @include m.flex-between;
-    margin-bottom: v.$spacing-xl;
-    flex-wrap: wrap;
-    gap: v.$spacing-md;
-
-    &-title {
-      margin-bottom: v.$spacing-xs;
-    }
-  }
-}
-
-// ── Fade-in animation ────────────────────────────────
-.c-fade-in {
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fade-in-up 0.5s ease-out forwards;
-}
-
-@keyframes fade-in-up {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-// ── Error ────────────────────────────────────────────
-.c-error {
-  text-align: center;
-  padding: v.$spacing-lg;
-  color: #e05555;
-  background: rgba(220, 53, 69, 0.06);
-  border: 1px solid rgba(220, 53, 69, 0.18);
-  border-radius: v.$radius-xl;
-  font-size: 0.95rem;
 }

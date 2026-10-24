@@ -13,6 +13,13 @@
     align-items: center;
     gap: v.$spacing-lg;
     text-align: center;
+
+    @include m.respond-to(md) {
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      text-align: left;
+    }
   }
 
   &__brand {
@@ -20,18 +27,23 @@
     flex-direction: column;
     align-items: center;
     gap: v.$spacing-xs;
+
+    @include m.respond-to(md) {
+      align-items: flex-start;
+    }
   }
 
   &__logo {
-    font-family: 'Inter', sans-serif;
-    font-size: 1.3rem;
-    font-weight: 800;
+    font-family: v.$font-display;
+    font-size: 1.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     color: v.$color-text-heading;
-    letter-spacing: -0.02em;
+    line-height: 1;
   }
 
   &__accent {
-    @include m.gradient-text(v.$gradient-primary);
+    color: v.$color-accent-red;
   }
 
   &__tagline {
@@ -51,6 +63,7 @@
   }
 
   &__link {
+    @include m.ui-label;
     font-size: 0.85rem;
     color: v.$color-text-muted;
     transition: color v.$transition-fast;
@@ -61,7 +74,13 @@
   }
 
   &__copy {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: v.$color-text-subtle;
+
+    @include m.respond-to(md) {
+      flex-basis: 100%;
+      padding-top: v.$spacing-md;
+      border-top: 1px solid v.$color-border;
+    }
   }
 }

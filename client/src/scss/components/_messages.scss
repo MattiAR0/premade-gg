@@ -145,11 +145,11 @@
     }
 
     &--unread {
-      background: rgba(220, 53, 69, 0.04);
+      background: rgba(255, 70, 85, 0.04);
       border-left: 3px solid v.$color-accent-red;
 
       &:hover {
-        background: rgba(220, 53, 69, 0.07);
+        background: rgba(255, 70, 85, 0.07);
       }
     }
   }
@@ -246,6 +246,6 @@
   50% {
     box-shadow:
       0 0 0 2px v.$color-bg-dark,
-      0 0 8px rgba(220, 53, 69, 0.4);
+      0 0 8px rgba(255, 70, 85, 0.4);
   }
 }

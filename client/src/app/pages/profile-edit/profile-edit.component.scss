@@ -8,7 +8,7 @@
   &__title {
     font-size: 1.6rem;
     font-weight: 800;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.02em;
     margin-bottom: v.$spacing-xs;
 
     @include m.respond-to(md) {
@@ -31,9 +31,9 @@
   &__error {
     text-align: center;
     padding: v.$spacing-sm v.$spacing-md;
-    color: #e05555;
-    background: rgba(220, 53, 69, 0.06);
-    border: 1px solid rgba(220, 53, 69, 0.18);
+    color: #ff6b76;
+    background: rgba(255, 70, 85, 0.06);
+    border: 1px solid rgba(255, 70, 85, 0.18);
     border-radius: v.$radius-md;
     font-size: 0.85rem;
     margin-bottom: v.$spacing-md;
@@ -43,8 +43,8 @@
     text-align: center;
     padding: v.$spacing-sm v.$spacing-md;
     color: v.$color-karma-high;
-    background: rgba(90, 158, 144, 0.06);
-    border: 1px solid rgba(90, 158, 144, 0.18);
+    background: rgba(47, 216, 176, 0.06);
+    border: 1px solid rgba(47, 216, 176, 0.18);
     border-radius: v.$radius-md;
     font-size: 0.85rem;
     font-weight: 600;
@@ -53,8 +53,8 @@
   }
 
   &__btn-success {
-    background-color: rgba(90, 158, 144, 0.15) !important;
-    border-color: rgba(90, 158, 144, 0.3) !important;
+    background-color: rgba(47, 216, 176, 0.15) !important;
+    border-color: rgba(47, 216, 176, 0.3) !important;
     color: v.$color-karma-high !important;
     pointer-events: none;
   }
@@ -108,7 +108,7 @@
     border-radius: v.$radius-md;
     color: v.$color-text-primary;
     font-size: 0.9rem;
-    font-family: 'Inter', sans-serif;
+    font-family: v.$font-heading;
     transition: all v.$transition-fast;
 
     &::placeholder {
@@ -118,7 +118,7 @@
     &:focus {
       outline: none;
       border-color: v.$color-accent-red;
-      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.08);
+      box-shadow: 0 0 0 3px rgba(255, 70, 85, 0.08);
     }
   }
 
@@ -251,7 +251,7 @@
 
     &--selected {
       border-color: v.$color-accent-red;
-      box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.2);
+      box-shadow: 0 0 0 2px rgba(255, 70, 85, 0.2);
     }
   }
 
@@ -272,15 +272,15 @@
     font-weight: 500;
     cursor: pointer;
     transition: all v.$transition-fast;
-    font-family: 'Inter', sans-serif;
+    font-family: v.$font-heading;
 
     &:hover:not(:disabled) {
       border-color: v.$color-accent-red;
-      background: rgba(220, 53, 69, 0.06);
+      background: rgba(255, 70, 85, 0.06);
     }
 
     &--selected {
-      background: rgba(220, 53, 69, 0.12);
+      background: rgba(255, 70, 85, 0.12);
       border-color: v.$color-accent-red;
       color: v.$color-accent-red;
       font-weight: 600;
@@ -346,7 +346,7 @@
     &-checkbox {
       width: 18px;
       height: 18px;
-      accent-color: #c084fc;
+      accent-color: #9a8cff;
     }
   }
 
@@ -375,7 +375,7 @@
     border-radius: v.$radius-sm;
     color: v.$color-text-primary;
     font-size: 0.85rem;
-    font-family: 'Inter', sans-serif;
+    font-family: v.$font-heading;
 
     &:focus {
       outline: none;

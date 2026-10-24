@@ -1,16 +1,20 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { Subject, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { LfgCardComponent } from '../../shared/lfg-card/lfg-card.component';
+import { UserPickerComponent } from '../../shared/user-picker/user-picker.component';
 import { LfgPost, TeamSizeTab, TEAM_SIZE_LABELS } from '../../models/lfg-post.model';
-import { User } from '../../models/user.model';
+import { User, VALORANT_RANKS } from '../../models/user.model';
+
+type LfgStatus = 'open' | 'full' | 'closed';
 
 @Component({
   selector: 'app-lfg-board',
   standalone: true,
-  imports: [FormsModule, LfgCardComponent],
+  imports: [FormsModule, LfgCardComponent, UserPickerComponent],
   templateUrl: './lfg-board.component.html',
   styleUrl: './lfg-board.component.scss',
 })
@@ -22,45 +26,34 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Paginación cursor-based (infinite scroll)
   private nextCursor: string | null = null;
+  // Descarta respuestas de peticiones antiguas cuando los filtros cambian rápido
+  private requestId = 0;
   totalPosts = 0;
   readonly pageSize = 12;
 
-  // Tabs por tamaño de equipo
-  activeTab: TeamSizeTab = 2;
-  readonly tabs: TeamSizeTab[] = [2, 3, 5];
-  readonly tabLabels = TEAM_SIZE_LABELS;
-
-  // Filtros
-  filterStatus = '';
-  statuses = ['open', 'full', 'closed'];
+  // Filtros (sincronizados con la URL: ?size=2|3|5&status=open|full|closed)
+  activeSize: TeamSizeTab | null = null;
+  activeStatus: LfgStatus = 'open';
+  readonly sizes: TeamSizeTab[] = [2, 3, 5];
+  readonly sizeLabels = TEAM_SIZE_LABELS;
+  readonly statusOptions: { value: LfgStatus; label: string }[] = [
+    { value: 'open', label: 'Abiertos' },
+    { value: 'full', label: 'Llenos' },
+    { value: 'closed', label: 'Cerrados' },
+  ];
 
   // ── Crear post ─────────────────────────────────────
   showCreateModal = false;
   creatingPost = false;
   createError = '';
-  newPost = {
-    title: '',
-    description: '',
-    teamSize: 2 as 2 | 3 | 5,
-    minRank: '',
-    minKarma: 3,
-  };
-  readonly rankOptions = [
-    'Iron', 'Bronze', 'Silver', 'Gold', 'Platinum',
-    'Diamond', 'Ascendant', 'Immortal', 'Radiant',
-  ];
-  readonly teamSizeOptions: { value: 2 | 3 | 5; label: string }[] = [
-    { value: 2, label: 'Duo (2v2)' },
-    { value: 3, label: 'Trio (3v3)' },
-    { value: 5, label: '5-Stack (5v5)' },
-  ];
-
-  // ── Buscador de miembros ───────────────────────────
-  memberSearchQuery = '';
-  memberSearchResults: User[] = [];
+  newPost = this.emptyPost();
   selectedMembers: User[] = [];
-  searchingMembers = false;
-  private memberSearch$ = new Subject<string>();
+  readonly rankOptions = VALORANT_RANKS;
+  readonly karmaOptions = [
+    { value: 0, label: 'Sin mínimo' },
+    { value: 3, label: '3+' },
+    { value: 4, label: '4+' },
+  ];
 
   @ViewChild('scrollSentinel') scrollSentinel!: ElementRef<HTMLDivElement>;
   private observer: IntersectionObserver | null = null;
@@ -68,12 +61,35 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private readonly api: ApiService,
     private readonly cdr: ChangeDetectorRef,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly destroyRef: DestroyRef,
     readonly auth: AuthService,
   ) {}
 
   ngOnInit(): void {
-    this.loadPosts();
-    this.setupMemberSearch();
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        // ?create=1 abre el formulario (desde navbar / home) y se limpia de la URL
+        if (params.get('create') === '1') {
+          // Al recargar con ?create=1 la sesión puede no estar restaurada aún
+          this.auth.whenSessionRestored.then(() => {
+            this.openCreateModal();
+            this.cdr.markForCheck();
+          });
+          this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: { create: null },
+            queryParamsHandling: 'merge',
+            replaceUrl: true,
+          });
+          return;
+        }
+
+        const changed = this.readFilters(params);
+        if (changed || this.posts.length === 0) this.loadPosts();
+      });
   }
 
   ngAfterViewInit(): void {
@@ -84,15 +100,50 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.observer?.disconnect();
   }
 
-  /** Cambia de tab y recarga los posts */
-  switchTab(tab: TeamSizeTab): void {
-    if (tab === this.activeTab) return;
-    this.activeTab = tab;
-    this.loadPosts();
+  /** Lee los filtros de la URL. Devuelve true si han cambiado. */
+  private readFilters(params: ParamMap): boolean {
+    const size = Number(params.get('size'));
+    const status = params.get('status') as LfgStatus;
+    const nextSize = this.sizes.includes(size as TeamSizeTab) ? (size as TeamSizeTab) : null;
+    const nextStatus = this.statusOptions.some((o) => o.value === status) ? status : 'open';
+    const changed = nextSize !== this.activeSize || nextStatus !== this.activeStatus;
+    this.activeSize = nextSize;
+    this.activeStatus = nextStatus;
+    return changed;
+  }
+
+  private applyFilters(): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        size: this.activeSize,
+        status: this.activeStatus === 'open' ? null : this.activeStatus,
+      },
+      replaceUrl: true,
+    });
+  }
+
+  setSize(size: TeamSizeTab | null): void {
+    if (size === this.activeSize) return;
+    this.activeSize = size;
+    this.applyFilters();
+  }
+
+  setStatus(status: LfgStatus): void {
+    if (status === this.activeStatus) return;
+    this.activeStatus = status;
+    this.applyFilters();
+  }
+
+  get resultsLabel(): string {
+    const type = this.activeSize ? `de ${this.sizeLabels[this.activeSize]}` : '';
+    const status = this.statusOptions.find((o) => o.value === this.activeStatus)!.label.toLowerCase();
+    return `grupos ${type} ${status}`.replace(/\s+/g, ' ').trim();
   }
 
   /** Carga la primera página (reset completo) */
   loadPosts(): void {
+    this.requestId++;
     this.initialLoading = true;
     this.errorMessage = '';
     this.posts = [];
@@ -110,15 +161,17 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Petición genérica de una página */
   private fetchPage(): void {
+    const requestId = this.requestId;
     const filters: { teamSize?: number; status?: string; cursor?: string; limit?: number } = {
       limit: this.pageSize,
-      teamSize: this.activeTab,
+      status: this.activeStatus,
     };
+    if (this.activeSize) filters.teamSize = this.activeSize;
     if (this.nextCursor) filters.cursor = this.nextCursor;
-    if (this.filterStatus) filters.status = this.filterStatus;
 
     this.api.getLfgPosts(filters).subscribe({
       next: (res) => {
+        if (requestId !== this.requestId) return;
         this.posts = [...this.posts, ...res.data];
         if (res.total >= 0) this.totalPosts = res.total;
         this.nextCursor = res.nextCursor;
@@ -129,7 +182,8 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.checkAutoFill();
       },
       error: (err) => {
-        this.errorMessage = 'Error al cargar los posts LFG. Comprueba que el servidor está en marcha.';
+        if (requestId !== this.requestId) return;
+        this.errorMessage = 'Error al cargar los grupos. Comprueba que el servidor está en marcha.';
         console.error('Error loading LFG posts:', err);
         this.initialLoading = false;
         this.loadingMore = false;
@@ -171,56 +225,79 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.nextCursor !== null;
   }
 
-  clearFilters(): void {
-    this.filterStatus = '';
-    this.loadPosts();
-  }
-
   // ── Create post modal ────────────────────────────────
-  openCreateModal(): void {
-    this.showCreateModal = true;
-    this.createError = '';
-    this.newPost = {
+  private emptyPost() {
+    return {
       title: '',
       description: '',
-      teamSize: this.activeTab,
+      teamSize: 2 as TeamSizeTab,
       minRank: '',
       minKarma: 3,
     };
+  }
+
+  openCreateModal(): void {
+    if (!this.auth.isAuthenticated()) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: '/lfg?create=1' } });
+      return;
+    }
+    this.createError = '';
+    this.newPost = { ...this.emptyPost(), teamSize: this.activeSize ?? 2 };
     this.selectedMembers = [];
-    this.memberSearchQuery = '';
-    this.memberSearchResults = [];
+    this.showCreateModal = true;
   }
 
   closeCreateModal(): void {
     this.showCreateModal = false;
   }
 
+  setNewPostSize(size: TeamSizeTab): void {
+    this.newPost.teamSize = size;
+    // Si reduce el tamaño, recorta los miembros que ya no caben
+    this.selectedMembers = this.selectedMembers.slice(0, size - 1);
+  }
+
+  /** Título por defecto si el usuario no escribe uno: "Duo · Gold · Duelist" */
+  get suggestedTitle(): string {
+    const user = this.auth.currentUser();
+    const parts: string[] = [`Busco ${this.sizeLabels[this.newPost.teamSize]}`];
+    if (user?.rank) parts.push(user.rank);
+    if (user?.role) parts.push(user.role);
+    return parts.join(' · ');
+  }
+
+  get maxMembers(): number {
+    return this.newPost.teamSize - 1;
+  }
+
   submitNewPost(): void {
-    if (!this.newPost.title.trim()) {
-      this.createError = 'El título es obligatorio.';
-      return;
-    }
     this.creatingPost = true;
     this.createError = '';
 
-    const payload: Record<string, unknown> = {
-      title: this.newPost.title.trim(),
+    const payload: {
+      title: string;
+      teamSize: number;
+      description?: string;
+      minRank?: string;
+      minKarma?: number;
+      initialMembers?: string[];
+    } = {
+      title: this.newPost.title.trim() || this.suggestedTitle,
       teamSize: this.newPost.teamSize,
     };
-    if (this.newPost.description.trim()) payload['description'] = this.newPost.description.trim();
-    if (this.newPost.minRank) payload['minRank'] = this.newPost.minRank;
-    if (this.newPost.minKarma > 0) payload['minKarma'] = this.newPost.minKarma;
+    if (this.newPost.description.trim()) payload.description = this.newPost.description.trim();
+    if (this.newPost.minRank) payload.minRank = this.newPost.minRank;
+    payload.minKarma = this.newPost.minKarma;
     if (this.selectedMembers.length > 0) {
-      payload['initialMembers'] = this.selectedMembers.map((u) => u._id);
+      payload.initialMembers = this.selectedMembers.map((u) => u._id);
     }
 
-    this.api.createLfgPost(payload as any).subscribe({
-      next: () => {
+    this.api.createLfgPost(payload).subscribe({
+      next: (post) => {
         this.creatingPost = false;
         this.showCreateModal = false;
-        this.loadPosts();
         this.cdr.markForCheck();
+        this.router.navigate(['/lfg', post._id]);
       },
       error: (err) => {
         this.creatingPost = false;
@@ -228,46 +305,5 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cdr.markForCheck();
       },
     });
-  }
-
-  // ── Member search ──────────────────────────────────
-  private setupMemberSearch(): void {
-    this.memberSearch$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      switchMap((query) => {
-        if (query.length < 2) return of([]);
-        this.searchingMembers = true;
-        return this.api.searchUsers(query);
-      }),
-    ).subscribe((users) => {
-      const currentUserId = this.auth.currentUser()?._id;
-      const selectedIds = new Set(this.selectedMembers.map((u) => u._id));
-      this.memberSearchResults = users.filter(
-        (u) => u._id !== currentUserId && !selectedIds.has(u._id),
-      );
-      this.searchingMembers = false;
-      this.cdr.markForCheck();
-    });
-  }
-
-  onMemberSearchInput(): void {
-    this.memberSearch$.next(this.memberSearchQuery);
-  }
-
-  selectMember(user: User): void {
-    const maxExtra = this.newPost.teamSize - 1;
-    if (this.selectedMembers.length >= maxExtra) return;
-    this.selectedMembers.push(user);
-    this.memberSearchQuery = '';
-    this.memberSearchResults = [];
-  }
-
-  removeMember(user: User): void {
-    this.selectedMembers = this.selectedMembers.filter((u) => u._id !== user._id);
-  }
-
-  get maxMembers(): number {
-    return this.newPost.teamSize - 1;
   }
 }

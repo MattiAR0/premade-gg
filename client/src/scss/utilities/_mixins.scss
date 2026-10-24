@@ -44,22 +44,77 @@
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid v.$color-glass-border;
-  border-radius: v.$radius-xl;
+  border-radius: v.$radius-sm;
+}
+
+// ── Angular cut corners (Valorant-style) ─────────────
+// Recorta la esquina superior izquierda e inferior derecha.
+@mixin cut-corners($size: v.$cut-md) {
+  clip-path: polygon(
+    $size 0,
+    100% 0,
+    100% calc(100% - #{$size}),
+    calc(100% - #{$size}) 100%,
+    0 100%,
+    0 $size
+  );
+}
+
+// Solo la esquina inferior derecha (botones, chips)
+@mixin cut-corner-br($size: v.$cut-sm) {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - #{$size}), calc(100% - #{$size}) 100%, 0 100%);
 }
 
 // ── Social card effect ────────────────────────────────
 @mixin social-card {
   background: v.$color-bg-card;
   border: 1px solid v.$color-border;
-  border-radius: v.$radius-lg;
+  border-radius: v.$radius-sm;
   transition:
     border-color v.$transition-base,
-    background-color v.$transition-base;
+    background-color v.$transition-base,
+    transform v.$transition-base;
 
   &:hover {
     border-color: v.$color-border-light;
     background: color.adjust(v.$color-bg-card, $lightness: 2%);
   }
+}
+
+// ── Form control base ────────────────────────────────
+@mixin form-control {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  background: v.$color-bg-input;
+  border: 1px solid v.$color-border;
+  border-radius: v.$radius-sm;
+  color: v.$color-text-heading;
+  font-family: v.$font-body;
+  font-size: 0.95rem;
+  transition:
+    border-color v.$transition-fast,
+    box-shadow v.$transition-fast;
+  appearance: none;
+
+  &::placeholder {
+    color: v.$color-text-subtle;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: v.$color-accent-red;
+    box-shadow: 0 0 0 3px rgba(255, 70, 85, 0.12);
+  }
+}
+
+// ── Uppercase UI label ───────────────────────────────
+@mixin ui-label {
+  font-family: v.$font-heading;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: v.$color-text-muted;
 }
 
 // ── Gradient text ─────────────────────────────────────

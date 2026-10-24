@@ -1,6 +1,6 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -19,8 +19,15 @@ export class LoginComponent {
   constructor(
     private readonly authService: AuthService,
     private readonly router: Router,
+    private readonly route: ActivatedRoute,
     private readonly cdr: ChangeDetectorRef,
   ) {}
+
+  /** Ruta interna a la que volver tras el login (solo rutas relativas, evita open redirects) */
+  private get returnUrl(): string {
+    const url = this.route.snapshot.queryParamMap.get('returnUrl') || '/';
+    return url.startsWith('/') && !url.startsWith('//') ? url : '/';
+  }
 
   onSubmit(): void {
     if (!this.email || !this.password) {
@@ -33,7 +40,7 @@ export class LoginComponent {
 
     this.authService.login({ email: this.email, password: this.password }).subscribe({
       next: () => {
-        this.router.navigate(['/']);
+        this.router.navigateByUrl(this.returnUrl);
       },
       error: (err) => {
         this.loading = false;

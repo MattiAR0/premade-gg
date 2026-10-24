@@ -1,0 +1,131 @@
+@use 'utilities/variables' as v;
+@use 'utilities/mixins' as m;
+
+.c-user-picker {
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-sm;
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: v.$spacing-xs;
+  }
+
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.35rem 0.25rem 0.6rem;
+    background: rgba(255, 70, 85, 0.1);
+    border: 1px solid rgba(255, 70, 85, 0.35);
+    font-size: 0.88rem;
+    color: v.$color-text-heading;
+  }
+
+  &__chip-name {
+    font-weight: 600;
+  }
+
+  &__chip-rank {
+    @include m.ui-label;
+    font-size: 0.7rem;
+  }
+
+  &__chip-remove {
+    @include m.flex-center;
+    width: 20px;
+    height: 20px;
+    color: v.$color-text-muted;
+
+    &:hover {
+      color: v.$color-accent-red;
+    }
+  }
+
+  &__search {
+    position: relative;
+  }
+
+  &__icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: v.$color-text-subtle;
+    pointer-events: none;
+  }
+
+  &__input {
+    @include m.form-control;
+    padding-left: 2.25rem;
+  }
+
+  &__spinner {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    margin-top: -7px;
+    border: 2px solid v.$color-border;
+    border-top-color: v.$color-accent-red;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  &__results {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 10;
+    max-height: 220px;
+    overflow-y: auto;
+    background: v.$color-bg-elevated;
+    border: 1px solid v.$color-border-light;
+    box-shadow: v.$shadow-float;
+    @include m.custom-scrollbar;
+  }
+
+  &__result {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+    width: 100%;
+    padding: v.$spacing-sm v.$spacing-md;
+    text-align: left;
+    transition: background v.$transition-fast;
+
+    &:hover {
+      background: rgba(236, 232, 225, 0.05);
+    }
+  }
+
+  &__avatar {
+    width: 28px;
+    height: 28px;
+    object-fit: cover;
+    flex-shrink: 0;
+
+    &--placeholder {
+      @include m.flex-center;
+      background: v.$color-bg-input;
+      font-family: v.$font-heading;
+      font-weight: 700;
+      color: v.$color-text-muted;
+    }
+  }
+
+  &__result-name {
+    flex: 1;
+    font-weight: 600;
+    color: v.$color-text-heading;
+    @include m.text-truncate;
+  }
+
+  &__result-meta {
+    @include m.ui-label;
+    font-size: 0.7rem;
+  }
+}

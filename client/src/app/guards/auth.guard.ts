@@ -6,7 +6,7 @@ import { AuthService } from '../services/auth.service';
  * Guard funcional que espera a que la sesión se restaure
  * antes de decidir si el usuario está autenticado.
  */
-export const authGuard: CanActivateFn = async () => {
+export const authGuard: CanActivateFn = async (_route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
@@ -17,5 +17,5 @@ export const authGuard: CanActivateFn = async () => {
     return true;
   }
 
-  return router.createUrlTree(['/login']);
+  return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
 };

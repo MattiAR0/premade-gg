@@ -20,6 +20,7 @@
   max-width: 440px;
   background: v.$color-bg-card;
   border: 1px solid v.$color-border;
+  border-top: 3px solid v.$color-accent-red;
   border-radius: v.$radius-xl;
   padding: v.$spacing-2xl;
 
@@ -35,7 +36,7 @@
   &__title {
     font-size: 1.3rem;
     font-weight: 800;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.02em;
     color: v.$color-text-heading;
     margin-bottom: v.$spacing-xs;
 
@@ -56,9 +57,9 @@
   &__error {
     text-align: center;
     padding: v.$spacing-sm v.$spacing-md;
-    color: #e05555;
-    background: rgba(220, 53, 69, 0.06);
-    border: 1px solid rgba(220, 53, 69, 0.18);
+    color: #ff6b76;
+    background: rgba(255, 70, 85, 0.06);
+    border: 1px solid rgba(255, 70, 85, 0.18);
     border-radius: v.$radius-md;
     font-size: 0.85rem;
     margin-bottom: v.$spacing-md;
@@ -102,7 +103,7 @@
     &:focus {
       outline: none;
       border-color: v.$color-accent-red;
-      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.08);
+      box-shadow: 0 0 0 3px rgba(255, 70, 85, 0.08);
     }
   }
 
@@ -156,8 +157,8 @@
     text-align: center;
     padding: v.$spacing-sm v.$spacing-md;
     color: v.$color-karma-high;
-    background: rgba(90, 158, 144, 0.06);
-    border: 1px solid rgba(90, 158, 144, 0.18);
+    background: rgba(47, 216, 176, 0.06);
+    border: 1px solid rgba(47, 216, 176, 0.18);
     border-radius: v.$radius-md;
     font-size: 0.85rem;
   }
@@ -195,7 +196,7 @@
     &:focus {
       outline: none;
       border-color: v.$color-accent-red;
-      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.08);
+      box-shadow: 0 0 0 3px rgba(255, 70, 85, 0.08);
     }
   }
 

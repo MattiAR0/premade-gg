@@ -18,11 +18,12 @@
   }
 
   &__title {
-    font-family: 'Inter', sans-serif;
-    font-size: 1.1rem;
+    font-family: v.$font-heading;
+    font-size: 1.2rem;
     font-weight: 700;
     color: v.$color-text-heading;
-    letter-spacing: -0.01em;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
   }
 
   &__body {

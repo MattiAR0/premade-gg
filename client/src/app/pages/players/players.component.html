@@ -1,71 +1,63 @@
 <main class="l-container l-container--medium l-section">
-  <!-- Page header (social style) -->
   <header class="c-page-header">
     <div class="c-page-header__text">
+      <span class="c-eyebrow">Comunidad</span>
       <h1 class="c-page-header__title">Jugadores</h1>
-      <p class="c-page-header__desc">Encuentra jugadores por rango, rol o reputacion</p>
+      <p class="c-page-header__desc">Encuentra compañeros por rol, rango y reputación.</p>
     </div>
   </header>
 
-  <!-- Filtros modernos -->
-  <section class="c-filters">
-    <form class="c-filters__form" (ngSubmit)="loadPlayers()">
-      <div class="c-filters__row">
-        <label class="c-filters__field">
-          <span class="c-filters__label">Rango</span>
-          <select class="c-filters__select" [(ngModel)]="filterRank" name="rank">
-            <option value="">Todos</option>
-            @for (rank of ranks; track rank) {
-              <option [value]="rank">{{ rank }}</option>
-            }
-          </select>
-        </label>
+  <!-- Filtros: se aplican al instante y quedan en la URL -->
+  <section class="c-filters" aria-label="Filtros">
+    <div class="c-filters__row">
+      <div class="c-filters__group">
+        <span class="c-filters__label">Rol</span>
+        <div class="c-chips">
+          <button type="button" class="c-chip" [class.c-chip--active]="!filterRole" (click)="setRole('')">Todos</button>
+          @for (role of roles; track role) {
+            <button type="button" class="c-chip" [class.c-chip--active]="filterRole === role" (click)="setRole(role)">{{ role }}</button>
+          }
+        </div>
+      </div>
+    </div>
 
-        <label class="c-filters__field">
-          <span class="c-filters__label">Rol</span>
-          <select class="c-filters__select" [(ngModel)]="filterRole" name="role">
-            <option value="">Todos</option>
-            @for (role of roles; track role) {
-              <option [value]="role">{{ role }}</option>
-            }
-          </select>
-        </label>
+    <div class="c-filters__row">
+      <label class="c-filters__group">
+        <span class="c-filters__label">Rango</span>
+        <select class="c-filters__select" [(ngModel)]="filterRank" (ngModelChange)="applyFilters()" name="rank">
+          <option value="">Todos los rangos</option>
+          @for (rank of ranks; track rank) {
+            <option [value]="rank">{{ rank }}</option>
+          }
+        </select>
+      </label>
 
-        <label class="c-filters__field">
-          <span class="c-filters__label">Karma minimo</span>
-          <input
-            class="c-filters__input"
-            type="number"
-            [(ngModel)]="filterMinKarma"
-            name="minKarma"
-            min="0"
-            max="5"
-            step="0.5"
-            placeholder="0"
-          />
-        </label>
-
-        <label class="c-filters__field c-filters__field--toggle">
-          <input
-            type="checkbox"
-            [(ngModel)]="filterLFT"
-            name="lookingForTeam"
-            class="c-filters__checkbox"
-          />
-          <span class="c-filters__label">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            Solo LFT
-          </span>
-        </label>
+      <div class="c-filters__group">
+        <span class="c-filters__label">Karma mínimo</span>
+        <div class="c-segmented">
+          @for (opt of karmaOptions; track opt.value) {
+            <button type="button" class="c-segmented__btn" [class.c-segmented__btn--active]="filterMinKarma === opt.value" (click)="setMinKarma(opt.value)">{{ opt.label }}</button>
+          }
+        </div>
       </div>
 
-      <nav class="c-filters__actions">
-        <button class="c-btn c-btn--primary c-btn--sm" type="submit">Buscar</button>
-        <button class="c-btn c-btn--ghost c-btn--sm" type="button" (click)="clearFilters()">
-          Limpiar
+      <div class="c-filters__group">
+        <span class="c-filters__label">Estado</span>
+        <button type="button" class="c-chip c-chip--toggle" [class.c-chip--active]="filterLFT" [attr.aria-pressed]="filterLFT" (click)="toggleLFT()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Buscando equipo
         </button>
-      </nav>
-    </form>
+      </div>
+    </div>
+
+    <footer class="c-filters__footer">
+      <span class="c-filters__count">
+        @if (initialLoading) { Buscando... } @else { <strong>{{ totalPlayers }}</strong> jugadores }
+      </span>
+      @if (activeFilterCount > 0) {
+        <button type="button" class="c-filters__clear" (click)="clearFilters()">Limpiar filtros ({{ activeFilterCount }})</button>
+      }
+    </footer>
   </section>
 
   <!-- Resultados -->
@@ -96,15 +88,16 @@
           <svg class="c-empty__icon-svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
         </div>
         <p class="c-empty__title">No se encontraron jugadores</p>
-        <p class="c-empty__hint">Prueba a cambiar los filtros para encontrar mas resultados</p>
-        @if (!filterRank && !filterRole && filterMinKarma === 0) {
-          <p class="c-empty__hint">Si la base de datos esta vacia, ejecuta el seed para generar datos de prueba.</p>
+        @if (activeFilterCount > 0) {
+          <p class="c-empty__hint">Prueba a quitar algún filtro para ver más resultados.</p>
+          <div class="c-empty__actions">
+            <button class="c-btn c-btn--ghost c-btn--sm" type="button" (click)="clearFilters()">Limpiar filtros</button>
+          </div>
+        } @else {
+          <p class="c-empty__hint">Si la base de datos está vacía, ejecuta el seed para generar datos de prueba.</p>
         }
       </div>
     } @else {
-      <div class="c-results-bar">
-        <p class="c-results-bar__count">{{ totalPlayers }} jugadores encontrados</p>
-      </div>
       <ul class="l-grid l-grid--2col">
         @for (player of players; track player._id; let i = $index) {
           <li class="c-fade-in" [style.animation-delay]="(i % 4) * 0.06 + 's'">
@@ -116,7 +109,7 @@
       @if (loadingMore) {
         <div class="c-loading-more">
           <div class="c-loading-more__spinner"></div>
-          <span>Cargando mas jugadores...</span>
+          <span>Cargando más jugadores...</span>
         </div>
       }
 

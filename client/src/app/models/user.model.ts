@@ -48,6 +48,11 @@ export const VALORANT_AGENTS = [
   'Gekko', 'Deadlock', 'Iso', 'Clove', 'Vyse', 'Tejo', 'Waylay', 'Veto',
 ] as const;
 
+export const VALORANT_RANKS = [
+  'Iron', 'Bronze', 'Silver', 'Gold', 'Platinum',
+  'Diamond', 'Ascendant', 'Immortal', 'Radiant',
+] as const;
+
 export const VALORANT_ROLES = [
   'Duelist', 'Controller', 'Initiator', 'Sentinel', 'Flex',
 ] as const;

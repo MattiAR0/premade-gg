@@ -1,8 +1,10 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { PlayerCardComponent } from '../../shared/player-card/player-card.component';
-import { User } from '../../models/user.model';
+import { User, VALORANT_RANKS, VALORANT_ROLES } from '../../models/user.model';
 
 @Component({
   selector: 'app-players',
@@ -19,17 +21,25 @@ export class PlayersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Paginación cursor-based (infinite scroll)
   private nextCursor: string | null = null;
+  // Descarta respuestas de peticiones antiguas cuando los filtros cambian rápido
+  private requestId = 0;
   totalPlayers = 0;
   readonly pageSize = 12;
 
-  // Filtros
+  // Filtros (sincronizados con la URL: ?rank=&role=&karma=&lft=1)
   filterRank = '';
   filterRole = '';
   filterMinKarma = 0;
   filterLFT = false;
 
-  ranks = ['Iron', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Ascendant', 'Immortal', 'Radiant'];
-  roles = ['Duelist', 'Controller', 'Initiator', 'Sentinel', 'Flex'];
+  readonly ranks = VALORANT_RANKS;
+  readonly roles = VALORANT_ROLES;
+  readonly karmaOptions = [
+    { value: 0, label: 'Cualquiera' },
+    { value: 3, label: '3+' },
+    { value: 4, label: '4+' },
+    { value: 4.5, label: '4.5+' },
+  ];
 
   @ViewChild('scrollSentinel') scrollSentinel!: ElementRef<HTMLDivElement>;
   private observer: IntersectionObserver | null = null;
@@ -37,10 +47,59 @@ export class PlayersComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private readonly api: ApiService,
     private readonly cdr: ChangeDetectorRef,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly destroyRef: DestroyRef,
   ) {}
 
   ngOnInit(): void {
-    this.loadPlayers();
+    // La URL es la fuente de verdad: cada cambio de filtro navega y esto recarga.
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        this.readFilters(params);
+        this.loadPlayers();
+      });
+  }
+
+  private readFilters(params: ParamMap): void {
+    const rank = params.get('rank') || '';
+    const role = params.get('role') || '';
+    const karma = Number(params.get('karma'));
+    this.filterRank = (this.ranks as readonly string[]).includes(rank) ? rank : '';
+    this.filterRole = (this.roles as readonly string[]).includes(role) ? role : '';
+    this.filterMinKarma = karma > 0 && karma <= 5 ? karma : 0;
+    this.filterLFT = params.get('lft') === '1';
+  }
+
+  /** Vuelca los filtros actuales a la URL (dispara la recarga) */
+  applyFilters(): void {
+    const queryParams: Record<string, string | number | null> = {
+      rank: this.filterRank || null,
+      role: this.filterRole || null,
+      karma: this.filterMinKarma || null,
+      lft: this.filterLFT ? 1 : null,
+    };
+    this.router.navigate([], { relativeTo: this.route, queryParams, replaceUrl: true });
+  }
+
+  setRole(role: string): void {
+    this.filterRole = this.filterRole === role ? '' : role;
+    this.applyFilters();
+  }
+
+  setMinKarma(value: number): void {
+    this.filterMinKarma = value;
+    this.applyFilters();
+  }
+
+  toggleLFT(): void {
+    this.filterLFT = !this.filterLFT;
+    this.applyFilters();
+  }
+
+  get activeFilterCount(): number {
+    return [this.filterRank, this.filterRole, this.filterMinKarma, this.filterLFT].filter(Boolean).length;
   }
 
   ngAfterViewInit(): void {
@@ -53,6 +112,7 @@ export class PlayersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Carga la primera página (reset completo) */
   loadPlayers(): void {
+    this.requestId++;
     this.initialLoading = true;
     this.errorMessage = '';
     this.players = [];
@@ -70,6 +130,7 @@ export class PlayersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Petición genérica de una página */
   private fetchPage(): void {
+    const requestId = this.requestId;
     const filters: { rank?: string; role?: string; minKarma?: number; lookingForTeam?: boolean; cursor?: string; limit?: number } = {
       limit: this.pageSize,
     };
@@ -81,6 +142,7 @@ export class PlayersComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.api.getUsers(filters).subscribe({
       next: (res) => {
+        if (requestId !== this.requestId) return;
         this.players = [...this.players, ...res.data];
         // El backend solo envía total en la primera página (-1 = sin cambios)
         if (res.total >= 0) this.totalPlayers = res.total;
@@ -95,6 +157,7 @@ export class PlayersComponent implements OnInit, AfterViewInit, OnDestroy {
         this.checkAutoFill();
       },
       error: (err) => {
+        if (requestId !== this.requestId) return;
         this.errorMessage = 'Error al cargar jugadores. Comprueba que el servidor está en marcha.';
         console.error('Error loading players:', err);
         this.initialLoading = false;
@@ -151,6 +214,6 @@ export class PlayersComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filterRole = '';
     this.filterMinKarma = 0;
     this.filterLFT = false;
-    this.loadPlayers();
+    this.applyFilters();
   }
 }

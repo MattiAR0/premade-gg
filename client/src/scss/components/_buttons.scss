@@ -1,52 +1,62 @@
 @use '../utilities/variables' as v;
 @use '../utilities/mixins' as m;
 
-// ── Buttons (Modern Social) ──────────────────────────
+// ── Buttons (Valorant style: rectos, mayúsculas, esquina cortada) ──
 .c-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: v.$spacing-sm;
-  padding: v.$spacing-xs v.$spacing-lg;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 0.85rem;
-  letter-spacing: 0;
-  border-radius: v.$radius-full;
+  padding: 0.55rem v.$spacing-lg;
+  font-family: v.$font-heading;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  border-radius: 0;
   transition:
-    all v.$transition-base;
+    background-color v.$transition-fast,
+    color v.$transition-fast,
+    border-color v.$transition-fast,
+    transform v.$transition-fast;
   cursor: pointer;
   position: relative;
-  overflow: hidden;
+  white-space: nowrap;
 
   @include m.respond-to(sm) {
-    padding: v.$spacing-sm v.$spacing-xl;
-    font-size: 0.9rem;
+    padding: 0.65rem v.$spacing-xl;
+    font-size: 1rem;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
   }
 
   &--primary {
-    background: v.$gradient-primary;
+    background: v.$color-accent-red;
     color: #fff;
     border: none;
+    @include m.cut-corner-br(v.$cut-md);
 
-    &:hover {
-      filter: brightness(1.1);
-    }
-
-    &:active {
-      filter: brightness(0.95);
+    &:hover:not(:disabled) {
+      background: v.$color-accent-red-hover;
     }
   }
 
   &--secondary {
     background: transparent;
-    color: v.$color-text-primary;
-    border: 1.5px solid v.$color-border-light;
+    color: v.$color-text-heading;
+    border: 1px solid rgba(236, 232, 225, 0.35);
 
-    &:hover {
-      border-color: v.$color-accent-red;
-      color: v.$color-accent-red;
-      background: rgba(220, 53, 69, 0.06);
+    &:hover:not(:disabled) {
+      border-color: v.$color-text-heading;
+      background: rgba(236, 232, 225, 0.06);
     }
   }
 
@@ -55,22 +65,41 @@
     color: v.$color-text-muted;
     border: 1px solid v.$color-border;
 
-    &:hover {
-      color: v.$color-text-primary;
+    &:hover:not(:disabled) {
+      color: v.$color-text-heading;
       border-color: v.$color-border-light;
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(236, 232, 225, 0.03);
+    }
+  }
+
+  &--light {
+    background: v.$color-text-heading;
+    color: v.$color-bg-dark;
+    border: none;
+    @include m.cut-corner-br(v.$cut-md);
+
+    &:hover:not(:disabled) {
+      background: #fff;
     }
   }
 
   &--sm {
-    padding: v.$spacing-xs v.$spacing-lg;
+    padding: 0.4rem v.$spacing-md;
     font-size: 0.85rem;
+
+    @include m.respond-to(sm) {
+      padding: 0.45rem v.$spacing-lg;
+      font-size: 0.88rem;
+    }
+  }
+
+  &--block {
+    width: 100%;
   }
 
   &--icon {
     width: 40px;
     height: 40px;
     padding: 0;
-    border-radius: v.$radius-lg;
   }
 }

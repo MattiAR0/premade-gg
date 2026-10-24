@@ -1,92 +1,205 @@
 <main>
-  <!-- Hero Section -->
+  <!-- ── Hero + buscador rápido ─────────────────────── -->
   <section class="c-hero">
-    <div class="c-hero__bg"></div>
-    <header class="c-hero__content l-container">
-      <div class="c-hero__badge">Valorant LFG Platform</div>
-      <h1 class="c-hero__title">
-        Encuentra tu<br />
-        <span class="c-hero__accent">Premade</span> perfecto
-      </h1>
-      <p class="c-hero__subtitle">
-        Conecta con jugadores basandote en reputacion real, no solo en rango.
-        Una comunidad donde la toxicidad no tiene lugar.
-      </p>
-      <nav class="c-hero__actions">
-        <a class="c-btn c-btn--primary" routerLink="/players">Explorar Jugadores</a>
-        <a class="c-btn c-btn--secondary" routerLink="/lfg">LFG Board</a>
-      </nav>
+    <div class="c-hero__inner l-container">
+      <header class="c-hero__content">
+        @if (auth.currentUser(); as user) {
+        <span class="c-eyebrow">Hola, {{ user.riotId }}</span>
+        <h1 class="c-hero__title">¿A qué<br /><span class="c-hero__accent">jugamos</span> hoy?</h1>
+        } @else {
+        <span class="c-eyebrow">Valorant · Looking for group</span>
+        <h1 class="c-hero__title">Encuentra tu<br /><span class="c-hero__accent">premade</span></h1>
+        }
+        <p class="c-hero__subtitle">
+          Grupos y jugadores filtrados por reputación real, no solo por rango.
+          Los jugadores tóxicos se quedan fuera.
+        </p>
 
-      <!-- Floating stats -->
-      <ul class="c-hero__stats">
-        <li class="c-hero__stat">
-          <strong class="c-hero__stat-number">{{ totalPlayers }}</strong>
-          <span class="c-hero__stat-label">Jugadores</span>
-        </li>
-        <li class="c-hero__stat-divider"></li>
-        <li class="c-hero__stat">
-          <strong class="c-hero__stat-number c-hero__stat-number--cyan">Karma</strong>
-          <span class="c-hero__stat-label">Reputacion</span>
-        </li>
-        <li class="c-hero__stat-divider"></li>
-        <li class="c-hero__stat">
-          <strong class="c-hero__stat-number c-hero__stat-number--gold">0 Toxic</strong>
-          <span class="c-hero__stat-label">Filtro activo</span>
-        </li>
-      </ul>
-    </header>
+        <ul class="c-hero__stats">
+          <li class="c-hero__stat">
+            <strong class="c-hero__stat-number">{{ loading && !totalOpenPosts ? "–" : totalOpenPosts }}</strong>
+            <span class="c-hero__stat-label">Grupos abiertos</span>
+          </li>
+          <li class="c-hero__stat">
+            <strong class="c-hero__stat-number">{{ loading && !totalPlayers ? "–" : totalPlayers }}</strong>
+            <span class="c-hero__stat-label">Jugadores</span>
+          </li>
+          <li class="c-hero__stat">
+            <strong class="c-hero__stat-number">{{ loading && !totalRecruiting ? "–" : totalRecruiting }}</strong>
+            <span class="c-hero__stat-label">Equipos reclutando</span>
+          </li>
+        </ul>
+      </header>
+
+      <form class="c-finder" (ngSubmit)="search()">
+        <div class="c-finder__head">
+          <span class="c-finder__title">¿Qué buscas?</span>
+          <div class="c-segmented c-segmented--block" role="tablist">
+            <button type="button" class="c-segmented__btn" role="tab"
+              [class.c-segmented__btn--active]="finderMode === 'lfg'" [attr.aria-selected]="finderMode === 'lfg'"
+              (click)="setFinderMode('lfg')">Un grupo</button>
+            <button type="button" class="c-segmented__btn" role="tab"
+              [class.c-segmented__btn--active]="finderMode === 'players'"
+              [attr.aria-selected]="finderMode === 'players'" (click)="setFinderMode('players')">Jugadores</button>
+          </div>
+        </div>
+
+        @if (finderMode === 'lfg') {
+        <div class="c-finder__field">
+          <span class="c-finder__label">Tamaño del grupo</span>
+          <div class="c-chips">
+            <button type="button" class="c-chip" [class.c-chip--active]="finderSize === null"
+              (click)="finderSize = null">Cualquiera</button>
+            @for (size of sizes; track size) {
+            <button type="button" class="c-chip" [class.c-chip--active]="finderSize === size"
+              (click)="finderSize = size">{{ sizeLabels[size] }}</button>
+            }
+          </div>
+        </div>
+        } @else {
+        <div class="c-finder__field">
+          <span class="c-finder__label">Rol</span>
+          <div class="c-chips">
+            @for (role of roles; track role) {
+            <button type="button" class="c-chip" [class.c-chip--active]="finderRole === role"
+              (click)="toggleFinderRole(role)">{{ role }}</button>
+            }
+          </div>
+        </div>
+        <label class="c-finder__field">
+          <span class="c-finder__label">Rango</span>
+          <select class="c-filters__select" [(ngModel)]="finderRank" name="rank">
+            <option value="">Cualquier rango</option>
+            @for (rank of ranks; track rank) {
+            <option [value]="rank">{{ rank }}</option>
+            }
+          </select>
+        </label>
+        }
+
+        <div class="c-finder__actions">
+          <button class="c-btn c-btn--primary c-btn--block" type="submit">
+            {{ finderMode === 'lfg' ? 'Buscar grupos' : 'Buscar jugadores' }}
+          </button>
+          @if (finderMode === 'lfg') {
+          <button class="c-finder__alt" type="button" (click)="createGroup()">
+            o publica tu propio grupo &rarr;
+          </button>
+          }
+        </div>
+      </form>
+    </div>
   </section>
 
-  <!-- Features Section -->
-  <section class="c-features l-section l-container">
-    <h2 class="c-features__title">Como funciona</h2>
-    <p class="c-features__subtitle">Una plataforma disenada para jugadores que valoran el trabajo en equipo</p>
-    <ul class="c-features__grid l-grid l-grid--3col">
-      <li class="c-features__item">
-        <div class="c-features__icon c-features__icon--red">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <h3 class="c-features__item-title">Busca Jugadores</h3>
-        <p class="c-features__item-desc">Filtra por rango, rol y reputacion. Encuentra companeros que encajen con tu estilo.</p>
-      </li>
-      <li class="c-features__item">
-        <div class="c-features__icon c-features__icon--cyan">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        </div>
-        <h3 class="c-features__item-title">Sistema Karma</h3>
-        <p class="c-features__item-desc">Cada jugador tiene una puntuacion de reputacion. Los toxicos se quedan fuera.</p>
-      </li>
-      <li class="c-features__item">
-        <div class="c-features__icon c-features__icon--purple">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        </div>
-        <h3 class="c-features__item-title">LFG Board</h3>
-        <p class="c-features__item-desc">Publica o busca posts de grupo. Conecta con gente que juega cuando tu juegas.</p>
-      </li>
-    </ul>
-  </section>
-
-  <!-- Top Players Section -->
   @if (errorMessage) {
-    <section class="l-section l-container">
-      <p class="c-error">{{ errorMessage }}</p>
-    </section>
-  } @else if (topPlayers.length > 0) {
-    <section class="c-top-players l-section l-container l-container--narrow">
-      <div class="c-top-players__header">
+  <section class="l-container l-section">
+    <p class="c-error">{{ errorMessage }}</p>
+  </section>
+  } @else {
+  <!-- ── Grupos abiertos ahora ──────────────────────── -->
+  <section class="l-section l-container">
+    <header class="c-section-head">
+      <div>
+        <span class="c-eyebrow">En directo</span>
+        <h2 class="c-section-head__title">Grupos abiertos ahora</h2>
+      </div>
+      <a class="c-btn c-btn--ghost c-btn--sm" routerLink="/lfg">Ver todos</a>
+    </header>
+
+    @if (loading && openPosts.length === 0) {
+    <ul class="l-grid l-grid--2col">
+      @for (i of [1, 2]; track i) {
+      <li><div class="c-skeleton-card" aria-hidden="true"><div class="c-skeleton c-skeleton--title"></div><div class="c-skeleton c-skeleton--text"></div><div class="c-skeleton c-skeleton--badges"></div></div></li>
+      }
+    </ul>
+    } @else if (openPosts.length === 0) {
+    <div class="c-empty">
+      <p class="c-empty__title">No hay grupos abiertos</p>
+      <p class="c-empty__hint">Sé el primero: publica un grupo y deja que los jugadores vengan a ti.</p>
+      <div class="c-empty__actions">
+        <button class="c-btn c-btn--primary c-btn--sm" type="button" (click)="createGroup()">Crear grupo</button>
+      </div>
+    </div>
+    } @else {
+    <ul class="l-grid l-grid--2col">
+      @for (post of openPosts; track post._id; let i = $index) {
+      <li class="c-fade-in" [style.animation-delay]="i * 0.06 + 's'">
+        <app-lfg-card [post]="post" />
+      </li>
+      }
+    </ul>
+    }
+  </section>
+
+  <!-- ── Top jugadores + equipos reclutando ─────────── -->
+  <section class="l-section l-container c-home-split">
+    <div class="c-home-split__col">
+      <header class="c-section-head">
         <div>
-          <h2 class="c-top-players__header-title">Top Jugadores</h2>
-          <p>Los jugadores con mejor reputacion de la comunidad</p>
+          <span class="c-eyebrow">Mejor karma</span>
+          <h2 class="c-section-head__title">Top jugadores</h2>
         </div>
         <a class="c-btn c-btn--ghost c-btn--sm" routerLink="/players">Ver todos</a>
-      </div>
+      </header>
       <ul class="l-grid l-grid--feed">
         @for (player of topPlayers; track player._id; let i = $index) {
-          <li class="c-fade-in" [style.animation-delay]="i * 0.1 + 's'">
-            <app-player-card [player]="player" />
-          </li>
+        <li class="c-fade-in" [style.animation-delay]="i * 0.06 + 's'">
+          <app-player-card [player]="player" />
+        </li>
+        } @empty {
+        @if (!loading) {
+        <li class="c-empty"><p class="c-empty__hint">Todavía no hay jugadores registrados.</p></li>
+        }
         }
       </ul>
-    </section>
+    </div>
+
+    <div class="c-home-split__col">
+      <header class="c-section-head">
+        <div>
+          <span class="c-eyebrow">Fichajes</span>
+          <h2 class="c-section-head__title">Equipos reclutando</h2>
+        </div>
+        <a class="c-btn c-btn--ghost c-btn--sm" routerLink="/teams" [queryParams]="{ recruiting: 1 }">Ver todos</a>
+      </header>
+      <ul class="l-grid l-grid--feed">
+        @for (team of recruitingTeams; track team._id; let i = $index) {
+        <li class="c-fade-in" [style.animation-delay]="i * 0.06 + 's'">
+          <app-team-card [team]="team" />
+        </li>
+        } @empty {
+        @if (!loading) {
+        <li class="c-empty"><p class="c-empty__hint">Ningún equipo está reclutando ahora mismo.</p></li>
+        }
+        }
+      </ul>
+    </div>
+  </section>
+  }
+
+  <!-- ── Cómo funciona (solo invitados) ─────────────── -->
+  @if (!auth.isAuthenticated()) {
+  <section class="l-section l-container">
+    <ol class="c-steps">
+      <li class="c-steps__item">
+        <span class="c-steps__num">01</span>
+        <h3 class="c-steps__title">Vincula tu Riot ID</h3>
+        <p class="c-steps__desc">Tu rango y nivel se sincronizan con tu cuenta real de Valorant.</p>
+      </li>
+      <li class="c-steps__item">
+        <span class="c-steps__num">02</span>
+        <h3 class="c-steps__title">Únete o crea un grupo</h3>
+        <p class="c-steps__desc">Duo, trio o 5-stack. Filtra por rol, rango y karma mínimo.</p>
+      </li>
+      <li class="c-steps__item">
+        <span class="c-steps__num">03</span>
+        <h3 class="c-steps__title">Valora a tus compañeros</h3>
+        <p class="c-steps__desc">Cada partida suma o resta karma. Con menos de 3 no puedes publicar.</p>
+      </li>
+      <li class="c-steps__cta">
+        <a class="c-btn c-btn--light" routerLink="/register">Crear cuenta gratis</a>
+      </li>
+    </ol>
+  </section>
   }
 </main>
