@@ -75,7 +75,9 @@
       width: 26px;
       height: 2px;
       background: v.$color-text-heading;
-      transition: all v.$transition-base;
+      transition:
+        transform v.$transition-base,
+        opacity v.$transition-base;
       transform-origin: center;
     }
 

@@ -109,7 +109,12 @@
     color: v.$color-text-primary;
     font-size: 0.9rem;
     font-family: v.$font-heading;
-    transition: all v.$transition-fast;
+    transition:
+      border-color v.$transition-fast,
+      background-color v.$transition-fast,
+      color v.$transition-fast,
+      box-shadow v.$transition-fast,
+      transform v.$transition-fast;
 
     &::placeholder {
       color: v.$color-text-subtle;
@@ -234,7 +239,12 @@
     border: 2px solid v.$color-border;
     overflow: hidden;
     cursor: pointer;
-    transition: all v.$transition-fast;
+    transition:
+      border-color v.$transition-fast,
+      background-color v.$transition-fast,
+      color v.$transition-fast,
+      box-shadow v.$transition-fast,
+      transform v.$transition-fast;
     background: v.$color-bg-input;
     padding: 0;
 
@@ -271,7 +281,12 @@
     font-size: 0.8rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all v.$transition-fast;
+    transition:
+      border-color v.$transition-fast,
+      background-color v.$transition-fast,
+      color v.$transition-fast,
+      box-shadow v.$transition-fast,
+      transform v.$transition-fast;
     font-family: v.$font-heading;
 
     &:hover:not(:disabled) {

@@ -15,7 +15,6 @@
   }
 
   &--full {
-    opacity: 0.85;
 
     &:hover {
       border-color: v.$color-border-light;
@@ -24,8 +23,13 @@
     }
   }
 
+  // Cerrado: fondo más apagado y título atenuado, sin bajar la opacidad del texto
   &--closed {
-    opacity: 0.6;
+    background: v.$color-bg-surface;
+
+    .c-lfg-card__title {
+      color: v.$color-text-muted;
+    }
 
     &:hover {
       border-color: v.$color-border-light;

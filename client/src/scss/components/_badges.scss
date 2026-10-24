@@ -13,7 +13,10 @@
   text-transform: uppercase;
   border-radius: v.$radius-sm;
   white-space: nowrap;
-  transition: all v.$transition-fast;
+  transition:
+    color v.$transition-fast,
+    background-color v.$transition-fast,
+    border-color v.$transition-fast;
 
   // Karma modifiers generated from $karma-colors map (@each loop)
   @each $level, $clr in v.$karma-colors {

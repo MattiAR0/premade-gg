@@ -442,7 +442,12 @@
     font-family: inherit;
     resize: vertical;
     min-height: 70px;
-    transition: all v.$transition-fast;
+    transition:
+      border-color v.$transition-fast,
+      background-color v.$transition-fast,
+      color v.$transition-fast,
+      box-shadow v.$transition-fast,
+      transform v.$transition-fast;
 
     &::placeholder {
       color: v.$color-text-subtle;

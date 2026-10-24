@@ -123,7 +123,12 @@
     border-radius: v.$radius-md;
     color: v.$color-text-primary;
     font-size: 0.9rem;
-    transition: all v.$transition-fast;
+    transition:
+      border-color v.$transition-fast,
+      background-color v.$transition-fast,
+      color v.$transition-fast,
+      box-shadow v.$transition-fast,
+      transform v.$transition-fast;
 
     &::placeholder {
       color: v.$color-text-subtle;
@@ -155,6 +160,11 @@
 
     >* {
       flex: 1;
+    }
+
+    // Nombre de juego ocupa el doble que el tag
+    > .c-auth-card__field--wide {
+      flex: 2;
     }
   }
 

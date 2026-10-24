@@ -612,7 +612,12 @@
     cursor: pointer;
     padding: 4px;
     border-radius: v.$radius-sm;
-    transition: all v.$transition-fast;
+    transition:
+      border-color v.$transition-fast,
+      background-color v.$transition-fast,
+      color v.$transition-fast,
+      box-shadow v.$transition-fast,
+      transform v.$transition-fast;
 
     &:hover {
       color: v.$color-text-primary;

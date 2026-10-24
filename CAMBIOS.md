@@ -4,9 +4,46 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
-## 2026-10-24 · Textos e idioma (paso 6 de la revisión de diseño)
+## 2026-10-24 · Repaso final (paso 7 de la revisión de diseño)
 
 **Commit:** sin commitear
+
+**Qué y por qué:** cerrar las observaciones menores de la revisión de diseño.
+
+**Cambios:**
+- **Fuentes:** el `@import` de Google Fonts sale de `_typography.scss` (bloqueaba el render) y pasa a `<link>` con `preconnect` en `index.html`.
+- **Títulos de página:**
+  - Cada ruta tiene el suyo en `app.routes.ts` ("Grupos LFG · PremadeGG", "Perfil · PremadeGG"…).
+  - El título por defecto pasa a "PremadeGG · Grupos de Valorant con reputación".
+- **Etiquetas sobre los títulos:**
+  - Fuera las que solo repetían el título: "Busca grupo", "Comunidad", "Competitivo", "En directo" y "Fichajes".
+  - "Mejor karma" pasa a descripción bajo "Top jugadores" ("Ordenados por karma").
+  - Se mantiene la del hero, que da contexto ("Valorant · Busca grupo" / "Hola, …").
+- **`transition: all`:** se sustituye por las propiedades concretas en los inputs de las páginas de acceso, perfil, editar perfil, team-detail, `.c-badge` y las líneas del menú.
+- **Tarjetas LFG llenas o cerradas:**
+  - Dejan de usar `opacity`, que bajaba el contraste de todo el texto.
+  - La cerrada usa un fondo más apagado y el título atenuado.
+- **Badge de región en `lfg-detail`:** fuera su versión morada local; usa el badge neutro del sistema.
+- **Registro y onboarding:** los `style="flex: 2"` en línea pasan al modificador `.c-auth-card__field--wide`.
+- **Footer:** "Conecta. Juega. Gana." pasa a "Grupos de Valorant con reputación real.".
+
+**Verificación:**
+- Navegador: `document.title` cambia por ruta.
+- `document.fonts.check` confirma que Anton y Barlow Condensed cargan desde el `<link>`.
+- Solo queda la etiqueta del hero.
+- Sin errores en consola.
+- Detector: solo falsos positivos.
+- Build sin errores.
+
+**Pendiente:**
+- No hay grupos cerrados en los datos de prueba, así que el nuevo estilo de tarjeta cerrada no se ha visto en pantalla.
+- El estado vacío del filtro "Cerrados" invita a crear un grupo, cosa que no encaja con ese filtro.
+
+---
+
+## 2026-10-24 · Textos e idioma (paso 6 de la revisión de diseño)
+
+**Commit:** `2fd7f48`
 
 **Qué y por qué:** la UI mezclaba inglés y español: rangos ("Platinum"), roles ("Duelist"), horarios ("Evenings"), meses ("October 2026"), "Reviews", "Lv.", "LFT", "Looking for group"… y un texto de desarrollo en un estado vacío.
 

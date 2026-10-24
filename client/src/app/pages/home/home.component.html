@@ -129,7 +129,6 @@
   <section class="l-section l-container">
     <header class="c-section-head">
       <div>
-        <span class="c-eyebrow">En directo</span>
         <h2 class="c-section-head__title">Grupos abiertos ahora</h2>
       </div>
       <a class="c-btn c-btn--ghost c-btn--sm" routerLink="/lfg">Ver todos</a>
@@ -165,8 +164,8 @@
     <div class="c-home-split__col">
       <header class="c-section-head">
         <div>
-          <span class="c-eyebrow">Mejor karma</span>
           <h2 class="c-section-head__title">Top jugadores</h2>
+          <p class="c-section-head__desc">Ordenados por karma</p>
         </div>
         <a class="c-btn c-btn--ghost c-btn--sm" routerLink="/players">Ver todos</a>
       </header>
@@ -186,7 +185,6 @@
     <div class="c-home-split__col">
       <header class="c-section-head">
         <div>
-          <span class="c-eyebrow">Fichajes</span>
           <h2 class="c-section-head__title">Equipos reclutando</h2>
         </div>
         <a class="c-btn c-btn--ghost c-btn--sm" routerLink="/teams" [queryParams]="{ recruiting: 1 }">Ver todos</a>
