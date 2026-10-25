@@ -9,7 +9,10 @@ export interface User {
 
   // Datos de juego
   rank: string;
+  /** Rol principal (= roles[0]); lo mantiene la base de datos */
   role: string;
+  /** Todos los roles que juega, en orden Duelista, Controlador, Iniciador, Centinela, Flex */
+  roles?: string[];
   schedule: string;
   karma: number;
   /** Nº de valoraciones recibidas (base del karma). Opcional por compatibilidad. */
@@ -52,6 +55,12 @@ export const VALORANT_RANKS = [
   'Iron', 'Bronze', 'Silver', 'Gold', 'Platinum',
   'Diamond', 'Ascendant', 'Immortal', 'Radiant',
 ] as const;
+
+/** Roles de un jugador; si el perfil aún no trae roles, el rol principal */
+export function rolesOf(user: Pick<User, 'role' | 'roles'> | null | undefined): string[] {
+  if (user?.roles?.length) return user.roles;
+  return user?.role ? [user.role] : [];
+}
 
 export const VALORANT_ROLES = [
   'Duelist', 'Controller', 'Initiator', 'Sentinel', 'Flex',

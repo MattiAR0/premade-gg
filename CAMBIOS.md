@@ -4,9 +4,59 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
-## 2026-10-25 · Editar, cerrar y eliminar grupos LFG
+## 2026-10-25 · Perfil sin nivel de cuenta
 
 **Commit:** este commit
+
+**Qué y por qué:** petición de la usuaria: quitar el nivel de cuenta de Valorant del perfil.
+
+**Cambios:** `profile.component.html`: fuera el badge "Nivel N" del pie del perfil; queda "Miembro desde …". La tarjeta de jugador (`player-card`) sigue mostrando "Nv. N".
+
+**Verificación:** navegador en local, perfil de Player10: el pie muestra solo "Miembro desde octubre 2026" y la palabra "nivel" ya no aparece en la página.
+
+---
+
+## 2026-10-25 · Varios roles por jugador
+
+**Commit:** este commit
+
+**Qué y por qué:** petición de la usuaria: poder poner más de un rol. Cada jugador tenía un solo `role` y, aparte, un "rol favorito".
+
+**Cambios:**
+- `supabase/migrations/20261025000007_multi_roles.sql` (nueva):
+  - `profiles.roles` (`valorant_role[]`, máximo 5) con índice GIN.
+  - Datos existentes: `{role}` y, si había un rol favorito distinto, se añade.
+  - Trigger `sync_profile_roles`: si cambia `roles`, `role` pasa a ser el primero. Si se escribe solo `role` (onboarding con la Edge Function `riot-link`, que no cambia), ese rol encabeza `roles`.
+  - `user_json` expone `roles`.
+  - El filtro de rol de `get_users` busca dentro de `roles` (`roles @> array[rol]`).
+  - `update_my_profile` acepta `roles`: sin repetir, en el orden del enum y al menos uno ("Elige al menos un rol").
+- `tests/database/security.test.sql`: 3 tests nuevos (orden y duplicados, `role` = primero, lista vacía rechazada). En total, 24.
+- `user.model.ts`: `roles?` y helper `rolesOf()`, que si el perfil no trae `roles` cae al rol principal.
+- Editar perfil: el selector "Rol favorito" pasa a chips multiselección "Roles que juegas". Al quitar el último aparece "Necesitas al menos un rol".
+- Perfil: todos los roles como etiquetas junto a la región; fuera la sección "Rol favorito".
+- `player-card`: "Duelista / Iniciador / Centinela". Con más de un rol van en su línea y región · nivel bajan sin un "·" suelto delante.
+- `user-picker`: muestra todos los roles.
+- Registro y onboarding siguen pidiendo un rol principal; los demás se añaden en el perfil.
+
+**Verificación:**
+- `npm run db:test`: 24/24.
+- Trigger probado con rollback: cambiar `roles` a Controlador + Centinela deja `role` = Controller; escribir `role` = Duelist deja `{Duelist,Controller,Sentinel}`.
+- Navegador en local con `test3@premade.gg`:
+  - Quitar el único rol muestra el aviso.
+  - Marcar Duelista + Centinela y guardar deja `role` = Duelist y `roles` = `{Duelist,Initiator,Sentinel}` en la base.
+  - El perfil muestra las tres etiquetas.
+  - `/players?role=Sentinel` encuentra a TestUser3 aunque su rol principal sea Duelista.
+  - A 375px la tarjeta queda en dos líneas sin scroll horizontal.
+
+**Pendiente:**
+- Aplicar la migración en Supabase cloud antes de publicar.
+- `favorite_role` sigue en la base pero ya no se edita ni se muestra.
+
+---
+
+## 2026-10-25 · Editar, cerrar y eliminar grupos LFG
+
+**Commit:** `792ec26`
 
 **Qué y por qué:** petición de la usuaria: no se podían editar ni borrar los grupos publicados. La crítica final también señaló que el creador no podía cerrar su grupo, aunque existe el filtro "Cerrados". Las RPC existían, pero no había forma de usarlas desde la app.
 

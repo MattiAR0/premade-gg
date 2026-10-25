@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Subject, catchError, debounceTime, distinctUntilChanged, of, switchMap, tap } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
-import { User } from '../../models/user.model';
+import { User, rolesOf } from '../../models/user.model';
 import { LabelPipe } from '../pipes/label.pipe';
 
 /**
@@ -19,6 +19,7 @@ import { LabelPipe } from '../pipes/label.pipe';
   styleUrl: './user-picker.component.scss',
 })
 export class UserPickerComponent {
+  readonly rolesOf = rolesOf;
   @Input() selected: User[] = [];
   @Output() selectedChange = new EventEmitter<User[]>();
   @Input() max = 9;

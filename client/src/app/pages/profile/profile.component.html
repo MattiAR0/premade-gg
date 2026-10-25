@@ -22,7 +22,9 @@
         <div class="c-profile__info">
           <h1 class="c-profile__name">{{ user.riotId }}</h1>
           <div class="c-profile__badges">
-            <span class="c-badge c-badge--role">{{ user.role | label: 'role' }}</span>
+            @for (r of userRoles; track r) {
+              <span class="c-badge c-badge--role">{{ r | label: 'role' }}</span>
+            }
             <span class="c-badge c-badge--region">{{ user.region | uppercase }}</span>
             @if (user.lookingForTeam) {
               <span class="c-badge c-badge--lft" title="Busca un equipo competitivo amateur">
@@ -72,13 +74,6 @@
               </span>
             }
           </div>
-        </section>
-      }
-
-      @if (user.favoriteRole) {
-        <section class="c-profile__section">
-          <h2 class="c-profile__section-title">Rol favorito</h2>
-          <span class="c-badge c-badge--role">{{ user.favoriteRole | label: 'role' }}</span>
         </section>
       }
 
@@ -148,9 +143,6 @@
 
       <!-- Info meta -->
       <footer class="c-profile__meta">
-        @if (user.accountLevel) {
-          <span class="c-badge c-badge--count">Nivel {{ user.accountLevel }}</span>
-        }
         <span class="c-profile__joined">Miembro desde {{ user.createdAt | date:'MMMM yyyy' }}</span>
       </footer>
     </section>

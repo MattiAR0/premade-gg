@@ -119,19 +119,24 @@
       </div>
     </section>
 
-    <!-- Favorite Role & Schedule -->
+    <!-- Roles & Schedule -->
     <section class="c-settings__section">
       <h2 class="c-settings__section-title">Preferencias de juego</h2>
+      <div class="c-settings__field">
+        <span class="c-settings__label" id="roles-label">Roles que juegas</span>
+        <div class="c-chips" role="group" aria-labelledby="roles-label" aria-describedby="roles-hint">
+          @for (r of roleOptions; track r) {
+          <button type="button" class="c-chip" [class.c-chip--active]="hasRole(r)" [attr.aria-pressed]="hasRole(r)"
+            (click)="toggleRole(r)">{{ r | label: 'role' }}</button>
+          }
+        </div>
+        @if (rolesError) {
+        <span class="c-settings__hint c-settings__hint--error" id="roles-hint" role="alert">{{ rolesError }}</span>
+        } @else {
+        <span class="c-settings__hint" id="roles-hint">Marca todos los que juegas. Los filtros de jugadores te encuentran por cualquiera de ellos.</span>
+        }
+      </div>
       <div class="c-settings__row">
-        <label class="c-settings__field">
-          <span class="c-settings__label">Rol favorito</span>
-          <select class="c-settings__select" [(ngModel)]="favoriteRole" name="favoriteRole">
-            <option value="">Sin preferencia</option>
-            @for (r of roles; track r) {
-            <option [value]="r">{{ r | label: 'role' }}</option>
-            }
-          </select>
-        </label>
         <label class="c-settings__field">
           <span class="c-settings__label">Horario de juego</span>
           <select class="c-settings__select" [(ngModel)]="schedule" name="schedule">

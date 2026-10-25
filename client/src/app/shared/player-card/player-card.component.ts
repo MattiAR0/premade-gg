@@ -3,7 +3,7 @@ import { UpperCasePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { KarmaBadgeComponent } from '../karma-badge/karma-badge.component';
 import { RankBadgeComponent } from '../rank-badge/rank-badge.component';
-import { User } from '../../models/user.model';
+import { User, rolesOf } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
 import { MessageService } from '../../services/message.service';
 import { LabelPipe } from '../pipes/label.pipe';
@@ -17,6 +17,11 @@ import { LabelPipe } from '../pipes/label.pipe';
 })
 export class PlayerCardComponent {
   @Input({ required: true }) player!: User;
+
+  /** Todos los roles que juega ("Controlador / Centinela") */
+  get roles(): string[] {
+    return rolesOf(this.player);
+  }
 
   constructor(
     readonly auth: AuthService,

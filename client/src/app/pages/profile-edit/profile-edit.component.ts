@@ -4,7 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { AgentIconsService, AgentInfo } from '../../services/agent-icons.service';
 import {
-  User, VALORANT_ROLES,
+  User, VALORANT_ROLES, rolesOf,
   DAYS_OF_WEEK, DAYS_LABELS, DAY_SLOTS, DAY_SLOT_LABELS, DaySlot, Availability, normalizeAvailability,
 } from '../../models/user.model';
 import { LabelPipe } from '../../shared/pipes/label.pipe';
@@ -22,7 +22,8 @@ export class ProfileEditComponent implements OnInit {
   profileImageType: 'upload' | 'avatar' | 'riot_card' = 'riot_card';
   profileImage: string | null = null;
   favoriteAgents: string[] = [];
-  favoriteRole = '';
+  roles: string[] = [];
+  rolesError = '';
   schedule = '';
   socialLinks = { discord: '', twitter: '', twitch: '' };
   availability: Availability = {};
@@ -40,7 +41,7 @@ export class ProfileEditComponent implements OnInit {
   previewUrl: string | null = null;
 
   // Constants
-  readonly roles = VALORANT_ROLES;
+  readonly roleOptions = VALORANT_ROLES;
   readonly daysOfWeek = DAYS_OF_WEEK;
   readonly daysLabels = DAYS_LABELS;
   readonly daySlots = DAY_SLOTS;
@@ -93,7 +94,7 @@ export class ProfileEditComponent implements OnInit {
     this.profileImageType = user.profileImageType || 'riot_card';
     this.profileImage = user.profileImage;
     this.favoriteAgents = [...(user.favoriteAgents || [])];
-    this.favoriteRole = user.favoriteRole || '';
+    this.roles = [...rolesOf(user)];
     this.schedule = user.schedule || '';
     this.socialLinks = {
       discord: user.socialLinks?.discord || '',
@@ -124,6 +125,24 @@ export class ProfileEditComponent implements OnInit {
       delete updated[day];
     }
     this.availability = updated;
+  }
+
+  hasRole(role: string): boolean {
+    return this.roles.includes(role);
+  }
+
+  /** Marca o desmarca un rol; siempre queda al menos uno. Se guardan en el orden de roleOptions */
+  toggleRole(role: string): void {
+    if (this.hasRole(role)) {
+      if (this.roles.length === 1) {
+        this.rolesError = 'Necesitas al menos un rol';
+        return;
+      }
+      this.roles = this.roles.filter((r) => r !== role);
+    } else {
+      this.roles = this.roleOptions.filter((r) => r === role || this.roles.includes(r));
+    }
+    this.rolesError = '';
   }
 
   /** Toggle un agente en favoritos (max 3) */
@@ -199,7 +218,7 @@ export class ProfileEditComponent implements OnInit {
         profileImageType: this.profileImageType,
         profileImage: imageUrl || this.profileImage,
         favoriteAgents: this.favoriteAgents,
-        favoriteRole: this.favoriteRole || null,
+        roles: this.roles,
         schedule: this.schedule,
         socialLinks: this.socialLinks,
         availability: this.availability,

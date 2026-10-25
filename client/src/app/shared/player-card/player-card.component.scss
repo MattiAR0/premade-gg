@@ -109,6 +109,15 @@
       margin-inline: 0.5rem;
       color: v.$color-text-subtle;
     }
+
+    // Varios roles: línea propia, para que región y nivel no empiecen con "·" suelto
+    > .c-player-card__roles {
+      flex-basis: 100%;
+    }
+
+    > .c-player-card__roles + span::before {
+      content: none;
+    }
   }
 
   &__footer {

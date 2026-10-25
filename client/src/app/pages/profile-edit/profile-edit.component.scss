@@ -152,6 +152,10 @@
     margin-top: v.$spacing-xs;
   }
 
+  &__hint--error {
+    color: v.$color-danger-text;
+  }
+
   &__row {
     display: flex;
     gap: v.$spacing-md;

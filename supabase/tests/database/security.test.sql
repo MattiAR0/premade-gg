@@ -4,7 +4,7 @@
 -- ════════════════════════════════════════════════════════════
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(21);
+select plan(24);
 
 -- ── Fixtures: tres usuarios (A, B, C) ────────────────────────
 insert into auth.users (id, email, aud, role)
@@ -46,6 +46,20 @@ select is(
 select is(
   (select rank::text from public.profiles where id = 'a0000000-0000-0000-0000-00000000000a'),
   'Gold', 'update_my_profile ignora rank'
+);
+
+-- ── Varios roles: role = el primero de roles ─────────────────
+select is(
+  (public.update_my_profile('{"roles": ["Sentinel", "Duelist", "Sentinel"]}') -> 'roles'),
+  '["Duelist", "Sentinel"]'::jsonb, 'roles se guarda sin repetir y en orden'
+);
+select is(
+  (select role::text from public.profiles where id = 'a0000000-0000-0000-0000-00000000000a'),
+  'Duelist', 'role pasa a ser el primero de roles'
+);
+select throws_ok(
+  $$ select public.update_my_profile('{"roles": []}') $$,
+  'P0001', 'Elige al menos un rol', 'no se puede quedar sin roles'
 );
 
 -- ── Reviews y karma ──────────────────────────────────────────

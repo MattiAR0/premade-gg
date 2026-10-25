@@ -7,7 +7,7 @@ import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { MessageService } from '../../services/message.service';
 import { AgentIconsService } from '../../services/agent-icons.service';
-import { User, DAYS_OF_WEEK, DAYS_LABELS, DAY_SLOTS, DAY_SLOT_LABELS, normalizeAvailability } from '../../models/user.model';
+import { User, DAYS_OF_WEEK, DAYS_LABELS, DAY_SLOTS, DAY_SLOT_LABELS, normalizeAvailability, rolesOf } from '../../models/user.model';
 import { Reputation, ReviewEligibility } from '../../models/reputation.model';
 import { LfgPost } from '../../models/lfg-post.model';
 import { RankBadgeComponent } from '../../shared/rank-badge/rank-badge.component';
@@ -105,6 +105,10 @@ export class ProfileComponent implements OnInit {
   }
 
   /** Verifica si el usuario tiene disponibilidad configurada */
+  get userRoles(): string[] {
+    return rolesOf(this.user);
+  }
+
   /** Favoritos en orden alfabético, guardados en cualquier orden */
   get favoriteAgentsSorted(): string[] {
     return [...(this.user?.favoriteAgents ?? [])].sort((a, b) => a.localeCompare(b));

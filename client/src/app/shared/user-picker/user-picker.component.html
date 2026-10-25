@@ -42,8 +42,8 @@
           @if (user.rank) {
           <span class="c-user-picker__result-meta">{{ user.rank | label: 'rank' }}</span>
           }
-          @if (user.role) {
-          <span class="c-user-picker__result-meta">{{ user.role | label: 'role' }}</span>
+          @for (r of rolesOf(user); track r) {
+          <span class="c-user-picker__result-meta">{{ r | label: 'role' }}</span>
           }
         </button>
       </li>

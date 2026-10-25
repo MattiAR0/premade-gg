@@ -25,7 +25,7 @@
 
   <section class="c-player-card__body">
     <p class="c-player-card__facts">
-      <span>{{ player.role | label: 'role' }}</span>
+      <span [class.c-player-card__roles]="roles.length > 1">@for (r of roles; track r; let last = $last) {{{ r | label: 'role' }}@if (!last) { / }}</span>
       @if (player.region) {
         <span>{{ player.region | uppercase }}</span>
       }
