@@ -4,9 +4,24 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
-## 2026-10-25 · Editar grupo: cambiar Dúo, Trío o 5-Stack
+## 2026-10-25 · Emblema de rango más grande
 
 **Commit:** este commit
+
+**Qué y por qué:** petición de la usuaria: el emblema de rango se veía pequeño.
+
+**Cambios:** `_badges.scss`, `.c-rank-icon`: `md` (tarjetas y filas) de 26 a 32px, `lg` (perfil) de 40 a 52px y `sm` de 22 a 26px (sin uso ahora).
+
+**Verificación:** navegador en local.
+- `/players`: emblema de 32px y la fila rango + karma mide lo mismo que el emblema (32px).
+- Perfil: emblema de 52px alineado con el karma.
+- `/lfg` a 375px: la fila "Creador" (emblema, karma, región) sigue en una línea, sin scroll horizontal.
+
+---
+
+## 2026-10-25 · Editar grupo: cambiar Dúo, Trío o 5-Stack
+
+**Commit:** `bce677c`
 
 **Qué y por qué:** la usuaria vio que al editar un grupo no se podía cambiar el tamaño. Se había dejado fuera porque afecta a los miembros; ahora se permite con una regla que lo hace seguro.
 

@@ -106,17 +106,17 @@
 
 // ── Rango con emblema, sin texto (app-rank-badge); .c-rank queda como respaldo si no carga ──
 .c-rank-icon {
-  --rank-size: 26px;
+  --rank-size: 32px;
   display: inline-flex;
   align-items: center;
   vertical-align: middle;
 
   &--sm {
-    --rank-size: 22px;
+    --rank-size: 26px;
   }
 
   &--lg {
-    --rank-size: 40px;
+    --rank-size: 52px;
   }
 
   &__img {
