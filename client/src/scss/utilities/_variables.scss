@@ -39,6 +39,11 @@ $color-on-selected: #0f1923;
 $color-focus: #ece8e1;
 $color-positive: $color-accent-cyan;
 $color-danger: $color-accent-red;
+$color-danger-text: #ff6b76; // errores en texto: el rojo de marca es más oscuro para leer en párrafos
+$color-warning: $color-accent-gold; // pendiente, lleno
+$color-info: $color-accent-blue;
+$color-team: $color-accent-purple; // equipos y staff
+$color-text-bright: #fff; // hover de enlaces sobre texto hueso
 $color-hover-border: rgba(236, 232, 225, 0.3);
 
 // Borders & Surfaces
@@ -78,6 +83,22 @@ $rank-colors: (
 $font-display: 'Anton', 'Barlow Condensed', Impact, sans-serif;
 $font-heading: 'Barlow Condensed', 'Barlow', system-ui, sans-serif;
 $font-body: 'Barlow', system-ui, -apple-system, sans-serif;
+
+// Escala tipográfica: 12px es el mínimo (etiquetas, badges, metadatos)
+$font-size-2xs: 0.75rem; // 12px
+$font-size-xs: 0.8125rem; // 13px
+$font-size-sm: 0.875rem; // 14px
+$font-size-md: 0.9375rem; // 15px
+$font-size-base: 1rem; // 16px
+$font-size-lg: 1.125rem; // 18px
+$font-size-xl: 1.25rem; // 20px
+$font-size-2xl: 1.5rem; // 24px
+$font-size-3xl: 1.75rem; // 28px
+$font-size-4xl: 2rem; // 32px
+$font-size-5xl: 2.25rem; // 36px
+$font-size-6xl: 3.25rem; // 52px
+$font-size-display: 4.5rem; // 72px, solo el hero
+$font-size-display-lg: 6rem; // 96px, solo el hero
 
 // Angular cut size (clip-path corners)
 $cut-sm: 6px;

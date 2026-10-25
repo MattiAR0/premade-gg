@@ -45,7 +45,7 @@
 
   &__logo-text {
     font-family: v.$font-display;
-    font-size: 1.1rem;
+    font-size: v.$font-size-lg;
     color: v.$color-text-heading;
     text-transform: uppercase;
     letter-spacing: 0.03em;
@@ -60,16 +60,17 @@
   }
 
   &__name {
-    font-size: 1.2rem;
+    font-size: v.$font-size-xl;
     font-weight: 700;
     letter-spacing: 0.02em;
+    text-transform: none; // nombres propios: se respetan mayúsculas y minúsculas
     color: v.$color-text-heading;
     @include m.text-truncate;
   }
 
   &__tag {
     font-family: v.$font-heading;
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     font-weight: 700;
     color: v.$color-text-muted;
     white-space: nowrap;
@@ -88,7 +89,7 @@
   }
 
   &__desc {
-    font-size: 0.9rem;
+    font-size: v.$font-size-md;
     color: v.$color-text-muted;
     line-height: 1.5;
     @include m.line-clamp(2);
@@ -127,7 +128,7 @@
     color: v.$color-text-heading;
     font-family: v.$font-heading;
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     text-transform: uppercase;
     position: relative;
     z-index: 1;
@@ -137,7 +138,7 @@
     display: inline-flex;
     align-items: center;
     gap: v.$spacing-xs;
-    font-size: 0.8rem;
+    font-size: v.$font-size-xs;
     font-weight: 500;
     color: v.$color-text-muted;
     white-space: nowrap;
@@ -169,7 +170,7 @@
     display: inline-flex;
     align-items: center;
     gap: v.$spacing-xs;
-    font-size: 0.75rem;
+    font-size: v.$font-size-2xs;
     color: v.$color-accent-gold;
     font-weight: 600;
 
@@ -179,7 +180,7 @@
   }
 
   &__owner {
-    font-size: 0.8rem;
+    font-size: v.$font-size-xs;
     color: v.$color-text-subtle;
     text-decoration: none;
     transition: color v.$transition-fast;

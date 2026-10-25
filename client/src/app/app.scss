@@ -35,7 +35,7 @@
 
   &__logo {
     font-family: v.$font-display;
-    font-size: 1.6rem;
+    font-size: v.$font-size-2xl;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: v.$color-text-heading;
@@ -47,7 +47,7 @@
   }
 
   &__tagline {
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     color: v.$color-text-muted;
   }
 
@@ -64,7 +64,7 @@
 
   &__link {
     @include m.ui-label;
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     color: v.$color-text-muted;
     transition: color v.$transition-fast;
 
@@ -76,7 +76,7 @@
   }
 
   &__copy {
-    font-size: 0.8rem;
+    font-size: v.$font-size-xs;
     color: v.$color-text-subtle;
 
     @include m.respond-to(md) {

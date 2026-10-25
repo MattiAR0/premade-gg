@@ -1,9 +1,10 @@
 // ── Global Styles Entry Point ─────────────────────────
 @use 'scss/main';
+@use 'scss/utilities/variables' as v;
 
 // ── Body base styling ─────────────────────────────────
 body {
-  background-color: #0f1923;
+  background-color: v.$color-bg-dark;
   background-image:
     linear-gradient(rgba(236, 232, 225, 0.018) 1px, transparent 1px),
     linear-gradient(90deg, rgba(236, 232, 225, 0.018) 1px, transparent 1px);

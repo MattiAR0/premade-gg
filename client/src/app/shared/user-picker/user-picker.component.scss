@@ -19,7 +19,7 @@
     padding: 0.25rem 0.35rem 0.25rem 0.6rem;
     background: rgba(236, 232, 225, 0.06);
     border: 1px solid v.$color-border-light;
-    font-size: 0.88rem;
+    font-size: v.$font-size-sm;
     color: v.$color-text-heading;
   }
 
@@ -29,7 +29,7 @@
 
   &__chip-rank {
     @include m.ui-label;
-    font-size: 0.7rem;
+    font-size: v.$font-size-2xs;
   }
 
   &__chip-remove {
@@ -126,6 +126,6 @@
 
   &__result-meta {
     @include m.ui-label;
-    font-size: 0.7rem;
+    font-size: v.$font-size-2xs;
   }
 }

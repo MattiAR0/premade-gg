@@ -47,11 +47,11 @@
 .c-error {
   text-align: center;
   padding: v.$spacing-lg;
-  color: #ff6b76;
+  color: v.$color-danger-text;
   background: rgba(255, 70, 85, 0.06);
   border: 1px solid rgba(255, 70, 85, 0.18);
   border-radius: v.$radius-xl;
-  font-size: 0.95rem;
+  font-size: v.$font-size-md;
   margin-block: v.$spacing-lg;
 }
 
@@ -105,7 +105,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
+    font-size: v.$font-size-4xl;
     font-weight: 800;
     color: v.$color-text-heading;
   }
@@ -132,9 +132,10 @@
   }
 
   &__name {
-    font-size: 1.6rem;
+    font-size: v.$font-size-2xl;
     font-weight: 800;
     letter-spacing: 0.02em;
+    text-transform: none; // nombres propios: se respetan mayúsculas y minúsculas
     color: v.$color-text-heading;
   }
 
@@ -150,7 +151,7 @@
   }
 
   &__bio {
-    font-size: 0.9rem;
+    font-size: v.$font-size-md;
     color: v.$color-text-primary;
     line-height: 1.6;
     max-width: 600px;
@@ -185,7 +186,7 @@
   }
 
   &__section-title {
-    font-size: 0.75rem;
+    font-size: v.$font-size-2xs;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -197,7 +198,7 @@
   }
 
   &__lft-details {
-    font-size: 0.9rem;
+    font-size: v.$font-size-md;
     color: v.$color-text-primary;
     line-height: 1.6;
     padding: v.$spacing-sm v.$spacing-md;
@@ -237,7 +238,7 @@
 
     &__name {
       font-family: v.$font-heading;
-      font-size: 0.9rem;
+      font-size: v.$font-size-md;
       font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
@@ -256,7 +257,7 @@
     display: flex;
     align-items: center;
     gap: v.$spacing-xs;
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     color: v.$color-text-primary;
 
     &--link {
@@ -290,13 +291,13 @@
   }
 
   &__day-name {
-    font-size: 0.8rem;
+    font-size: v.$font-size-xs;
     font-weight: 600;
     color: v.$color-text-primary;
   }
 
   &__day-time {
-    font-size: 0.8rem;
+    font-size: v.$font-size-xs;
     color: v.$color-text-muted;
   }
 
@@ -305,7 +306,7 @@
     display: flex;
     align-items: center;
     gap: v.$spacing-sm;
-    font-size: 0.9rem;
+    font-size: v.$font-size-md;
     color: v.$color-text-primary;
   }
 
@@ -321,7 +322,7 @@
   }
 
   &__joined {
-    font-size: 0.8rem;
+    font-size: v.$font-size-xs;
     color: v.$color-text-muted;
   }
 
@@ -331,7 +332,7 @@
   }
 
   &__block-title {
-    font-size: 1.15rem;
+    font-size: v.$font-size-lg;
     font-weight: 700;
     color: v.$color-text-heading;
     margin-bottom: v.$spacing-md;
@@ -353,7 +354,7 @@
   }
 
   &__empty {
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     color: v.$color-text-muted;
     margin-top: v.$spacing-sm;
   }
@@ -366,23 +367,23 @@
   gap: v.$spacing-sm;
   padding: v.$spacing-sm v.$spacing-md;
   border-radius: v.$radius-md;
-  font-size: 0.8rem;
+  font-size: v.$font-size-xs;
   margin-bottom: v.$spacing-md;
 
   &--info {
-    color: #5aa9ff;
+    color: v.$color-info;
     background: rgba(59, 130, 246, 0.06);
     border: 1px solid rgba(59, 130, 246, 0.18);
   }
 
   &--success {
-    color: #2fd8b0;
+    color: v.$color-positive;
     background: rgba(34, 197, 94, 0.06);
     border: 1px solid rgba(34, 197, 94, 0.18);
   }
 
   &--error {
-    color: #ff6b76;
+    color: v.$color-danger-text;
     background: rgba(255, 70, 85, 0.06);
     border: 1px solid rgba(255, 70, 85, 0.18);
   }
@@ -402,7 +403,7 @@
 
   &__label {
     display: block;
-    font-size: 0.75rem;
+    font-size: v.$font-size-2xs;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -421,7 +422,7 @@
     border: 1px solid v.$color-border;
     border-radius: v.$radius-md;
     color: v.$color-text-primary;
-    font-size: 0.9rem;
+    font-size: v.$font-size-md;
     font-family: inherit;
     resize: vertical;
     min-height: 70px;
@@ -446,7 +447,7 @@
   &__count {
     display: block;
     text-align: right;
-    font-size: 0.7rem;
+    font-size: v.$font-size-2xs;
     color: v.$color-text-subtle;
     margin-top: 4px;
   }
@@ -474,13 +475,13 @@
   }
 
   &__author {
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     font-weight: 600;
     color: v.$color-text-heading;
     transition: color v.$transition-fast;
 
     &:hover {
-      color: #fff;
+      color: v.$color-text-bright;
     }
   }
 
@@ -500,20 +501,20 @@
     border-radius: v.$radius-sm;
 
     &:hover {
-      color: #ff6b76;
+      color: v.$color-danger-text;
       background: rgba(255, 70, 85, 0.1);
     }
   }
 
   &__comment {
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     color: v.$color-text-primary;
     line-height: 1.5;
   }
 
   &__date {
     display: block;
-    font-size: 0.75rem;
+    font-size: v.$font-size-2xs;
     color: v.$color-text-subtle;
     margin-top: v.$spacing-sm;
   }
@@ -524,9 +525,9 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 0.7rem;
+  font-size: v.$font-size-2xs;
   font-weight: 600;
-  color: #2fd8b0;
+  color: v.$color-positive;
   background: rgba(34, 197, 94, 0.08);
   border: 1px solid rgba(34, 197, 94, 0.2);
   padding: 2px 8px;
@@ -534,7 +535,7 @@
 }
 
 .c-badge--subtle {
-  font-size: 0.75rem;
+  font-size: v.$font-size-2xs;
   color: v.$color-text-muted;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid v.$color-border;

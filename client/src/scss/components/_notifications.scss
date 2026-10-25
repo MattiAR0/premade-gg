@@ -41,7 +41,7 @@
     border-radius: v.$radius-full;
     background: v.$color-brand;
     color: v.$color-on-brand;
-    font-size: 0.65rem;
+    font-size: v.$font-size-2xs;
     font-weight: 700;
     display: flex;
     align-items: center;
@@ -86,14 +86,14 @@
   }
 
   &__title {
-    font-size: 0.95rem;
+    font-size: v.$font-size-md;
     font-weight: 700;
     color: v.$color-text-heading;
     margin: 0;
   }
 
   &__mark-all {
-    font-size: 0.75rem;
+    font-size: v.$font-size-2xs;
     font-weight: 600;
     color: v.$color-text-heading;
     background: none;
@@ -126,7 +126,7 @@
     color: v.$color-text-muted;
 
     &-text {
-      font-size: 0.85rem;
+      font-size: v.$font-size-sm;
       margin: 0;
     }
   }
@@ -159,7 +159,7 @@
   }
 
   &__icon {
-    font-size: 1.2rem;
+    font-size: v.$font-size-xl;
     line-height: 1;
     flex-shrink: 0;
     margin-top: 2px;
@@ -171,7 +171,7 @@
   }
 
   &__message {
-    font-size: 0.82rem;
+    font-size: v.$font-size-xs;
     color: v.$color-text-primary;
     margin: 0 0 v.$spacing-xs;
     line-height: 1.4;
@@ -179,20 +179,20 @@
   }
 
   &__time {
-    font-size: 0.7rem;
+    font-size: v.$font-size-2xs;
     color: v.$color-text-muted;
   }
 
   &__link {
     display: inline-block;
     margin-top: v.$spacing-xs;
-    font-size: 0.75rem;
+    font-size: v.$font-size-2xs;
     font-weight: 600;
     color: v.$color-text-heading;
     transition: color v.$transition-fast;
 
     &:hover {
-      color: #fff;
+      color: v.$color-text-bright;
     }
   }
 

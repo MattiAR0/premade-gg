@@ -41,7 +41,7 @@
 
   &__brand-text {
     font-family: v.$font-display;
-    font-size: 1.45rem;
+    font-size: v.$font-size-2xl;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: v.$color-text-heading;
@@ -147,7 +147,7 @@
     padding: 0 v.$spacing-md;
     font-family: v.$font-heading;
     font-weight: 700;
-    font-size: 1rem;
+    font-size: v.$font-size-base;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: v.$color-text-muted;
@@ -182,7 +182,7 @@
     // Tablet: menos aire para que enlaces y botones quepan en una línea
     @media (min-width: v.$breakpoint-md) and (max-width: (v.$breakpoint-lg - 1px)) {
       padding-inline: v.$spacing-sm;
-      font-size: 0.92rem;
+      font-size: v.$font-size-md;
       letter-spacing: 0.06em;
 
       &::after {
@@ -193,7 +193,7 @@
 
     @include m.respond-below(md) {
       padding: v.$spacing-md 0;
-      font-size: 1.2rem;
+      font-size: v.$font-size-xl;
 
       &::after {
         left: auto;
@@ -297,14 +297,14 @@
     background: v.$color-bg-elevated;
     border: 1px solid v.$color-border-light;
     font-family: v.$font-heading;
-    font-size: 1rem;
+    font-size: v.$font-size-base;
     font-weight: 700;
     color: v.$color-text-heading;
   }
 
   &__username {
     font-family: v.$font-heading;
-    font-size: 0.95rem;
+    font-size: v.$font-size-md;
     font-weight: 600;
     letter-spacing: 0.02em;
     color: v.$color-text-heading;
@@ -354,7 +354,7 @@
     align-items: center;
     gap: v.$spacing-sm;
     padding: v.$spacing-sm v.$spacing-md;
-    font-size: 0.92rem;
+    font-size: v.$font-size-md;
     font-weight: 500;
     color: v.$color-text-primary;
     transition: background v.$transition-fast;

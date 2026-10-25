@@ -35,7 +35,7 @@
   }
 
   &__sidebar-title {
-    font-size: 1.1rem;
+    font-size: v.$font-size-lg;
     font-weight: 700;
     color: v.$color-text-heading;
     margin: 0;
@@ -75,7 +75,7 @@
     border-radius: v.$radius-md;
     color: v.$color-text-primary;
     font-family: inherit;
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     outline: none;
     transition: border-color v.$transition-fast;
 
@@ -140,7 +140,7 @@
   }
 
   &__search-result-name {
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     color: v.$color-text-primary;
   }
 
@@ -160,7 +160,7 @@
     border: 1px solid v.$color-border-light;
     border-radius: v.$radius-full;
     color: v.$color-text-primary;
-    font-size: 0.75rem;
+    font-size: v.$font-size-2xs;
     cursor: pointer;
     transition: background v.$transition-fast, border-color v.$transition-fast;
 
@@ -211,13 +211,13 @@
 
   &__empty-text,
   &__loading-text {
-    font-size: 0.9rem;
+    font-size: v.$font-size-md;
     margin: 0 0 v.$spacing-xs;
   }
 
   &__empty-hint,
   &__loading-hint {
-    font-size: 0.78rem;
+    font-size: v.$font-size-xs;
     color: v.$color-text-subtle;
   }
 
@@ -274,18 +274,18 @@
     background: v.$gradient-accent;
     color: v.$color-text-heading;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: v.$font-size-md;
 
     &--sm {
       width: 34px;
       height: 34px;
-      font-size: 0.85rem;
+      font-size: v.$font-size-sm;
     }
 
     &--xs {
       width: 28px;
       height: 28px;
-      font-size: 0.7rem;
+      font-size: v.$font-size-2xs;
       border-radius: v.$radius-sm;
     }
   }
@@ -305,7 +305,7 @@
     border: 2px solid v.$color-bg-card;
 
     &--team {
-      background: #f5c451; // Gold for teams
+      background: v.$color-accent-gold; // Gold for teams
     }
   }
 
@@ -323,7 +323,7 @@
   }
 
   &__conversation-name {
-    font-size: 0.88rem;
+    font-size: v.$font-size-sm;
     font-weight: 600;
     color: v.$color-text-heading;
     white-space: nowrap;
@@ -332,13 +332,13 @@
   }
 
   &__conversation-time {
-    font-size: 0.68rem;
+    font-size: v.$font-size-2xs;
     color: v.$color-text-muted;
     flex-shrink: 0;
   }
 
   &__conversation-preview {
-    font-size: 0.78rem;
+    font-size: v.$font-size-xs;
     color: v.$color-text-muted;
     margin: 0;
     white-space: nowrap;
@@ -359,7 +359,7 @@
     border-radius: v.$radius-full;
     background: v.$color-brand;
     color: v.$color-on-brand;
-    font-size: 0.65rem;
+    font-size: v.$font-size-2xs;
     font-weight: 700;
     display: flex;
     align-items: center;
@@ -430,7 +430,7 @@
   }
 
   &__chat-header-name {
-    font-size: 0.95rem;
+    font-size: v.$font-size-md;
     font-weight: 700;
     color: v.$color-text-heading;
     margin: 0;
@@ -440,7 +440,7 @@
   }
 
   &__chat-header-members {
-    font-size: 0.72rem;
+    font-size: v.$font-size-2xs;
     color: v.$color-text-muted;
   }
 
@@ -488,7 +488,7 @@
 
   &__load-more-btn {
     font-family: inherit;
-    font-size: 0.75rem;
+    font-size: v.$font-size-2xs;
     color: v.$color-text-heading;
     background: none;
     border: none;
@@ -507,7 +507,7 @@
     padding: v.$spacing-sm 0;
 
     &-text {
-      font-size: 0.7rem;
+      font-size: v.$font-size-2xs;
       color: v.$color-text-muted;
       background: v.$color-bg-elevated;
       padding: v.$spacing-xs v.$spacing-md;
@@ -564,14 +564,14 @@
 
   &__bubble-sender {
     display: block;
-    font-size: 0.7rem;
+    font-size: v.$font-size-2xs;
     font-weight: 600;
     color: v.$color-accent-cyan;
     margin-bottom: 2px;
   }
 
   &__bubble-text {
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     color: v.$color-text-primary;
     margin: 0;
     line-height: 1.4;
@@ -581,7 +581,7 @@
 
   &__bubble-time {
     display: block;
-    font-size: 0.62rem;
+    font-size: v.$font-size-2xs;
     color: v.$color-text-subtle;
     text-align: right;
     margin-top: 4px;
@@ -618,7 +618,7 @@
   }
 
   &__typing-text {
-    font-size: 0.72rem;
+    font-size: v.$font-size-2xs;
     color: v.$color-text-muted;
     font-style: italic;
   }
@@ -655,7 +655,7 @@
     background: transparent;
     color: v.$color-text-primary;
     font-family: inherit;
-    font-size: 0.88rem;
+    font-size: v.$font-size-sm;
     padding: v.$spacing-xs v.$spacing-sm;
     outline: none;
 
@@ -702,13 +702,13 @@
     }
 
     &-title {
-      font-size: 1.1rem;
+      font-size: v.$font-size-lg;
       color: v.$color-text-heading;
       margin: 0;
     }
 
     &-text {
-      font-size: 0.85rem;
+      font-size: v.$font-size-sm;
       margin: 0;
     }
   }

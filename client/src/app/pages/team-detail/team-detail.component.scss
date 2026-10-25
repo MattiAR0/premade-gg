@@ -34,8 +34,8 @@
   padding: v.$spacing-4xl v.$spacing-xl;
 
   &__msg {
-    font-size: 1.1rem;
-    color: #ff6b76;
+    font-size: v.$font-size-lg;
+    color: v.$color-danger-text;
     margin-bottom: v.$spacing-lg;
   }
 }
@@ -48,7 +48,7 @@
   background: none;
   border: none;
   color: v.$color-text-muted;
-  font-size: 0.85rem;
+  font-size: v.$font-size-sm;
   font-family: inherit;
   cursor: pointer;
   padding: 0;
@@ -116,7 +116,7 @@
 
   &__logo-text {
     font-weight: 800;
-    font-size: 1.3rem;
+    font-size: v.$font-size-xl;
     color: v.$color-accent-cyan;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -135,18 +135,19 @@
   }
 
   &__name {
-    font-size: 1.6rem;
+    font-size: v.$font-size-2xl;
     font-weight: 800;
     color: v.$color-text-heading;
     letter-spacing: 0.02em;
+    text-transform: none; // nombres propios: se respetan mayúsculas y minúsculas
 
     @include m.respond-to(md) {
-      font-size: 1.85rem;
+      font-size: v.$font-size-3xl;
     }
   }
 
   &__tag {
-    font-size: 1rem;
+    font-size: v.$font-size-base;
     font-weight: 700;
     color: v.$color-accent-cyan;
     opacity: 0.8;
@@ -183,7 +184,7 @@
   }
 
   &__section-title {
-    font-size: 1rem;
+    font-size: v.$font-size-base;
     font-weight: 700;
     color: v.$color-text-heading;
     margin-bottom: v.$spacing-md;
@@ -196,12 +197,12 @@
     }
 
     &--green &-icon {
-      color: #2fd8b0;
+      color: v.$color-positive;
     }
   }
 
   &__count {
-    font-size: 0.8rem;
+    font-size: v.$font-size-xs;
     font-weight: 600;
     color: v.$color-text-muted;
     background: v.$color-bg-elevated;
@@ -210,14 +211,14 @@
   }
 
   &__text {
-    font-size: 0.9rem;
+    font-size: v.$font-size-md;
     color: v.$color-text-muted;
     line-height: 1.7;
     white-space: pre-line;
   }
 
   &__label {
-    font-size: 0.7rem;
+    font-size: v.$font-size-2xs;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -225,7 +226,7 @@
   }
 
   &__empty-msg {
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     color: v.$color-text-subtle;
     font-style: italic;
   }
@@ -260,7 +261,7 @@
   }
 
   &__social {
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     color: v.$color-text-muted;
 
     &-value {
@@ -281,14 +282,14 @@
   &__feedback {
     text-align: center;
     padding: v.$spacing-sm v.$spacing-xl;
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
 
     &--ok {
-      color: #2fd8b0;
+      color: v.$color-positive;
     }
 
     &--err {
-      color: #ff6b76;
+      color: v.$color-danger-text;
     }
   }
 }
@@ -319,13 +320,13 @@
   }
 
   &__title {
-    font-size: 0.9rem;
+    font-size: v.$font-size-md;
     font-weight: 600;
     color: v.$color-text-heading;
   }
 
   &__desc {
-    font-size: 0.8rem;
+    font-size: v.$font-size-xs;
     color: v.$color-text-muted;
   }
 }
@@ -366,7 +367,7 @@
     background: v.$color-bg-elevated;
     color: v.$color-text-heading;
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     text-transform: uppercase;
     flex-shrink: 0;
 
@@ -390,7 +391,7 @@
 
   &__name {
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: v.$font-size-md;
     color: v.$color-text-heading;
     transition: color v.$transition-fast;
 
@@ -400,12 +401,12 @@
   }
 
   &__role-tag {
-    font-size: 0.7rem;
+    font-size: v.$font-size-2xs;
     font-weight: 600;
     padding: 0.1rem 0.4rem;
     border-radius: v.$radius-sm;
     background: rgba(154, 140, 255, 0.1);
-    color: #9a8cff;
+    color: v.$color-team;
 
     &--gold {
       background: rgba(245, 196, 81, 0.12);
@@ -429,10 +430,10 @@
 .c-badge {
   &--region {
     background: rgba(154, 140, 255, 0.1);
-    color: #9a8cff;
+    color: v.$color-team;
     padding: 0.2rem 0.6rem;
     border-radius: v.$radius-sm;
-    font-size: 0.8rem;
+    font-size: v.$font-size-xs;
     font-weight: 600;
   }
 
@@ -441,10 +442,10 @@
     align-items: center;
     gap: 0.25rem;
     background: rgba(47, 216, 176, 0.1);
-    color: #2fd8b0;
+    color: v.$color-positive;
     padding: 0.2rem 0.6rem;
     border-radius: v.$radius-sm;
-    font-size: 0.75rem;
+    font-size: v.$font-size-2xs;
     font-weight: 600;
   }
 
@@ -453,7 +454,7 @@
     color: v.$color-accent-gold;
     padding: 0.15rem 0.5rem;
     border-radius: v.$radius-sm;
-    font-size: 0.7rem;
+    font-size: v.$font-size-2xs;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -461,10 +462,10 @@
 
   &--role {
     background: rgba(154, 140, 255, 0.08);
-    color: #9a8cff;
+    color: v.$color-team;
     padding: 0.2rem 0.6rem;
     border-radius: v.$radius-sm;
-    font-size: 0.8rem;
+    font-size: v.$font-size-xs;
     font-weight: 600;
   }
 }
@@ -473,11 +474,11 @@
 .c-btn {
   &--xs {
     padding: 0.25rem 0.6rem;
-    font-size: 0.75rem;
+    font-size: v.$font-size-2xs;
   }
 
   &--danger {
-    color: #ff6b76;
+    color: v.$color-danger-text;
     border-color: rgba(255, 70, 85, 0.3);
 
     &:hover {
@@ -535,13 +536,13 @@
   }
 
   &__name {
-    font-size: 0.9rem;
+    font-size: v.$font-size-md;
     font-weight: 600;
     color: v.$color-text-heading;
   }
 
   &__date {
-    font-size: 0.75rem;
+    font-size: v.$font-size-2xs;
     color: v.$color-text-subtle;
   }
 
@@ -551,7 +552,7 @@
   }
 
   &__message {
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     color: v.$color-text-muted;
     font-style: italic;
     background: rgba(255, 255, 255, 0.02);
@@ -600,7 +601,7 @@
   }
 
   &__title {
-    font-size: 1.25rem;
+    font-size: v.$font-size-xl;
     color: v.$color-text-heading;
     font-weight: 700;
   }
@@ -631,7 +632,7 @@
   }
 
   &__text {
-    font-size: 0.9rem;
+    font-size: v.$font-size-md;
     color: v.$color-text-muted;
     margin-bottom: v.$spacing-lg;
   }
@@ -644,7 +645,7 @@
   }
 
   &__label {
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     font-weight: 600;
     color: v.$color-text-primary;
   }
@@ -656,7 +657,7 @@
     padding: v.$spacing-sm v.$spacing-md;
     color: v.$color-text-primary;
     font-family: inherit;
-    font-size: 0.95rem;
+    font-size: v.$font-size-md;
     resize: vertical;
     transition: border-color v.$transition-fast;
 
@@ -677,21 +678,21 @@
 
   &__error {
     background: rgba(255, 70, 85, 0.1);
-    color: #ff6b76;
+    color: v.$color-danger-text;
     padding: v.$spacing-sm v.$spacing-md;
     border-radius: v.$radius-md;
     border: 1px solid rgba(255, 70, 85, 0.2);
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     margin: v.$spacing-md v.$spacing-lg 0;
   }
 
   &__success {
     background: rgba(47, 216, 176, 0.1);
-    color: #2fd8b0;
+    color: v.$color-positive;
     padding: v.$spacing-sm v.$spacing-md;
     border-radius: v.$radius-md;
     border: 1px solid rgba(47, 216, 176, 0.2);
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     margin: v.$spacing-md v.$spacing-lg 0;
   }
 
@@ -701,7 +702,7 @@
     height: 14px;
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
-    border-top-color: #fff;
+    border-top-color: v.$color-text-bright;
     animation: spin 1s linear infinite;
     margin-right: 6px;
     vertical-align: text-bottom;

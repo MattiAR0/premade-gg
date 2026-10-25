@@ -10,7 +10,7 @@
   padding: 0.55rem v.$spacing-lg;
   font-family: v.$font-heading;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: v.$font-size-md;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   line-height: 1.2;
@@ -26,7 +26,7 @@
 
   @include m.respond-to(sm) {
     padding: 0.65rem v.$spacing-xl;
-    font-size: 1rem;
+    font-size: v.$font-size-base;
   }
 
   &:active:not(:disabled) {
@@ -83,17 +83,17 @@
     @include m.cut-corner-br(v.$cut-md);
 
     &:hover:not(:disabled) {
-      background: #fff;
+      background: v.$color-text-bright;
     }
   }
 
   &--sm {
     padding: 0.4rem v.$spacing-md;
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
 
     @include m.respond-to(sm) {
       padding: 0.45rem v.$spacing-lg;
-      font-size: 0.88rem;
+      font-size: v.$font-size-sm;
     }
   }
 

@@ -104,7 +104,7 @@
   border-radius: v.$radius-sm;
   color: v.$color-text-heading;
   font-family: v.$font-body;
-  font-size: 0.95rem;
+  font-size: v.$font-size-md;
   transition:
     border-color v.$transition-fast,
     box-shadow v.$transition-fast;
@@ -124,7 +124,7 @@
 // ── Uppercase UI label ───────────────────────────────
 @mixin ui-label {
   font-family: v.$font-heading;
-  font-size: 0.78rem;
+  font-size: v.$font-size-xs;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;

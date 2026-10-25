@@ -41,7 +41,7 @@
     border-radius: v.$radius-full;
     background: v.$color-brand;
     color: v.$color-on-brand;
-    font-size: 0.65rem;
+    font-size: v.$font-size-2xs;
     font-weight: 700;
     display: flex;
     align-items: center;
@@ -86,20 +86,20 @@
   }
 
   &__title {
-    font-size: 0.95rem;
+    font-size: v.$font-size-md;
     font-weight: 700;
     color: v.$color-text-heading;
     margin: 0;
   }
 
   &__view-all {
-    font-size: 0.75rem;
+    font-size: v.$font-size-2xs;
     font-weight: 600;
     color: v.$color-text-heading;
     transition: color v.$transition-fast;
 
     &:hover {
-      color: #fff;
+      color: v.$color-text-bright;
     }
   }
 
@@ -120,7 +120,7 @@
     color: v.$color-text-muted;
 
     &-text {
-      font-size: 0.85rem;
+      font-size: v.$font-size-sm;
       margin: 0;
     }
   }
@@ -173,7 +173,7 @@
     background: v.$gradient-accent;
     color: v.$color-text-heading;
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
   }
 
   &__item-info {
@@ -190,7 +190,7 @@
   }
 
   &__item-name {
-    font-size: 0.82rem;
+    font-size: v.$font-size-xs;
     font-weight: 600;
     color: v.$color-text-heading;
     white-space: nowrap;
@@ -199,13 +199,13 @@
   }
 
   &__item-time {
-    font-size: 0.65rem;
+    font-size: v.$font-size-2xs;
     color: v.$color-text-muted;
     flex-shrink: 0;
   }
 
   &__item-preview {
-    font-size: 0.75rem;
+    font-size: v.$font-size-2xs;
     color: v.$color-text-muted;
     margin: 0;
     white-space: nowrap;
@@ -221,7 +221,7 @@
     border-radius: v.$radius-full;
     background: v.$color-brand;
     color: v.$color-on-brand;
-    font-size: 0.6rem;
+    font-size: v.$font-size-2xs;
     font-weight: 700;
     display: flex;
     align-items: center;

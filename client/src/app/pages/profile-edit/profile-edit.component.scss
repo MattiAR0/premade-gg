@@ -6,18 +6,18 @@
   margin-bottom: v.$spacing-lg;
 
   &__title {
-    font-size: 1.6rem;
+    font-size: v.$font-size-2xl;
     font-weight: 800;
     letter-spacing: 0.02em;
     margin-bottom: v.$spacing-xs;
 
     @include m.respond-to(md) {
-      font-size: 1.85rem;
+      font-size: v.$font-size-3xl;
     }
   }
 
   &__desc {
-    font-size: 0.9rem;
+    font-size: v.$font-size-md;
     color: v.$color-text-muted;
   }
 }
@@ -31,11 +31,11 @@
   &__error {
     text-align: center;
     padding: v.$spacing-sm v.$spacing-md;
-    color: #ff6b76;
+    color: v.$color-danger-text;
     background: rgba(255, 70, 85, 0.06);
     border: 1px solid rgba(255, 70, 85, 0.18);
     border-radius: v.$radius-md;
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     margin-bottom: v.$spacing-md;
   }
 
@@ -46,7 +46,7 @@
     background: rgba(47, 216, 176, 0.06);
     border: 1px solid rgba(47, 216, 176, 0.18);
     border-radius: v.$radius-md;
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     font-weight: 600;
     margin-bottom: v.$spacing-md;
     animation: slideDown 0.3s ease-out;
@@ -72,14 +72,14 @@
   }
 
   &__section-title {
-    font-size: 1rem;
+    font-size: v.$font-size-base;
     font-weight: 700;
     color: v.$color-text-heading;
     margin-bottom: v.$spacing-md;
   }
 
   &__section-hint {
-    font-size: 0.8rem;
+    font-size: v.$font-size-xs;
     font-weight: 400;
     color: v.$color-text-muted;
   }
@@ -92,7 +92,7 @@
   }
 
   &__label {
-    font-size: 0.75rem;
+    font-size: v.$font-size-2xs;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -107,7 +107,7 @@
     border: 1px solid v.$color-border;
     border-radius: v.$radius-md;
     color: v.$color-text-primary;
-    font-size: 0.9rem;
+    font-size: v.$font-size-md;
     font-family: v.$font-heading;
     transition:
       border-color v.$transition-fast,
@@ -141,13 +141,13 @@
   }
 
   &__char-count {
-    font-size: 0.7rem;
+    font-size: v.$font-size-2xs;
     color: v.$color-text-subtle;
     text-align: right;
   }
 
   &__hint {
-    font-size: 0.75rem;
+    font-size: v.$font-size-2xs;
     color: v.$color-text-subtle;
     margin-top: v.$spacing-xs;
   }
@@ -198,7 +198,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.8rem;
+    font-size: v.$font-size-3xl;
     font-weight: 800;
     color: v.$color-text-heading;
   }
@@ -221,7 +221,7 @@
   }
 
   &__preset-label {
-    font-size: 0.8rem;
+    font-size: v.$font-size-xs;
     color: v.$color-text-muted;
     margin-bottom: v.$spacing-sm;
   }
@@ -278,7 +278,7 @@
     border: 1px solid v.$color-border;
     background: transparent;
     color: v.$color-text-primary;
-    font-size: 0.8rem;
+    font-size: v.$font-size-xs;
     font-weight: 500;
     cursor: pointer;
     transition:
@@ -361,18 +361,18 @@
     &-checkbox {
       width: 18px;
       height: 18px;
-      accent-color: #9a8cff;
+      accent-color: v.$color-team;
     }
   }
 
   &__toggle-label {
-    font-size: 0.9rem;
+    font-size: v.$font-size-md;
     font-weight: 600;
     color: v.$color-text-primary;
   }
 
   &__day-name {
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     font-weight: 600;
     color: v.$color-text-primary;
   }
@@ -389,7 +389,7 @@
     border: 1px solid v.$color-border;
     border-radius: v.$radius-sm;
     color: v.$color-text-primary;
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     font-family: v.$font-heading;
 
     &:focus {
@@ -399,7 +399,7 @@
   }
 
   &__time-sep {
-    font-size: 0.8rem;
+    font-size: v.$font-size-xs;
     color: v.$color-text-muted;
   }
 

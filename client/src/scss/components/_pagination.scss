@@ -10,7 +10,7 @@
   border-top: 1px solid v.$color-border;
 
   &__info {
-    font-size: 0.9rem;
+    font-size: v.$font-size-md;
     color: v.$color-text-muted;
   }
 }

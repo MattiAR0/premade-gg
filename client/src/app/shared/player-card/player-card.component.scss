@@ -51,7 +51,7 @@
     background: v.$color-bg-elevated;
     color: v.$color-text-heading;
     font-family: v.$font-display;
-    font-size: 1.3rem;
+    font-size: v.$font-size-xl;
     @include m.cut-corner-br(8px);
   }
 
@@ -67,9 +67,10 @@
 
   &__name {
     font-family: v.$font-heading;
-    font-size: 1.15rem;
+    font-size: v.$font-size-lg;
     font-weight: 700;
     letter-spacing: 0.02em;
+    text-transform: none; // nombres propios: se respetan mayúsculas y minúsculas
     color: v.$color-text-heading;
     max-width: 100%;
     @include m.text-truncate;
@@ -128,7 +129,7 @@
     display: inline-flex;
     align-items: center;
     gap: v.$spacing-xs;
-    font-size: 0.8rem;
+    font-size: v.$font-size-xs;
     color: v.$color-text-muted;
 
     &-icon {

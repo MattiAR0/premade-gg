@@ -4,9 +4,42 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
-## 2026-10-25 · Lectores de pantalla y teclado (segunda ronda, paso 4)
+## 2026-10-25 · Escala tipográfica y roles de color (segunda ronda, paso 5)
 
 **Commit:** este commit
+
+**Qué y por qué:** había unos 38 tamaños de letra distintos (22 solo en la portada, alguno de 9,6 a 11,5px) y 39 colores hex sueltos fuera de `_variables.scss`. Además, los Riot ID y los nombres de equipo salían en mayúsculas y se perdía cómo se escriben.
+
+**Cambios:**
+- `_variables.scss`:
+  - Escala `$font-size-2xs` … `$font-size-6xl`: 12, 13, 14, 15, 16, 18, 20, 24, 28, 32, 36 y 52px. Para el hero, `$font-size-display` (72px) y `$font-size-display-lg` (96px).
+  - El mínimo es 12px.
+  - Roles nuevos: `$color-danger-text` (#ff6b76), `$color-warning`, `$color-info`, `$color-team` y `$color-text-bright`.
+- 268 `font-size` en rem pasan al paso más cercano de la escala, en 28 SCSS (componentes, páginas, `_mixins` y `_typography`). Todo lo que bajaba de 12px sube a 12px. `ui-label` pasa de 0,78 a 0,8125rem.
+- 39 hex sueltos pasan a roles: #ff6b76, #9a8cff, #2fd8b0, #f5c451, #5aa9ff, #8a96a3 y los `#fff` de hover. El fondo de `styles.scss` usa `$color-bg-dark`.
+- `text-transform: none` en los nombres propios: `.c-player-card__name`, `.c-team-card__name`, `.c-profile__name`, `.c-team-detail__name` y los títulos de grupo (`.c-lfg-card__title`, `.c-detail__title`).
+- `.c-detail__title`: con la escala, móvil y escritorio quedaban iguales; en escritorio sube a 28px para mantener la jerarquía.
+
+**Verificación:**
+- Portada: de 22 tamaños distintos (mínimo 10,88px) a 12 (mínimo 12px).
+- A 375px, en 10 páginas (portada, listados, perfil, detalle LFG, detalle de equipo y acceso): sin scroll horizontal y ningún texto por debajo de 12px.
+- "Player10#EUW", "Test Team Alpha" y "Busco trío chill" conservan sus mayúsculas y minúsculas.
+- Contraste medido sobre `bg-card` (#16232f):
+  - `danger-text` 5,79:1 (6,11:1 sobre el fondo de `.c-error`)
+  - `team` 5,75:1
+  - `warning` 9,8:1
+  - `info` 6,5:1
+- Build sin errores y consola limpia.
+
+**Pendiente:**
+- Quedan sin tocar los archivos nuevos de la migración (`oauth-buttons`, que tiene los colores de marca de Discord) y el `#fff` de la máscara de `gradient-border` (`_mixins.scss`), que es funcional.
+- `_navbar.scss` y `_typography.scss` también tienen cambios de la migración: al commitear, preparar solo los bloques de este paso.
+
+---
+
+## 2026-10-25 · Lectores de pantalla y teclado (segunda ronda, paso 4)
+
+**Commit:** `3129148`
 
 **Qué y por qué:** al cambiar de página el foco se quedaba en el enlace pulsado, los títulos eran genéricos ("Perfil · PremadeGG"), los mini-avatares de las tarjetas LFG se anunciaban como "T", las pestañas de tamaño medían 9,6px en móvil y los errores no se anunciaban.
 

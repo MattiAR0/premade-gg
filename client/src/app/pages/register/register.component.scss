@@ -38,19 +38,19 @@
   }
 
   &__title {
-    font-size: 1.3rem;
+    font-size: v.$font-size-xl;
     font-weight: 800;
     letter-spacing: 0.02em;
     color: v.$color-text-heading;
     margin-bottom: v.$spacing-xs;
 
     @include m.respond-to(sm) {
-      font-size: 1.6rem;
+      font-size: v.$font-size-2xl;
     }
   }
 
   &__subtitle {
-    font-size: 0.9rem;
+    font-size: v.$font-size-md;
     color: v.$color-text-muted;
   }
 
@@ -59,7 +59,7 @@
   }
 
   &__section-title {
-    font-size: 0.8rem;
+    font-size: v.$font-size-xs;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -71,11 +71,11 @@
   &__error {
     text-align: center;
     padding: v.$spacing-sm v.$spacing-md;
-    color: #ff6b76;
+    color: v.$color-danger-text;
     background: rgba(255, 70, 85, 0.06);
     border: 1px solid rgba(255, 70, 85, 0.18);
     border-radius: v.$radius-md;
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     margin-bottom: v.$spacing-sm;
   }
 
@@ -89,7 +89,7 @@
     background: rgba(47, 216, 176, 0.06);
     border: 1px solid rgba(47, 216, 176, 0.18);
     border-radius: v.$radius-md;
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     font-weight: 600;
   }
 
@@ -106,7 +106,7 @@
   }
 
   &__label {
-    font-size: 0.75rem;
+    font-size: v.$font-size-2xs;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -122,7 +122,7 @@
     border: 1px solid v.$color-border;
     border-radius: v.$radius-md;
     color: v.$color-text-primary;
-    font-size: 0.9rem;
+    font-size: v.$font-size-md;
     transition:
       border-color v.$transition-fast,
       background-color v.$transition-fast,
@@ -172,7 +172,7 @@
     width: 100%;
     padding: 0.7rem;
     margin-top: v.$spacing-sm;
-    font-size: 0.95rem;
+    font-size: v.$font-size-md;
 
     &:disabled {
       opacity: 0.7;
@@ -192,14 +192,14 @@
 
   &__hint {
     margin-top: -(v.$spacing-xs);
-    font-size: 0.8rem;
+    font-size: v.$font-size-xs;
     color: v.$color-text-muted;
   }
 
   &__footer {
     text-align: center;
     margin-top: v.$spacing-lg;
-    font-size: 0.85rem;
+    font-size: v.$font-size-sm;
     color: v.$color-text-muted;
   }
 

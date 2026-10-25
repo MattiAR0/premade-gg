@@ -58,17 +58,17 @@
   &__title {
     font-family: v.$font-display;
     font-weight: 400;
-    font-size: 3.25rem;
+    font-size: v.$font-size-6xl;
     line-height: 0.95;
     letter-spacing: 0.01em;
     text-transform: uppercase;
 
     @include m.respond-to(sm) {
-      font-size: 4.5rem;
+      font-size: v.$font-size-display;
     }
 
     @include m.respond-to(xl) {
-      font-size: 6rem;
+      font-size: v.$font-size-display-lg;
     }
   }
 
@@ -77,7 +77,7 @@
   }
 
   &__subtitle {
-    font-size: 1.1rem;
+    font-size: v.$font-size-lg;
     color: v.$color-text-primary;
     max-width: 44ch;
   }
@@ -113,18 +113,18 @@
   &__stat-number {
     font-family: v.$font-display;
     font-weight: 400;
-    font-size: 1.6rem;
+    font-size: v.$font-size-2xl;
     line-height: 1;
     color: v.$color-text-heading;
 
     @include m.respond-to(sm) {
-      font-size: 2rem;
+      font-size: v.$font-size-4xl;
     }
   }
 
   &__stat-label {
     @include m.ui-label;
-    font-size: 0.72rem;
+    font-size: v.$font-size-2xs;
     margin-top: 0.3rem;
   }
 }
@@ -152,7 +152,7 @@
 
   &__title {
     font-family: v.$font-display;
-    font-size: 1.75rem;
+    font-size: v.$font-size-3xl;
     text-transform: uppercase;
     color: v.$color-text-heading;
     line-height: 1;
@@ -177,7 +177,7 @@
       .c-chip {
         justify-content: center;
         padding-inline: 0.3rem;
-        font-size: 0.8rem;
+        font-size: v.$font-size-xs;
         letter-spacing: 0.02em;
       }
     }
@@ -195,7 +195,7 @@
   }
 
   &__alt {
-    font-size: 0.92rem;
+    font-size: v.$font-size-md;
     color: v.$color-text-muted;
     transition: color v.$transition-fast;
 
@@ -242,17 +242,17 @@
 
   &__num {
     font-family: v.$font-display;
-    font-size: 2.5rem;
+    font-size: v.$font-size-5xl;
     line-height: 1;
     color: v.$color-text-subtle;
   }
 
   &__title {
-    font-size: 1.25rem;
+    font-size: v.$font-size-xl;
   }
 
   &__desc {
-    font-size: 0.95rem;
+    font-size: v.$font-size-md;
   }
 
   &__cta {
