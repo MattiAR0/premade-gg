@@ -118,9 +118,13 @@
     min-width: 0;
   }
 
-  // El karma es la cifra que define a un jugador en PremadeGG: va aparte y grande
-  &__karma {
+  // Rango y karma, lo que define a un jugador en PremadeGG: juntos, aparte y grandes
+  &__standing {
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: v.$spacing-lg;
     padding: v.$spacing-md v.$spacing-lg;
     background: v.$color-bg-surface;
     border: 1px solid v.$color-border;
@@ -280,10 +284,12 @@
     }
   }
 
+  // Nombre arriba y franjas debajo: con varias franjas el texto ocupa dos líneas
+  // y así las tarjetas siguen alineadas
   &__day {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 0.15rem;
     padding: v.$spacing-sm v.$spacing-md;
     background: v.$color-bg-input;
     border: 1px solid v.$color-border;

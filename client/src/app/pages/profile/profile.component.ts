@@ -7,7 +7,7 @@ import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { MessageService } from '../../services/message.service';
 import { AgentIconsService } from '../../services/agent-icons.service';
-import { User, DAYS_OF_WEEK, DAYS_LABELS, DAY_SLOT_LABELS, normalizeAvailability } from '../../models/user.model';
+import { User, DAYS_OF_WEEK, DAYS_LABELS, DAY_SLOTS, DAY_SLOT_LABELS, normalizeAvailability } from '../../models/user.model';
 import { Reputation, ReviewEligibility } from '../../models/reputation.model';
 import { LfgPost } from '../../models/lfg-post.model';
 import { RankBadgeComponent } from '../../shared/rank-badge/rank-badge.component';
@@ -105,13 +105,19 @@ export class ProfileComponent implements OnInit {
   }
 
   /** Verifica si el usuario tiene disponibilidad configurada */
+  /** Favoritos en orden alfabético, guardados en cualquier orden */
+  get favoriteAgentsSorted(): string[] {
+    return [...(this.user?.favoriteAgents ?? [])].sort((a, b) => a.localeCompare(b));
+  }
+
   get hasAvailability(): boolean {
     return Object.keys(normalizeAvailability(this.user?.availability)).length > 0;
   }
 
-  /** "Tarde, Noche" para un día; vacío si ese día no juega */
+  /** "Tarde, Noche" para un día; "Todo el día" con las 4 franjas; vacío si ese día no juega */
   slotsLabel(day: string): string {
     const slots = normalizeAvailability(this.user?.availability)[day] ?? [];
+    if (slots.length === DAY_SLOTS.length) return 'Todo el día';
     return slots.map((s) => this.daySlotLabels[s]).join(', ');
   }
 

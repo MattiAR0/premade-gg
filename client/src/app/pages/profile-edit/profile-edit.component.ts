@@ -133,6 +133,7 @@ export class ProfileEditComponent implements OnInit {
       this.favoriteAgents.splice(idx, 1);
     } else if (this.favoriteAgents.length < 3) {
       this.favoriteAgents.push(agent);
+      this.favoriteAgents.sort((a, b) => a.localeCompare(b));
     }
   }
 

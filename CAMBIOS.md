@@ -4,6 +4,40 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-10-25 · Perfil: disponibilidad alineada con muchas franjas
+
+**Commit:** este commit
+
+**Qué y por qué:** la usuaria vio que, con muchas franjas, el cuadro de disponibilidad se descuadraba: el texto ("Mañana, Tarde, Noche, Madrugada") partía en dos líneas junto al día y las tarjetas quedaban desiguales.
+
+**Cambios:**
+- `profile.component.scss`: `.c-profile__day` pasa a columna (día arriba, franjas debajo).
+- `profile.component.ts`: con las 4 franjas, `slotsLabel()` devuelve "Todo el día".
+
+**Verificación:** navegador en local, con test2 con 2, 3 y 4 franjas según el día. Las 7 tarjetas miden 62px; Viernes y Sábado muestran "Todo el día" y Domingo "Mañana, Noche, Madrugada" sin partir.
+
+---
+
+## 2026-10-25 · Perfil: rango junto al karma y favoritos en orden alfabético
+
+**Commit:** este commit
+
+**Qué y por qué:** petición de la usuaria: el emblema de rango tenía que ir al lado del karma, no entre las etiquetas de rol y región. Además, los agentes tenían que verse en orden alfabético; los favoritos salían en el orden en que se eligieron.
+
+**Cambios:**
+- `profile`:
+  - Nuevo bloque `.c-profile__standing` con el emblema (`lg`) a la izquierda del karma (`lg`), con el fondo y las esquinas que antes tenía `.c-profile__karma`. El emblema sale de `.c-profile__badges`.
+  - Los agentes favoritos se muestran por orden alfabético (`favoriteAgentsSorted`).
+- `profile-edit`: al marcar un favorito se ordena la lista, así que se guarda ya ordenada. Los selectores de avatar y de favoritos ya eran alfabéticos (catálogo de la entrada anterior); en producción todavía está la lista antigua.
+
+**Verificación:** navegador en local con `test2@premade.gg`.
+- Emblema y karma en la misma fila, a 24px.
+- La fila de etiquetas ya no tiene el rango.
+- Favoritos guardados como Omen, Brimstone, Miks se muestran como Brimstone, Miks, Omen.
+- A 375px el bloque queda centrado bajo el nombre y no hay scroll horizontal.
+
+---
+
 ## 2026-10-25 · Agentes desde valorant-api: avatares y favoritos con filtros
 
 **Commit:** este commit
