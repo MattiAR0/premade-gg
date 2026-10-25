@@ -185,29 +185,6 @@
     line-height: 1.65;
   }
 
-  &__requirements {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-  }
-
-  &__req-list {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    gap: v.$spacing-md;
-    flex-wrap: wrap;
-  }
-
-  &__req-item {
-    font-size: v.$font-size-sm;
-    color: v.$color-text-muted;
-  }
-
-  &__req-value {
-    color: v.$color-text-primary;
-  }
-
   // ── Sections (miembros, solicitudes) ──────────────
   &__section {
     padding: v.$spacing-lg v.$spacing-xl;
@@ -254,49 +231,7 @@
     gap: v.$spacing-sm;
   }
 
-  // ── Action area ───────────────────────────────────
-  &__action {
-    padding: v.$spacing-lg v.$spacing-xl;
-    text-align: center;
-
-    @include m.respond-below(md) {
-      padding: v.$spacing-md;
-    }
-
-    &--guest {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: v.$spacing-md;
-      border-top: 1px solid v.$color-border;
-    }
-  }
-
-  &__guest-text {
-    max-width: 48ch;
-    font-size: v.$font-size-md;
-    color: v.$color-text-primary;
-  }
-
-  &__guest-actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: v.$spacing-sm;
-  }
-
-  &__pending-msg {
-    font-size: v.$font-size-md;
-    color: v.$color-warning;
-    font-weight: 500;
-    padding: v.$spacing-sm v.$spacing-md;
-    background: rgba(245, 196, 81, 0.08);
-    border: 1px solid rgba(245, 196, 81, 0.2);
-    border-radius: v.$radius-md;
-    display: inline-block;
-  }
-
-  // ── Feedback messages ─────────────────────────────
+  // ── Mensajes de resultado (acciones sobre miembros) ──
   &__feedback {
     text-align: center;
     padding: v.$spacing-sm v.$spacing-xl;
@@ -305,6 +240,126 @@
     &--ok {
       color: v.$color-positive;
     }
+
+    &--err {
+      color: v.$color-danger-text;
+    }
+  }
+}
+
+// ── Requisitos y unirse (en la cabecera) ────────────
+.c-join {
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-sm;
+  margin-top: v.$spacing-md;
+  padding-top: v.$spacing-md;
+  border-top: 1px solid v.$color-border;
+
+  &__title {
+    font-family: v.$font-heading;
+    font-size: v.$font-size-2xs;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: v.$color-text-subtle;
+  }
+
+  &__reqs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: v.$spacing-xs v.$spacing-lg;
+  }
+
+  &__req {
+    font-size: v.$font-size-sm;
+    color: v.$color-text-muted;
+
+    &--ok .c-join__mark {
+      color: v.$color-positive;
+    }
+
+    &--ko .c-join__mark {
+      color: v.$color-danger-text;
+    }
+  }
+
+  &__mark {
+    font-weight: 700;
+    margin-right: 0.25rem;
+  }
+
+  &__value {
+    color: v.$color-text-heading;
+    font-weight: 600;
+  }
+
+  // Angular quita el espacio entre etiquetas: el hueco antes de "· tienes…" va aquí
+  &__mine {
+    margin-left: 0.3em;
+  }
+
+  &__action {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: v.$spacing-sm v.$spacing-md;
+    margin-top: v.$spacing-xs;
+
+    &--guest {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    // móvil: el botón ocupa el ancho, fácil de alcanzar con el pulgar
+    @include m.respond-below(sm) {
+      > .c-btn {
+        width: 100%;
+      }
+    }
+  }
+
+  &__reason,
+  &__text {
+    margin: 0;
+    max-width: 52ch;
+    font-size: v.$font-size-sm;
+    color: v.$color-text-primary;
+  }
+
+  &__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: v.$spacing-sm;
+  }
+
+  &__status {
+    align-self: flex-start;
+    margin: v.$spacing-xs 0 0;
+    padding: v.$spacing-sm v.$spacing-md;
+    font-size: v.$font-size-md;
+    font-weight: 500;
+    border: 1px solid;
+    border-radius: v.$radius-md;
+
+    &--pending {
+      color: v.$color-warning;
+      background: rgba(245, 196, 81, 0.08);
+      border-color: rgba(245, 196, 81, 0.2);
+    }
+
+    &--ok {
+      color: v.$color-positive;
+      background: rgba(47, 216, 176, 0.08);
+      border-color: rgba(47, 216, 176, 0.2);
+    }
+  }
+
+  &__feedback {
+    margin: 0;
+    font-size: v.$font-size-sm;
 
     &--err {
       color: v.$color-danger-text;

@@ -4,6 +4,46 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-10-25 · Flujo de unirse: requisitos a la vista y sin recarga (tercera ronda, paso 2)
+
+**Commit:** este commit
+
+**Qué y por qué:** la crítica final encontró varios fallos en el flujo de unirse:
+- El botón "Solicitar unirse" quedaba bajo el pliegue (y≈760 a 1366×768).
+- No decía si cumplías los requisitos: el error llegaba del servidor después del clic.
+- Al enviar, la página volvía al esqueleto y el foco caía al `body`.
+
+**Cambios:**
+- `lfg-detail` (HTML, TS y SCSS): nuevo bloque `.c-join` en la cabecera, debajo del creador.
+  - Lista los requisitos (rango y karma). Si puedes pedir unirte, marca cada uno con ✓/✕ (con texto para lectores de pantalla) y muestra lo tuyo: "tienes Ascendente", "tienes 3,5 ajustado".
+  - Si te falta algo, el botón se desactiva y lo explica, enlazado con `aria-describedby`: "Te falta karma para unirte a este grupo. El karma sube con las valoraciones de tus compañeros."
+  - La comprobación usa `trustKarma`; si el perfil en memoria no lo trae, lo calcula igual que la columna generada. El rango se compara por el orden de `VALORANT_RANKS`.
+  - Tras enviar, el estado pendiente lo dice todo: "Solicitud enviada. El creador la verá en sus notificaciones y te avisaremos cuando responda." Lleva `role="status"` y recibe el foco.
+  - Otros estados: "Estás en este grupo" y "Este grupo ya no acepta solicitudes".
+  - Texto para invitados corregido: "Una cuenta nueva cuenta como karma 3,5 hasta recibir valoraciones" (antes decía que todas empiezan con 5).
+  - En móvil el botón ocupa todo el ancho.
+- `loadPost(id, silent, focusStatus)`: tras unirse, aceptar, rechazar, expulsar o abandonar, la página se refresca sin el esqueleto.
+- Los mensajes de resultado salen junto a su acción (`feedbackAt`): los de unirse en el bloque nuevo; los de gestionar miembros al final, con `role="status"`.
+- Fuera el bloque "Requisitos" de la info y las acciones del final, que estaban duplicados. También sus estilos sin uso.
+- "No se pudo cargar el post LFG" pasa a "No se pudo cargar el grupo".
+- **Corrección del paso 4:** la regla que quita el anillo del `h1` enfocado por código estaba en `app.scss`, que está encapsulado y no llegaba a las páginas. Pasa a `scss/global/_reset.scss`.
+
+**Verificación:**
+- Navegador, como invitado: el botón de iniciar sesión queda en y=406 (antes ≈760).
+- Con `test2@premade.gg` del seed, en la base local:
+  - En "Reclutando…" (Platino, karma 4): rango ✓, karma ✕ con 3,5, botón desactivado y motivo enlazado.
+  - En "Buscando duo de prueba" (Oro, karma 3): ambos ✓. Al enviar no aparece el esqueleto, la página no se mueve y el foco pasa al mensaje con `role="status"`.
+  - A 375px el botón mide 309×44 en y=386, sin scroll horizontal.
+- El `h1` enfocado ya no muestra el anillo.
+- Build sin errores.
+
+**Pendiente:**
+- La prueba dejó en la base local una solicitud pendiente de test2 en "Buscando duo de prueba" (útil para ver el panel del creador con test3).
+- Los 503 de consola son de la Edge Function `riot-refresh`, que no está levantada en local; no vienen de este cambio.
+- El panel de aceptar o rechazar del creador no se ha probado con sesión de creador.
+
+---
+
 ## 2026-10-25 · Karma ajustado con media bayesiana (tercera ronda, paso 1)
 
 **Commit:** este commit (solo frontend; la migración y los tests SQL van con el commit de la migración a Supabase)

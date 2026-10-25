@@ -45,6 +45,82 @@
             <app-karma-badge [karma]="post.author.karma" [count]="post.author.reviewCount" />
           </div>
         </div>
+
+        <!-- Requisitos y unirse: arriba, con lo que cumples y lo que te falta antes de pulsar -->
+        <section class="c-join" aria-labelledby="lfg-join-title">
+          <h2 class="c-join__title" id="lfg-join-title">Requisitos</h2>
+          <ul class="c-join__reqs">
+            @if (post.minRank) {
+              <li class="c-join__req" [class.c-join__req--ok]="isCandidate && meetsRank" [class.c-join__req--ko]="isCandidate && !meetsRank">
+                @if (isCandidate) {
+                  <span class="c-join__mark" aria-hidden="true">{{ meetsRank ? '✓' : '✕' }}</span>
+                  <span class="u-sr-only">{{ meetsRank ? 'Cumples:' : 'No cumples:' }}</span>
+                }
+                Rango <strong class="c-join__value">{{ post.minRank | label: 'rank' }} o más</strong>
+                @if (isCandidate && auth.currentUser()?.rank) {
+                  <span class="c-join__mine">· tienes {{ auth.currentUser()!.rank | label: 'rank' }}</span>
+                }
+              </li>
+            }
+            <li class="c-join__req" [class.c-join__req--ok]="isCandidate && meetsKarma" [class.c-join__req--ko]="isCandidate && !meetsKarma">
+              @if (isCandidate) {
+                <span class="c-join__mark" aria-hidden="true">{{ meetsKarma ? '✓' : '✕' }}</span>
+                <span class="u-sr-only">{{ meetsKarma ? 'Cumples:' : 'No cumples:' }}</span>
+              }
+              Karma <strong class="c-join__value">{{ post.minKarma | number: '1.0-1' }} o más</strong>
+              @if (isCandidate) {
+                <span class="c-join__mine">· tienes {{ myTrustKarma | number: '1.1-2' }} ajustado</span>
+              }
+            </li>
+          </ul>
+
+          @if (canJoin) {
+            <div class="c-join__action">
+              <button
+                class="c-btn c-btn--primary"
+                type="button"
+                [disabled]="actionLoading || !!joinBlockReason"
+                [attr.aria-describedby]="joinBlockReason ? 'lfg-join-reason' : null"
+                (click)="requestJoin()">
+                @if (actionLoading) {
+                  Enviando...
+                } @else {
+                  Solicitar unirse
+                }
+              </button>
+              @if (joinBlockReason) {
+                <p class="c-join__reason" id="lfg-join-reason">{{ joinBlockReason }}</p>
+              }
+            </div>
+          } @else if (!auth.isAuthenticated() && post.status === 'open') {
+            <!-- Invitado: el siguiente paso, sin dejar la página sin salida -->
+            <div class="c-join__action c-join__action--guest">
+              <p class="c-join__text">
+                Para unirte necesitas una cuenta. Una cuenta nueva cuenta como karma 3,5 hasta recibir valoraciones.
+              </p>
+              <div class="c-join__buttons">
+                <a class="c-btn c-btn--primary" routerLink="/login" [queryParams]="{ returnUrl: currentUrl }">
+                  Inicia sesión para unirte
+                </a>
+                <a class="c-btn c-btn--secondary" routerLink="/register" [queryParams]="{ returnUrl: currentUrl }">
+                  Crear cuenta
+                </a>
+              </div>
+            </div>
+          } @else if (currentMemberStatus === 'pending') {
+            <p class="c-join__status c-join__status--pending" id="lfg-join-status" tabindex="-1" role="status">
+              Solicitud enviada. El creador la verá en sus notificaciones y te avisaremos cuando responda.
+            </p>
+          } @else if (currentMemberStatus === 'accepted' && !isCreator) {
+            <p class="c-join__status c-join__status--ok" id="lfg-join-status" tabindex="-1" role="status">Estás en este grupo.</p>
+          } @else if (isCandidate && post.status !== 'open') {
+            <p class="c-join__text">Este grupo ya no acepta solicitudes.</p>
+          }
+
+          @if (actionError && feedbackAt === 'join') {
+            <p class="c-join__feedback c-join__feedback--err" role="alert">{{ actionError }}</p>
+          }
+        </section>
       </header>
 
       <!-- Info principal -->
@@ -62,17 +138,6 @@
             <p class="c-detail__text">{{ post.description }}</p>
           </div>
         }
-
-        <!-- Requisitos -->
-        <div class="c-detail__requirements">
-          <span class="c-detail__label">Requisitos</span>
-          <ul class="c-detail__req-list">
-            @if (post.minRank) {
-              <li class="c-detail__req-item">Rango mínimo: <strong class="c-detail__req-value">{{ post.minRank | label: 'rank' }}</strong></li>
-            }
-            <li class="c-detail__req-item">Karma mínimo: <strong class="c-detail__req-value">{{ post.minKarma }}</strong></li>
-          </ul>
-        </div>
       </section>
 
       <!-- Miembros aceptados -->
@@ -157,50 +222,14 @@
         </section>
       }
 
-      <!-- Acción unirse -->
-      @if (canJoin) {
-        <section class="c-detail__action">
-          <button
-            class="c-btn c-btn--primary"
-            [disabled]="actionLoading"
-            (click)="requestJoin()">
-            @if (actionLoading) {
-              Enviando...
-            } @else {
-              Solicitar unirse
-            }
-          </button>
-        </section>
-      } @else if (!auth.isAuthenticated() && post.status === 'open') {
-        <!-- Invitado: explicar el siguiente paso en vez de dejar la página sin salida -->
-        <section class="c-detail__action c-detail__action--guest">
-          <p class="c-detail__guest-text">
-            Para unirte necesitas una cuenta de PremadeGG y karma {{ post.minKarma }} o más.
-            Todas las cuentas empiezan con 5 de karma.
-          </p>
-          <div class="c-detail__guest-actions">
-            <a class="c-btn c-btn--primary" routerLink="/login" [queryParams]="{ returnUrl: currentUrl }">
-              Inicia sesión para unirte
-            </a>
-            <a class="c-btn c-btn--secondary" routerLink="/register" [queryParams]="{ returnUrl: currentUrl }">
-              Crear cuenta
-            </a>
-          </div>
-        </section>
-      }
-
-      @if (currentMemberStatus === 'pending') {
-        <section class="c-detail__action">
-          <p class="c-detail__pending-msg">Tu solicitud está pendiente de aprobación</p>
-        </section>
-      }
-
-      <!-- Mensajes de feedback -->
-      @if (actionMessage) {
-        <p class="c-detail__feedback c-detail__feedback--ok">{{ actionMessage }}</p>
-      }
-      @if (actionError) {
-        <p class="c-detail__feedback c-detail__feedback--err" role="alert">{{ actionError }}</p>
+      <!-- Resultado de aceptar, rechazar, expulsar o abandonar, junto a la lista -->
+      @if (feedbackAt === 'members') {
+        @if (actionMessage) {
+          <p class="c-detail__feedback c-detail__feedback--ok" role="status">{{ actionMessage }}</p>
+        }
+        @if (actionError) {
+          <p class="c-detail__feedback c-detail__feedback--err" role="alert">{{ actionError }}</p>
+        }
       }
     </article>
   }

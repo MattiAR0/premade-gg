@@ -62,6 +62,12 @@ button {
   outline-offset: 2px;
 }
 
+// El h1 recibe el foco por código al cambiar de página (app.ts): no es un control,
+// así que sin anillo. Va aquí y no en app.scss porque los estilos de App están encapsulados.
+main h1[tabindex='-1']:focus {
+  outline: none;
+}
+
 // ── Selection color ───────────────────────────────────
 ::selection {
   background: rgba(255, 70, 85, 0.25);

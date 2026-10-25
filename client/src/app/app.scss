@@ -107,7 +107,6 @@
   }
 }
 
-.c-skip-target:focus,
-main h1[tabindex='-1']:focus {
+.c-skip-target:focus {
   outline: none;
 }
