@@ -30,7 +30,8 @@
 
   // Rol y región son datos, no estados: neutros para no competir con rango y karma
   &--role,
-  &--region {
+  &--region,
+  &--neutral {
     background: transparent;
     color: v.$color-text-muted;
     border: 1px solid v.$color-border-light;

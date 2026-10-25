@@ -383,15 +383,6 @@
 
 // ── Badges ──────────────────────────────────────────
 .c-badge {
-  &--team {
-    background: rgba(154, 140, 255, 0.1);
-    color: v.$color-team;
-    padding: 0.2rem 0.6rem;
-    border-radius: v.$radius-sm;
-    font-size: v.$font-size-xs;
-    font-weight: 700;
-  }
-
   &--full {
     background: rgba(245, 196, 81, 0.12);
     color: v.$color-warning;

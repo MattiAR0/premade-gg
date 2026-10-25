@@ -6,9 +6,7 @@
   position: relative;
   overflow: hidden;
   border-bottom: 1px solid v.$color-border;
-  background:
-    linear-gradient(115deg, rgba(255, 70, 85, 0.14) 0%, rgba(255, 70, 85, 0) 45%),
-    v.$color-bg-dark;
+  background: v.$color-bg-dark;
 
   // Bloque diagonal decorativo
   &::before {

@@ -4,9 +4,46 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-10-25 · Detalles menores (segunda ronda, paso 6)
+
+**Commit:** este commit (los cambios de `oauth-buttons` van con el commit de la migración)
+
+**Qué y por qué:** cerrar las observaciones menores de la segunda crítica. Unas incumplían `CLAUDE.md` (brillo decorativo, franja lateral de 2px); otras pesaban más de la cuenta en la jerarquía o eran textos en inglés o en masculino.
+
+**Cambios:**
+- **Estilo:**
+  - Hero de la portada: fuera el degradado rojo; queda el fondo liso y el bloque diagonal.
+  - `team-detail`: el mensaje de las solicitudes pasa de `border-left: 2px` a un borde completo de 1px.
+  - `oauth-buttons`: Discord deja de ser un botón relleno de su color de marca. Los dos proveedores son botones secundarios iguales y solo el icono de Discord lleva su color; así el CTA rojo "Iniciar sesión" es lo que más pesa. El foco usa `$color-focus` y el error `$color-danger-text`.
+  - Detalle LFG: el badge de tamaño (Dúo/Trío) pasa del morado de equipos a un badge neutro nuevo, `.c-badge--neutral`; el `--team` local desaparece.
+- **Textos:**
+  - Login: "Bienvenido de vuelta a PremadeGG" pasa a "Entra en tu cuenta de PremadeGG" (sin género).
+  - `TEAM_SIZE_LABELS`: "Dúo" y "Trío" con tilde. Afecta a pestañas, chips, títulos sugeridos y badges. En la portada, "Dúo, trío o 5-stack".
+  - Perfil: "Posts LFG" pasa a "Grupos LFG".
+  - Equipos: "Remover" y "Remover coach" pasan a "Quitar" y "Quitar coach".
+  - "Coach" se mantiene: es el término habitual en los esports en español y no tiene género.
+  - `alt=""` en los avatares de `player-card` y de las solicitudes de equipo (antes "… avatar" y "Avatar"), porque el nombre está al lado. La inicial que sustituye al avatar lleva `aria-hidden`.
+- **Estados vacíos de `/lfg`:**
+  - "Llenos" y "Cerrados" explican qué se lista y ofrecen "Ver grupos abiertos" en lugar de "Crear grupo".
+  - "Abiertos" con filtros activos añade "Limpiar filtros".
+
+**Verificación:**
+- Login: los dos botones de proveedor se ven iguales y el CTA rojo destaca. Icono de Discord sobre `bg-input`: 4,06:1 (gráfico, mínimo 3:1).
+- `/lfg?status=closed`: el estado vacío muestra el texto nuevo y "Ver grupos abiertos" lleva a los 10 grupos abiertos.
+- Pestañas "Dúo", "Trío"; badge neutro "Trío" en el detalle; "Grupos LFG (1)" en el perfil de Player1#KR1; hero sin degradado.
+- Build sin errores y consola limpia.
+
+**Pendiente:**
+- El mensaje de solicitud de `team-detail` necesita sesión de capitán para verse; solo se ha comprobado compilando.
+- `oauth-buttons` es un archivo nuevo de la migración: estos cambios irán con su commit.
+- `login.component.html` mezcla cambios de la migración: al commitear, preparar solo la línea del subtítulo.
+- Falta volver a lanzar `/impeccable critique` y compararlo con el 26/40.
+
+---
+
 ## 2026-10-25 · Escala tipográfica y roles de color (segunda ronda, paso 5)
 
-**Commit:** este commit
+**Commit:** `d809070`
 
 **Qué y por qué:** había unos 38 tamaños de letra distintos (22 solo en la portada, alguno de 9,6 a 11,5px) y 39 colores hex sueltos fuera de `_variables.scss`. Además, los Riot ID y los nombres de equipo salían en mayúsculas y se perdía cómo se escriben.
 

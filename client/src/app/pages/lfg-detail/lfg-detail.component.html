@@ -23,7 +23,7 @@
       <header class="c-detail__header">
         <div class="c-detail__title-row">
           <h1 class="c-detail__title">{{ post.title }}</h1>
-          <span class="c-badge c-badge--team">{{ teamLabels[post.teamSize] }}</span>
+          <span class="c-badge c-badge--neutral">{{ teamLabels[post.teamSize] }}</span>
           @if (post.status === 'full') {
             <span class="c-badge c-badge--full">Lleno</span>
           } @else if (post.status === 'closed') {

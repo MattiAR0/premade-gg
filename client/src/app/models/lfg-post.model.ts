@@ -23,7 +23,7 @@ export interface LfgPost {
 export type TeamSizeTab = 2 | 3 | 5;
 
 export const TEAM_SIZE_LABELS: Record<TeamSizeTab, string> = {
-  2: 'Duo',
-  3: 'Trio',
+  2: 'Dúo',
+  3: 'Trío',
   5: '5-Stack',
 };

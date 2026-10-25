@@ -282,7 +282,7 @@
     <!-- LFG Posts -->
     @if (lfgPosts.length > 0) {
       <section class="c-profile__section-block">
-        <h2 class="c-profile__block-title">Posts LFG ({{ lfgPosts.length }})</h2>
+        <h2 class="c-profile__block-title">Grupos LFG ({{ lfgPosts.length }})</h2>
         <div class="l-grid l-grid--feed">
           @for (post of lfgPosts; track post._id) {
             <app-lfg-card [post]="post" />

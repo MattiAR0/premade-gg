@@ -102,7 +102,7 @@
             <div class="c-request-card__user">
               <div class="c-request-card__avatar">
                 @if (req.user.profileImage) {
-                <img [src]="req.user.profileImage" alt="Avatar" />
+                <img [src]="req.user.profileImage" alt="" />
                 } @else {
                 {{ req.user.riotId.charAt(0) }}
                 }
@@ -175,7 +175,7 @@
           @if (isOwner && player.user._id !== team.owner._id) {
           <button class="c-btn c-btn--ghost c-btn--xs c-btn--danger" [disabled]="actionLoading"
             (click)="removePlayer(player.user._id)">
-            Remover
+            Quitar
           </button>
           }
           @if (!isOwner && player.user._id === auth.currentUser()?._id) {
@@ -214,7 +214,7 @@
         </a>
         @if (isOwner) {
         <button class="c-btn c-btn--ghost c-btn--xs c-btn--danger" [disabled]="actionLoading" (click)="removeCoach()">
-          Remover coach
+          Quitar coach
         </button>
         }
       </div>
@@ -249,7 +249,7 @@
           @if (isOwner) {
           <button class="c-btn c-btn--ghost c-btn--xs c-btn--danger" [disabled]="actionLoading"
             (click)="removeStaff(s.user._id)">
-            Remover
+            Quitar
           </button>
           }
         </li>

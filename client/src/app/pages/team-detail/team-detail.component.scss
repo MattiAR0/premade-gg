@@ -558,7 +558,7 @@
     background: rgba(255, 255, 255, 0.02);
     padding: v.$spacing-sm;
     border-radius: v.$radius-sm;
-    border-left: 2px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid v.$color-border;
   }
 }
 

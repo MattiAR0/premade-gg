@@ -308,7 +308,7 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectedMembers = this.selectedMembers.slice(0, size - 1);
   }
 
-  /** Título por defecto si el usuario no escribe uno: "Duo · Gold · Duelist" */
+  /** Título por defecto si el usuario no escribe uno: "Busco Dúo · Gold · Duelist" */
   get suggestedTitle(): string {
     const user = this.auth.currentUser();
     const parts: string[] = [`Busco ${this.sizeLabels[this.newPost.teamSize]}`];

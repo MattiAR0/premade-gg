@@ -5,10 +5,10 @@
         <img
           class="c-player-card__avatar"
           [src]="avatarUrl"
-          [alt]="player.riotId + ' avatar'"
+          alt=""
         />
       } @else {
-        <div class="c-player-card__avatar-placeholder">
+        <div class="c-player-card__avatar-placeholder" aria-hidden="true">
           {{ player.riotId.charAt(0) | uppercase }}
         </div>
       }
