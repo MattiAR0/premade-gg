@@ -4,6 +4,20 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-10-25 · DEPLOY.md: dominio real y despliegue por preview
+
+**Commit:** este commit
+
+**Qué y por qué:** `DEPLOY.md` apuntaba a `premadegg.vercel.app`, que da `404 DEPLOYMENT_NOT_FOUND`; la producción está en `premade-gg.vercel.app`. Además mandaba importar un proyecto de Vercel que ya existe, y no tenía en cuenta que las previews necesitan estar en Redirect URLs.
+
+**Cambios:**
+- Site URL y Redirect URLs con `premade-gg.vercel.app` y el comodín de previews `premade-*-mattis-projects-43eade79.vercel.app/**`. Nota de por qué: el cliente redirige a `window.location.origin`.
+- Paso 5b: revisar el proyecto existente (Root Directory `client`, Node 20+), probar en el preview de la rama y fusionar en `main` para producción.
+
+**Verificación:** dominios comprobados en el navegador (`premade-gg.vercel.app` responde con la versión de febrero; `premadegg.vercel.app`, 404) y despliegues leídos de la API de GitHub.
+
+---
+
 ## 2026-10-25 · Migración a Supabase (commit)
 
 **Commit:** este commit

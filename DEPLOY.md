@@ -53,8 +53,12 @@ En **Dashboard → Authentication**:
 ### URL Configuration
 | Campo | Valor |
 |---|---|
-| Site URL | `https://premadegg.vercel.app` |
-| Redirect URLs | `https://premadegg.vercel.app/**` y `http://localhost:4200/**` |
+| Site URL | `https://premade-gg.vercel.app` |
+| Redirect URLs | `https://premade-gg.vercel.app/**`, `https://premade-*-mattis-projects-43eade79.vercel.app/**` (previews de Vercel: por commit y por rama) y `http://localhost:4200/**` |
+
+> El cliente redirige a `window.location.origin` (registro, OAuth, recuperar contraseña), así que
+> cada dominio desde el que se use la app tiene que estar en **Redirect URLs**; si no, Supabase
+> manda al usuario a la Site URL.
 
 ### SMTP propio (obligatorio)
 El SMTP por defecto de Supabase **solo envía emails a los miembros de tu equipo** del proyecto. Para que los usuarios reales reciban la recuperación de contraseña, configura Brevo (300 emails/día gratis):
@@ -133,9 +137,15 @@ export const environment = {
 Haz commit y push.
 
 ### 5b. Deploy
-1. En [vercel.com](https://vercel.com) → **Add New → Project** → importa el repositorio
-2. **Root Directory**: `client` (el resto lo lee de `client/vercel.json`)
-3. **Deploy**
+El proyecto de Vercel ya existe (producción en `https://premade-gg.vercel.app`, desplegando desde `main`).
+
+1. En **Vercel → premade-gg → Settings → General** comprueba que **Root Directory** es `client`
+   (el resto lo lee de `client/vercel.json`) y que **Node.js Version** es 20 o superior.
+2. Sube la rama de trabajo (`git push -u origin <rama>`): Vercel crea un **Preview** con su propia URL.
+   Prueba ahí registro, login, Google/Discord, crear grupo y unirse.
+3. Cuando el preview funcione, fusiona la rama en `main`: Vercel despliega producción.
+
+Si empiezas de cero: **Add New → Project** → importa el repositorio → Root Directory `client` → **Deploy**.
 
 ---
 
