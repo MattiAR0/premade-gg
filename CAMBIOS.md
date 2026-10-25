@@ -4,6 +4,19 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-10-25 · Ignorar la carpeta .vercel
+
+**Commit:** este commit
+
+**Qué y por qué:** el CLI de Vercel crea `.vercel/` al enlazar el proyecto (ID del proyecto y de la organización). Es configuración local y no debe entrar en el repositorio.
+
+**Cambios:**
+- `.gitignore`: añade `.vercel`.
+
+**Verificación:** `git check-ignore .vercel` lo marca como ignorado.
+
+---
+
 ## 2026-10-25 · Fusión de main en migrate-supabase (capturas del README)
 
 **Commit:** este commit

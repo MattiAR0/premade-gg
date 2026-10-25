@@ -27,3 +27,5 @@ Thumbs.db
 # Supabase
 supabase/.branches
 supabase/.temp
+
+.vercel
