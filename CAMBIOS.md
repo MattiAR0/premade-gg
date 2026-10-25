@@ -4,6 +4,35 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-10-25 · Rango con emblema en vez de texto
+
+**Commit:** este commit
+
+**Qué y por qué:** petición de la usuaria: mostrar el rango con su icono del juego, no escrito. Es lo que reconoce de un vistazo cualquier jugador de Valorant.
+
+**Cambios:**
+- `app-rank-badge`:
+  - Muestra el emblema de valorant-api.com, la misma fuente que los iconos de agentes. La URL es fija por episodio y nº de tier (`media.valorant-api.com/competitivetiers/<episodio>/<tier>/smallicon.png`), así que no hay petición a la API.
+  - Accesibilidad: `role="img"` con `aria-label` "Rango Oro" y `title` con el nombre como tooltip.
+  - Nuevas entradas `size` (`sm` 22px, `md` 26px, `lg` 40px) y `showLabel` (emblema + nombre).
+  - Si la imagen no carga, vuelve la pastilla de texto de antes (`.c-rank`).
+  - La base de datos guarda solo el tier: sin división se usa el emblema de la división 1. Si el valor trae división ("Gold 2"), se respeta.
+- `_badges.scss`: nuevo `.c-rank-icon`. El nombre usa `$rank-colors`.
+- Con nombre visible: cabecera del perfil (`lg`), rango objetivo en el detalle de equipo y creador en el detalle LFG. En tarjetas, filas y miembros va solo el emblema.
+
+**Verificación:**
+- `/players`: 12 emblemas cargados (Bronce → tier 6, Plata → 9, Radiante → 27) y 0 respaldos.
+- Perfil: emblema de 40px + "BRONCE".
+- Detalle LFG a 375px: emblema + "DIAMANTE" en el creador y solo emblema en miembros, sin scroll horizontal.
+- Contraste de los nombres sobre `bg-card`: de 5,17:1 (Hierro) a 13,28:1 (Radiante); sobre `bg-elevated`, mínimo 4,68:1.
+- Consola limpia.
+
+**Pendiente:**
+- El icono de división 1 cuando no hay división puede inducir a error. Guardar la división exige cambiar el enum `valorant_rank` y la Edge Function de Riot.
+- Los selectores de rango (filtros, crear grupo) siguen en texto.
+
+---
+
 ## 2026-10-25 · Ignorar la carpeta .vercel
 
 **Commit:** este commit

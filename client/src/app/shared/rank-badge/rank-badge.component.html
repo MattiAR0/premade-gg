@@ -1,1 +1,15 @@
-<span class="c-rank c-rank--{{ tier }}"><span class="c-rank__gem" aria-hidden="true"></span>{{ rank | label: 'rank' }}</span>
+@if (!iconFailed) {
+  <span
+    class="c-rank-icon c-rank-icon--{{ size }} c-rank-icon--{{ tier }}"
+    role="img"
+    [attr.aria-label]="'Rango ' + (rank | label: 'rank')"
+    [title]="rank | label: 'rank'"
+  >
+    <img class="c-rank-icon__img" [src]="iconUrl" alt="" loading="lazy" (error)="iconFailed = true" />
+    @if (showLabel) {
+      <span class="c-rank-icon__label" aria-hidden="true">{{ rank | label: 'rank' }}</span>
+    }
+  </span>
+} @else {
+  <span class="c-rank c-rank--{{ tier }}"><span class="c-rank__gem" aria-hidden="true"></span>{{ rank | label: 'rank' }}</span>
+}

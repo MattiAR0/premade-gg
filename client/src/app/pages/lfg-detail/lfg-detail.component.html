@@ -40,7 +40,7 @@
           <!-- Lo que decide si te unes: rango y karma del creador, al mismo nivel -->
           <div class="c-detail__standing">
             @if (post.author.rank) {
-              <app-rank-badge [rank]="post.author.rank" />
+              <app-rank-badge [rank]="post.author.rank" [showLabel]="true" />
             }
             <app-karma-badge [karma]="post.author.karma" [count]="post.author.reviewCount" />
           </div>
