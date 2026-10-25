@@ -1,10 +1,9 @@
 import { Injectable, signal, computed, effect } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
-import { SocketService } from './socket.service';
+import { RealtimeService } from './realtime.service';
+import { rpc } from './supabase.client';
 import {
   Conversation,
   Message,
@@ -14,13 +13,12 @@ import {
 
 /**
  * Servicio de mensajería.
- * Gestiona conversaciones, mensajes, unread counts, y eventos de Socket.IO.
+ * Gestiona conversaciones, mensajes, unread counts y eventos de Supabase Realtime.
  */
 @Injectable({
   providedIn: 'root',
 })
 export class MessageService {
-  private readonly baseUrl = `${environment.apiUrl}/messages`;
   private socketSubs: Subscription[] = [];
   private typingTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -54,12 +52,11 @@ export class MessageService {
   readonly loadingMessages = signal(false);
 
   constructor(
-    private readonly http: HttpClient,
     private readonly auth: AuthService,
-    private readonly socket: SocketService,
+    private readonly socket: RealtimeService,
     private readonly router: Router,
   ) {
-    // Suscribirse a eventos Socket.IO cuando se conecta
+    // Suscribirse a eventos Realtime cuando se conecta
     effect(() => {
       if (this.auth.isAuthenticated() && this.socket.connected()) {
         this.setupSocketListeners();
@@ -74,7 +71,7 @@ export class MessageService {
     });
   }
 
-  // ── Socket.IO event listeners ──────────────────────
+  // ── Realtime event listeners ───────────────────────
 
   private setupSocketListeners(): void {
     this.teardownSocketListeners();
@@ -97,7 +94,11 @@ export class MessageService {
         // Actualizar lastMessage y mover la conversación al top
         this.conversations.update((convs) => {
           const idx = convs.findIndex((c) => c._id === message.conversation);
-          if (idx === -1) return convs;
+          if (idx === -1) {
+            // Conversación aún no cargada en la lista: traerla completa
+            this.fetchConversation(message.conversation);
+            return convs;
+          }
 
           const updated = { ...convs[idx] };
           updated.lastMessage = {
@@ -131,8 +132,20 @@ export class MessageService {
     // Nueva conversación
     this.socketSubs.push(
       this.socket.on<Conversation>('conversation:new').subscribe((conv) => {
-        this.conversations.update((convs) => [conv, ...convs]);
-        this.socket.emit('conversation:join', { conversationId: conv._id });
+        this.conversations.update((convs) => [conv, ...convs.filter((c) => c._id !== conv._id)]);
+      }),
+    );
+
+    // Expulsado de una conversación (p. ej. chat de un equipo que abandonas)
+    this.socketSubs.push(
+      this.socket.on<{ conversationId: string }>('conversation:removed').subscribe(({ conversationId }) => {
+        this.conversations.update((convs) => convs.filter((c) => c._id !== conversationId));
+        if (this.activeConversation()?._id === conversationId) {
+          this.activeConversation.set(null);
+          this.messages.set([]);
+          this.socket.leaveTyping();
+        }
+        this.loadUnreadCount();
       }),
     );
 
@@ -193,15 +206,23 @@ export class MessageService {
     this.socketSubs = [];
   }
 
-  // ── REST API methods ───────────────────────────────
+  // ── API methods (RPC) ──────────────────────────────
+
+  /** Trae una conversación y la pone al principio de la lista */
+  private fetchConversation(conversationId: string): void {
+    rpc<Conversation | null>('get_conversation', { p_id: conversationId }).subscribe({
+      next: (conv) => {
+        if (!conv) return;
+        this.conversations.update((convs) => [conv, ...convs.filter((c) => c._id !== conv._id)]);
+      },
+    });
+  }
 
   /** Carga la lista de conversaciones */
   loadConversations(cursor?: string): void {
     this.loadingConversations.set(true);
-    let params = new HttpParams();
-    if (cursor) params = params.set('cursor', cursor);
 
-    this.http.get<ConversationsResponse>(`${this.baseUrl}/conversations`, { params }).subscribe({
+    rpc<ConversationsResponse>('get_conversations', { p_cursor: cursor ?? null }).subscribe({
       next: (res) => {
         if (cursor) {
           this.conversations.update((convs) => [...convs, ...res.data]);
@@ -217,10 +238,8 @@ export class MessageService {
   /** Carga mensajes de una conversación */
   loadMessages(conversationId: string, cursor?: string): void {
     this.loadingMessages.set(true);
-    let params = new HttpParams();
-    if (cursor) params = params.set('cursor', cursor);
 
-    this.http.get<MessagesResponse>(`${this.baseUrl}/conversations/${conversationId}/messages`, { params }).subscribe({
+    rpc<MessagesResponse>('get_messages', { p_conversation_id: conversationId, p_cursor: cursor ?? null }).subscribe({
       next: (res) => {
         if (cursor) {
           // Prepend al inicio (mensajes más antiguos arriba)
@@ -237,7 +256,7 @@ export class MessageService {
 
   /** Crea o abre un chat directo con un usuario */
   startDirectChat(targetUserId: string): void {
-    this.http.post<Conversation>(`${this.baseUrl}/conversations/direct`, { targetUserId }).subscribe({
+    rpc<Conversation>('get_or_create_direct_conversation', { p_target: targetUserId }).subscribe({
       next: (conversation) => {
         // Añadir a la lista si no existe
         this.conversations.update((convs) => {
@@ -252,7 +271,7 @@ export class MessageService {
 
   /** Crea una conversación grupal */
   createGroupConversation(name: string, participantIds: string[]): void {
-    this.http.post<Conversation>(`${this.baseUrl}/conversations/group`, { name, participantIds }).subscribe({
+    rpc<Conversation>('create_group_conversation', { p_name: name, p_participant_ids: participantIds }).subscribe({
       next: (conversation) => {
         this.conversations.update((convs) => [conversation, ...convs]);
         this.router.navigate(['/messages', conversation._id]);
@@ -262,13 +281,13 @@ export class MessageService {
 
   /** Envía un mensaje */
   sendMessage(conversationId: string, content: string): void {
-    this.http.post<Message>(`${this.baseUrl}/conversations/${conversationId}/messages`, { content }).subscribe();
-    // La respuesta real llega via Socket.IO 'message:new'
+    rpc<Message>('send_message', { p_conversation_id: conversationId, p_content: content }).subscribe();
+    // La respuesta real llega via Realtime 'message:new'
   }
 
   /** Marca mensajes como leídos */
   markAsRead(conversationId: string): void {
-    this.http.put(`${this.baseUrl}/conversations/${conversationId}/read`, {}).subscribe({
+    rpc('mark_conversation_read', { p_conversation_id: conversationId }).subscribe({
       next: () => {
         // Actualizar unread count de la conversación
         this.conversations.update((convs) =>
@@ -286,8 +305,8 @@ export class MessageService {
 
   /** Carga el total de mensajes no leídos */
   loadUnreadCount(): void {
-    this.http.get<{ count: number }>(`${this.baseUrl}/unread-count`).subscribe({
-      next: (res) => this.unreadCount.set(res.count),
+    rpc<number>('get_unread_message_count').subscribe({
+      next: (count) => this.unreadCount.set(count),
     });
   }
 
@@ -296,6 +315,7 @@ export class MessageService {
     this.activeConversation.set(conversation);
     this.messages.set([]);
     this.messagesNextCursor.set(null);
+    this.socket.joinTyping(conversation._id);
     this.loadMessages(conversation._id);
     this.markAsRead(conversation._id);
   }

@@ -41,6 +41,9 @@ export interface User {
   isCoach: boolean;
   coachDetails: string;
 
+  /** false hasta que el usuario vincula su Riot ID (p. ej. tras entrar con Google/Discord) */
+  onboarded?: boolean;
+
   createdAt: string;
 }
 

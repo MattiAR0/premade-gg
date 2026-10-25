@@ -2,11 +2,12 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { OauthButtonsComponent } from '../../shared/oauth-buttons/oauth-buttons.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, OauthButtonsComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
@@ -24,7 +25,7 @@ export class LoginComponent {
   ) {}
 
   /** Ruta interna a la que volver tras el login (solo rutas relativas, evita open redirects) */
-  private get returnUrl(): string {
+  get returnUrl(): string {
     const url = this.route.snapshot.queryParamMap.get('returnUrl') || '/';
     return url.startsWith('/') && !url.startsWith('//') ? url : '/';
   }
@@ -39,7 +40,12 @@ export class LoginComponent {
     this.errorMessage = '';
 
     this.authService.login({ email: this.email, password: this.password }).subscribe({
-      next: () => {
+      next: (res) => {
+        // Cuenta sin Riot ID vinculado (p. ej. registro a medias) → onboarding
+        if (res.user && !res.user.onboarded) {
+          this.router.navigate(['/onboarding'], { queryParams: { returnUrl: this.returnUrl } });
+          return;
+        }
         this.router.navigateByUrl(this.returnUrl);
       },
       error: (err) => {

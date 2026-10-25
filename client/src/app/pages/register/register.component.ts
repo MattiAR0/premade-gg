@@ -3,12 +3,13 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
+import { OauthButtonsComponent } from '../../shared/oauth-buttons/oauth-buttons.component';
 import { LabelPipe } from '../../shared/pipes/label.pipe';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, RouterLink, LabelPipe],
+  imports: [FormsModule, RouterLink, OauthButtonsComponent, LabelPipe],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
 })
@@ -33,6 +34,8 @@ export class RegisterComponent {
   // General state
   errorMessage = '';
   loading = false;
+  /** El proyecto exige confirmar el email: se muestra el aviso en lugar del formulario */
+  confirmationSent = false;
 
   readonly regions = [
     { value: 'eu', label: 'Europa' },
@@ -97,7 +100,13 @@ export class RegisterComponent {
 
     // Validar Riot ID automáticamente antes de registrar
     this.apiService.validateRiotId(this.gameName, this.tagLine).subscribe({
-      next: () => {
+      next: (res) => {
+        if (res.taken) {
+          this.loading = false;
+          this.errorMessage = 'Este Riot ID ya está registrado';
+          this.cdr.markForCheck();
+          return;
+        }
         this.finishRegistration();
       },
       error: (err) => {
@@ -117,10 +126,21 @@ export class RegisterComponent {
       role: this.role,
       schedule: this.schedule,
     }).subscribe({
-      next: () => {
+      next: (res) => {
+        if (res.emailConfirmationRequired) {
+          this.loading = false;
+          this.confirmationSent = true;
+          this.cdr.markForCheck();
+          return;
+        }
         this.router.navigateByUrl(this.returnUrl);
       },
       error: (err) => {
+        // Cuenta creada pero no se pudo vincular el Riot ID: se termina en /onboarding
+        if (err.onboardingRequired) {
+          this.router.navigate(['/onboarding'], { queryParams: { returnUrl: this.returnUrl } });
+          return;
+        }
         this.loading = false;
         this.errorMessage = err.error?.message || 'Error al registrarse';
         this.cdr.markForCheck();

@@ -4,9 +4,41 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
-## 2026-10-25 · Flujo de unirse: requisitos a la vista y sin recarga (tercera ronda, paso 2)
+## 2026-10-25 · Migración a Supabase (commit)
 
 **Commit:** este commit
+
+**Qué y por qué:** dejar en git la migración de MEAN (Express + MongoDB en Render) a Angular + Supabase, que llevaba sin commitear desde el 2026-10-24. Sobre esa base se han ido commiteando por separado los cambios de diseño, y sin ella no se puede desplegar. El detalle de la migración está en `MIGRACION-SUPABASE.md`.
+
+**Cambios:**
+- Fuera `server/`, `docker-compose.yml`, los Dockerfile, `nginx.conf`, `proxy.conf.json`, `socket.service`, `auth.interceptor` y `environment.docker`.
+- `supabase/`:
+  - `config.toml` con puertos 443xx.
+  - 9 migraciones: esquema, RLS, RPC de lectura y escritura, triggers y cron, storage, `review_count`, filtros LFG y `trust_karma`.
+  - `seed.sql`, tests pgTAP, plantillas de email y las Edge Functions `riot-validate`, `riot-link` y `riot-refresh`.
+- Cliente:
+  - `supabase.client`, `realtime.service` y `auth.service` con Supabase Auth (email, Google y Discord).
+  - Página `onboarding`, componente `oauth-buttons` y `api.service` sobre RPC.
+  - `environment.prod.ts` con marcadores para la URL y la clave publicable.
+- `scripts/migrate-mongo-to-supabase.mjs`, `package.json` raíz con `db:*`, workflow `supabase-keepalive` y `.env.example` por ámbito.
+- `DEPLOY.md`, `README.md`, `.gitignore` y `MIGRACION-SUPABASE.md`.
+- En `_navbar.scss` y `_typography.scss`, los bloques de la migración: cajón móvil con `transform` y `font-synthesis: none`.
+
+**Verificación:**
+- `ng build --configuration=production` sin errores. Aviso: el bundle inicial pesa 549,6 kB, 49,6 kB por encima del presupuesto de 500 kB.
+- `npm run db:test`: 18/18.
+- Búsqueda de secretos en los archivos del commit: solo marcadores y la clave publicable de demostración del CLI local.
+
+**Pendiente:**
+- Configurar Supabase cloud y Vercel antes de subir la rama (ver `DEPLOY.md`).
+- Probar `riot-link` con una `RIOT_API_KEY` vigente.
+- No entran en este commit: `CLAUDE.md` y la entrada "caveman" (otra tarea), `TRASPASO.md`, `REDISENO-VALORANT.md`, `.claude/` y `.impeccable/`.
+
+---
+
+## 2026-10-25 · Flujo de unirse: requisitos a la vista y sin recarga (tercera ronda, paso 2)
+
+**Commit:** `c6f11cc`
 
 **Qué y por qué:** la crítica final encontró varios fallos en el flujo de unirse:
 - El botón "Solicitar unirse" quedaba bajo el pliegue (y≈760 a 1366×768).
@@ -46,7 +78,7 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ## 2026-10-25 · Karma ajustado con media bayesiana (tercera ronda, paso 1)
 
-**Commit:** este commit (solo frontend; la migración y los tests SQL van con el commit de la migración a Supabase)
+**Commit:** `0d6c7e2` (solo frontend; la migración y los tests SQL van con el commit de la migración a Supabase)
 
 **Qué y por qué:** la crítica final (22/40) vio que las cuentas nuevas, con un 5,0 implícito, pasaban cualquier filtro o requisito de karma. En `/players`, "4,5+" devolvía 8 jugadores y 4 no tenían ninguna valoración. Además, en tarjetas y filas no se veía en cuántas valoraciones se basaba el karma. Se eligió la media bayesiana.
 

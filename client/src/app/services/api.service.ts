@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
+import { map, tap } from 'rxjs/operators';
 import { User } from '../models/user.model';
 import { Reputation, ReviewEligibility } from '../models/reputation.model';
 import { LfgPost } from '../models/lfg-post.model';
 import { Team } from '../models/team.model';
 import { RiotAccountValidation, RiotRankData } from '../models/riot.model';
 import { AppNotification } from '../models/notification.model';
+import { invokeFunction, rpc } from './supabase.client';
 
-/** Respuesta paginada genérica del backend (cursor-based) */
+/** Respuesta paginada genérica (cursor-based) */
 export interface PaginatedResponse<T> {
   data: T[];
   total: number;
@@ -18,6 +17,8 @@ export interface PaginatedResponse<T> {
   totalPages: number;
   nextCursor: string | null;
 }
+
+type Message = { message: string };
 
 // ── Cache en memoria con TTL ────────────────────────────
 interface CacheEntry<T> {
@@ -27,28 +28,27 @@ interface CacheEntry<T> {
 
 const DEFAULT_TTL_MS = 60_000; // 1 minuto
 
+/**
+ * Acceso a datos de PremadeGG.
+ * Las lecturas y escrituras van a funciones RPC de Postgres (supabase/migrations)
+ * que devuelven la misma forma que la antigua API Express; la integración con Riot
+ * va a Edge Functions (supabase/functions).
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService {
-  private readonly baseUrl = environment.apiUrl;
   private readonly cache = new Map<string, CacheEntry<unknown>>();
 
-  constructor(private readonly http: HttpClient) { }
-
-  private cacheKey(url: string, params: HttpParams): string {
-    return `${url}?${params.toString()}`;
-  }
-
-  private cachedGet<T>(url: string, params: HttpParams, ttl = DEFAULT_TTL_MS): Observable<T> {
-    const key = this.cacheKey(url, params);
+  private cachedRpc<T>(fn: string, args: Record<string, unknown> = {}, ttl = DEFAULT_TTL_MS): Observable<T> {
+    const key = `${fn}?${JSON.stringify(args)}`;
     const entry = this.cache.get(key) as CacheEntry<T> | undefined;
 
     if (entry && Date.now() < entry.expiresAt) {
       return of(entry.data);
     }
 
-    return this.http.get<T>(url, { params }).pipe(
+    return rpc<T>(fn, args).pipe(
       tap((data) => {
         this.cache.set(key, { data, expiresAt: Date.now() + ttl });
       }),
@@ -60,7 +60,7 @@ export class ApiService {
     this.cache.clear();
   }
 
-  /** Invalida entradas de cache que coincidan con un prefijo de URL */
+  /** Invalida entradas de cache cuyo nombre de función empiece por el prefijo */
   invalidateByPrefix(prefix: string): void {
     for (const key of this.cache.keys()) {
       if (key.startsWith(prefix)) {
@@ -69,16 +69,14 @@ export class ApiService {
     }
   }
 
-  // ── Riot API (Proxy) ────────────────────────────────
+  // ── Riot API (Edge Functions) ───────────────────────
   validateRiotId(gameName: string, tagLine: string): Observable<RiotAccountValidation> {
-    return this.http.get<RiotAccountValidation>(
-      `${this.baseUrl}/riot/validate/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`,
-    );
+    return invokeFunction<RiotAccountValidation>('riot-validate', { gameName, tagLine });
   }
 
   getRiotRank(region: string, gameName: string, tagLine: string): Observable<RiotRankData> {
-    return this.http.get<RiotRankData>(
-      `${this.baseUrl}/riot/rank/${region}/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`,
+    return invokeFunction<{ rank: RiotRankData }>('riot-validate', { gameName, tagLine, region }).pipe(
+      map((res) => res.rank),
     );
   }
 
@@ -88,73 +86,89 @@ export class ApiService {
     role?: string;
     minKarma?: number;
     lookingForTeam?: boolean;
-    /** Solo jugadores con al menos N valoraciones */
     minReviews?: number;
     cursor?: string;
     limit?: number;
   }): Observable<PaginatedResponse<User>> {
-    let params = new HttpParams();
-    if (filters?.rank) params = params.set('rank', filters.rank);
-    if (filters?.role) params = params.set('role', filters.role);
-    if (filters?.minKarma) params = params.set('minKarma', filters.minKarma.toString());
-    if (filters?.lookingForTeam) params = params.set('lookingForTeam', 'true');
-    if (filters?.minReviews) params = params.set('minReviews', filters.minReviews.toString());
-    if (filters?.cursor) params = params.set('cursor', filters.cursor);
-    if (filters?.limit) params = params.set('limit', filters.limit.toString());
-    return this.cachedGet<PaginatedResponse<User>>(`${this.baseUrl}/users`, params);
+    return this.cachedRpc<PaginatedResponse<User>>('get_users', {
+      p_rank: filters?.rank || null,
+      p_role: filters?.role || null,
+      p_min_karma: filters?.minKarma || null,
+      p_looking_for_team: filters?.lookingForTeam || null,
+      p_cursor: filters?.cursor || null,
+      p_limit: filters?.limit || 12,
+      // Solo se envía si se usa: así el RPC antiguo (sin el parámetro) sigue funcionando
+      ...(filters?.minReviews ? { p_min_reviews: filters.minReviews } : {}),
+    });
   }
 
   getUserById(id: string): Observable<User> {
-    return this.cachedGet<User>(`${this.baseUrl}/users/${id}`, new HttpParams());
+    return this.cachedRpc<User | null>('get_user', { p_id: id }).pipe(
+      map((user) => {
+        if (!user) throw { status: 404, error: { message: 'Usuario no encontrado' } };
+        return user;
+      }),
+    );
   }
 
   // ── Reviews ─────────────────────────────────────────
   getReviews(filters?: { target?: string; author?: string }): Observable<Reputation[]> {
-    let params = new HttpParams();
-    if (filters?.target) params = params.set('target', filters.target);
-    if (filters?.author) params = params.set('author', filters.author);
-    return this.cachedGet<Reputation[]>(`${this.baseUrl}/reviews`, params);
+    return this.cachedRpc<Reputation[]>('get_reviews', {
+      p_target: filters?.target || null,
+      p_author: filters?.author || null,
+    });
   }
 
   createReview(data: { target: string; rating: number; comment?: string }): Observable<Reputation> {
-    return this.http.post<Reputation>(`${this.baseUrl}/reviews`, data).pipe(
-      tap(() => this.invalidateByPrefix(`${this.baseUrl}/reviews`)),
-    );
+    return rpc<Reputation>('create_review', {
+      p_target: data.target,
+      p_rating: data.rating,
+      p_comment: data.comment ?? null,
+    }).pipe(tap(() => this.invalidateReputation()));
   }
 
-  deleteReview(id: string): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.baseUrl}/reviews/${id}`).pipe(
-      tap(() => this.invalidateByPrefix(`${this.baseUrl}/reviews`)),
-    );
+  deleteReview(id: string): Observable<Message> {
+    return rpc<Message>('delete_review', { p_id: id }).pipe(tap(() => this.invalidateReputation()));
+  }
+
+  /** Una review cambia el karma: invalida reviews y usuarios */
+  private invalidateReputation(): void {
+    this.invalidateByPrefix('get_reviews');
+    this.invalidateByPrefix('get_user');
   }
 
   checkReviewEligibility(targetId: string): Observable<ReviewEligibility> {
-    return this.http.get<ReviewEligibility>(`${this.baseUrl}/reviews/eligibility/${targetId}`);
+    return rpc<ReviewEligibility>('get_review_eligibility', { p_target: targetId });
   }
 
   // ── LFG Posts ───────────────────────────────────────
   getLfgPosts(filters?: {
     teamSize?: number;
     status?: string;
-    /** Rango del jugador: grupos sin mínimo o con mínimo igual o inferior */
+    /** Solo grupos a los que se puede entrar con este rango */
     myRank?: string;
     /** Karma mínimo del creador */
     minAuthorKarma?: number;
     cursor?: string;
     limit?: number;
   }): Observable<PaginatedResponse<LfgPost>> {
-    let params = new HttpParams();
-    if (filters?.teamSize) params = params.set('teamSize', filters.teamSize.toString());
-    if (filters?.status) params = params.set('status', filters.status);
-    if (filters?.myRank) params = params.set('myRank', filters.myRank);
-    if (filters?.minAuthorKarma) params = params.set('minAuthorKarma', filters.minAuthorKarma.toString());
-    if (filters?.cursor) params = params.set('cursor', filters.cursor);
-    if (filters?.limit) params = params.set('limit', filters.limit.toString());
-    return this.cachedGet<PaginatedResponse<LfgPost>>(`${this.baseUrl}/lfg`, params);
+    return this.cachedRpc<PaginatedResponse<LfgPost>>('get_lfg_posts', {
+      p_team_size: filters?.teamSize || null,
+      p_status: filters?.status || null,
+      p_cursor: filters?.cursor || null,
+      p_limit: filters?.limit || 12,
+      ...(filters?.myRank ? { p_my_rank: filters.myRank } : {}),
+      ...(filters?.minAuthorKarma ? { p_min_author_karma: filters.minAuthorKarma } : {}),
+    });
   }
 
   getLfgPostById(id: string): Observable<LfgPost> {
-    return this.http.get<LfgPost>(`${this.baseUrl}/lfg/${id}`);
+    return rpc<LfgPost | null>('get_lfg_post', { p_id: id }).pipe(
+      map((post) => {
+        if (!post) throw { status: 404, error: { message: 'Post LFG no encontrado' } };
+        return post;
+      }),
+    );
   }
 
   createLfgPost(data: {
@@ -165,120 +179,139 @@ export class ApiService {
     minKarma?: number;
     initialMembers?: string[];
   }): Observable<LfgPost> {
-    return this.http.post<LfgPost>(`${this.baseUrl}/lfg`, data).pipe(
-      tap(() => this.invalidateByPrefix(`${this.baseUrl}/lfg`)),
-    );
+    return rpc<LfgPost>('create_lfg_post', {
+      p_title: data.title,
+      p_team_size: data.teamSize,
+      p_description: data.description ?? null,
+      p_min_rank: data.minRank || null,
+      p_min_karma: data.minKarma ?? 3,
+      p_initial_members: data.initialMembers ?? [],
+    }).pipe(tap(() => this.invalidateByPrefix('get_lfg_posts')));
   }
 
   // ── LFG Miembros ────────────────────────────────────
-  joinLfgPost(postId: string): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${this.baseUrl}/lfg/${postId}/join`, {});
+  joinLfgPost(postId: string): Observable<Message> {
+    return rpc<Message>('join_lfg_post', { p_id: postId }).pipe(tap(() => this.invalidateByPrefix('get_lfg_posts')));
   }
 
   handleLfgMember(postId: string, userId: string, action: 'accept' | 'reject'): Observable<{ message: string; post?: LfgPost }> {
-    return this.http.put<{ message: string; post?: LfgPost }>(
-      `${this.baseUrl}/lfg/${postId}/members/${userId}`,
-      { action },
-    );
+    return rpc<{ message: string; post?: LfgPost }>('handle_lfg_member', {
+      p_post_id: postId,
+      p_user_id: userId,
+      p_action: action,
+    }).pipe(tap(() => this.invalidateByPrefix('get_lfg_posts')));
   }
 
-  leaveLfgPost(postId: string, userId: string): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(
-      `${this.baseUrl}/lfg/${postId}/members/${userId}`,
+  leaveLfgPost(postId: string, userId: string): Observable<Message> {
+    return rpc<Message>('leave_lfg_post', { p_post_id: postId, p_user_id: userId }).pipe(
+      tap(() => this.invalidateByPrefix('get_lfg_posts')),
     );
   }
 
   // ── LFG Posts by author ────────────────────────────
   getLfgPostsByAuthor(authorId: string): Observable<PaginatedResponse<LfgPost>> {
-    const params = new HttpParams().set('author', authorId);
-    return this.cachedGet<PaginatedResponse<LfgPost>>(`${this.baseUrl}/lfg`, params);
+    return this.cachedRpc<PaginatedResponse<LfgPost>>('get_lfg_posts', { p_author: authorId });
   }
+
   // ── User Search (autocomplete) ─────────────
   searchUsers(query: string): Observable<User[]> {
-    const params = new HttpParams().set('q', query);
-    return this.http.get<User[]>(`${this.baseUrl}/users/search`, { params });
+    return rpc<User[]>('search_users', { p_q: query });
   }
+
   // ── Teams ───────────────────────────────────────────
   getTeams(filters?: Record<string, string | number | boolean>): Observable<PaginatedResponse<Team>> {
-    let params = new HttpParams();
-    if (filters) {
-      for (const [key, value] of Object.entries(filters)) {
-        if (value !== undefined && value !== '' && value !== false) {
-          params = params.set(key, String(value));
-        }
-      }
-    }
-    return this.cachedGet<PaginatedResponse<Team>>(`${this.baseUrl}/teams`, params);
+    const f = filters ?? {};
+    return this.cachedRpc<PaginatedResponse<Team>>('get_teams', {
+      p_region: f['region'] || null,
+      p_target_rank: f['targetRank'] || null,
+      p_recruiting: f['recruiting'] === true || f['recruiting'] === 'true' ? true : null,
+      p_search: f['search'] || null,
+      p_cursor: f['cursor'] || null,
+      p_limit: Number(f['limit']) || 12,
+    });
   }
 
   getTeamById(id: string): Observable<Team> {
-    return this.http.get<Team>(`${this.baseUrl}/teams/${id}`);
-  }
-
-  createTeam(data: Partial<Team>): Observable<Team> {
-    return this.http.post<Team>(`${this.baseUrl}/teams`, data).pipe(
-      tap(() => this.invalidateByPrefix(`${this.baseUrl}/teams`)),
+    return rpc<Team | null>('get_team', { p_id: id }).pipe(
+      map((team) => {
+        if (!team) throw { status: 404, error: { message: 'Equipo no encontrado' } };
+        return team;
+      }),
     );
   }
 
+  createTeam(data: Partial<Team> & { initialPlayers?: string[] }): Observable<Team> {
+    return rpc<Team>('create_team', { p_data: data }).pipe(tap(() => this.invalidateByPrefix('get_teams')));
+  }
+
   updateTeam(id: string, data: Partial<Team>): Observable<Team> {
-    return this.http.put<Team>(`${this.baseUrl}/teams/${id}`, data);
+    return rpc<Team>('update_team', { p_id: id, p_data: data }).pipe(tap(() => this.invalidateByPrefix('get_teams')));
   }
 
-  deleteTeam(id: string): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.baseUrl}/teams/${id}`);
+  deleteTeam(id: string): Observable<Message> {
+    return rpc<Message>('delete_team', { p_id: id }).pipe(tap(() => this.invalidateByPrefix('get_teams')));
   }
 
-  setTeamCoach(teamId: string, userId: string | null): Observable<{ message: string }> {
-    return this.http.put<{ message: string }>(`${this.baseUrl}/teams/${teamId}/coach`, { userId });
+  setTeamCoach(teamId: string, userId: string | null): Observable<Message> {
+    return rpc<Message>('set_team_coach', { p_team_id: teamId, p_user_id: userId }).pipe(
+      tap(() => this.invalidateByPrefix('get_teams')),
+    );
   }
 
-  addTeamPlayer(teamId: string, userId: string, role: string): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${this.baseUrl}/teams/${teamId}/players`, { userId, role });
+  addTeamPlayer(teamId: string, userId: string, role: string): Observable<Message> {
+    return rpc<Message>('add_team_player', { p_team_id: teamId, p_user_id: userId, p_role: role }).pipe(
+      tap(() => this.invalidateByPrefix('get_teams')),
+    );
   }
 
-  removeTeamPlayer(teamId: string, userId: string): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.baseUrl}/teams/${teamId}/players/${userId}`);
+  removeTeamPlayer(teamId: string, userId: string): Observable<Message> {
+    return rpc<Message>('remove_team_player', { p_team_id: teamId, p_user_id: userId }).pipe(
+      tap(() => this.invalidateByPrefix('get_teams')),
+    );
   }
 
-  addTeamStaff(teamId: string, userId: string, role: string): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${this.baseUrl}/teams/${teamId}/staff`, { userId, role });
+  addTeamStaff(teamId: string, userId: string, role: string): Observable<Message> {
+    return rpc<Message>('add_team_staff', { p_team_id: teamId, p_user_id: userId, p_role: role }).pipe(
+      tap(() => this.invalidateByPrefix('get_teams')),
+    );
   }
 
-  removeTeamStaff(teamId: string, userId: string): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.baseUrl}/teams/${teamId}/staff/${userId}`);
+  removeTeamStaff(teamId: string, userId: string): Observable<Message> {
+    return rpc<Message>('remove_team_staff', { p_team_id: teamId, p_user_id: userId }).pipe(
+      tap(() => this.invalidateByPrefix('get_teams')),
+    );
   }
 
   // ── Team Join Requests ────────────────────────────────
 
-  requestJoinTeam(teamId: string, message: string): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${this.baseUrl}/teams/${teamId}/requests`, { message });
+  requestJoinTeam(teamId: string, message: string): Observable<Message> {
+    return rpc<Message>('request_join_team', { p_team_id: teamId, p_message: message });
   }
 
-  reviewJoinRequestTeam(teamId: string, userId: string, status: 'accepted' | 'rejected'): Observable<{ message: string }> {
-    return this.http.put<{ message: string }>(`${this.baseUrl}/teams/${teamId}/requests/${userId}`, { status });
+  reviewJoinRequestTeam(teamId: string, userId: string, status: 'accepted' | 'rejected'): Observable<Message> {
+    return rpc<Message>('review_team_join_request', { p_team_id: teamId, p_user_id: userId, p_status: status }).pipe(
+      tap(() => this.invalidateByPrefix('get_teams')),
+    );
   }
 
   // ── Notifications ───────────────────────────────────
   getNotifications(unreadOnly = false): Observable<AppNotification[]> {
-    let params = new HttpParams();
-    if (unreadOnly) params = params.set('unreadOnly', 'true');
-    return this.http.get<AppNotification[]>(`${this.baseUrl}/notifications`, { params });
+    return rpc<AppNotification[]>('get_notifications', { p_unread_only: unreadOnly });
   }
 
   getUnreadNotificationCount(): Observable<{ count: number }> {
-    return this.http.get<{ count: number }>(`${this.baseUrl}/notifications/unread-count`);
+    return rpc<number>('get_unread_notification_count').pipe(map((count) => ({ count })));
   }
 
-  markNotificationAsRead(id: string): Observable<{ message: string }> {
-    return this.http.put<{ message: string }>(`${this.baseUrl}/notifications/${id}/read`, {});
+  markNotificationAsRead(id: string): Observable<Message> {
+    return rpc<Message>('mark_notification_read', { p_id: id });
   }
 
-  markAllNotificationsAsRead(): Observable<{ message: string }> {
-    return this.http.put<{ message: string }>(`${this.baseUrl}/notifications/read-all`, {});
+  markAllNotificationsAsRead(): Observable<Message> {
+    return rpc<Message>('mark_all_notifications_read');
   }
 
-  deleteNotification(id: string): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.baseUrl}/notifications/${id}`);
+  deleteNotification(id: string): Observable<Message> {
+    return rpc<Message>('delete_notification', { p_id: id });
   }
 }

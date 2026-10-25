@@ -12,6 +12,8 @@ body {
   font-size: v.$font-size-base;
   color: v.$color-text-primary;
   -webkit-font-smoothing: antialiased;
+  // Anton solo tiene un peso: evita negritas sintéticas cuando un componente pide 700/800
+  font-synthesis: none;
 }
 
 h1,

@@ -1,9 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
+/**
+ * Llega desde el enlace del email de recuperación. Supabase procesa el token de la
+ * URL al arrancar y deja al usuario con una sesión temporal para cambiar la contraseña.
+ */
 @Component({
   selector: 'app-reset-password',
   standalone: true,
@@ -12,8 +15,6 @@ import { environment } from '../../../environments/environment';
   styleUrl: './reset-password.component.scss',
 })
 export class ResetPasswordComponent implements OnInit {
-  token = '';
-  email = '';
   password = '';
   confirmPassword = '';
   loading = false;
@@ -21,24 +22,18 @@ export class ResetPasswordComponent implements OnInit {
   successMessage = '';
   invalidLink = false;
 
-  private readonly baseUrl = environment.apiUrl;
-
   constructor(
-    private readonly route: ActivatedRoute,
-    private readonly router: Router,
-    private readonly http: HttpClient,
+    private readonly authService: AuthService,
     private readonly cdr: ChangeDetectorRef,
   ) {}
 
-  ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
-      this.token = params['token'] || '';
-      this.email = params['email'] || '';
+  async ngOnInit(): Promise<void> {
+    await this.authService.whenSessionRestored;
 
-      if (!this.token || !this.email) {
-        this.invalidLink = true;
-      }
-    });
+    // Enlace caducado o ya usado: Supabase deja el error en el hash de la URL
+    const linkError = new URLSearchParams(window.location.hash.slice(1)).get('error_code');
+    this.invalidLink = !!linkError || !this.authService.session();
+    this.cdr.markForCheck();
   }
 
   onSubmit(): void {
@@ -61,11 +56,7 @@ export class ResetPasswordComponent implements OnInit {
 
     this.loading = true;
 
-    this.http.post<{ message: string }>(`${this.baseUrl}/auth/reset-password`, {
-      token: this.token,
-      email: this.email,
-      password: this.password,
-    }).subscribe({
+    this.authService.updatePassword(this.password).subscribe({
       next: (res) => {
         this.loading = false;
         this.successMessage = res.message;

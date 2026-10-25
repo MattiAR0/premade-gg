@@ -1,8 +1,7 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -17,10 +16,8 @@ export class ForgotPasswordComponent {
   errorMessage = '';
   successMessage = '';
 
-  private readonly baseUrl = environment.apiUrl;
-
   constructor(
-    private readonly http: HttpClient,
+    private readonly authService: AuthService,
     private readonly cdr: ChangeDetectorRef,
   ) {}
 
@@ -34,9 +31,7 @@ export class ForgotPasswordComponent {
     this.errorMessage = '';
     this.successMessage = '';
 
-    this.http.post<{ message: string }>(`${this.baseUrl}/auth/forgot-password`, {
-      email: this.email,
-    }).subscribe({
+    this.authService.requestPasswordReset(this.email).subscribe({
       next: (res) => {
         this.loading = false;
         this.successMessage = res.message;

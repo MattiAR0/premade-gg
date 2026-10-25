@@ -1,0 +1,85 @@
+@use 'utilities/variables' as v;
+
+.c-oauth {
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-sm;
+  margin-bottom: v.$spacing-lg;
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: v.$spacing-sm;
+    width: 100%;
+    padding: 0.65rem v.$spacing-md;
+    border: 1px solid v.$color-border;
+    border-radius: v.$radius-md;
+    font-family: v.$font-body;
+    font-size: v.$font-size-md;
+    font-weight: 600;
+    color: v.$color-text-heading;
+    background: v.$color-bg-input;
+    cursor: pointer;
+    transition:
+      background-color v.$transition-fast,
+      border-color v.$transition-fast,
+      transform v.$transition-fast;
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &:hover:not(:disabled) {
+      border-color: v.$color-border-light;
+      background: v.$color-bg-elevated;
+    }
+
+    &:focus-visible {
+      outline: 2px solid v.$color-focus;
+      outline-offset: 2px;
+    }
+
+    // Solo el icono lleva el color de Discord, como el de Google
+    &--discord .c-oauth__icon {
+      color: #5865f2;
+    }
+  }
+
+  &__icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  &__error {
+    margin: 0;
+    color: v.$color-danger-text;
+    font-size: v.$font-size-xs;
+    text-align: center;
+  }
+
+  &__divider {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-md;
+    margin-top: v.$spacing-sm;
+    color: v.$color-text-subtle;
+    font-size: v.$font-size-2xs;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+
+    &::before,
+    &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: v.$color-border;
+    }
+  }
+}

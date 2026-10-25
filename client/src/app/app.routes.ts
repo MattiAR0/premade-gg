@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './guards/auth.guard';
+import { authGuard, onboardingGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -48,6 +48,13 @@ export const routes: Routes = [
     title: 'Crear cuenta · PremadeGG',
     loadComponent: () =>
       import('./pages/register/register.component').then((m) => m.RegisterComponent),
+  },
+  {
+    path: 'onboarding',
+    title: 'Vincula tu Riot ID · PremadeGG',
+    loadComponent: () =>
+      import('./pages/onboarding/onboarding.component').then((m) => m.OnboardingComponent),
+    canActivate: [onboardingGuard],
   },
   {
     path: 'forgot-password',

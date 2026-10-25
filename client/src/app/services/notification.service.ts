@@ -2,7 +2,7 @@ import { Injectable, signal, computed, OnDestroy, effect } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
-import { SocketService } from './socket.service';
+import { RealtimeService } from './realtime.service';
 import { AppNotification } from '../models/notification.model';
 
 @Injectable({
@@ -29,9 +29,9 @@ export class NotificationService implements OnDestroy {
   constructor(
     private readonly api: ApiService,
     private readonly auth: AuthService,
-    private readonly socket: SocketService,
+    private readonly socket: RealtimeService,
   ) {
-    // Reacciona a cambios de autenticación y conexión de socket
+    // Reacciona a cambios de autenticación y conexión Realtime
     effect(() => {
       if (this.auth.isAuthenticated() && this.socket.connected()) {
         this.setupSocketListeners();
@@ -48,7 +48,7 @@ export class NotificationService implements OnDestroy {
     this.teardownSocketListeners();
   }
 
-  /** Configura listeners de Socket.IO para notificaciones en tiempo real */
+  /** Configura listeners de Realtime para notificaciones en tiempo real */
   private setupSocketListeners(): void {
     this.teardownSocketListeners();
 

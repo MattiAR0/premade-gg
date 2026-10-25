@@ -1,0 +1,19 @@
+{
+  "name": "premade-gg",
+  "private": true,
+  "description": "PremadeGG - Valorant LFG Platform (Angular + Supabase)",
+  "scripts": {
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset",
+    "db:test": "supabase test db",
+    "db:push": "supabase db push",
+    "functions:serve": "supabase functions serve",
+    "migrate:mongo": "node scripts/migrate-mongo-to-supabase.mjs"
+  },
+  "devDependencies": {
+    "@supabase/supabase-js": "^2.118.0",
+    "mongodb": "^7.7.0",
+    "supabase": "^2.122.0"
+  }
+}

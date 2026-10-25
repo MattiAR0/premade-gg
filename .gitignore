@@ -23,3 +23,7 @@ mongo-data/
 # OS
 .DS_Store
 Thumbs.db
+
+# Supabase
+supabase/.branches
+supabase/.temp

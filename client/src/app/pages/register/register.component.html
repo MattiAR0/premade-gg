@@ -9,6 +9,13 @@
       <div class="c-auth-card__error" role="alert">{{ errorMessage }}</div>
     }
 
+    @if (confirmationSent) {
+      <div class="c-auth-card__success" role="status">
+        Te hemos enviado un email a {{ email }}. Confírmalo para terminar de crear tu cuenta.
+      </div>
+    } @else {
+    <app-oauth-buttons returnUrl="/onboarding" />
+
     <form class="c-auth-card__form" (ngSubmit)="onSubmit()">
       <!-- Email -->
       <label class="c-auth-card__field">
@@ -107,7 +114,6 @@
           </select>
         </label>
       </div>
-
       <p class="c-auth-card__hint">El horario y tus agentes favoritos los eliges luego en tu perfil.</p>
 
       <button
@@ -123,6 +129,7 @@
         }
       </button>
     </form>
+    }
 
     <footer class="c-auth-card__footer">
       <p>¿Ya tienes cuenta?

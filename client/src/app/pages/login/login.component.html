@@ -9,6 +9,8 @@
       <div class="c-auth-card__error" role="alert">{{ errorMessage }}</div>
     }
 
+    <app-oauth-buttons [returnUrl]="returnUrl" />
+
     <form class="c-auth-card__form" (ngSubmit)="onSubmit()">
       <label class="c-auth-card__field">
         <span class="c-auth-card__label">Email</span>
