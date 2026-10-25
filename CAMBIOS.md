@@ -4,6 +4,24 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-10-25 · Fusión de main en migrate-supabase (capturas del README)
+
+**Commit:** este commit
+
+**Qué y por qué:** `main` tenía un commit que no estaba en la rama (`a577b89`, capturas en el README). Hay que integrarlo para que `main` pueda avanzar hasta la rama sin perder nada.
+
+**Cambios:**
+- `README.md`: conflicto resuelto.
+  - Se mantiene el stack nuevo (Angular + Supabase) y se añade la sección de capturas de `main`.
+  - Una nota avisa de que las capturas son de la versión 1.0 (MEAN) y que el diseño ha cambiado.
+- `screenshots/` (10 imágenes) entra desde `main`.
+
+**Verificación:** sin marcadores de conflicto; la sección "Stack Tecnológico" aparece una sola vez, con el de Supabase.
+
+**Pendiente:** rehacer las capturas con el diseño actual.
+
+---
+
 ## 2026-10-25 · Producción apuntando a Supabase cloud
 
 **Commit:** este commit

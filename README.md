@@ -8,6 +8,34 @@ Una plataforma "Looking For Group" (LFG) que penaliza la toxicidad. Los usuarios
 ## 🎬 Video Explicativo
 [![Ver Video](https://img.shields.io/badge/Ver%20Video%20Explicativo-Google%20Drive-blue?style=for-the-badge&logo=googledrive)](https://drive.google.com/file/d/1ghoKyXdTBNtKZwR7niyRDcn0XRcBcAn9/view?usp=sharing)
 
+## 📸 Capturas de Pantalla
+
+Vistas de la versión 1.0 (MEAN). El diseño actual ha cambiado: ver `CAMBIOS.md`.
+
+### Inicio
+![Inicio](./screenshots/inicio.png)
+
+### Board LFG
+![LFG Board](./screenshots/lfg-board.png)
+
+### Jugadores
+![Jugadores](./screenshots/jugadores.png)
+
+### Perfil Público
+![Perfil Público](./screenshots/perfil-publico.png)
+
+### Mensajes y Notificaciones
+![Mensajes](./screenshots/mensajes.png)
+![Notificaciones](./screenshots/notificaciones.png)
+
+### Configuración del perfil
+![Configuración del perfil 1](./screenshots/perfil-1.png)
+![Configuración del perfil 2](./screenshots/perfil-2.png)
+![Disponibilidad](./screenshots/disponibilidad.png)
+
+### Equipos
+![Equipos](./screenshots/equipos.png)
+
 ## Stack Tecnológico (Angular + Supabase)
 - **Angular 21**: Frontend con Standalone Components, signals y arquitectura SASS 7-1.
 - **Supabase** (plan gratuito):
