@@ -39,7 +39,7 @@
         </div>
         <div class="c-team-detail__badges">
           @if (team.targetRank) {
-          <app-rank-badge [rank]="team.targetRank" [showLabel]="true" />
+          <app-rank-badge [rank]="team.targetRank" />
           }
           <span class="c-badge c-badge--region">{{ regionLabel }}</span>
           @if (team.recruiting) {

@@ -104,12 +104,11 @@
   }
 }
 
-// ── Rango con emblema (app-rank-badge); .c-rank queda como respaldo si no carga ──
+// ── Rango con emblema, sin texto (app-rank-badge); .c-rank queda como respaldo si no carga ──
 .c-rank-icon {
   --rank-size: 26px;
   display: inline-flex;
   align-items: center;
-  gap: v.$spacing-xs;
   vertical-align: middle;
 
   &--sm {
@@ -118,7 +117,6 @@
 
   &--lg {
     --rank-size: 40px;
-    gap: v.$spacing-sm;
   }
 
   &__img {
@@ -126,25 +124,6 @@
     height: var(--rank-size);
     object-fit: contain;
     flex-shrink: 0;
-  }
-
-  &__label {
-    font-family: v.$font-heading;
-    font-size: v.$font-size-xs;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  &--lg &__label {
-    font-size: v.$font-size-md;
-  }
-
-  @each $tier, $clr in v.$rank-colors {
-    &--#{$tier} {
-      color: $clr;
-    }
   }
 }
 

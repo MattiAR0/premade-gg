@@ -4,6 +4,26 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-10-25 · Rango solo con emblema, sin nombre
+
+**Commit:** este commit
+
+**Qué y por qué:** petición de la usuaria: quitar el texto que acompañaba al emblema en las cabeceras (perfil, detalle de equipo, creador en el detalle LFG) y dejar solo el icono en toda la app. Corrige parte de la entrada `4422c1d`.
+
+**Cambios:**
+- `app-rank-badge`: fuera la entrada `showLabel` y su `<span>`.
+  - El nombre sigue en `aria-label` ("Rango Bronce") para lectores de pantalla y en `title` como tooltip.
+  - Si el emblema no carga, se mantiene la pastilla de texto de respaldo.
+- `_badges.scss`: fuera `.c-rank-icon__label`, sus colores por tier y el `gap`.
+- `profile`, `team-detail` y `lfg-detail`: sin `[showLabel]`. El perfil mantiene el emblema grande (`size="lg"`, 40px).
+
+**Verificación:** navegador en local.
+- Perfil: emblema de 40px sin texto y `aria-label` "Rango Bronce".
+- Detalle LFG: los dos rangos "Rango Diamante" sin texto visible.
+- Sin errores nuevos en consola (los 503 son `riot-refresh` sin levantar en local).
+
+---
+
 ## 2026-10-25 · Rango con emblema en vez de texto
 
 **Commit:** este commit

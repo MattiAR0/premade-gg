@@ -24,8 +24,6 @@ export class RankBadgeComponent {
   @Input({ required: true }) rank!: string;
   /** sm: filas compactas · md: tarjetas · lg: cabecera de perfil */
   @Input() size: 'sm' | 'md' | 'lg' = 'md';
-  /** Muestra el nombre junto al emblema (cabeceras); por defecto solo el emblema con tooltip */
-  @Input() showLabel = false;
 
   /** Si el emblema no carga, se vuelve a la pastilla de texto */
   iconFailed = false;

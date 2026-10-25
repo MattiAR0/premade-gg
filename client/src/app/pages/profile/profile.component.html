@@ -22,7 +22,7 @@
         <div class="c-profile__info">
           <h1 class="c-profile__name">{{ user.riotId }}</h1>
           <div class="c-profile__badges">
-            <app-rank-badge [rank]="user.rank" size="lg" [showLabel]="true" />
+            <app-rank-badge [rank]="user.rank" size="lg" />
             <span class="c-badge c-badge--role">{{ user.role | label: 'role' }}</span>
             <span class="c-badge c-badge--region">{{ user.region | uppercase }}</span>
             @if (user.lookingForTeam) {
