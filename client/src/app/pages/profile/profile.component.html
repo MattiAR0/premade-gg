@@ -6,7 +6,7 @@
       <div class="c-skeleton c-skeleton--text" style="width: 300px; margin-top: 8px"></div>
     </div>
   } @else if (errorMessage) {
-    <div class="c-error">{{ errorMessage }}</div>
+    <div class="c-error" role="alert">{{ errorMessage }}</div>
   } @else if (user) {
     <!-- Profile Header -->
     <section class="c-profile">

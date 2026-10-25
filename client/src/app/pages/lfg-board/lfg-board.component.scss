@@ -69,12 +69,11 @@
 
   &__size {
     @include m.ui-label;
-    font-size: 0.68rem;
+    font-size: 0.75rem;
     color: v.$color-text-subtle;
 
     @include m.respond-below(sm) {
-      font-size: 0.6rem;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.02em;
     }
   }
 

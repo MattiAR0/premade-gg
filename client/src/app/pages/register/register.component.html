@@ -6,7 +6,7 @@
     </header>
 
     @if (errorMessage) {
-      <div class="c-auth-card__error">{{ errorMessage }}</div>
+      <div class="c-auth-card__error" role="alert">{{ errorMessage }}</div>
     }
 
     <form class="c-auth-card__form" (ngSubmit)="onSubmit()">

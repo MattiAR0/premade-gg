@@ -69,7 +69,7 @@
   <section aria-labelledby="players-results-title">
     <h2 id="players-results-title" class="u-sr-only">Resultados</h2>
     @if (errorMessage) {
-      <p class="c-error">{{ errorMessage }}</p>
+      <p class="c-error" role="alert">{{ errorMessage }}</p>
     } @else if (initialLoading) {
       <ul class="l-grid l-grid--2col">
         @for (i of [1, 2, 3, 4]; track i) {

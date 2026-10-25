@@ -4,9 +4,38 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-10-25 · Lectores de pantalla y teclado (segunda ronda, paso 4)
+
+**Commit:** este commit
+
+**Qué y por qué:** al cambiar de página el foco se quedaba en el enlace pulsado, los títulos eran genéricos ("Perfil · PremadeGG"), los mini-avatares de las tarjetas LFG se anunciaban como "T", las pestañas de tamaño medían 9,6px en móvil y los errores no se anunciaban.
+
+**Cambios:**
+- `app.ts` y `app.scss`: al cambiar de ruta (no al cambiar filtros), el foco pasa al `h1` de `main` con `tabindex="-1"`. Si la página aún carga datos, espera en `#contenido` y pasa al `h1` cuando aparece, salvo que el usuario ya haya movido el foco. Sin anillo en ese `h1`, que no es un control.
+- Títulos con nombre (`Title`): "Busco trío chill · PremadeGG", "Player1#KR1 · Jugadores · PremadeGG", "Test Team Alpha · Equipos · PremadeGG" (`lfg-detail`, `profile`, `team-detail`).
+- `lfg-card`:
+  - Los mini-avatares llevan `tabindex="-1"` y `aria-hidden="true"`; siguen siendo clicables con ratón.
+  - El recuento se lee "1/5 jugadores" (texto `u-sr-only`).
+- `lfg-board`:
+  - Las pestañas de tamaño pasan de `<nav>` a `<div role="group" aria-label="Tamaño de grupo">`, porque filtran y no navegan.
+  - `.c-tabs__size` sube a 0,75rem (12px) también en móvil.
+- `role="alert"` en `.c-auth-card__error`, `.c-error`, `.c-detail__feedback--err` y `.c-modal__error` (login, registro, recuperar y nueva contraseña, portada, listados, detalle LFG, perfil y modales de equipos). Se deja fuera el aviso fijo de "Enlace inválido".
+
+**Verificación:**
+- Navegador a 375px:
+  - Tarjeta → detalle, detalle → perfil y listado → equipo: el foco acaba en el `h1` con el nombre y el título de la pestaña cambia.
+  - Del pie a `/lfg`: el foco va al `h1` "Grupos LFG". Al pulsar una pestaña de tamaño el foco se queda en ella.
+  - Las 4 pestañas caben a 12px (86px cada una, sin desbordar). Contraste del texto de tamaño: 5,03:1.
+  - Avatares con `tabIndex` -1 y `aria-hidden`.
+- Build sin errores y consola limpia.
+
+**Pendiente:** los `role="alert"` no se han visto disparar: los errores necesitan forzar un fallo del servidor o iniciar sesión.
+
+---
+
 ## 2026-10-25 · Móvil: filtros plegables y cabecera compacta (segunda ronda, paso 3)
 
-**Commit:** este commit (solo frontend; las migraciones SQL van con el commit de la migración a Supabase)
+**Commit:** `8195eee` (solo frontend; las migraciones SQL van con el commit de la migración a Supabase)
 
 **Qué y por qué:** a 375px los filtros y la cabecera ocupaban casi toda la primera pantalla: la primera tarjeta de `/players` empezaba en y≈712 y el panel de filtros de `/lfg` terminaba en y=673.
 
@@ -49,7 +78,7 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ## 2026-10-25 · Karma donde se decide (segunda ronda, paso 2)
 
-**Commit:** este commit (solo frontend; las migraciones SQL van con el commit de la migración a Supabase)
+**Commit:** `8195eee` (solo frontend; las migraciones SQL van con el commit de la migración a Supabase)
 
 **Qué y por qué:** el karma no aparecía en los momentos de decidir. Faltaba en el detalle LFG, el tablero no filtraba por él y en la tarjeta LFG iba en el pie. Además, el rango del creador salía junto a "Mín. Oro" y no se sabía de quién era cada dato. Se pidió karma y rango al mismo nivel.
 
@@ -90,7 +119,7 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ## 2026-10-25 · Karma con pruebas (segunda ronda, paso 1)
 
-**Commit:** este commit (solo frontend; las migraciones SQL van con el commit de la migración a Supabase)
+**Commit:** `8195eee` (solo frontend; las migraciones SQL van con el commit de la migración a Supabase)
 
 **Qué y por qué:** la segunda crítica (26/40) detectó que el karma no demostraba nada. Todas las cuentas empiezan con 5,0, así que "Top jugadores" eran en realidad jugadores sin valorar, y las valoraciones usaban otro lenguaje visual (estrellas).
 

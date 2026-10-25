@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UpperCasePipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -44,6 +45,7 @@ export class ProfileComponent implements OnInit {
 
   readonly daysOfWeek = DAYS_OF_WEEK;
   readonly daysLabels = DAYS_LABELS;
+  private readonly title = inject(Title);
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -123,6 +125,7 @@ export class ProfileComponent implements OnInit {
     this.apiService.getUserById(id).subscribe({
       next: (user) => {
         this.user = user;
+        this.title.setTitle(`${user.riotId} · Jugadores · PremadeGG`);
         this.loading = false;
         this.cdr.markForCheck();
 

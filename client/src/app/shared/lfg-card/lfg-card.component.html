@@ -51,6 +51,7 @@
         <div class="c-lfg-card__progress-fill" [style.width.%]="(acceptedCount / post.teamSize) * 100"></div>
       </div>
       <div class="c-lfg-card__members-row">
+        <!-- Atajo visual para ratón: el recuento de al lado ya da la información -->
         <div class="c-lfg-card__avatars">
           @for (member of acceptedMembers; track member.user._id; let i = $index) {
             @if (i < 5) {
@@ -58,6 +59,8 @@
                 class="c-lfg-card__avatar"
                 [routerLink]="['/profile', member.user._id]"
                 [title]="member.user.riotId"
+                tabindex="-1"
+                aria-hidden="true"
                 (click)="$event.stopPropagation()">
                 {{ member.user.riotId.charAt(0) }}
               </a>
@@ -65,7 +68,7 @@
           }
         </div>
         <span class="c-lfg-card__member-count">
-          <strong class="c-lfg-card__member-count-value">{{ acceptedCount }}</strong>/{{ post.teamSize }}
+          <strong class="c-lfg-card__member-count-value">{{ acceptedCount }}</strong>/{{ post.teamSize }}<span class="u-sr-only"> jugadores</span>
         </span>
       </div>
     </div>

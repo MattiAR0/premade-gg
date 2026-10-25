@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
@@ -23,6 +24,7 @@ export class LfgDetailComponent implements OnInit {
   actionLoading = false;
 
   readonly teamLabels = TEAM_SIZE_LABELS;
+  private readonly title = inject(Title);
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -88,6 +90,7 @@ export class LfgDetailComponent implements OnInit {
     this.api.getLfgPostById(id).subscribe({
       next: (post) => {
         this.post = post;
+        this.title.setTitle(`${post.title} · PremadeGG`);
         this.loading = false;
         this.cdr.markForCheck();
       },

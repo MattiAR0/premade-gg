@@ -368,7 +368,7 @@
     </header>
 
     @if (actionError) {
-    <p class="c-modal__error">{{ actionError }}</p>
+    <p class="c-modal__error" role="alert">{{ actionError }}</p>
     }
     @if (actionMessage) {
     <p class="c-modal__success">{{ actionMessage }}</p>
@@ -409,7 +409,7 @@
     </header>
 
     @if (joinError) {
-    <p class="c-modal__error">{{ joinError }}</p>
+    <p class="c-modal__error" role="alert">{{ joinError }}</p>
     }
     @if (joinSuccess) {
     <p class="c-modal__success">{{ joinSuccess }}</p>

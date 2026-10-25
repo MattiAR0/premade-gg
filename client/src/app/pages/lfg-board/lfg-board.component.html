@@ -13,7 +13,7 @@
   </header>
 
   <!-- Tabs por tamaño de grupo -->
-  <nav class="c-tabs" aria-label="Tamaño de grupo">
+  <div class="c-tabs" role="group" aria-label="Tamaño de grupo">
     <button type="button" class="c-tabs__btn" [class.c-tabs__btn--active]="activeSize === null" [attr.aria-pressed]="activeSize === null" (click)="setSize(null)">
       <span class="c-tabs__label">Todos</span>
     </button>
@@ -23,7 +23,7 @@
         <span class="c-tabs__size">{{ size }} jugadores</span>
       </button>
     }
-  </nav>
+  </div>
 
   <section class="c-filters" [class.c-filters--open]="filtersOpen" aria-label="Filtros">
     <div class="c-filters__body" id="lfg-filters">
@@ -76,7 +76,7 @@
   <section class="c-feed" aria-labelledby="lfg-results-title">
     <h2 id="lfg-results-title" class="u-sr-only">Grupos</h2>
     @if (errorMessage) {
-      <p class="c-error">{{ errorMessage }}</p>
+      <p class="c-error" role="alert">{{ errorMessage }}</p>
     } @else if (initialLoading) {
       <ul class="l-grid l-grid--2col">
         @for (i of [1, 2, 3, 4]; track i) {
@@ -140,7 +140,7 @@
       </header>
 
       @if (createError) {
-        <p class="c-modal__error">{{ createError }}</p>
+        <p class="c-modal__error" role="alert">{{ createError }}</p>
       }
 
       <form class="c-modal__form" (ngSubmit)="submitNewPost()">

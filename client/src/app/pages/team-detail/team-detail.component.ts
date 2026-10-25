@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -35,6 +36,7 @@ export class TeamDetailComponent implements OnInit {
   joinSuccess = '';
 
   readonly staffLabels = STAFF_ROLE_LABELS;
+  private readonly title = inject(Title);
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -89,6 +91,7 @@ export class TeamDetailComponent implements OnInit {
     this.api.getTeamById(id).subscribe({
       next: (team) => {
         this.team = team;
+        this.title.setTitle(`${team.name} · Equipos · PremadeGG`);
         this.loading = false;
         this.cdr.markForCheck();
       },
