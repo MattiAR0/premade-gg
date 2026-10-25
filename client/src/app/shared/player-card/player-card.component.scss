@@ -75,9 +75,11 @@
     @include m.text-truncate;
   }
 
-  &__karma {
-    flex-shrink: 0;
-    align-self: flex-start;
+  &__standing {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: v.$spacing-sm v.$spacing-md;
   }
 
   &__body {

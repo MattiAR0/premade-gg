@@ -32,10 +32,21 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   private requestId = 0;
   totalPosts = 0;
   readonly pageSize = 12;
+  filtersOpen = false;
 
-  // Filtros (sincronizados con la URL: ?size=2|3|5&status=open|full|closed)
+  // Filtros (sincronizados con la URL: ?size=2|3|5&status=open|full|closed&rank=Gold&karma=4)
   activeSize: TeamSizeTab | null = null;
   activeStatus: LfgStatus = 'open';
+  /** Tu rango: muestra solo los grupos a los que puedes entrar */
+  filterMyRank = '';
+  /** Karma mínimo del creador */
+  filterMinKarma = 0;
+  readonly authorKarmaOptions = [
+    { value: 0, label: 'Cualquiera' },
+    { value: 3, label: '3+' },
+    { value: 4, label: '4+' },
+    { value: 4.5, label: '4,5+' },
+  ];
   readonly sizes: TeamSizeTab[] = [2, 3, 5];
   readonly sizeLabels = TEAM_SIZE_LABELS;
   readonly statusOptions: { value: LfgStatus; label: string }[] = [
@@ -108,18 +119,30 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     const status = params.get('status') as LfgStatus;
     const nextSize = this.sizes.includes(size as TeamSizeTab) ? (size as TeamSizeTab) : null;
     const nextStatus = this.statusOptions.some((o) => o.value === status) ? status : 'open';
-    const changed = nextSize !== this.activeSize || nextStatus !== this.activeStatus;
+    const rank = params.get('rank') ?? '';
+    const nextRank = (this.rankOptions as readonly string[]).includes(rank) ? rank : '';
+    const karma = Number(params.get('karma'));
+    const nextKarma = this.authorKarmaOptions.some((o) => o.value === karma) ? karma : 0;
+    const changed =
+      nextSize !== this.activeSize ||
+      nextStatus !== this.activeStatus ||
+      nextRank !== this.filterMyRank ||
+      nextKarma !== this.filterMinKarma;
     this.activeSize = nextSize;
     this.activeStatus = nextStatus;
+    this.filterMyRank = nextRank;
+    this.filterMinKarma = nextKarma;
     return changed;
   }
 
-  private applyFilters(): void {
+  applyFilters(): void {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
         size: this.activeSize,
         status: this.activeStatus === 'open' ? null : this.activeStatus,
+        rank: this.filterMyRank || null,
+        karma: this.filterMinKarma || null,
       },
       replaceUrl: true,
     });
@@ -134,6 +157,23 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   setStatus(status: LfgStatus): void {
     if (status === this.activeStatus) return;
     this.activeStatus = status;
+    this.applyFilters();
+  }
+
+  setMinKarma(value: number): void {
+    if (value === this.filterMinKarma) return;
+    this.filterMinKarma = value;
+    this.applyFilters();
+  }
+
+  /** Filtros del panel (rango y karma); el tamaño y el estado tienen su propio control */
+  get activeFilterCount(): number {
+    return [this.filterMyRank, this.filterMinKarma].filter(Boolean).length;
+  }
+
+  clearFilters(): void {
+    this.filterMyRank = '';
+    this.filterMinKarma = 0;
     this.applyFilters();
   }
 
@@ -164,10 +204,19 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   /** Petición genérica de una página */
   private fetchPage(): void {
     const requestId = this.requestId;
-    const filters: { teamSize?: number; status?: string; cursor?: string; limit?: number } = {
+    const filters: {
+      teamSize?: number;
+      status?: string;
+      myRank?: string;
+      minAuthorKarma?: number;
+      cursor?: string;
+      limit?: number;
+    } = {
       limit: this.pageSize,
       status: this.activeStatus,
     };
+    if (this.filterMyRank) filters.myRank = this.filterMyRank;
+    if (this.filterMinKarma) filters.minAuthorKarma = this.filterMinKarma;
     if (this.activeSize) filters.teamSize = this.activeSize;
     if (this.nextCursor) filters.cursor = this.nextCursor;
 

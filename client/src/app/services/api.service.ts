@@ -88,6 +88,8 @@ export class ApiService {
     role?: string;
     minKarma?: number;
     lookingForTeam?: boolean;
+    /** Solo jugadores con al menos N valoraciones */
+    minReviews?: number;
     cursor?: string;
     limit?: number;
   }): Observable<PaginatedResponse<User>> {
@@ -96,6 +98,7 @@ export class ApiService {
     if (filters?.role) params = params.set('role', filters.role);
     if (filters?.minKarma) params = params.set('minKarma', filters.minKarma.toString());
     if (filters?.lookingForTeam) params = params.set('lookingForTeam', 'true');
+    if (filters?.minReviews) params = params.set('minReviews', filters.minReviews.toString());
     if (filters?.cursor) params = params.set('cursor', filters.cursor);
     if (filters?.limit) params = params.set('limit', filters.limit.toString());
     return this.cachedGet<PaginatedResponse<User>>(`${this.baseUrl}/users`, params);
@@ -133,12 +136,18 @@ export class ApiService {
   getLfgPosts(filters?: {
     teamSize?: number;
     status?: string;
+    /** Rango del jugador: grupos sin mínimo o con mínimo igual o inferior */
+    myRank?: string;
+    /** Karma mínimo del creador */
+    minAuthorKarma?: number;
     cursor?: string;
     limit?: number;
   }): Observable<PaginatedResponse<LfgPost>> {
     let params = new HttpParams();
     if (filters?.teamSize) params = params.set('teamSize', filters.teamSize.toString());
     if (filters?.status) params = params.set('status', filters.status);
+    if (filters?.myRank) params = params.set('myRank', filters.myRank);
+    if (filters?.minAuthorKarma) params = params.set('minAuthorKarma', filters.minAuthorKarma.toString());
     if (filters?.cursor) params = params.set('cursor', filters.cursor);
     if (filters?.limit) params = params.set('limit', filters.limit.toString());
     return this.cachedGet<PaginatedResponse<LfgPost>>(`${this.baseUrl}/lfg`, params);

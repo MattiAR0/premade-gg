@@ -4,9 +4,139 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-10-25 · Móvil: filtros plegables y cabecera compacta (segunda ronda, paso 3)
+
+**Commit:** este commit (solo frontend; las migraciones SQL van con el commit de la migración a Supabase)
+
+**Qué y por qué:** a 375px los filtros y la cabecera ocupaban casi toda la primera pantalla: la primera tarjeta de `/players` empezaba en y≈712 y el panel de filtros de `/lfg` terminaba en y=673.
+
+**Cambios:**
+- `scss/components/_page.scss`, por debajo de `sm` (576px):
+  - `.c-page-header`: título y acción ("Crear grupo", "Crear equipo") en la misma fila; se oculta `__desc`.
+  - `.c-filters`: el contenido va en `__body` y se pliega. El pie (recuento) pasa arriba con el botón `__toggle` "Filtros (n)", con `aria-expanded` y `aria-controls`.
+  - Plegado se oculta "Limpiar filtros" (el botón ya dice cuántos hay); abierto baja a su propia línea.
+  - `.c-filters .c-chips`: una sola fila con scroll horizontal que llega al borde del panel, con 4px de relleno vertical para no recortar el anillo de foco. Los chips de la portada no cambian.
+- `lfg-board`, `players` y `teams`: `<div class="c-filters__body">` alrededor de las filas, botón en el pie y propiedad `filtersOpen`.
+- En escritorio no cambia nada: el botón no se muestra y el cuerpo siempre está abierto.
+
+**Verificación:**
+- Navegador a 375px, sin scroll horizontal:
+  - `/players`: la primera tarjeta empieza en y=252 (antes ≈712); el panel plegado mide 71px. Abierto, los roles van en una fila con scroll.
+  - `/lfg?rank=Silver&karma=3`: "Filtros (2)" y la primera tarjeta en y=305 (antes el panel acababa en y=673).
+  - `/teams?region=eu&recruiting=1`: "Filtros (2)" en la misma fila que el recuento.
+- A 1024px el panel se ve como antes, con la descripción de la cabecera.
+- Build sin errores y consola limpia.
+- Para probar `/lfg` se reinsertaron en la base local los 10 grupos del seed: el cron `delete … where expires_at < now()` los había borrado al caducar (24 h).
+
+**Pendiente:** el panel se pliega de nuevo al cambiar de página; no se guarda el estado.
+
+---
+
+## 2026-10-25 · Documento de traspaso
+
+**Commit:** no se commitea (documento de trabajo local)
+
+**Qué y por qué:** pasar la segunda ronda de la revisión de diseño a otro agente.
+
+**Cambios:**
+- `TRASPASO.md` (nuevo) recoge:
+  - El estado de git y cómo no mezclar la migración a Supabase.
+  - El trabajo sin commitear de los pasos 1 y 2.
+  - Los pasos 3 a 6 pendientes.
+  - Cómo verificar y las trampas conocidas (CRLF, archivos mezclados, Docker).
+
+---
+
+## 2026-10-25 · Karma donde se decide (segunda ronda, paso 2)
+
+**Commit:** este commit (solo frontend; las migraciones SQL van con el commit de la migración a Supabase)
+
+**Qué y por qué:** el karma no aparecía en los momentos de decidir. Faltaba en el detalle LFG, el tablero no filtraba por él y en la tarjeta LFG iba en el pie. Además, el rango del creador salía junto a "Mín. Oro" y no se sabía de quién era cada dato. Se pidió karma y rango al mismo nivel.
+
+**Cambios:**
+- `supabase/migrations/20261025000002_lfg_filters.sql` (nueva): `get_lfg_posts` gana dos filtros, con el mismo orden y cursor.
+  - `p_my_rank`: grupos sin rango mínimo o con un mínimo igual o inferior a ese rango (el enum está ordenado).
+  - `p_min_author_karma`: karma mínimo del creador.
+  - Se mantiene `p_min_rank` (igualdad) por compatibilidad.
+- Tablero `/lfg`:
+  - Filtros "Tu rango" (select) y "Karma del creador" (Cualquiera / 3+ / 4+ / 4,5+), sincronizados con la URL (`?rank=` y `?karma=`).
+  - "Limpiar filtros (n)".
+- `lfg-card`:
+  - La fila "Creador" muestra rango, karma (sm) y región juntos.
+  - Los requisitos van aparte: "Exige Bronce o más · karma 3+".
+  - El karma sale del pie.
+  - Nuevo `@Input() showStatus`: el badge "Abierto" se oculta cuando el contexto ya lo dice (filtro "Abiertos" y portada).
+- `player-card`: rango y karma en la misma fila (`__standing`). El karma grande de la derecha desaparece.
+- `lfg-detail`:
+  - Rango y karma del creador juntos en la cabecera.
+  - Cada miembro aceptado muestra su karma.
+  - Fuera el bloque "Rango" suelto, que no decía de quién era.
+- `karma-badge`: en tamaño sm, una cuenta sin valoraciones muestra "Nuevo" (antes un guion).
+- `/players`: "4.5+" pasa a "4,5+".
+
+**Verificación:**
+- Migración aplicada y `npm run db:test` en verde (16/16).
+- RPC: con "Tu rango Plata" salen 5 de 10 grupos (los que exigen Hierro, Bronce o Plata); con karma ≥ 4, 5.
+- Navegador:
+  - `/lfg?rank=Silver&karma=3` recupera los filtros de la URL, muestra 4 grupos, "Limpiar filtros (2)" y ningún badge "Abierto".
+  - Detalle: "Radiante · Karma 4,5 · 2 valoraciones" en el creador y karma en los miembros.
+  - En `/players`, rango y karma en la misma fila.
+  - Sin desbordamiento a 375px.
+- Build sin errores.
+
+**Pendiente:** en móvil el panel de filtros de `/lfg` es más alto (termina en y=673); los filtros plegables del paso 3 lo resuelven.
+
+---
+
+## 2026-10-25 · Karma con pruebas (segunda ronda, paso 1)
+
+**Commit:** este commit (solo frontend; las migraciones SQL van con el commit de la migración a Supabase)
+
+**Qué y por qué:** la segunda crítica (26/40) detectó que el karma no demostraba nada. Todas las cuentas empiezan con 5,0, así que "Top jugadores" eran en realidad jugadores sin valorar, y las valoraciones usaban otro lenguaje visual (estrellas).
+
+**Cambios:**
+- `supabase/migrations/20261025000001_review_count.sql` (nueva):
+  - Columna `profiles.review_count`, rellenada con las valoraciones existentes.
+  - `recalculate_karma()` mantiene karma y recuento juntos.
+  - `user_json` expone `reviewCount`.
+  - `get_users` gana el filtro opcional `p_min_reviews` (mismo orden y cursor).
+  - Es una migración aparte para aplicarla con `migration up` sin borrar la base local.
+- `karma-badge`:
+  - Nuevo `@Input() count`.
+  - Con 0 valoraciones muestra "Nuevo" / "Sin valoraciones": sin número, segmentos vacíos y color neutro.
+  - Con alguna valoración añade "N valoraciones" en los tamaños md y lg.
+  - El `aria-label` incluye el recuento.
+  - Los segmentos vacíos llevan un contorno de 1px en `$color-text-subtle` (antes 1,4:1).
+- `[count]` se pasa en la tarjeta de jugador, el perfil, la tarjeta LFG y los miembros del detalle LFG. `User.reviewCount` es opcional en el modelo.
+- `api.service`: `getUsers({ minReviews })`. Solo envía `p_min_reviews` si se usa.
+- Portada:
+  - "Top jugadores" pide solo jugadores con al menos una valoración y desempata por número de valoraciones.
+  - El total del hero sale de otra petición.
+  - Textos más claros: "Tus compañeros te puntúan de 1 a 5 y tu karma es la media…", "Mejor karma con al menos una valoración".
+  - Nuevo estado vacío para cuando nadie tiene valoraciones.
+- Perfil:
+  - Las estrellas pasan a segmentos (`.c-rating`) con los colores del karma y `aria-label` "Puntuación N de 5".
+  - El formulario usa 5 botones numerados (`.c-rating-input`) con `aria-pressed` y 44px en táctil.
+  - "Eliminar mi review" pasa a "Eliminar mi valoración".
+
+**Verificación:**
+- Migración aplicada con `npx supabase migration up`.
+- `npm run db:test`: 16/16 en verde.
+- `review_count` cuadra con las 50 valoraciones: 0 descuadres en 23 jugadores, 19 con alguna valoración.
+- Trigger probado en una transacción con rollback: karma 5,0 y 0 valoraciones → 2,0 y 1 tras insertar una de 2 → 5,0 y 0 tras borrarla.
+- Navegador:
+  - "Top jugadores" muestra solo jugadores valorados, con "1 valoración" / "3 valoraciones"; el hero sigue en 23 jugadores.
+  - En `/players` las cuentas sin valoraciones salen como "Nuevo" con segmentos huecos.
+  - El perfil muestra las valoraciones como segmentos con `aria-label` "Puntuación N de 5".
+- Build sin errores.
+
+**Pendiente:** el selector de puntuación del formulario necesita sesión iniciada; solo está comprobado compilando.
+
+---
+
 ## 2026-10-24 · Repaso final (paso 7 de la revisión de diseño)
 
-**Commit:** sin commitear
+**Commit:** `bdaa01c`
 
 **Qué y por qué:** cerrar las observaciones menores de la revisión de diseño.
 

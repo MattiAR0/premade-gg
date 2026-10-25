@@ -410,23 +410,6 @@
     margin-bottom: v.$spacing-xs;
   }
 
-  &__star-row {
-    display: flex;
-    gap: 4px;
-  }
-
-  &__star-btn {
-    background: none;
-    border: none;
-    padding: 2px;
-    cursor: pointer;
-    transition: transform v.$transition-fast;
-
-    &:hover {
-      transform: scale(1.2);
-    }
-  }
-
   &__field {
     margin-bottom: v.$spacing-md;
   }
@@ -505,11 +488,6 @@
     display: flex;
     align-items: center;
     gap: v.$spacing-sm;
-  }
-
-  &__rating {
-    display: flex;
-    gap: 2px;
   }
 
   &__delete {

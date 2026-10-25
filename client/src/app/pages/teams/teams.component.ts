@@ -30,6 +30,7 @@ export class TeamsComponent implements OnInit, AfterViewInit, OnDestroy {
   private requestId = 0;
   totalTeams = 0;
   readonly pageSize = 12;
+  filtersOpen = false;
 
   // Filtros (sincronizados con la URL: ?q=&region=&rank=&recruiting=1)
   filterRegion = '';

@@ -15,9 +15,12 @@
     </div>
     <div class="c-player-card__info">
       <h3 class="c-player-card__name"><a class="c-card__link" [routerLink]="['/profile', player._id]">{{ player.riotId }}</a></h3>
-      <app-rank-badge [rank]="player.rank" />
+      <!-- Rango y karma al mismo nivel -->
+      <div class="c-player-card__standing">
+        <app-rank-badge [rank]="player.rank" />
+        <app-karma-badge [karma]="player.karma" [count]="player.reviewCount" size="sm" />
+      </div>
     </div>
-    <app-karma-badge class="c-player-card__karma" [karma]="player.karma" />
   </header>
 
   <section class="c-player-card__body">

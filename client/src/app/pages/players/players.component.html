@@ -7,45 +7,47 @@
   </header>
 
   <!-- Filtros: se aplican al instante y quedan en la URL -->
-  <section class="c-filters" aria-label="Filtros">
-    <div class="c-filters__row">
-      <div class="c-filters__group">
-        <span class="c-filters__label">Rol</span>
-        <div class="c-chips">
-          <button type="button" class="c-chip" [class.c-chip--active]="!filterRole" [attr.aria-pressed]="!filterRole" (click)="setRole('')">Todos</button>
-          @for (role of roles; track role) {
-            <button type="button" class="c-chip" [class.c-chip--active]="filterRole === role" [attr.aria-pressed]="filterRole === role" (click)="setRole(role)">{{ role | label: 'role' }}</button>
-          }
-        </div>
-      </div>
-    </div>
-
-    <div class="c-filters__row">
-      <label class="c-filters__group">
-        <span class="c-filters__label">Rango</span>
-        <select class="c-filters__select" [(ngModel)]="filterRank" (ngModelChange)="applyFilters()" name="rank">
-          <option value="">Todos los rangos</option>
-          @for (rank of ranks; track rank) {
-            <option [value]="rank">{{ rank | label: 'rank' }}</option>
-          }
-        </select>
-      </label>
-
-      <div class="c-filters__group">
-        <span class="c-filters__label">Karma mínimo</span>
-        <div class="c-segmented">
-          @for (opt of karmaOptions; track opt.value) {
-            <button type="button" class="c-segmented__btn" [class.c-segmented__btn--active]="filterMinKarma === opt.value" [attr.aria-pressed]="filterMinKarma === opt.value" (click)="setMinKarma(opt.value)">{{ opt.label }}</button>
-          }
+  <section class="c-filters" [class.c-filters--open]="filtersOpen" aria-label="Filtros">
+    <div class="c-filters__body" id="players-filters">
+      <div class="c-filters__row">
+        <div class="c-filters__group">
+          <span class="c-filters__label">Rol</span>
+          <div class="c-chips">
+            <button type="button" class="c-chip" [class.c-chip--active]="!filterRole" [attr.aria-pressed]="!filterRole" (click)="setRole('')">Todos</button>
+            @for (role of roles; track role) {
+              <button type="button" class="c-chip" [class.c-chip--active]="filterRole === role" [attr.aria-pressed]="filterRole === role" (click)="setRole(role)">{{ role | label: 'role' }}</button>
+            }
+          </div>
         </div>
       </div>
 
-      <div class="c-filters__group">
-        <span class="c-filters__label">Estado</span>
-        <button type="button" class="c-chip c-chip--toggle" [class.c-chip--active]="filterLFT" [attr.aria-pressed]="filterLFT" (click)="toggleLFT()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          Buscando equipo
-        </button>
+      <div class="c-filters__row">
+        <label class="c-filters__group">
+          <span class="c-filters__label">Rango</span>
+          <select class="c-filters__select" [(ngModel)]="filterRank" (ngModelChange)="applyFilters()" name="rank">
+            <option value="">Todos los rangos</option>
+            @for (rank of ranks; track rank) {
+              <option [value]="rank">{{ rank | label: 'rank' }}</option>
+            }
+          </select>
+        </label>
+
+        <div class="c-filters__group">
+          <span class="c-filters__label">Karma mínimo</span>
+          <div class="c-segmented">
+            @for (opt of karmaOptions; track opt.value) {
+              <button type="button" class="c-segmented__btn" [class.c-segmented__btn--active]="filterMinKarma === opt.value" [attr.aria-pressed]="filterMinKarma === opt.value" (click)="setMinKarma(opt.value)">{{ opt.label }}</button>
+            }
+          </div>
+        </div>
+
+        <div class="c-filters__group">
+          <span class="c-filters__label">Estado</span>
+          <button type="button" class="c-chip c-chip--toggle" [class.c-chip--active]="filterLFT" [attr.aria-pressed]="filterLFT" (click)="toggleLFT()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Buscando equipo
+          </button>
+        </div>
       </div>
     </div>
 
@@ -56,6 +58,10 @@
       @if (activeFilterCount > 0) {
         <button type="button" class="c-filters__clear" (click)="clearFilters()">Limpiar filtros ({{ activeFilterCount }})</button>
       }
+      <button type="button" class="c-filters__toggle" [attr.aria-expanded]="filtersOpen" aria-controls="players-filters" (click)="filtersOpen = !filtersOpen">
+        Filtros@if (activeFilterCount > 0) { ({{ activeFilterCount }}) }
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
     </footer>
   </section>
 

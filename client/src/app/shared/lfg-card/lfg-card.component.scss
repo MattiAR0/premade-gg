@@ -101,11 +101,21 @@
     flex-wrap: wrap;
   }
 
-  &__req {
+  &__meta-label {
     @include m.ui-label;
-    font-size: 0.72rem;
-    padding: 0.15rem 0.45rem;
-    border: 1px dashed v.$color-border-light;
+    font-size: 0.75rem;
+  }
+
+  // Requisitos del grupo, separados de los datos del creador
+  &__req {
+    margin: 0;
+    font-size: 0.85rem;
+    color: v.$color-text-muted;
+
+    strong {
+      color: v.$color-text-heading;
+      font-weight: 600;
+    }
   }
 
   &__desc {

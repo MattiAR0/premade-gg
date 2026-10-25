@@ -51,8 +51,8 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Tres peticiones independientes: cada sección se pinta en cuanto llega su dato.
-    let pending = 3;
+    // Peticiones independientes: cada sección se pinta en cuanto llega su dato.
+    let pending = 4;
     const done = () => {
       pending--;
       if (pending === 0) this.loading = false;
@@ -73,10 +73,21 @@ export class HomeComponent implements OnInit {
       error: fail,
     });
 
-    // Top jugadores (ordenados por karma desc desde el backend)
-    this.api.getUsers({ limit: 3 }).subscribe({
+    // Top jugadores: solo quien tiene valoraciones (un 5,0 inicial no demuestra nada).
+    // Empate de karma: gana quien tiene más valoraciones.
+    this.api.getUsers({ minReviews: 1, limit: 12 }).subscribe({
       next: (res) => {
-        this.topPlayers = res.data;
+        this.topPlayers = [...res.data]
+          .sort((a, b) => b.karma - a.karma || (b.reviewCount ?? 0) - (a.reviewCount ?? 0))
+          .slice(0, 3);
+        done();
+      },
+      error: fail,
+    });
+
+    // Total de jugadores para las cifras del hero
+    this.api.getUsers({ limit: 1 }).subscribe({
+      next: (res) => {
         this.totalPlayers = res.total;
         done();
       },

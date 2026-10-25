@@ -25,21 +25,50 @@
     }
   </nav>
 
-  <section class="c-filters" aria-label="Filtros">
-    <div class="c-filters__row">
-      <div class="c-filters__group">
-        <span class="c-filters__label">Estado</span>
-        <div class="c-segmented">
-          @for (opt of statusOptions; track opt.value) {
-            <button type="button" class="c-segmented__btn" [class.c-segmented__btn--active]="activeStatus === opt.value" [attr.aria-pressed]="activeStatus === opt.value" (click)="setStatus(opt.value)">{{ opt.label }}</button>
-          }
+  <section class="c-filters" [class.c-filters--open]="filtersOpen" aria-label="Filtros">
+    <div class="c-filters__body" id="lfg-filters">
+      <div class="c-filters__row">
+        <div class="c-filters__group">
+          <span class="c-filters__label">Estado</span>
+          <div class="c-segmented">
+            @for (opt of statusOptions; track opt.value) {
+              <button type="button" class="c-segmented__btn" [class.c-segmented__btn--active]="activeStatus === opt.value" [attr.aria-pressed]="activeStatus === opt.value" (click)="setStatus(opt.value)">{{ opt.label }}</button>
+            }
+          </div>
+        </div>
+
+        <label class="c-filters__group">
+          <span class="c-filters__label">Tu rango</span>
+          <select class="c-filters__select" [(ngModel)]="filterMyRank" (ngModelChange)="applyFilters()" name="myRank">
+            <option value="">Cualquiera</option>
+            @for (rank of rankOptions; track rank) {
+              <option [value]="rank">{{ rank | label: 'rank' }}</option>
+            }
+          </select>
+        </label>
+
+        <div class="c-filters__group">
+          <span class="c-filters__label">Karma del creador</span>
+          <div class="c-segmented">
+            @for (opt of authorKarmaOptions; track opt.value) {
+              <button type="button" class="c-segmented__btn" [class.c-segmented__btn--active]="filterMinKarma === opt.value" [attr.aria-pressed]="filterMinKarma === opt.value" (click)="setMinKarma(opt.value)">{{ opt.label }}</button>
+            }
+          </div>
         </div>
       </div>
     </div>
+
     <footer class="c-filters__footer">
       <span class="c-filters__count">
         @if (initialLoading) { Buscando... } @else { <strong>{{ totalPosts }}</strong> {{ resultsLabel }} }
       </span>
+      @if (activeFilterCount > 0) {
+        <button type="button" class="c-filters__clear" (click)="clearFilters()">Limpiar filtros ({{ activeFilterCount }})</button>
+      }
+      <button type="button" class="c-filters__toggle" [attr.aria-expanded]="filtersOpen" aria-controls="lfg-filters" (click)="filtersOpen = !filtersOpen">
+        Filtros@if (activeFilterCount > 0) { ({{ activeFilterCount }}) }
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
     </footer>
   </section>
 
@@ -75,7 +104,7 @@
       <ul class="l-grid l-grid--2col">
         @for (post of posts; track post._id; let i = $index) {
           <li class="c-fade-in" [style.animation-delay]="(i % 4) * 0.06 + 's'">
-            <app-lfg-card [post]="post" />
+            <app-lfg-card [post]="post" [showStatus]="activeStatus !== 'open'" />
           </li>
         }
       </ul>

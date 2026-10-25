@@ -1,4 +1,5 @@
 @use '../utilities/variables' as v;
+@use '../utilities/mixins' as m;
 
 // ── Badge base (Modern Pill) ─────────────────────────
 .c-badge {
@@ -119,6 +120,10 @@
     }
   }
 
+  &--none {
+    --karma: #{v.$color-text-muted};
+  }
+
   &__head {
     display: flex;
     align-items: baseline;
@@ -140,6 +145,23 @@
     font-size: 1.35rem;
     color: var(--karma);
     font-variant-numeric: tabular-nums;
+
+    // Sin valoraciones: no hay número que enseñar
+    &--none {
+      font-family: v.$font-heading;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: v.$color-text-muted;
+    }
+  }
+
+  &__count {
+    font-family: v.$font-body;
+    font-size: 0.75rem;
+    color: v.$color-text-muted;
+    white-space: nowrap;
   }
 
   &__bar {
@@ -153,11 +175,9 @@
     width: var(--seg-w);
     height: var(--seg-h);
     transform: skewX(-24deg);
-    background: linear-gradient(
-      90deg,
-      var(--karma) calc(var(--fill, 0) * 100%),
-      rgba(236, 232, 225, 0.12) 0
-    );
+    background: linear-gradient(90deg, var(--karma) calc(var(--fill, 0) * 100%), transparent 0);
+    // Contorno visible en la parte vacía: ≥3:1 sobre las tarjetas (antes 1,4:1)
+    box-shadow: inset 0 0 0 1px v.$color-text-subtle;
   }
 
   // Compacto: una sola línea (listas de miembros)
@@ -193,6 +213,74 @@
 
     .c-karma__bar {
       gap: 4px;
+    }
+  }
+}
+
+// ── Puntuación de una valoración (mismo lenguaje que el karma) ──
+@mixin rating-level-colors {
+  @each $level, $clr in v.$karma-colors {
+    &--#{$level} {
+      --rating: #{$clr};
+    }
+  }
+
+  &--none {
+    --rating: #{v.$color-text-muted};
+  }
+}
+
+.c-rating {
+  --rating: #{v.$color-karma-high};
+  display: inline-flex;
+  gap: 3px;
+  padding-inline: 2px;
+  @include rating-level-colors;
+
+  &__seg {
+    width: 10px;
+    height: 6px;
+    transform: skewX(-24deg);
+    box-shadow: inset 0 0 0 1px v.$color-text-subtle;
+
+    &--on {
+      background: var(--rating);
+      box-shadow: none;
+    }
+  }
+}
+
+// Selector de puntuación: 5 segmentos numerados (botones de 44px en táctil)
+.c-rating-input {
+  --rating: #{v.$color-text-muted};
+  display: flex;
+  gap: v.$spacing-xs;
+  @include rating-level-colors;
+
+  &__btn {
+    min-width: 40px;
+    height: 32px;
+    font-family: v.$font-heading;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: v.$color-text-muted;
+    background: transparent;
+    border: 1px solid v.$color-text-subtle;
+    @include m.cut-corner-br(v.$cut-sm);
+    transition:
+      background-color v.$transition-fast,
+      border-color v.$transition-fast,
+      color v.$transition-fast;
+
+    @include m.touch {
+      min-width: 44px;
+      height: 44px;
+    }
+
+    &--on {
+      background: var(--rating);
+      border-color: var(--rating);
+      color: v.$color-on-selected;
     }
   }
 }

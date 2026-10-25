@@ -2,15 +2,24 @@
   class="c-karma c-karma--{{ level }} c-karma--{{ size }}"
   role="img"
   [attr.aria-label]="ariaLabel"
-  title="Reputación según las valoraciones de otros jugadores (0–5)"
+  title="Media de las valoraciones de otros jugadores (de 0 a 5). Todas las cuentas empiezan con 5."
 >
   <span class="c-karma__head" aria-hidden="true">
     <span class="c-karma__label">Karma</span>
-    <span class="c-karma__value">{{ karma | number: '1.1-1' }}</span>
+    @if (unrated) {
+      <span class="c-karma__value c-karma__value--none">Nuevo</span>
+    } @else {
+      <span class="c-karma__value">{{ karma | number: '1.1-1' }}</span>
+    }
   </span>
   <span class="c-karma__bar" aria-hidden="true">
     @for (fill of segments; track $index) {
       <span class="c-karma__seg" [style.--fill]="fill"></span>
     }
   </span>
+  @if (size !== 'sm' && count != null) {
+    <span class="c-karma__count" aria-hidden="true">
+      {{ unrated ? 'Sin valoraciones' : countLabel }}
+    </span>
+  }
 </span>

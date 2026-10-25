@@ -111,7 +111,7 @@
       <li class="c-steps__item">
         <span class="c-steps__num">03</span>
         <h3 class="c-steps__title">Valora a tus compañeros</h3>
-        <p class="c-steps__desc">Cada partida suma o resta karma. Con menos de 3 no puedes publicar.</p>
+        <p class="c-steps__desc">Tus compañeros te puntúan de 1 a 5 y tu karma es la media. Con menos de 3 no puedes publicar grupos nuevos.</p>
       </li>
       <li class="c-steps__cta">
         <a class="c-btn c-btn--secondary" routerLink="/register">Crear cuenta gratis</a>
@@ -152,7 +152,7 @@
     <ul class="l-grid l-grid--2col">
       @for (post of openPosts; track post._id; let i = $index) {
       <li class="c-fade-in" [style.animation-delay]="i * 0.06 + 's'">
-        <app-lfg-card [post]="post" />
+        <app-lfg-card [post]="post" [showStatus]="false" />
       </li>
       }
     </ul>
@@ -165,7 +165,7 @@
       <header class="c-section-head">
         <div>
           <h2 class="c-section-head__title">Top jugadores</h2>
-          <p class="c-section-head__desc">Ordenados por karma</p>
+          <p class="c-section-head__desc">Mejor karma con al menos una valoración</p>
         </div>
         <a class="c-btn c-btn--ghost c-btn--sm" routerLink="/players">Ver todos</a>
       </header>
@@ -176,7 +176,7 @@
         </li>
         } @empty {
         @if (!loading) {
-        <li class="c-empty"><p class="c-empty__hint">Todavía no hay jugadores registrados.</p></li>
+        <li class="c-empty"><p class="c-empty__hint">Aún nadie ha recibido valoraciones. Después de jugar, puntúa a tus compañeros desde su perfil.</p></li>
         }
         }
       </ul>

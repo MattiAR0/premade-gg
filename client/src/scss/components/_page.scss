@@ -17,6 +17,17 @@
     justify-content: space-between;
   }
 
+  // móvil: título y acción en la misma fila, sin descripción
+  @include m.respond-below(sm) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: v.$spacing-sm;
+    padding-bottom: v.$spacing-md;
+    margin-bottom: v.$spacing-md;
+  }
+
   &__text {
     display: flex;
     flex-direction: column;
@@ -32,6 +43,10 @@
     font-size: 1rem;
     color: v.$color-text-muted;
     max-width: 56ch;
+
+    @include m.respond-below(sm) {
+      display: none;
+    }
   }
 
   &__actions {
@@ -54,6 +69,34 @@
 
   @include m.respond-to(md) {
     padding: v.$spacing-md v.$spacing-lg;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-md;
+  }
+
+  // móvil: el panel se pliega y el pie (recuento + botón) pasa arriba
+  &__toggle {
+    display: none;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.75rem;
+    min-height: 44px;
+    @include m.ui-label;
+    color: v.$color-text-heading;
+    background: v.$color-bg-input;
+    border: 1px solid v.$color-border-light;
+    cursor: pointer;
+
+    svg {
+      transition: transform v.$transition-fast;
+    }
+
+    &[aria-expanded='true'] svg {
+      transform: rotate(180deg);
+    }
   }
 
   &__row {
@@ -119,6 +162,10 @@
     color: v.$color-text-muted;
   }
 
+  &__count {
+    margin-right: auto;
+  }
+
   &__count strong {
     color: v.$color-text-heading;
     font-family: v.$font-heading;
@@ -137,6 +184,43 @@
       text-decoration-color: currentColor;
     }
   }
+
+  @include m.respond-below(sm) {
+    padding: v.$spacing-sm v.$spacing-md;
+
+    &__body {
+      display: none;
+    }
+
+    &--open &__body {
+      display: flex;
+    }
+
+    &__toggle {
+      display: inline-flex;
+    }
+
+    // plegado, el botón ya dice cuántos filtros hay; abierto, "Limpiar" baja a otra línea
+    &__clear {
+      order: 1;
+    }
+
+    &:not(&--open) &__clear {
+      display: none;
+    }
+
+    &__footer {
+      order: -1;
+      flex-wrap: wrap;
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    &--open &__footer {
+      padding-bottom: v.$spacing-sm;
+      border-bottom: 1px dashed v.$color-border;
+    }
+  }
 }
 
 // ── Chips (selección rápida: roles, rangos…) ─────────
@@ -144,6 +228,28 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
+}
+
+// móvil: dentro de los filtros, una sola fila con scroll horizontal
+.c-filters .c-chips {
+  @include m.respond-below(sm) {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    // sangra hasta el borde del panel; el relleno vertical deja ver el anillo de foco
+    margin: -4px (-(v.$spacing-md));
+    padding: 4px v.$spacing-md;
+    scroll-padding-inline: v.$spacing-md;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .c-chip {
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+  }
 }
 
 .c-chip {

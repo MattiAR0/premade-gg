@@ -17,48 +17,50 @@
   </header>
 
   <!-- Filtros: se aplican al instante y quedan en la URL -->
-  <section class="c-filters" aria-label="Filtros">
-    <div class="c-filters__row">
-      <label class="c-filters__group c-filters__group--grow">
-        <span class="c-filters__label">Buscar</span>
-        <div class="c-filters__search">
-          <svg class="c-filters__search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <input class="c-filters__input" type="search" [(ngModel)]="searchQuery" (input)="onSearchInput()"
-            name="search" placeholder="Nombre o tag del equipo..." />
-        </div>
-      </label>
+  <section class="c-filters" [class.c-filters--open]="filtersOpen" aria-label="Filtros">
+    <div class="c-filters__body" id="teams-filters">
+      <div class="c-filters__row">
+        <label class="c-filters__group c-filters__group--grow">
+          <span class="c-filters__label">Buscar</span>
+          <div class="c-filters__search">
+            <svg class="c-filters__search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input class="c-filters__input" type="search" [(ngModel)]="searchQuery" (input)="onSearchInput()"
+              name="search" placeholder="Nombre o tag del equipo..." />
+          </div>
+        </label>
 
-      <label class="c-filters__group">
-        <span class="c-filters__label">Rango objetivo</span>
-        <select class="c-filters__select" [(ngModel)]="filterRank" (ngModelChange)="applyFilters()" name="rank">
-          <option value="">Todos los rangos</option>
-          @for (rank of ranks; track rank) {
-          <option [value]="rank">{{ rank | label: 'rank' }}</option>
-          }
-        </select>
-      </label>
-    </div>
-
-    <div class="c-filters__row">
-      <div class="c-filters__group">
-        <span class="c-filters__label">Región</span>
-        <div class="c-chips">
-          <button type="button" class="c-chip" [class.c-chip--active]="!filterRegion" [attr.aria-pressed]="!filterRegion" (click)="setRegion('')">Todas</button>
-          @for (r of regions; track r) {
-          <button type="button" class="c-chip" [class.c-chip--active]="filterRegion === r" [attr.aria-pressed]="filterRegion === r" [title]="regionLabels[r]"
-            (click)="setRegion(r)">{{ r.toUpperCase() }}</button>
-          }
-        </div>
+        <label class="c-filters__group">
+          <span class="c-filters__label">Rango objetivo</span>
+          <select class="c-filters__select" [(ngModel)]="filterRank" (ngModelChange)="applyFilters()" name="rank">
+            <option value="">Todos los rangos</option>
+            @for (rank of ranks; track rank) {
+            <option [value]="rank">{{ rank | label: 'rank' }}</option>
+            }
+          </select>
+        </label>
       </div>
 
-      <div class="c-filters__group">
-        <span class="c-filters__label">Estado</span>
-        <button type="button" class="c-chip c-chip--toggle" [class.c-chip--active]="filterRecruiting"
-          [attr.aria-pressed]="filterRecruiting" (click)="toggleRecruiting()">Solo reclutando</button>
+      <div class="c-filters__row">
+        <div class="c-filters__group">
+          <span class="c-filters__label">Región</span>
+          <div class="c-chips">
+            <button type="button" class="c-chip" [class.c-chip--active]="!filterRegion" [attr.aria-pressed]="!filterRegion" (click)="setRegion('')">Todas</button>
+            @for (r of regions; track r) {
+            <button type="button" class="c-chip" [class.c-chip--active]="filterRegion === r" [attr.aria-pressed]="filterRegion === r" [title]="regionLabels[r]"
+              (click)="setRegion(r)">{{ r.toUpperCase() }}</button>
+            }
+          </div>
+        </div>
+
+        <div class="c-filters__group">
+          <span class="c-filters__label">Estado</span>
+          <button type="button" class="c-chip c-chip--toggle" [class.c-chip--active]="filterRecruiting"
+            [attr.aria-pressed]="filterRecruiting" (click)="toggleRecruiting()">Solo reclutando</button>
+        </div>
       </div>
     </div>
 
@@ -69,6 +71,10 @@
       @if (activeFilterCount > 0) {
       <button type="button" class="c-filters__clear" (click)="clearFilters()">Limpiar filtros ({{ activeFilterCount }})</button>
       }
+      <button type="button" class="c-filters__toggle" [attr.aria-expanded]="filtersOpen" aria-controls="teams-filters" (click)="filtersOpen = !filtersOpen">
+        Filtros@if (activeFilterCount > 0) { ({{ activeFilterCount }}) }
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
     </footer>
   </section>
 

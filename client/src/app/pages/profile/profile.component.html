@@ -52,7 +52,7 @@
           }
         </div>
 
-        <app-karma-badge class="c-profile__karma" [karma]="user.karma" size="lg" />
+        <app-karma-badge class="c-profile__karma" [karma]="user.karma" [count]="user.reviewCount" size="lg" />
       </header>
 
       <!-- Favorite Agents -->
@@ -188,20 +188,17 @@
         <div class="c-review-form">
           <div class="c-review-form__stars">
             <span class="c-review-form__label">Puntuación</span>
-            <div class="c-review-form__star-row">
-              @for (star of [1, 2, 3, 4, 5]; track star) {
+            <div class="c-rating-input c-rating-input--{{ ratingLevel(reviewHoverRating || reviewRating) }}" role="group" aria-label="Puntuación de 1 a 5">
+              @for (n of [1, 2, 3, 4, 5]; track n) {
                 <button
-                  class="c-review-form__star-btn"
-                  (click)="setRating(star)"
-                  (mouseenter)="setHoverRating(star)"
-                  (mouseleave)="setHoverRating(0)">
-                  <svg width="22" height="22" viewBox="0 0 24 24"
-                    [attr.fill]="star <= (reviewHoverRating || reviewRating) ? '#c49a44' : 'none'"
-                    [attr.stroke]="star <= (reviewHoverRating || reviewRating) ? '#c49a44' : '#4a5568'"
-                    stroke-width="2">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                  </svg>
-                </button>
+                  type="button"
+                  class="c-rating-input__btn"
+                  [class.c-rating-input__btn--on]="n <= (reviewHoverRating || reviewRating)"
+                  [attr.aria-pressed]="reviewRating === n"
+                  [attr.aria-label]="'Puntuar ' + n + ' de 5'"
+                  (click)="setRating(n)"
+                  (mouseenter)="setHoverRating(n)"
+                  (mouseleave)="setHoverRating(0)">{{ n }}</button>
               }
             </div>
           </div>
@@ -258,13 +255,13 @@
                   }
                 </div>
                 <div class="c-review-card__actions">
-                  <div class="c-review-card__rating">
-                    @for (star of [1, 2, 3, 4, 5]; track star) {
-                      <svg width="14" height="14" viewBox="0 0 24 24" [attr.fill]="star <= review.rating ? '#c49a44' : 'none'" [attr.stroke]="star <= review.rating ? '#c49a44' : '#4a5568'" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <span class="c-rating c-rating--{{ ratingLevel(review.rating) }}" role="img" [attr.aria-label]="'Puntuación ' + review.rating + ' de 5'">
+                    @for (n of [1, 2, 3, 4, 5]; track n) {
+                      <span class="c-rating__seg" [class.c-rating__seg--on]="n <= review.rating"></span>
                     }
-                  </div>
+                  </span>
                   @if (isOwnReview(review)) {
-                    <button class="c-review-card__delete" title="Eliminar mi review" (click)="deleteReview(review._id)">
+                    <button class="c-review-card__delete" title="Eliminar mi valoración" aria-label="Eliminar mi valoración" (click)="deleteReview(review._id)">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                     </button>
                   }

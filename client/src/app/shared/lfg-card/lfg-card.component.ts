@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RankBadgeComponent } from '../rank-badge/rank-badge.component';
 import { KarmaBadgeComponent } from '../karma-badge/karma-badge.component';
@@ -8,12 +9,14 @@ import { LabelPipe } from '../pipes/label.pipe';
 @Component({
   selector: 'app-lfg-card',
   standalone: true,
-  imports: [RankBadgeComponent, KarmaBadgeComponent, RouterLink, LabelPipe],
+  imports: [RankBadgeComponent, KarmaBadgeComponent, RouterLink, LabelPipe, DecimalPipe],
   templateUrl: './lfg-card.component.html',
   styleUrl: './lfg-card.component.scss',
 })
 export class LfgCardComponent {
   @Input({ required: true }) post!: LfgPost;
+  /** false cuando el contexto ya dice que el grupo está abierto (filtro "Abiertos", home) */
+  @Input() showStatus = true;
 
   /** Número de miembros aceptados */
   get acceptedCount(): number {

@@ -9,7 +9,7 @@
   <!-- Header: título + status -->
   <header class="c-lfg-card__header">
     <h3 class="c-lfg-card__title"><a class="c-card__link" [routerLink]="['/lfg', post._id]">{{ post.title }}</a></h3>
-    @if (post.status === 'open') {
+    @if (post.status === 'open' && showStatus) {
       <span class="c-badge c-badge--open">
         <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="6"/></svg>
         Abierto
@@ -23,15 +23,23 @@
 
   <!-- Body: rango, región, miembros -->
   <section class="c-lfg-card__body">
+    <!-- Quién lo crea (rango y karma al mismo nivel) y qué exige el grupo -->
     <div class="c-lfg-card__meta">
+      <span class="c-lfg-card__meta-label">Creador</span>
       @if (post.author.rank) {
         <app-rank-badge [rank]="post.author.rank" />
       }
+      <app-karma-badge [karma]="post.author.karma" [count]="post.author.reviewCount" size="sm" />
       <span class="c-badge c-badge--region">{{ regionLabel }}</span>
-      @if (post.minRank) {
-        <span class="c-lfg-card__req">Mín. {{ post.minRank | label: 'rank' }}</span>
-      }
     </div>
+    @if (post.minRank || post.minKarma) {
+      <p class="c-lfg-card__req">
+        Exige
+        @if (post.minRank) { <strong>{{ post.minRank | label: 'rank' }} o más</strong> }
+        @if (post.minRank && post.minKarma) { · }
+        @if (post.minKarma) { <strong>karma {{ post.minKarma | number: '1.0-1' }}+</strong> }
+      </p>
+    }
 
     @if (post.description) {
       <p class="c-lfg-card__desc">{{ post.description }}</p>
@@ -72,9 +80,6 @@
         (click)="$event.stopPropagation()">
         por {{ post.author.riotId }}
       </a>
-      @if (post.author.karma != null) {
-        <app-karma-badge [karma]="post.author.karma" size="sm" />
-      }
     }
   </footer>
 </article>

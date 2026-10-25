@@ -12,6 +12,8 @@ export interface User {
   role: string;
   schedule: string;
   karma: number;
+  /** Nº de valoraciones recibidas (base del karma). Opcional por compatibilidad. */
+  reviewCount?: number;
   accountLevel: number | null;
   cardImage: string | null;
   lastRankUpdate: string | null;

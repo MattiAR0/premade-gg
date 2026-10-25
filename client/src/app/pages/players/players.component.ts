@@ -26,6 +26,7 @@ export class PlayersComponent implements OnInit, AfterViewInit, OnDestroy {
   private requestId = 0;
   totalPlayers = 0;
   readonly pageSize = 12;
+  filtersOpen = false;
 
   // Filtros (sincronizados con la URL: ?rank=&role=&karma=&lft=1)
   filterRank = '';
@@ -39,7 +40,7 @@ export class PlayersComponent implements OnInit, AfterViewInit, OnDestroy {
     { value: 0, label: 'Cualquiera' },
     { value: 3, label: '3+' },
     { value: 4, label: '4+' },
-    { value: 4.5, label: '4.5+' },
+    { value: 4.5, label: '4,5+' },
   ];
 
   @ViewChild('scrollSentinel') scrollSentinel!: ElementRef<HTMLDivElement>;

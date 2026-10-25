@@ -56,6 +56,14 @@ export class ProfileComponent implements OnInit {
     this.agentIcons.load();
   }
 
+  /** Color de una puntuación entera (mismos umbrales que el karma) */
+  ratingLevel(rating: number): 'high' | 'mid' | 'low' | 'none' {
+    if (!rating) return 'none';
+    if (rating >= 4) return 'high';
+    if (rating >= 3) return 'mid';
+    return 'low';
+  }
+
   /** Puede enviar mensaje (logueado y no es su propio perfil) */
   get canMessage(): boolean {
     return this.authService.isAuthenticated() && !this.isOwnProfile;

@@ -99,8 +99,22 @@
 
   &__creator {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: v.$spacing-sm;
+  }
+
+  &__standing {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: v.$spacing-sm v.$spacing-lg;
+    margin-left: auto;
+
+    @include m.respond-below(md) {
+      margin-left: 0;
+      flex-basis: 100%;
+    }
   }
 
   &__creator-link {
