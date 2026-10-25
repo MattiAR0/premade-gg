@@ -4,6 +4,41 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-10-25 · Agentes desde valorant-api: avatares y favoritos con filtros
+
+**Commit:** este commit
+
+**Qué y por qué:** petición de la usuaria: faltaban personajes para la foto de perfil y para elegir como favoritos, y el selector de imágenes no tenía filtros. Las dos listas estaban escritas a mano con 28 agentes y faltaba Miks.
+
+**Cambios:**
+- `AgentIconsService`: pasa de "nombre → icono" a catálogo completo `AgentInfo` (nombre, rol, icono) desde valorant-api.com.
+  - Orden alfabético y caché en `localStorage` (`premadegg:agents:v2`).
+  - Lista de respaldo con los 29 agentes de hoy por si la API no responde.
+  - `iconFor()` sigue igual para el perfil.
+- Editar perfil:
+  - Avatares y favoritos salen del catálogo, así que un agente nuevo aparece solo.
+  - Selector de avatar con chips de rol (Todos, Duelista, Controlador, Iniciador, Centinela), búsqueda por nombre y estado vacío "Ningún agente coincide con «…»". El avatar elegido lleva `aria-pressed`.
+  - Favoritos con icono, el mismo filtro por rol y `aria-pressed`.
+- Fuera la lista fija `PRESET_AVATARS` (`profile-edit`) y la constante sin uso `VALORANT_AGENTS` (`user.model.ts`). Los avatares ya guardados siguen valiendo: es la misma URL de valorant-api.
+- `supabase/migrations/20261025000005_favorite_agents_open.sql` (nueva):
+  - El `CHECK` de `profiles.favorite_agents` enumeraba los 28 agentes y rechazaba Miks al guardar; lo destapó la prueba en el navegador.
+  - Ahora exige como mucho 3 nombres y un formato razonable por nombre (función `valid_agent_names`).
+
+**Verificación:**
+- Navegador en local con `test2@premade.gg`:
+  - 29 agentes en avatares y en favoritos, Miks incluido.
+  - "Controlador" deja 7 (Astra, Brimstone, Clove, Harbor, Miks, Omen, Viper); la búsqueda "je" deja Jett.
+  - Avatar de Miks + Miks como favorito → "Guardado con éxito" y en la base `profile_image_type = avatar` y `{Omen,Brimstone,Miks}`.
+  - El perfil público muestra el avatar de Miks.
+- Las 58 imágenes cargan. A 375px, chips de 44px y sin scroll horizontal.
+- Restricción probada en transacciones con rollback: `{Miks,KAY/O,Omen}` pasa; 4 agentes o `<script>` se rechazan. `npm run db:test`: 18/18.
+
+**Pendiente:**
+- Aplicar la migración en Supabase cloud antes de publicar: sin ella, guardar Miks como favorito falla en producción.
+- El error de la base se muestra tal cual al usuario ("violates check constraint…"); habría que traducir los errores de `update_my_profile`.
+
+---
+
 ## 2026-10-25 · Rango solo con emblema, sin nombre
 
 **Commit:** este commit

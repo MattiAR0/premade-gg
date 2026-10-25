@@ -232,6 +232,24 @@
     gap: v.$spacing-sm;
   }
 
+  // Filtros por rol y búsqueda (avatares y favoritos)
+  &__agent-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: v.$spacing-sm v.$spacing-md;
+    margin-bottom: v.$spacing-sm;
+  }
+
+  &__agent-search {
+    flex: 1 1 180px;
+    max-width: 260px;
+
+    .c-settings__input {
+      width: 100%;
+    }
+  }
+
   &__preset-avatar {
     width: 48px;
     height: 48px;
@@ -273,7 +291,10 @@
   }
 
   &__agent-chip {
-    padding: v.$spacing-xs v.$spacing-md;
+    display: inline-flex;
+    align-items: center;
+    gap: v.$spacing-xs;
+    padding: v.$spacing-xs v.$spacing-md v.$spacing-xs v.$spacing-xs;
     border-radius: v.$radius-full;
     border: 1px solid v.$color-border;
     background: transparent;
@@ -299,6 +320,14 @@
       border-color: v.$color-selected;
       color: v.$color-on-selected;
       font-weight: 600;
+    }
+
+    &-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: v.$radius-full;
+      object-fit: cover;
+      flex-shrink: 0;
     }
 
     &--disabled {
