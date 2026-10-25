@@ -2,7 +2,7 @@
   class="c-karma c-karma--{{ level }} c-karma--{{ size }}"
   role="img"
   [attr.aria-label]="ariaLabel"
-  title="Media de las valoraciones de otros jugadores (de 0 a 5). Todas las cuentas empiezan con 5."
+  title="Media de las valoraciones de otros jugadores (de 1 a 5) y cuántas hay. Los filtros y requisitos usan un karma ajustado: con pocas valoraciones cuenta menos."
 >
   <span class="c-karma__head" aria-hidden="true">
     <span class="c-karma__label">Karma</span>
@@ -10,6 +10,10 @@
       <span class="c-karma__value c-karma__value--none">Nuevo</span>
     } @else {
       <span class="c-karma__value">{{ karma | number: '1.1-1' }}</span>
+      <!-- En filas compactas el recuento va junto al número: un 5,0 de 1 voto no vale lo mismo que uno de 50 -->
+      @if (size === 'sm' && count) {
+        <span class="c-karma__count">({{ count }})</span>
+      }
     }
   </span>
   <span class="c-karma__bar" aria-hidden="true">

@@ -14,6 +14,8 @@ export interface User {
   karma: number;
   /** Nº de valoraciones recibidas (base del karma). Opcional por compatibilidad. */
   reviewCount?: number;
+  /** Karma ajustado (media bayesiana): decide orden, filtros y requisitos. Una cuenta nueva vale 3,5. */
+  trustKarma?: number;
   accountLevel: number | null;
   cardImage: string | null;
   lastRankUpdate: string | null;

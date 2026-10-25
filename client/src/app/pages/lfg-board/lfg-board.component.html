@@ -48,12 +48,13 @@
         </label>
 
         <div class="c-filters__group">
-          <span class="c-filters__label">Karma del creador</span>
-          <div class="c-segmented">
+          <span class="c-filters__label" id="lfg-karma-label">Karma del creador</span>
+          <div class="c-segmented" role="group" aria-labelledby="lfg-karma-label" aria-describedby="lfg-karma-hint">
             @for (opt of authorKarmaOptions; track opt.value) {
               <button type="button" class="c-segmented__btn" [class.c-segmented__btn--active]="filterMinKarma === opt.value" [attr.aria-pressed]="filterMinKarma === opt.value" (click)="setMinKarma(opt.value)">{{ opt.label }}</button>
             }
           </div>
+          <span class="c-filters__hint" id="lfg-karma-hint">Ajustado por nº de valoraciones: una cuenta nueva cuenta como 3,5.</span>
         </div>
       </div>
     </div>

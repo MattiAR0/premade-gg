@@ -33,12 +33,13 @@
         </label>
 
         <div class="c-filters__group">
-          <span class="c-filters__label">Karma mínimo</span>
-          <div class="c-segmented">
+          <span class="c-filters__label" id="players-karma-label">Karma mínimo</span>
+          <div class="c-segmented" role="group" aria-labelledby="players-karma-label" aria-describedby="players-karma-hint">
             @for (opt of karmaOptions; track opt.value) {
               <button type="button" class="c-segmented__btn" [class.c-segmented__btn--active]="filterMinKarma === opt.value" [attr.aria-pressed]="filterMinKarma === opt.value" (click)="setMinKarma(opt.value)">{{ opt.label }}</button>
             }
           </div>
+          <span class="c-filters__hint" id="players-karma-hint">Ajustado por nº de valoraciones: una cuenta nueva cuenta como 3,5.</span>
         </div>
 
         <div class="c-filters__group">

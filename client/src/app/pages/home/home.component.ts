@@ -73,13 +73,11 @@ export class HomeComponent implements OnInit {
       error: fail,
     });
 
-    // Top jugadores: solo quien tiene valoraciones (un 5,0 inicial no demuestra nada).
-    // Empate de karma: gana quien tiene más valoraciones.
-    this.api.getUsers({ minReviews: 1, limit: 12 }).subscribe({
+    // Top jugadores: solo quien tiene valoraciones. El servidor ordena por karma ajustado,
+    // así que un 4,7 con 3 valoraciones va por delante de un 5,0 con una.
+    this.api.getUsers({ minReviews: 1, limit: 3 }).subscribe({
       next: (res) => {
-        this.topPlayers = [...res.data]
-          .sort((a, b) => b.karma - a.karma || (b.reviewCount ?? 0) - (a.reviewCount ?? 0))
-          .slice(0, 3);
+        this.topPlayers = res.data;
         done();
       },
       error: fail,

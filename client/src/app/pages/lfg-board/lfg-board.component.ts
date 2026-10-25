@@ -44,8 +44,8 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly authorKarmaOptions = [
     { value: 0, label: 'Cualquiera' },
     { value: 3, label: '3+' },
+    { value: 3.5, label: '3,5+' },
     { value: 4, label: '4+' },
-    { value: 4.5, label: '4,5+' },
   ];
   readonly sizes: TeamSizeTab[] = [2, 3, 5];
   readonly sizeLabels = TEAM_SIZE_LABELS;

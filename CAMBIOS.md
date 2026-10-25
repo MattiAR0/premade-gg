@@ -4,9 +4,81 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-10-25 · Karma ajustado con media bayesiana (tercera ronda, paso 1)
+
+**Commit:** este commit (solo frontend; la migración y los tests SQL van con el commit de la migración a Supabase)
+
+**Qué y por qué:** la crítica final (22/40) vio que las cuentas nuevas, con un 5,0 implícito, pasaban cualquier filtro o requisito de karma. En `/players`, "4,5+" devolvía 8 jugadores y 4 no tenían ninguna valoración. Además, en tarjetas y filas no se veía en cuántas valoraciones se basaba el karma. Se eligió la media bayesiana.
+
+**Cambios:**
+- Skill `supabase-postgres-best-practices` (Supabase) instalado con `npx skills add` y usado para la migración.
+- `supabase/migrations/20261025000003_trust_karma.sql` (nueva):
+  - Columna generada `profiles.trust_karma` = `(3·3,5 + karma·n) / (3 + n)`. Una cuenta nueva vale 3,50, un solo 5 da 3,88 y 4,7 con 3 valoraciones da 4,10.
+  - Índices: los tres de `karma` pasan a `trust_karma` (orden, rango+rol, LFT).
+  - `user_json` expone `trustKarma`.
+  - `get_users` ordena, pagina (cursor `<trust>_<id>`) y filtra el karma mínimo sobre `trust_karma`.
+  - `get_lfg_posts` filtra el karma del creador sobre `trust_karma`.
+  - `create_lfg_post` exige `trust_karma` ≥ 3 y `join_lfg_post` exige `trust_karma` ≥ el mínimo del grupo. Los mensajes dicen "karma ajustado" y cuántas valoraciones hay; "posts LFG" pasa a "grupos".
+- `tests/database/security.test.sql`:
+  - El fixture de B lleva 5 valoraciones (karma 2 → ajustado 2,56).
+  - Mensaje esperado actualizado.
+  - Dos tests nuevos: karma ajustado de C y una cuenta nueva = 3,5. En total, 18.
+- En pantalla se sigue mostrando la media real:
+  - `karma-badge` en tamaño sm añade el recuento: "4,7 (3)".
+  - El `title` explica el ajuste.
+- Filtros de karma en `/players` y `/lfg`:
+  - Las opciones pasan a Cualquiera / 3+ / 3,5+ / 4+. Con tan pocas valoraciones, "4,5+" siempre salía vacío.
+  - Debajo, la explicación "Ajustado por nº de valoraciones: una cuenta nueva cuenta como 3,5", enlazada con `aria-describedby`.
+- Portada: "Top jugadores" usa el orden del servidor; desaparece la ordenación en el cliente.
+- `User.trustKarma` en el modelo.
+
+**Verificación:**
+- `npx supabase migration up` sin borrar datos y `npm run db:test`: 18/18.
+- Datos locales:
+  - "4,5+" pasa de 8 jugadores a 0.
+  - "4+" deja 2 (Player10 4,7 (3), ajustado 4,10; Player19 4,5 (4), ajustado 4,07).
+  - Las 4 cuentas nuevas ya no pasan un requisito de 4.
+- Navegador:
+  - `/players?karma=4` muestra esos 2.
+  - "Top jugadores": Player10, Player19, Player1 (antes Player4, 5,0 con una valoración, iba primero).
+  - `/lfg?karma=3.5` a 375px: 6 grupos, explicación visible y sin scroll horizontal.
+- Build sin errores y consola limpia.
+
+**Pendiente:**
+- La migración va con el commit de la migración a Supabase, porque depende de sus migraciones base.
+- Las constantes (3,5 y 3) están en la columna generada: cambiarlas exige otra migración.
+
+---
+
+## 2026-10-25 · Crítica final de la segunda ronda (22/40)
+
+**Commit:** sin commitear (`.impeccable/` no está en git)
+
+**Qué y por qué:** medir el resultado de los pasos 1 a 6 con el mismo método que la crítica anterior (26/40): dos subagentes aislados, uno para la revisión de diseño y otro para el detector con el navegador.
+
+**Cambios:**
+- `.impeccable/critique/2026-10-25T15-38-38Z__client-src-app.md` (nuevo): informe completo. Tendencia: 24 → 26 → 22.
+- `TRASPASO.md`: segunda ronda cerrada y siguientes pasos.
+
+**Verificación:**
+- Detector CLI: 16 hallazgos, todos falsos positivos (`[src]` de Angular y el indicador de escritura).
+- Overlay en 6 páginas, en escritorio y a 375px:
+  - Mínimo de 12px en todas, sin scroll horizontal.
+  - Un contraste de 4,46:1: `c-rank--immortal` sobre el degradado de `player-card`.
+- Comprobados en el código los tres problemas P1 que más pesan en la nota:
+  - `canJoin` no mira requisitos.
+  - No hay filtro de región en `/lfg` ni en `/players`.
+  - 4 de 8 perfiles con karma ≥ 4,5 no tienen valoraciones.
+
+**Pendiente:**
+- La nota baja porque este revisor recorrió flujos que la crítica anterior no penalizó (unirse, confirmaciones, región, prevención de errores). No hay regresiones: lo que corrigieron los pasos 1 a 6 consta como resuelto.
+- Quedan 3 P1 y 2 P2 por decidir.
+
+---
+
 ## 2026-10-25 · Detalles menores (segunda ronda, paso 6)
 
-**Commit:** este commit (los cambios de `oauth-buttons` van con el commit de la migración)
+**Commit:** `721802b` (los cambios de `oauth-buttons` van con el commit de la migración)
 
 **Qué y por qué:** cerrar las observaciones menores de la segunda crítica. Unas incumplían `CLAUDE.md` (brillo decorativo, franja lateral de 2px); otras pesaban más de la cuenta en la jerarquía o eran textos en inglés o en masculino.
 

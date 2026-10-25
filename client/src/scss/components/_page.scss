@@ -121,6 +121,12 @@
     @include m.ui-label;
   }
 
+  &__hint {
+    font-size: v.$font-size-2xs;
+    color: v.$color-text-subtle;
+    max-width: 28ch;
+  }
+
   &__select,
   &__input {
     @include m.form-control;
