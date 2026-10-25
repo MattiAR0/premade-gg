@@ -7,6 +7,6 @@
  */
 export const environment = {
   production: true,
-  supabaseUrl: 'https://YOUR_PROJECT_REF.supabase.co',
-  supabaseKey: 'YOUR_SUPABASE_PUBLISHABLE_KEY',
+  supabaseUrl: 'https://taprgsiozhwralnzqxri.supabase.co',
+  supabaseKey: 'sb_publishable_7Wns5ZkfRi0h6al1ZpZnHA_M8NVss_j',
 };

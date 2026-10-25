@@ -4,6 +4,30 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-10-25 · Producción apuntando a Supabase cloud
+
+**Commit:** este commit
+
+**Qué y por qué:** el proyecto de Supabase cloud (`taprgsiozhwralnzqxri`, West EU) ya tiene el esquema; el frontend de producción tiene que apuntar a él para poder desplegar en Vercel.
+
+**Cambios:**
+- `client/src/environments/environment.prod.ts`: Project URL y publishable key del proyecto. La clave es pública por diseño; la seguridad la dan las políticas RLS y las RPC `security definer`.
+- Fuera del repositorio, en el proyecto cloud:
+  - `supabase db push` con las 9 migraciones, sin seed.
+  - Despliegue de `riot-validate`, `riot-link` y `riot-refresh` con `--no-verify-jwt`.
+
+**Verificación:**
+- `migration list` muestra las 9 migraciones aplicadas.
+- Con la publishable key, `get_users` y `get_lfg_posts` responden (base vacía).
+- Un `PATCH` directo sobre `profiles` devuelve 401.
+
+**Pendiente:**
+- Secrets `RIOT_API_KEY` y `HENRIK_API_KEY`: sin ellos no funciona vincular el Riot ID.
+- En el panel: URLs de Auth, SMTP de Brevo, plantillas de email y proveedores Google/Discord.
+- Migración de datos desde MongoDB.
+
+---
+
 ## 2026-10-25 · DEPLOY.md: dominio real y despliegue por preview
 
 **Commit:** este commit
