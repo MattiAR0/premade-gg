@@ -256,7 +256,7 @@
       <header class="c-modal__header">
         <div>
           <h2 class="c-modal__title" id="lfg-edit-title">Editar grupo</h2>
-          <p class="c-modal__subtitle">El tamaño no se puede cambiar: afecta a quién ya está dentro.</p>
+          <p class="c-modal__subtitle">Cambia lo que necesites; los miembros que ya están dentro se mantienen.</p>
         </div>
         <button class="c-modal__close" type="button" (click)="closeEditModal()" aria-label="Cerrar">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -268,6 +268,21 @@
       }
 
       <form class="c-modal__form" (ngSubmit)="saveEdit()">
+        <div class="c-modal__field">
+          <span class="c-modal__label" id="lfg-edit-size-label">Tamaño del grupo</span>
+          <div class="c-segmented c-segmented--block" role="group" aria-labelledby="lfg-edit-size-label"
+            [attr.aria-describedby]="acceptedMembers.length > 2 ? 'lfg-edit-size-hint' : null">
+            @for (size of sizes; track size) {
+              <button type="button" class="c-segmented__btn" [class.c-segmented__btn--active]="editForm.teamSize === size"
+                [attr.aria-pressed]="editForm.teamSize === size" [disabled]="!sizeFits(size)"
+                (click)="editForm.teamSize = size">{{ teamLabels[size] }}</button>
+            }
+          </div>
+          @if (acceptedMembers.length > 2) {
+            <span class="c-modal__hint" id="lfg-edit-size-hint">Ya sois {{ acceptedMembers.length }}: para un grupo más pequeño, saca antes a alguien.</span>
+          }
+        </div>
+
         <label class="c-modal__field">
           <span class="c-modal__label">
             Título

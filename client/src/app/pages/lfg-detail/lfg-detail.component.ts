@@ -5,7 +5,7 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
-import { LfgPost, LfgMember, TEAM_SIZE_LABELS } from '../../models/lfg-post.model';
+import { LfgPost, LfgMember, TEAM_SIZE_LABELS, TeamSizeTab } from '../../models/lfg-post.model';
 import { VALORANT_RANKS } from '../../models/user.model';
 import { RankBadgeComponent } from '../../shared/rank-badge/rank-badge.component';
 import { KarmaBadgeComponent } from '../../shared/karma-badge/karma-badge.component';
@@ -31,6 +31,7 @@ export class LfgDetailComponent implements OnInit {
 
   readonly teamLabels = TEAM_SIZE_LABELS;
   readonly rankOptions = VALORANT_RANKS;
+  readonly sizes: TeamSizeTab[] = [2, 3, 5];
   /** Mismas opciones que al crear el grupo */
   readonly karmaOptions = [
     { value: 0, label: 'Sin mínimo' },
@@ -40,7 +41,7 @@ export class LfgDetailComponent implements OnInit {
 
   // ── Editar y borrar (solo el creador) ─────────────
   showEditModal = false;
-  editForm = { title: '', description: '', minRank: '', minKarma: 0 };
+  editForm = { title: '', description: '', minRank: '', minKarma: 0, teamSize: 2 as TeamSizeTab };
   editError = '';
   editSaving = false;
   showDeleteModal = false;
@@ -245,9 +246,15 @@ export class LfgDetailComponent implements OnInit {
       description: this.post.description ?? '',
       minRank: this.post.minRank ?? '',
       minKarma: this.post.minKarma ?? 0,
+      teamSize: this.post.teamSize as TeamSizeTab,
     };
     this.editError = '';
     this.showEditModal = true;
+  }
+
+  /** No se puede reducir el grupo por debajo de los miembros que ya tiene */
+  sizeFits(size: number): boolean {
+    return size >= this.acceptedMembers.length;
   }
 
   closeEditModal(): void {
@@ -270,6 +277,7 @@ export class LfgDetailComponent implements OnInit {
         description: this.editForm.description.trim(),
         minRank: this.editForm.minRank,
         minKarma: this.editForm.minKarma,
+        teamSize: this.editForm.teamSize,
       })
       .subscribe({
         next: (post) => {

@@ -4,7 +4,7 @@
 -- ════════════════════════════════════════════════════════════
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(24);
+select plan(26);
 
 -- ── Fixtures: tres usuarios (A, B, C) ────────────────────────
 insert into auth.users (id, email, aud, role)
@@ -102,6 +102,14 @@ select is(
   'closed', 'el creador puede cerrar su grupo'
 );
 select public.update_lfg_post((select id from public.lfg_posts where title = 'Duo ranked'), '{"status": "open"}');
+select is(
+  (public.update_lfg_post((select id from public.lfg_posts where title = 'Duo ranked'), '{"teamSize": 5}') ->> 'teamSize'),
+  '5', 'el creador puede cambiar el tamaño del grupo'
+);
+select throws_ok(
+  format($$ select public.update_lfg_post(%L, '{"teamSize": 4}') $$, (select id from public.lfg_posts where title = 'Duo ranked')),
+  'P0001', 'Tamaño no válido: Dúo, Trío o 5-Stack', 'solo se admiten 2, 3 o 5'
+);
 
 select pg_temp.login('b0000000-0000-0000-0000-00000000000b');
 select throws_ok(

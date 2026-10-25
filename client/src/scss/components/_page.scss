@@ -338,6 +338,14 @@
       color: v.$color-on-selected;
       background: v.$color-selected;
     }
+
+    // Opción no disponible (p. ej. un tamaño de grupo donde no caben los miembros)
+    &:disabled,
+    &:disabled:hover {
+      color: v.$color-text-subtle;
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
 
   &--block {

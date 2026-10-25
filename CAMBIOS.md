@@ -4,9 +4,41 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
-## 2026-10-25 · Perfil sin nivel de cuenta
+## 2026-10-25 · Editar grupo: cambiar Dúo, Trío o 5-Stack
 
 **Commit:** este commit
+
+**Qué y por qué:** la usuaria vio que al editar un grupo no se podía cambiar el tamaño. Se había dejado fuera porque afecta a los miembros; ahora se permite con una regla que lo hace seguro.
+
+**Cambios:**
+- `supabase/migrations/20261025000008_lfg_edit_size.sql` (nueva): `update_lfg_post` acepta `teamSize`.
+  - Solo 2, 3 o 5.
+  - No puede quedar por debajo de los miembros aceptados: "El grupo ya tiene N miembros: saca a alguien antes de reducirlo a M".
+  - El estado se recalcula con el tamaño final: cerrado se queda cerrado; si no, lleno o abierto según las plazas.
+- `tests/database/security.test.sql`: 2 tests nuevos (cambio de tamaño y tamaño inválido). En total, 26.
+- `api.service`: `updateLfgPost` admite `teamSize`.
+- `lfg-detail`:
+  - El modal de edición empieza con el segmentado Dúo / Trío / 5-Stack.
+  - Los tamaños donde no caben los miembros actuales salen desactivados, con el aviso "Ya sois N: para un grupo más pequeño, saca antes a alguien".
+  - Fuera el subtítulo que decía que el tamaño no se podía cambiar.
+- `_page.scss`: estilo desactivado para `.c-segmented__btn:disabled` (no existía).
+
+**Verificación:**
+- `npm run db:test`: 26/26.
+- Navegador en local con `test1@premade.gg`, en su grupo 5-Stack con 3 miembros (2 añadidos para la prueba):
+  - Dúo sale desactivado con el aviso.
+  - Pasar a Trío deja "Trío · Lleno" y 3/3; volver a 5-Stack lo reabre con 3/5.
+- La RPC rechaza reducir a Dúo con 3 miembros (probado con rollback).
+
+**Pendiente:**
+- Aplicar la migración en Supabase cloud antes de publicar.
+- En la base local, el grupo de test1 se queda con 3 miembros de prueba.
+
+---
+
+## 2026-10-25 · Perfil sin nivel de cuenta
+
+**Commit:** `6240606`
 
 **Qué y por qué:** petición de la usuaria: quitar el nivel de cuenta de Valorant del perfil.
 
@@ -18,7 +50,7 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ## 2026-10-25 · Varios roles por jugador
 
-**Commit:** este commit
+**Commit:** `6240606`
 
 **Qué y por qué:** petición de la usuaria: poder poner más de un rol. Cada jugador tenía un solo `role` y, aparte, un "rol favorito".
 

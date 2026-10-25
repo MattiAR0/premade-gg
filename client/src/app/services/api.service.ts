@@ -205,7 +205,14 @@ export class ApiService {
   /** Solo el creador. status: 'closed' cierra; 'open' reabre (queda 'full' si ya está completo) */
   updateLfgPost(
     postId: string,
-    data: { title?: string; description?: string; minRank?: string; minKarma?: number; status?: 'open' | 'closed' },
+    data: {
+      title?: string;
+      description?: string;
+      minRank?: string;
+      minKarma?: number;
+      teamSize?: number;
+      status?: 'open' | 'closed';
+    },
   ): Observable<LfgPost> {
     return rpc<LfgPost>('update_lfg_post', { p_id: postId, p_data: data }).pipe(
       tap(() => this.invalidateByPrefix('get_lfg_posts')),
