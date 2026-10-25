@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
@@ -9,11 +10,12 @@ import { VALORANT_RANKS } from '../../models/user.model';
 import { RankBadgeComponent } from '../../shared/rank-badge/rank-badge.component';
 import { KarmaBadgeComponent } from '../../shared/karma-badge/karma-badge.component';
 import { LabelPipe } from '../../shared/pipes/label.pipe';
+import { DialogDirective } from '../../shared/dialog/dialog.directive';
 
 @Component({
   selector: 'app-lfg-detail',
   standalone: true,
-  imports: [RouterLink, RankBadgeComponent, KarmaBadgeComponent, LabelPipe, DecimalPipe],
+  imports: [RouterLink, FormsModule, RankBadgeComponent, KarmaBadgeComponent, LabelPipe, DecimalPipe, DialogDirective],
   templateUrl: './lfg-detail.component.html',
   styleUrl: './lfg-detail.component.scss',
 })
@@ -28,6 +30,22 @@ export class LfgDetailComponent implements OnInit {
   feedbackAt: 'join' | 'members' = 'join';
 
   readonly teamLabels = TEAM_SIZE_LABELS;
+  readonly rankOptions = VALORANT_RANKS;
+  /** Mismas opciones que al crear el grupo */
+  readonly karmaOptions = [
+    { value: 0, label: 'Sin mínimo' },
+    { value: 3, label: '3+' },
+    { value: 4, label: '4+' },
+  ];
+
+  // ── Editar y borrar (solo el creador) ─────────────
+  showEditModal = false;
+  editForm = { title: '', description: '', minRank: '', minKarma: 0 };
+  editError = '';
+  editSaving = false;
+  showDeleteModal = false;
+  deleteError = '';
+  deleting = false;
   private readonly title = inject(Title);
 
   constructor(
@@ -215,6 +233,109 @@ export class LfgDetailComponent implements OnInit {
       error: (err) => {
         this.actionError = err.error?.message || 'Error al procesar acción';
         this.actionLoading = false;
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  openEditModal(): void {
+    if (!this.post) return;
+    this.editForm = {
+      title: this.post.title,
+      description: this.post.description ?? '',
+      minRank: this.post.minRank ?? '',
+      minKarma: this.post.minKarma ?? 0,
+    };
+    this.editError = '';
+    this.showEditModal = true;
+  }
+
+  closeEditModal(): void {
+    if (this.editSaving) return;
+    this.showEditModal = false;
+  }
+
+  saveEdit(): void {
+    if (!this.post) return;
+    const title = this.editForm.title.trim();
+    if (!title) {
+      this.editError = 'El título no puede estar vacío';
+      return;
+    }
+    this.editSaving = true;
+    this.editError = '';
+    this.api
+      .updateLfgPost(this.post._id, {
+        title,
+        description: this.editForm.description.trim(),
+        minRank: this.editForm.minRank,
+        minKarma: this.editForm.minKarma,
+      })
+      .subscribe({
+        next: (post) => {
+          this.post = post;
+          this.title.setTitle(`${post.title} · PremadeGG`);
+          this.editSaving = false;
+          this.showEditModal = false;
+          this.feedbackAt = 'join';
+          this.actionError = '';
+          this.actionMessage = 'Grupo actualizado';
+          this.cdr.markForCheck();
+        },
+        error: (err) => {
+          this.editSaving = false;
+          this.editError = err.error?.message || 'No se pudo guardar el grupo';
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  /** Cerrar deja de aceptar solicitudes; reabrir vuelve a "abierto" (o "lleno" si no quedan plazas) */
+  toggleClosed(): void {
+    if (!this.post) return;
+    const status = this.post.status === 'closed' ? 'open' : 'closed';
+    this.actionLoading = true;
+    this.actionMessage = '';
+    this.actionError = '';
+    this.feedbackAt = 'join';
+    this.api.updateLfgPost(this.post._id, { status }).subscribe({
+      next: (post) => {
+        this.post = post;
+        this.actionLoading = false;
+        this.actionMessage = status === 'closed' ? 'Grupo cerrado: ya no acepta solicitudes' : 'Grupo reabierto';
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.actionLoading = false;
+        this.actionError = err.error?.message || 'No se pudo cambiar el estado del grupo';
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  openDeleteModal(): void {
+    this.deleteError = '';
+    this.showDeleteModal = true;
+  }
+
+  closeDeleteModal(): void {
+    if (this.deleting) return;
+    this.showDeleteModal = false;
+  }
+
+  deleteGroup(): void {
+    if (!this.post) return;
+    this.deleting = true;
+    this.deleteError = '';
+    this.api.deleteLfgPost(this.post._id).subscribe({
+      next: () => {
+        this.deleting = false;
+        this.showDeleteModal = false;
+        this.router.navigate(['/lfg']);
+      },
+      error: (err) => {
+        this.deleting = false;
+        this.deleteError = err.error?.message || 'No se pudo eliminar el grupo';
         this.cdr.markForCheck();
       },
     });

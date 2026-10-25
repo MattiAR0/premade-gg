@@ -62,6 +62,17 @@
     }
   }
 
+  // Confirmaciones (eliminar…)
+  &--small {
+    max-width: 450px;
+  }
+
+  &__text {
+    font-size: v.$font-size-md;
+    color: v.$color-text-muted;
+    margin-bottom: v.$spacing-lg;
+  }
+
   &__subtitle {
     font-size: v.$font-size-md;
     margin-top: 0.2rem;

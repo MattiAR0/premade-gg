@@ -4,7 +4,7 @@
 -- ════════════════════════════════════════════════════════════
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(18);
+select plan(21);
 
 -- ── Fixtures: tres usuarios (A, B, C) ────────────────────────
 insert into auth.users (id, email, aud, role)
@@ -79,8 +79,21 @@ select ok(
   (public.create_lfg_post('Duo ranked', 2, null, 'Silver', 3) ->> '_id') is not null,
   'A crea un post LFG'
 );
+select throws_ok(
+  format($$ select public.update_lfg_post(%L, '{"status": "full"}') $$, (select id from public.lfg_posts where title = 'Duo ranked')),
+  'P0001', 'Estado no válido: solo se puede cerrar o reabrir el grupo', 'el creador no puede poner un estado arbitrario'
+);
+select is(
+  (public.update_lfg_post((select id from public.lfg_posts where title = 'Duo ranked'), '{"status": "closed"}') ->> 'status'),
+  'closed', 'el creador puede cerrar su grupo'
+);
+select public.update_lfg_post((select id from public.lfg_posts where title = 'Duo ranked'), '{"status": "open"}');
 
 select pg_temp.login('b0000000-0000-0000-0000-00000000000b');
+select throws_ok(
+  format($$ select public.update_lfg_post(%L, '{"title": "hackeado"}') $$, (select id from public.lfg_posts where title = 'Duo ranked')),
+  '42501', null, 'otro usuario no puede editar un grupo ajeno'
+);
 select throws_ok(
   $$ select public.create_lfg_post('Post tóxico', 2) $$,
   'P0001', 'Tu karma ajustado (2.56) es demasiado bajo para crear grupos. Mínimo: 3', 'karma ajustado < 3 no puede crear grupos'

@@ -361,9 +361,21 @@
     margin: 0;
     font-size: v.$font-size-sm;
 
+    &--ok {
+      color: v.$color-positive;
+    }
+
     &--err {
       color: v.$color-danger-text;
     }
+  }
+
+  // Editar, cerrar y eliminar: solo el creador
+  &__owner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: v.$spacing-sm;
+    margin-top: v.$spacing-xs;
   }
 }
 

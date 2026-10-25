@@ -74,6 +74,20 @@
             </li>
           </ul>
 
+          @if (isCreator) {
+            <!-- Gestionar el grupo: solo el creador -->
+            <div class="c-join__owner" role="group" aria-label="Gestionar tu grupo">
+              <button class="c-btn c-btn--secondary c-btn--sm" type="button" (click)="openEditModal()">Editar</button>
+              <button class="c-btn c-btn--ghost c-btn--sm" type="button" [disabled]="actionLoading" (click)="toggleClosed()">
+                {{ post.status === 'closed' ? 'Reabrir grupo' : 'Cerrar grupo' }}
+              </button>
+              <button class="c-btn c-btn--ghost c-btn--sm c-btn--danger" type="button" (click)="openDeleteModal()">Eliminar</button>
+            </div>
+            @if (actionMessage && feedbackAt === 'join') {
+              <p class="c-join__feedback c-join__feedback--ok" role="status">{{ actionMessage }}</p>
+            }
+          }
+
           @if (canJoin) {
             <div class="c-join__action">
               <button
@@ -234,3 +248,109 @@
     </article>
   }
 </main>
+
+<!-- ── Modal: editar grupo ────────────────────────── -->
+@if (showEditModal && post) {
+  <div class="c-modal-overlay" (click)="closeEditModal()">
+    <div class="c-modal" role="dialog" aria-modal="true" aria-labelledby="lfg-edit-title" appDialog (dismiss)="closeEditModal()" (click)="$event.stopPropagation()">
+      <header class="c-modal__header">
+        <div>
+          <h2 class="c-modal__title" id="lfg-edit-title">Editar grupo</h2>
+          <p class="c-modal__subtitle">El tamaño no se puede cambiar: afecta a quién ya está dentro.</p>
+        </div>
+        <button class="c-modal__close" type="button" (click)="closeEditModal()" aria-label="Cerrar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </header>
+
+      @if (editError) {
+        <p class="c-modal__error" role="alert">{{ editError }}</p>
+      }
+
+      <form class="c-modal__form" (ngSubmit)="saveEdit()">
+        <label class="c-modal__field">
+          <span class="c-modal__label">
+            Título
+            <span class="c-modal__label-hint">{{ editForm.title.length }}/120</span>
+          </span>
+          <input class="c-modal__input" type="text" [(ngModel)]="editForm.title" name="title" maxlength="120" required />
+        </label>
+
+        <label class="c-modal__field">
+          <span class="c-modal__label">
+            Descripción
+            <span class="c-modal__label-hint">{{ editForm.description.length }}/500</span>
+          </span>
+          <textarea class="c-modal__textarea" [(ngModel)]="editForm.description" name="description" maxlength="500" rows="3"
+            placeholder="Horario, modo de juego, qué buscas..."></textarea>
+        </label>
+
+        <div class="c-modal__row">
+          <label class="c-modal__field">
+            <span class="c-modal__label">Rango mínimo</span>
+            <select class="c-modal__select" [(ngModel)]="editForm.minRank" name="minRank">
+              <option value="">Cualquiera</option>
+              @for (rank of rankOptions; track rank) {
+                <option [value]="rank">{{ rank | label: 'rank' }}</option>
+              }
+            </select>
+          </label>
+
+          <div class="c-modal__field">
+            <span class="c-modal__label">Karma mínimo</span>
+            <div class="c-segmented c-segmented--block">
+              @for (opt of karmaOptions; track opt.value) {
+                <button type="button" class="c-segmented__btn" [class.c-segmented__btn--active]="editForm.minKarma === opt.value"
+                  [attr.aria-pressed]="editForm.minKarma === opt.value" (click)="editForm.minKarma = opt.value">{{ opt.label }}</button>
+              }
+            </div>
+          </div>
+        </div>
+
+        <footer class="c-modal__footer">
+          <button class="c-btn c-btn--ghost" type="button" (click)="closeEditModal()">Cancelar</button>
+          <button class="c-btn c-btn--primary" type="submit" [disabled]="editSaving">
+            @if (editSaving) {
+              <span class="c-modal__spinner"></span> Guardando...
+            } @else {
+              Guardar cambios
+            }
+          </button>
+        </footer>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- ── Modal: eliminar grupo ──────────────────────── -->
+@if (showDeleteModal && post) {
+  <div class="c-modal-overlay" (click)="closeDeleteModal()">
+    <div class="c-modal c-modal--small" role="alertdialog" aria-modal="true" aria-labelledby="lfg-delete-title" aria-describedby="lfg-delete-text"
+      appDialog (dismiss)="closeDeleteModal()" (click)="$event.stopPropagation()">
+      <header class="c-modal__header">
+        <h2 class="c-modal__title c-modal__title--danger" id="lfg-delete-title">Eliminar grupo</h2>
+      </header>
+
+      @if (deleteError) {
+        <p class="c-modal__error" role="alert">{{ deleteError }}</p>
+      }
+
+      <div class="c-modal__form">
+        <p class="c-modal__text" id="lfg-delete-text">
+          ¿Seguro que quieres eliminar <strong>{{ post.title }}</strong>? Se borran también sus miembros y solicitudes,
+          y <strong>no se puede deshacer</strong>. Si solo quieres dejar de recibir solicitudes, ciérralo.
+        </p>
+        <footer class="c-modal__footer">
+          <button class="c-btn c-btn--ghost" type="button" (click)="closeDeleteModal()">Cancelar</button>
+          <button class="c-btn c-btn--ghost c-btn--danger" type="button" [disabled]="deleting" (click)="deleteGroup()">
+            @if (deleting) {
+              <span class="c-modal__spinner"></span> Eliminando...
+            } @else {
+              Sí, eliminar grupo
+            }
+          </button>
+        </footer>
+      </div>
+    </div>
+  </div>
+}

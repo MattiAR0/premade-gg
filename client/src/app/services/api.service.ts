@@ -202,6 +202,20 @@ export class ApiService {
     }).pipe(tap(() => this.invalidateByPrefix('get_lfg_posts')));
   }
 
+  /** Solo el creador. status: 'closed' cierra; 'open' reabre (queda 'full' si ya está completo) */
+  updateLfgPost(
+    postId: string,
+    data: { title?: string; description?: string; minRank?: string; minKarma?: number; status?: 'open' | 'closed' },
+  ): Observable<LfgPost> {
+    return rpc<LfgPost>('update_lfg_post', { p_id: postId, p_data: data }).pipe(
+      tap(() => this.invalidateByPrefix('get_lfg_posts')),
+    );
+  }
+
+  deleteLfgPost(postId: string): Observable<Message> {
+    return rpc<Message>('delete_lfg_post', { p_id: postId }).pipe(tap(() => this.invalidateByPrefix('get_lfg_posts')));
+  }
+
   leaveLfgPost(postId: string, userId: string): Observable<Message> {
     return rpc<Message>('leave_lfg_post', { p_post_id: postId, p_user_id: userId }).pipe(
       tap(() => this.invalidateByPrefix('get_lfg_posts')),

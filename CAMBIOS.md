@@ -4,9 +4,42 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
-## 2026-10-25 · Perfil: disponibilidad alineada con muchas franjas
+## 2026-10-25 · Editar, cerrar y eliminar grupos LFG
 
 **Commit:** este commit
+
+**Qué y por qué:** petición de la usuaria: no se podían editar ni borrar los grupos publicados. La crítica final también señaló que el creador no podía cerrar su grupo, aunque existe el filtro "Cerrados". Las RPC existían, pero no había forma de usarlas desde la app.
+
+**Cambios:**
+- `supabase/migrations/20261025000006_lfg_edit.sql` (nueva):
+  - `update_lfg_post` solo acepta `open` o `closed` como estado (antes cualquiera). Al reabrir un grupo completo queda `full`. Ya no se edita un grupo caducado.
+  - Mensajes en español ("Grupo no encontrado", "Solo el creador puede editar este grupo").
+  - `delete_lfg_post` igual.
+- `tests/database/security.test.sql`: 3 tests nuevos (estado arbitrario rechazado, el creador cierra, otro usuario no puede editar). En total, 21.
+- `api.service`: `updateLfgPost()` y `deleteLfgPost()`, que invalidan la caché del tablero.
+- `lfg-detail`:
+  - Para el creador, botones Editar · Cerrar grupo / Reabrir grupo · Eliminar en el bloque de requisitos, con el resultado en `role="status"`.
+  - Modal de edición (título, descripción, rango mínimo y karma mínimo; el tamaño no, porque afecta a los miembros) con `appDialog`.
+  - Confirmación de borrado (`role="alertdialog"`) que sugiere cerrar en vez de borrar; tras borrar vuelve a `/lfg`.
+- `_modal.scss`: `c-modal--small` y `c-modal__text` pasan a ser globales (antes solo existían dentro de `team-detail`).
+
+**Verificación:**
+- `npm run db:test`: 21/21.
+- Navegador en local con `test3@premade.gg` (creador de "Buscando duo de prueba"):
+  - Editar título y karma (3 → 4) actualiza el `h1`, el título de la pestaña y los requisitos, y muestra "Grupo actualizado".
+  - Cerrar muestra el badge "Cerrado" y el botón "Reabrir grupo"; reabrir lo devuelve a abierto.
+  - Eliminar abre el diálogo con el foco dentro; al confirmar vuelve a `/lfg` y en la base no quedan ni el grupo ni sus miembros.
+
+**Pendiente:**
+- Aplicar la migración en Supabase cloud antes de publicar.
+- No probado a 375px con sesión de creador.
+- En la base local ya no está el grupo "Buscando duo de prueba" del seed.
+
+---
+
+## 2026-10-25 · Perfil: disponibilidad alineada con muchas franjas
+
+**Commit:** `cc4ebac`
 
 **Qué y por qué:** la usuaria vio que, con muchas franjas, el cuadro de disponibilidad se descuadraba: el texto ("Mañana, Tarde, Noche, Madrugada") partía en dos líneas junto al día y las tarjetas quedaban desiguales.
 
@@ -20,7 +53,7 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ## 2026-10-25 · Perfil: rango junto al karma y favoritos en orden alfabético
 
-**Commit:** este commit
+**Commit:** `cc4ebac`
 
 **Qué y por qué:** petición de la usuaria: el emblema de rango tenía que ir al lado del karma, no entre las etiquetas de rol y región. Además, los agentes tenían que verse en orden alfabético; los favoritos salían en el orden en que se eligieron.
 
@@ -40,7 +73,7 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ## 2026-10-25 · Agentes desde valorant-api: avatares y favoritos con filtros
 
-**Commit:** este commit
+**Commit:** `1c52b96`
 
 **Qué y por qué:** petición de la usuaria: faltaban personajes para la foto de perfil y para elegir como favoritos, y el selector de imágenes no tenía filtros. Las dos listas estaban escritas a mano con 28 agentes y faltaba Miks.
 
@@ -75,7 +108,7 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ## 2026-10-25 · Rango solo con emblema, sin nombre
 
-**Commit:** este commit
+**Commit:** `51a8828`
 
 **Qué y por qué:** petición de la usuaria: quitar el texto que acompañaba al emblema en las cabeceras (perfil, detalle de equipo, creador en el detalle LFG) y dejar solo el icono en toda la app. Corrige parte de la entrada `4422c1d`.
 
@@ -95,7 +128,7 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ## 2026-10-25 · Disponibilidad por franjas, sin horas
 
-**Commit:** este commit
+**Commit:** `d189e22`
 
 **Qué y por qué:** petición de la usuaria: quitar las horas de la disponibilidad. Cada día pedía una hora de inicio y otra de fin; ahora basta con marcar en qué franjas sueles jugar.
 
@@ -130,7 +163,7 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ## 2026-10-25 · Rango con emblema en vez de texto
 
-**Commit:** este commit
+**Commit:** `4422c1d`
 
 **Qué y por qué:** petición de la usuaria: mostrar el rango con su icono del juego, no escrito. Es lo que reconoce de un vistazo cualquier jugador de Valorant.
 
@@ -159,7 +192,7 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ## 2026-10-25 · Ignorar la carpeta .vercel
 
-**Commit:** este commit
+**Commit:** `d05c54e`
 
 **Qué y por qué:** el CLI de Vercel crea `.vercel/` al enlazar el proyecto (ID del proyecto y de la organización). Es configuración local y no debe entrar en el repositorio.
 
@@ -172,7 +205,7 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ## 2026-10-25 · Fusión de main en migrate-supabase (capturas del README)
 
-**Commit:** este commit
+**Commit:** `efc20a8`
 
 **Qué y por qué:** `main` tenía un commit que no estaba en la rama (`a577b89`, capturas en el README). Hay que integrarlo para que `main` pueda avanzar hasta la rama sin perder nada.
 
@@ -190,7 +223,7 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ## 2026-10-25 · Producción apuntando a Supabase cloud
 
-**Commit:** este commit
+**Commit:** `66ad5ed`
 
 **Qué y por qué:** el proyecto de Supabase cloud (`taprgsiozhwralnzqxri`, West EU) ya tiene el esquema; el frontend de producción tiene que apuntar a él para poder desplegar en Vercel.
 
@@ -214,7 +247,7 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ## 2026-10-25 · DEPLOY.md: dominio real y despliegue por preview
 
-**Commit:** este commit
+**Commit:** `b5e07e3`
 
 **Qué y por qué:** `DEPLOY.md` apuntaba a `premadegg.vercel.app`, que da `404 DEPLOYMENT_NOT_FOUND`; la producción está en `premade-gg.vercel.app`. Además mandaba importar un proyecto de Vercel que ya existe, y no tenía en cuenta que las previews necesitan estar en Redirect URLs.
 
@@ -228,7 +261,7 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ## 2026-10-25 · Migración a Supabase (commit)
 
-**Commit:** este commit
+**Commit:** `c3aa6ba`
 
 **Qué y por qué:** dejar en git la migración de MEAN (Express + MongoDB en Render) a Angular + Supabase, que llevaba sin commitear desde el 2026-10-24. Sobre esa base se han ido commiteando por separado los cambios de diseño, y sin ella no se puede desplegar. El detalle de la migración está en `MIGRACION-SUPABASE.md`.
 
