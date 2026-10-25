@@ -199,22 +199,17 @@
     <!-- Availability -->
     <section class="c-settings__section">
       <h2 class="c-settings__section-title">Disponibilidad semanal</h2>
+      <p class="c-settings__hint">Marca las franjas en las que sueles jugar. Un día sin franjas no aparece en tu perfil.</p>
       <div class="c-settings__availability">
         @for (day of daysOfWeek; track day) {
-        <div class="c-settings__day-row">
-          <label class="c-settings__day-toggle">
-            <input class="c-settings__day-toggle-checkbox" type="checkbox" [(ngModel)]="availability[day].available"
-              [name]="'avail_' + day" />
-            <span class="c-settings__day-name">{{ daysLabels[day] }}</span>
-          </label>
-          @if (availability[day].available) {
-          <div class="c-settings__day-times">
-            <input class="c-settings__time-input" type="time" [(ngModel)]="availability[day].from"
-              [name]="'from_' + day" />
-            <span class="c-settings__time-sep">a</span>
-            <input class="c-settings__time-input" type="time" [(ngModel)]="availability[day].to" [name]="'to_' + day" />
+        <div class="c-settings__day-row" role="group" [attr.aria-label]="daysLabels[day]">
+          <span class="c-settings__day-name" aria-hidden="true">{{ daysLabels[day] }}</span>
+          <div class="c-chips c-settings__slots">
+            @for (slot of daySlots; track slot) {
+            <button type="button" class="c-chip" [class.c-chip--active]="hasSlot(day, slot)"
+              [attr.aria-pressed]="hasSlot(day, slot)" (click)="toggleSlot(day, slot)">{{ daySlotLabels[slot] }}</button>
+            }
           </div>
-          }
         </div>
         }
       </div>

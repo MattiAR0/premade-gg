@@ -24,6 +24,41 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-10-25 · Disponibilidad por franjas, sin horas
+
+**Commit:** este commit
+
+**Qué y por qué:** petición de la usuaria: quitar las horas de la disponibilidad. Cada día pedía una hora de inicio y otra de fin; ahora basta con marcar en qué franjas sueles jugar.
+
+**Cambios:**
+- `supabase/migrations/20261025000004_availability_slots.sql` (nueva):
+  - `profiles.availability` pasa de `{"monday": {"from", "to", "available"}}` a `{"monday": ["afternoon", "evening"]}`.
+  - Convierte los perfiles existentes según las franjas que tocaba su horario: madrugada 00–08, mañana 08–14, tarde 14–20, noche 20–24. Un horario que cruza la medianoche cuenta también al día siguiente.
+  - Los días marcados como no disponibles desaparecen.
+- `user.model.ts`: `DAY_SLOTS`, `DAY_SLOT_LABELS` (Mañana, Tarde, Noche, Madrugada), tipo `Availability` y `normalizeAvailability()`, que descarta el formato antiguo si aún llegara alguno.
+- Editar perfil (`/settings/profile`):
+  - Cada día es un grupo con 4 chips conmutables (`aria-pressed`), en lugar de casilla + dos campos de hora. Un día sin franjas no aparece en el perfil.
+  - Fuera los estilos de casilla y hora.
+- Perfil: "Lunes · Tarde, Noche" en vez de "18:00 - 23:00".
+
+**Verificación:**
+- Migración aplicada en local con datos antiguos de prueba:
+  - 18:00–23:00 → tarde y noche.
+  - 22:00–02:00 → noche y madrugada.
+  - 09:00–21:00 → mañana, tarde y noche.
+  - El día no disponible desaparece.
+- `npm run db:test`: 18/18.
+- Navegador con `test2@premade.gg`: marcar Viernes → Noche + Madrugada y guardar deja `{"friday": ["evening", "night"]}` en la base.
+- El perfil de Player10 muestra "Lunes · Tarde, Noche" y "Viernes · Noche, Madrugada".
+- A 375px, chips de 44px sin scroll horizontal. Consola limpia.
+
+**Pendiente:**
+- Aplicar la migración en Supabase cloud (`npx supabase db push --linked`) antes de publicar el frontend.
+- `scripts/migrate-mongo-to-supabase.mjs` sigue copiando el formato antiguo (no hay usuarios que migrar).
+- En la base local, Player10, Player19 y test2 se quedan con disponibilidad de prueba.
+
+---
+
 ## 2026-10-25 · Rango con emblema en vez de texto
 
 **Commit:** este commit

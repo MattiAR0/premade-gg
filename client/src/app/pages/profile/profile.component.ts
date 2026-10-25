@@ -7,7 +7,7 @@ import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { MessageService } from '../../services/message.service';
 import { AgentIconsService } from '../../services/agent-icons.service';
-import { User, DAYS_OF_WEEK, DAYS_LABELS } from '../../models/user.model';
+import { User, DAYS_OF_WEEK, DAYS_LABELS, DAY_SLOT_LABELS, normalizeAvailability } from '../../models/user.model';
 import { Reputation, ReviewEligibility } from '../../models/reputation.model';
 import { LfgPost } from '../../models/lfg-post.model';
 import { RankBadgeComponent } from '../../shared/rank-badge/rank-badge.component';
@@ -45,6 +45,7 @@ export class ProfileComponent implements OnInit {
 
   readonly daysOfWeek = DAYS_OF_WEEK;
   readonly daysLabels = DAYS_LABELS;
+  readonly daySlotLabels = DAY_SLOT_LABELS;
   private readonly title = inject(Title);
 
   constructor(
@@ -105,8 +106,13 @@ export class ProfileComponent implements OnInit {
 
   /** Verifica si el usuario tiene disponibilidad configurada */
   get hasAvailability(): boolean {
-    if (!this.user?.availability) return false;
-    return Object.values(this.user.availability).some((v) => v.available);
+    return Object.keys(normalizeAvailability(this.user?.availability)).length > 0;
+  }
+
+  /** "Tarde, Noche" para un día; vacío si ese día no juega */
+  slotsLabel(day: string): string {
+    const slots = normalizeAvailability(this.user?.availability)[day] ?? [];
+    return slots.map((s) => this.daySlotLabels[s]).join(', ');
   }
 
   /** Verifica si el usuario tiene enlaces sociales */

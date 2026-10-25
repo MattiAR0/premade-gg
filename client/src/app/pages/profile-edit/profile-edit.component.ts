@@ -4,7 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import {
   User, VALORANT_AGENTS, VALORANT_ROLES,
-  DAYS_OF_WEEK, DAYS_LABELS,
+  DAYS_OF_WEEK, DAYS_LABELS, DAY_SLOTS, DAY_SLOT_LABELS, DaySlot, Availability, normalizeAvailability,
 } from '../../models/user.model';
 import { LabelPipe } from '../../shared/pipes/label.pipe';
 
@@ -56,7 +56,7 @@ export class ProfileEditComponent implements OnInit {
   favoriteRole = '';
   schedule = '';
   socialLinks = { discord: '', twitter: '', twitch: '' };
-  availability: Record<string, { from: string; to: string; available: boolean }> = {};
+  availability: Availability = {};
   lookingForTeam = false;
   lftDetails = '';
   isCoach = false;
@@ -75,6 +75,8 @@ export class ProfileEditComponent implements OnInit {
   readonly roles = VALORANT_ROLES;
   readonly daysOfWeek = DAYS_OF_WEEK;
   readonly daysLabels = DAYS_LABELS;
+  readonly daySlots = DAY_SLOTS;
+  readonly daySlotLabels = DAY_SLOT_LABELS;
   readonly presetAvatars = PRESET_AVATARS;
   readonly schedules = ['Weekends', 'Evenings', 'Late Night', 'Mornings', 'Flexible'];
 
@@ -110,14 +112,25 @@ export class ProfileEditComponent implements OnInit {
     this.isCoach = user.isCoach || false;
     this.coachDetails = user.coachDetails || '';
 
-    // Inicializar availability
-    for (const day of this.daysOfWeek) {
-      this.availability[day] = {
-        from: user.availability?.[day]?.from || '18:00',
-        to: user.availability?.[day]?.to || '23:00',
-        available: user.availability?.[day]?.available || false,
-      };
+    this.availability = normalizeAvailability(user.availability);
+  }
+
+  hasSlot(day: string, slot: DaySlot): boolean {
+    return this.availability[day]?.includes(slot) ?? false;
+  }
+
+  /** Marca o desmarca una franja; un día sin franjas deja de estar disponible */
+  toggleSlot(day: string, slot: DaySlot): void {
+    const current = this.availability[day] ?? [];
+    const next = current.includes(slot) ? current.filter((s) => s !== slot) : [...current, slot];
+    const ordered = this.daySlots.filter((s) => next.includes(s));
+    const updated: Availability = { ...this.availability };
+    if (ordered.length) {
+      updated[day] = ordered;
+    } else {
+      delete updated[day];
     }
+    this.availability = updated;
   }
 
   /** Toggle un agente en favoritos (max 3) */

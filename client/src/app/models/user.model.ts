@@ -31,7 +31,8 @@ export interface User {
     twitter: string;
     twitch: string;
   };
-  availability: Record<string, { from: string; to: string; available: boolean }>;
+  /** Día → franjas en las que juega (día sin franjas = no disponible) */
+  availability: Availability;
 
   // Looking For Team
   lookingForTeam: boolean;
@@ -67,6 +68,36 @@ export const VALORANT_ROLES = [
 export const DAYS_OF_WEEK = [
   'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
 ] as const;
+
+/** Franjas del día, sin horas exactas: night = madrugada (00–08) … evening = noche (20–24) */
+export const DAY_SLOTS = ['morning', 'afternoon', 'evening', 'night'] as const;
+export type DaySlot = (typeof DAY_SLOTS)[number];
+
+export const DAY_SLOT_LABELS: Record<DaySlot, string> = {
+  morning: 'Mañana',
+  afternoon: 'Tarde',
+  evening: 'Noche',
+  night: 'Madrugada',
+};
+
+export type Availability = Partial<Record<string, DaySlot[]>>;
+
+/**
+ * Deja la disponibilidad en el formato de franjas. Los perfiles se migraron en SQL
+ * (20261025000004); si aún llegara el formato antiguo ({ from, to, available }),
+ * ese día se ignora y la usuaria elige sus franjas al editar.
+ */
+export function normalizeAvailability(raw: unknown): Availability {
+  const out: Availability = {};
+  if (!raw || typeof raw !== 'object') return out;
+  for (const [day, value] of Object.entries(raw as Record<string, unknown>)) {
+    if (Array.isArray(value)) {
+      const slots = DAY_SLOTS.filter((s) => value.includes(s));
+      if (slots.length) out[day] = slots;
+    }
+  }
+  return out;
+}
 
 export const DAYS_LABELS: Record<string, string> = {
   monday: 'Lunes',

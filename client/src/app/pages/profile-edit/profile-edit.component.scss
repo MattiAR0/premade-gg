@@ -338,20 +338,6 @@
     }
   }
 
-  &__day-toggle {
-    display: flex;
-    align-items: center;
-    gap: v.$spacing-sm;
-    cursor: pointer;
-    min-width: 140px;
-
-    &-checkbox {
-      width: 16px;
-      height: 16px;
-      accent-color: v.$color-selected;
-    }
-  }
-
   &__toggle-row {
     display: flex;
     align-items: center;
@@ -372,36 +358,20 @@
   }
 
   &__day-name {
+    min-width: 6rem;
     font-size: v.$font-size-sm;
     font-weight: 600;
     color: v.$color-text-primary;
   }
 
-  &__day-times {
-    display: flex;
-    align-items: center;
-    gap: v.$spacing-sm;
-  }
+  &__slots {
+    justify-content: flex-end;
 
-  &__time-input {
-    padding: v.$spacing-xs v.$spacing-sm;
-    background: v.$color-bg-dark;
-    border: 1px solid v.$color-border;
-    border-radius: v.$radius-sm;
-    color: v.$color-text-primary;
-    font-size: v.$font-size-sm;
-    font-family: v.$font-heading;
-
-    &:focus {
-      outline: none;
-      border-color: v.$color-focus;
+    @include m.respond-below(sm) {
+      justify-content: flex-start;
     }
   }
 
-  &__time-sep {
-    font-size: v.$font-size-xs;
-    color: v.$color-text-muted;
-  }
 
   // ── Actions ───────────────────────────────────────
   &__actions {

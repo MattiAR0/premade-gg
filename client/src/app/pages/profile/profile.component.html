@@ -123,10 +123,10 @@
           <h2 class="c-profile__section-title">Disponibilidad</h2>
           <div class="c-profile__availability">
             @for (day of daysOfWeek; track day) {
-              @if (user.availability[day]?.available) {
+              @if (slotsLabel(day)) {
                 <div class="c-profile__day">
                   <span class="c-profile__day-name">{{ daysLabels[day] }}</span>
-                  <span class="c-profile__day-time">{{ user.availability[day].from }} - {{ user.availability[day].to }}</span>
+                  <span class="c-profile__day-time">{{ slotsLabel(day) }}</span>
                 </div>
               }
             }
