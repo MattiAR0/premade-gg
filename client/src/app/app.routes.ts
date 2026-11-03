@@ -95,5 +95,12 @@ export const routes: Routes = [
       import('./pages/profile-edit/profile-edit.component').then((m) => m.ProfileEditComponent),
     canActivate: [authGuard],
   },
+  {
+    path: 'settings/account',
+    title: 'Ajustes de cuenta · PremadeGG',
+    loadComponent: () =>
+      import('./pages/account-settings/account-settings.component').then((m) => m.AccountSettingsComponent),
+    canActivate: [authGuard],
+  },
   { path: '**', redirectTo: '' },
 ];

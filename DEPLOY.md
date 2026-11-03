@@ -41,6 +41,7 @@ npx supabase secrets set RIOT_API_KEY=RGAPI-xxxx HENRIK_API_KEY=HDEV-xxxx
 npx supabase functions deploy riot-validate --no-verify-jwt
 npx supabase functions deploy riot-link --no-verify-jwt
 npx supabase functions deploy riot-refresh --no-verify-jwt
+npx supabase functions deploy delete-account --no-verify-jwt
 ```
 (`--no-verify-jwt` porque cada función valida la sesión por dentro; ya está así en `supabase/config.toml`).
 
@@ -74,7 +75,7 @@ El SMTP por defecto de Supabase **solo envía emails a los miembros de tu equipo
 | Sender email | Un remitente verificado en Brevo |
 | Sender name | `PremadeGG` |
 
-En **Emails → Templates** pega el contenido de `supabase/templates/recovery.html` y `confirmation.html` (en español).
+En **Emails → Templates** pega el contenido de `supabase/templates/recovery.html`, `confirmation.html` y `email_change.html` (en español; esta última en *Change email address*).
 
 > Recomendado: activa **Confirm email** en *Providers → Email*. El registro ya lo soporta: el usuario
 > confirma el email y termina de vincular su Riot ID en `/onboarding`.

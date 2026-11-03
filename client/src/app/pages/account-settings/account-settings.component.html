@@ -1,0 +1,176 @@
+<main class="l-container l-container--medium l-section">
+  <header class="c-page-header">
+    <div class="c-page-header__text">
+      <h1 class="c-page-header__title">Ajustes de cuenta</h1>
+      <p class="c-page-header__desc">Email, contraseña y borrado de la cuenta. Lo que ven los demás se cambia en tu perfil.</p>
+    </div>
+    <div class="c-page-header__actions">
+      <a class="c-btn c-btn--ghost c-btn--sm" routerLink="/settings/profile">Editar perfil</a>
+    </div>
+  </header>
+
+  @if (loadError) {
+  <p class="c-account__error" role="alert">{{ loadError }}</p>
+  }
+
+  @if (account) {
+  <!-- ── Email ─────────────────────────────────────── -->
+  <section class="c-account__section" aria-labelledby="account-email-title">
+    <h2 class="c-account__title" id="account-email-title">Email</h2>
+    <p class="c-account__text">Email actual: <strong class="c-account__value">{{ account.email }}</strong></p>
+
+    @if (account.pendingEmail) {
+    <p class="c-account__pending">
+      Cambio pendiente a <strong class="c-account__value">{{ account.pendingEmail }}</strong>. Abre el enlace que te
+      hemos enviado para confirmarlo.
+    </p>
+    }
+
+    <form class="c-account__form" (ngSubmit)="changeEmail()" novalidate>
+      <label class="c-account__field">
+        <span class="c-account__label">Email nuevo</span>
+        <input #emailInput class="c-account__input" type="email" name="newEmail" [(ngModel)]="newEmail"
+          autocomplete="email" inputmode="email" placeholder="tu@email.com" [attr.aria-invalid]="emailError ? true : null"
+          [attr.aria-describedby]="emailError ? 'account-email-error' : 'account-email-hint'" />
+      </label>
+      <p class="c-account__hint" id="account-email-hint">
+        Te llegará un correo de confirmación. Hasta que abras el enlace seguirás entrando con el email actual.
+      </p>
+
+      @if (emailError) {
+      <p class="c-account__error" id="account-email-error" role="alert">{{ emailError }}</p>
+      }
+      @if (emailSuccess) {
+      <p class="c-account__success" role="status">{{ emailSuccess }}</p>
+      }
+
+      <div class="c-account__actions">
+        <button class="c-btn c-btn--secondary" type="submit" [disabled]="emailSaving">
+          @if (emailSaving) {
+          <span class="c-account__spinner" aria-hidden="true"></span> Enviando...
+          } @else {
+          Cambiar email
+          }
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- ── Contraseña ────────────────────────────────── -->
+  <section class="c-account__section" aria-labelledby="account-password-title">
+    <h2 class="c-account__title" id="account-password-title">Contraseña</h2>
+
+    @if (account.hasPassword) {
+    <form class="c-account__form" (ngSubmit)="changePassword()" novalidate>
+      <!-- Para que el gestor de contraseñas sepa de qué cuenta es -->
+      <input type="email" name="username" autocomplete="username" [value]="account.email" hidden />
+
+      <label class="c-account__field">
+        <span class="c-account__label">Contraseña actual</span>
+        <input #currentPasswordInput class="c-account__input" type="password" name="currentPassword"
+          [(ngModel)]="currentPassword" autocomplete="current-password"
+          [attr.aria-describedby]="passwordError ? 'account-password-error' : null" />
+      </label>
+
+      <div class="c-account__row">
+        <label class="c-account__field">
+          <span class="c-account__label">Contraseña nueva</span>
+          <input #newPasswordInput class="c-account__input" type="password" name="newPassword" [(ngModel)]="newPassword"
+            autocomplete="new-password" placeholder="Mínimo 6 caracteres"
+            [attr.aria-describedby]="passwordError ? 'account-password-error' : null" />
+        </label>
+        <label class="c-account__field">
+          <span class="c-account__label">Repite la nueva</span>
+          <input class="c-account__input" type="password" name="confirmPassword" [(ngModel)]="confirmPassword"
+            autocomplete="new-password" [attr.aria-describedby]="passwordError ? 'account-password-error' : null" />
+        </label>
+      </div>
+
+      @if (passwordError) {
+      <p class="c-account__error" id="account-password-error" role="alert">{{ passwordError }}</p>
+      }
+      @if (passwordSuccess) {
+      <p class="c-account__success" role="status">{{ passwordSuccess }}</p>
+      }
+
+      <div class="c-account__actions">
+        <button class="c-btn c-btn--secondary" type="submit" [disabled]="passwordSaving">
+          @if (passwordSaving) {
+          <span class="c-account__spinner" aria-hidden="true"></span> Guardando...
+          } @else {
+          Cambiar contraseña
+          }
+        </button>
+      </div>
+    </form>
+    } @else {
+    <p class="c-account__text">
+      Entras con {{ providerNames }}, así que tu cuenta no tiene contraseña de PremadeGG. Si quieres cambiar la
+      contraseña, hazlo en {{ account.oauthProviders.length > 1 ? 'esos servicios' : providerNames }}.
+    </p>
+    }
+  </section>
+
+  <!-- ── Borrar cuenta ─────────────────────────────── -->
+  <section class="c-account__section c-account__section--danger" aria-labelledby="account-delete-title">
+    <h2 class="c-account__title c-account__title--danger" id="account-delete-title">Borrar cuenta</h2>
+    <p class="c-account__text">
+      Se borran tu perfil, tus grupos LFG, los equipos que creaste, tus mensajes y las valoraciones que has escrito y
+      recibido. El karma de los jugadores que valoraste se recalcula sin tus valoraciones.
+      <strong class="c-account__value">No se puede deshacer.</strong>
+    </p>
+    <div class="c-account__actions">
+      <button class="c-btn c-btn--primary" type="button" (click)="openDeleteModal()">Borrar mi cuenta</button>
+    </div>
+  </section>
+  }
+</main>
+
+<!-- ── Modal: confirmar borrado ────────────────────── -->
+@if (showDeleteModal) {
+<div class="c-modal-overlay" (click)="closeDeleteModal()">
+  <div class="c-modal c-modal--small" role="alertdialog" aria-modal="true" aria-labelledby="account-delete-modal-title"
+    aria-describedby="account-delete-modal-text" appDialog (dismiss)="closeDeleteModal()"
+    (click)="$event.stopPropagation()">
+    <header class="c-modal__header">
+      <h2 class="c-modal__title c-modal__title--danger" id="account-delete-modal-title">Borrar cuenta</h2>
+    </header>
+
+    <form class="c-modal__form" (ngSubmit)="deleteAccount()" novalidate>
+      <p class="c-modal__text" id="account-delete-modal-text">
+        Vas a borrar tu cuenta y todos sus datos. <strong>Es irreversible</strong>: no podremos recuperarla.
+      </p>
+
+      <label class="c-modal__field">
+        <span class="c-modal__label">
+          @if (riotId) {
+          <span>Escribe tu Riot ID (<span class="c-account__literal">{{ riotId }}</span>) o {{ confirmWord }}</span>
+          } @else {
+          Escribe {{ confirmWord }}
+          }
+        </span>
+        <input class="c-modal__input c-account__input" type="text" name="deleteConfirmation"
+          [(ngModel)]="deleteConfirmation" autocomplete="off" autocapitalize="off" spellcheck="false"
+          [attr.aria-describedby]="deleteError ? 'account-delete-error' : null" />
+      </label>
+
+      @if (deleteError) {
+      <p class="c-modal__error" id="account-delete-error" role="alert">{{ deleteError }}</p>
+      }
+
+      <footer class="c-modal__footer">
+        <button class="c-btn c-btn--ghost" type="button" [disabled]="deleting" (click)="closeDeleteModal()">
+          Cancelar
+        </button>
+        <button class="c-btn c-btn--primary" type="submit" [disabled]="!deleteConfirmed || deleting">
+          @if (deleting) {
+          <span class="c-modal__spinner" aria-hidden="true"></span> Borrando...
+          } @else {
+          Borrar para siempre
+          }
+        </button>
+      </footer>
+    </form>
+  </div>
+</div>
+}
