@@ -111,7 +111,8 @@ select is(
   'gg, eres un crack *********', 'el mensaje se censura'
 );
 select is(
-  (select last_message_content from public.conversations limit 1),
+  (select last_message_content from public.conversations
+    where id = (public.get_or_create_direct_conversation('b0000000-0000-0000-0000-00000000000b') ->> '_id')::uuid),
   'gg, eres un crack *********', 'la vista previa de la conversación también se censura'
 );
 

@@ -4,6 +4,28 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-03 · Fusión de los puntos 5, 12 y 6 y arreglo de un test
+
+**Commit:** este commit (fusiones `e82c177`, `f937a19` y `1f5c0fc`)
+
+**Qué y por qué:** juntar en `migrate-supabase` las tres ramas hechas en paralelo (Copiar Riot ID, filtro de palabras malsonantes y ajustes de cuenta).
+
+**Cambios:**
+- Fusionadas `claude/copiar-riot-id-4036b5`, `claude/filtro-palabrotas-df927d` y `claude/ajustes-cuenta-ee319b`. El código entró sin conflictos. En `CAMBIOS.md`, `BACKLOG.md` e `INDICE.md` se conservaron las entradas de todas las ramas. En el backlog, el punto 12 pasa a la lista de hechas.
+- En las entradas de esta tanda, "este commit" se cambia por el hash real de cada commit.
+- `supabase/tests/database/profanity.test.sql`: el test de la vista previa censurada leía `conversations limit 1` y, con los datos de prueba que añade el seed de ajustes de cuenta, cogía otra conversación (`NULL`). Ahora lee la conversación del propio test.
+
+**Verificación:**
+- `npm --prefix client run build` sin errores (solo el aviso de presupuesto del bundle inicial, que ya existía).
+- `npm run db:test`: 52 de 52 en verde tras el arreglo (antes fallaba el 25).
+- Navegador en local: el perfil de Player10 muestra "Copiar Riot ID", `/settings/account` sin sesión lleva al login y la consola no da errores.
+
+**Pendiente:**
+- En el Supabase local las dos migraciones nuevas se aplicaron en orden inverso (`000002` antes que `000001`). No se ha probado la cadena completa en orden con `db reset`, porque borra los datos locales; en producción `db push` las aplicará en orden.
+- Publicar: `npx supabase db push --linked`, `supabase functions deploy delete-account --no-verify-jwt`, plantilla `email_change.html` en el panel de Supabase y push a `migrate-supabase` y `main`.
+
+---
+
 ## 2026-11-03 · Enlaces entre Editar perfil y Ajustes de cuenta
 
 **Commit:** `0c331d2`
