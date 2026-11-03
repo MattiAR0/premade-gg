@@ -49,3 +49,8 @@ Cada vez que modifiques el proyecto (código, estilos, configuración, base de d
 - Muchos archivos usan saltos de línea CRLF: cualquier script que edite archivos debe respetar `\r\n`.
 - En un commit mete solo los archivos de la tarea. Si un archivo mezcla cambios de otra tarea, prepara solo tus bloques.
 - Comprueba en el navegador los cambios visibles antes de darlos por terminados.
+
+## Estilo de respuesta
+
+- Responde siempre en modo caveman (nivel full) siguiendo la skill `caveman`, desde el primer mensaje de cada sesión y sin esperar a `/caveman`. Sigue sus excepciones: commits, PRs, `CAMBIOS.md`, documentación y textos de la UI van en español normal.
+- Si el usuario dice "modo normal" o `/caveman off`, responde normal el resto de la sesión.

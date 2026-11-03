@@ -1,0 +1,17 @@
+{
+  "userIgnoreFilters": [
+    "node_modules/",
+    "client/node_modules/",
+    "client/.angular/",
+    "client/dist/",
+    "client/public/",
+    "supabase/.temp/",
+    "supabase/.branches/",
+    "screenshots/"
+  ],
+  "useMarkdownLinks": false,
+  "newLinkFormat": "shortest",
+  "newFileLocation": "root",
+  "attachmentFolderPath": "screenshots",
+  "alwaysUpdateLinks": true
+}

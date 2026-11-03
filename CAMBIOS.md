@@ -4,9 +4,33 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
-## 2026-10-25 · Emblema de rango más grande
+## 2026-11-03 · Vault de Obsidian, backlog y agentes de Claude Code
 
 **Commit:** este commit
+
+**Qué y por qué:** petición de la usuaria: retomar lo que quedaba sin confirmar, vincular la documentación con Obsidian y preparar el trabajo con varios agentes.
+
+**Cambios:**
+- `INDICE.md` (nuevo): nota de entrada del vault. Estado actual, documentos vivos e históricos, críticas de impeccable, migraciones, Edge Functions y agentes, con wikilinks `[[…]]`.
+- `BACKLOG.md` (nuevo): mejoras hechas y pendientes en el orden acordado, pendientes técnicos y flujo de publicación. Hasta ahora solo estaba en la memoria de Claude, fuera del repositorio.
+- `.obsidian/app.json` (nuevo): la raíz del repositorio es el vault. Oculta `node_modules`, `.angular`, `dist`, `public` y las carpetas temporales de Supabase, y usa wikilinks.
+- `.gitignore`: ignora `.claude/settings.local.json` y el estado personal de Obsidian (`workspace*.json`, caché, `data.json` de plugins, `.trash/`).
+- `.claude/agents/` (nuevo): tres subagentes de proyecto: `revisor-supabase` (revisa SQL y RLS, solo lectura), `verificador-ui` (comprueba en el navegador) y `documentador` (mantiene este registro, el backlog y el índice).
+- `TRASPASO.md`: aviso al principio de que está obsoleto. La migración se commiteó en `c3aa6ba`, el índice de git está vacío y no hay archivos mixtos.
+- La regla del modo caveman (entrada del 2026-10-25 más abajo) queda comprobada: esta sesión la aplicó desde el primer mensaje.
+
+**Verificación:** los wikilinks de `INDICE.md`, `BACKLOG.md` y `TRASPASO.md` apuntan a archivos existentes (comprobado con un script). El inventario de documentos y la comparación de `TRASPASO.md` con `git log` los hizo un subagente de exploración. Las opciones de Obsidian se investigaron con otro subagente. No se ha abierto en Obsidian porque no está instalado en este equipo.
+
+**Pendiente:**
+- Instalar Obsidian y abrir `D:\premade-gg` como vault. Si va lento por `node_modules` (Obsidian lo lee aunque lo oculte), mover las notas a una subcarpeta `docs/`.
+- En este commit se versionan también `.claude/launch.json`, las críticas de `.impeccable/critique/`, `REDISENO-VALORANT.md` y `TRASPASO.md`, que estaban sin versionar. `.claude/skills/` (288 archivos de skills importadas de otro proyecto) sigue fuera: falta decidir si se versiona.
+- `MIGRACION-SUPABASE.md` y `client/README.md` siguen diciendo cosas que ya no son ciertas (sin commitear, backend Express).
+
+---
+
+## 2026-10-25 · Emblema de rango más grande
+
+**Commit:** `6cf8b3c`
 
 **Qué y por qué:** petición de la usuaria: el emblema de rango se veía pequeño.
 
@@ -131,6 +155,20 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 - Aplicar la migración en Supabase cloud antes de publicar.
 - No probado a 375px con sesión de creador.
 - En la base local ya no está el grupo "Buscando duo de prueba" del seed.
+
+---
+
+## 2026-10-25 · Respuestas de Claude en modo caveman por defecto
+
+**Commit:** el mismo que la entrada "Vault de Obsidian, backlog y agentes de Claude Code" (2026-11-03)
+
+**Qué y por qué:** reducir los tokens de salida de Claude en el proyecto. Se creó la skill de usuario `caveman`, que comprime las respuestas, y se activó por defecto.
+
+**Cambios:**
+- `CLAUDE.md`: nueva sección "Estilo de respuesta". Ordena responder en modo caveman (nivel full) desde el inicio de cada sesión y se desactiva con "modo normal". Commits, PRs, `CAMBIOS.md`, documentación y UI siguen en español normal.
+- Skill `caveman` creada a mano en `~/.claude/skills/caveman/SKILL.md` (fuera del repositorio), sin descargar la versión de terceros.
+
+**Verificación:** ninguna todavía. La regla se aplica a partir de la próxima sesión.
 
 ---
 
