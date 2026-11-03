@@ -16,10 +16,10 @@ Lista de mejoras acordada con la usuaria el 2026-10-25. El orden de los pendient
 - [x] 11 · Varios roles por jugador.
 - [x] Perfil sin nivel de cuenta.
 - [x] Emblema de rango más grande (32px en tarjetas, 52px en perfil).
+- [x] 5 · "Agregar en el juego": botón **Copiar Riot ID** en perfil, tarjeta de jugador y miembros del detalle LFG (sin publicar).
 
 ## Pendientes (en orden)
 
-- [ ] 5 · "Agregar en el juego": Riot no tiene API de amigos → botón **Copiar Riot ID**.
 - [ ] 12 · Palabras malsonantes: censurar con asteriscos en general; en biografía y comentarios de valoraciones, bloquear el guardado.
 - [ ] 13 · Moderación de imágenes con un servicio externo (Sightengine o Google Vision). Necesita una cuenta de la usuaria.
 - [ ] 6 · Ajustes de cuenta: cambiar email y contraseña, borrar cuenta.

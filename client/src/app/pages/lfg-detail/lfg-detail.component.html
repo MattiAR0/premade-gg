@@ -173,6 +173,10 @@
                   <app-karma-badge [karma]="member.user.karma" [count]="member.user.reviewCount" size="sm" />
                 </div>
               </a>
+              <!-- Para agregar al resto del grupo en el juego (Riot no tiene API de amigos) -->
+              @if (member.user._id !== auth.currentUser()?._id) {
+                <app-copy-riot-id [riotId]="member.user.riotId" variant="icon" />
+              }
               @if (isCreator && member.user._id !== post.author._id) {
                 <button
                   class="c-btn c-btn--ghost c-btn--xs c-btn--danger"

@@ -9,13 +9,14 @@ import { LfgPost, LfgMember, TEAM_SIZE_LABELS, TeamSizeTab } from '../../models/
 import { VALORANT_RANKS } from '../../models/user.model';
 import { RankBadgeComponent } from '../../shared/rank-badge/rank-badge.component';
 import { KarmaBadgeComponent } from '../../shared/karma-badge/karma-badge.component';
+import { CopyRiotIdComponent } from '../../shared/copy-riot-id/copy-riot-id.component';
 import { LabelPipe } from '../../shared/pipes/label.pipe';
 import { DialogDirective } from '../../shared/dialog/dialog.directive';
 
 @Component({
   selector: 'app-lfg-detail',
   standalone: true,
-  imports: [RouterLink, FormsModule, RankBadgeComponent, KarmaBadgeComponent, LabelPipe, DecimalPipe, DialogDirective],
+  imports: [RouterLink, FormsModule, RankBadgeComponent, KarmaBadgeComponent, CopyRiotIdComponent, LabelPipe, DecimalPipe, DialogDirective],
   templateUrl: './lfg-detail.component.html',
   styleUrl: './lfg-detail.component.scss',
 })

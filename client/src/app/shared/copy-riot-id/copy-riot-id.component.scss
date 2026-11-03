@@ -1,0 +1,88 @@
+@use 'utilities/variables' as v;
+@use 'utilities/mixins' as m;
+
+:host {
+  display: inline-flex;
+}
+
+.c-copy-riot-id {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+
+  // Variante botón (perfil): mismo aspecto que "Editar perfil"; al copiar pasa a positivo
+  &__btn {
+    gap: 0.4rem;
+
+    &--copied,
+    &--copied:hover:not(:disabled) {
+      color: v.$color-positive;
+      border-color: v.$color-positive;
+    }
+  }
+
+  // Variante icono (tarjetas y filas de miembros): igual que el botón de mensaje de la tarjeta
+  &__icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: v.$radius-sm;
+    background: transparent;
+    color: v.$color-text-muted;
+    cursor: pointer;
+    transition: color v.$transition-fast, background v.$transition-fast;
+
+    @include m.touch {
+      width: 44px;
+      height: 44px;
+      margin: -7px;
+    }
+
+    &:hover {
+      color: v.$color-text-heading;
+      background: rgba(236, 232, 225, 0.08);
+    }
+
+    &--copied,
+    &--copied:hover {
+      color: v.$color-positive;
+    }
+  }
+
+  // Aviso visible encima del icono, alineado a la derecha para no salirse de la tarjeta
+  &__bubble {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 6px);
+    z-index: 2;
+    padding: 0.3rem 0.6rem;
+    background: v.$color-bg-elevated;
+    border: 1px solid v.$color-border-light;
+    border-radius: v.$radius-sm;
+    color: v.$color-positive;
+    font-size: v.$font-size-xs;
+    font-weight: 600;
+    white-space: nowrap;
+    pointer-events: none;
+    animation: copy-bubble-in 0.15s ease-out;
+
+    &--error {
+      color: v.$color-danger-text;
+    }
+  }
+}
+
+@keyframes copy-bubble-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
