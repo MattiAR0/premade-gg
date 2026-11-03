@@ -1,9 +1,9 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { Observable, defer, firstValueFrom, tap } from 'rxjs';
+import { Observable, defer, firstValueFrom, switchMap, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import type { AuthError, Session } from '@supabase/supabase-js';
 import { User } from '../models/user.model';
-import { LoginRequest, RegisterRequest, AuthResponse, OnboardingRequest } from '../models/auth.model';
+import { LoginRequest, RegisterRequest, AuthResponse, OnboardingRequest, AccountInfo } from '../models/auth.model';
 import { ApiError, invokeFunction, rpc, supabase } from './supabase.client';
 
 export type OAuthProvider = 'google' | 'discord';
@@ -17,6 +17,8 @@ const AUTH_ERROR_MESSAGES: Record<string, string> = {
   weak_password: 'La contraseña es demasiado débil (mínimo 6 caracteres)',
   over_email_send_rate_limit: 'Demasiados emails enviados. Inténtalo en unos minutos.',
   same_password: 'La nueva contraseña debe ser distinta a la anterior',
+  email_address_invalid: 'El email no es válido',
+  over_request_rate_limit: 'Demasiados intentos. Inténtalo en unos minutos.',
 };
 
 const toAuthError = (err: AuthError): ApiError => ({
@@ -224,6 +226,76 @@ export class AuthService {
       this.passwordRecoverySignal.set(false);
       return { message: 'Contraseña actualizada correctamente.' };
     });
+  }
+
+  // ── Ajustes de cuenta ────────────────────────────────
+
+  /** Email, cambio pendiente y métodos de acceso de la cuenta. */
+  getAccountInfo(): Observable<AccountInfo> {
+    return defer(async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (error) throw toAuthError(error);
+      if (!data.user) throw { status: 401, error: { message: 'Debes iniciar sesión' } } as ApiError;
+      const meta = data.user.app_metadata;
+      const providers: string[] = meta['providers'] ?? (meta.provider ? [meta.provider] : []);
+      return {
+        email: data.user.email ?? '',
+        pendingEmail: data.user.new_email ?? null,
+        hasPassword: providers.includes('email'),
+        oauthProviders: providers.filter((p) => p !== 'email'),
+      };
+    });
+  }
+
+  /** Pide el cambio de email. Supabase manda un enlace de confirmación (al actual y al nuevo). */
+  changeEmail(email: string): Observable<{ message: string }> {
+    return defer(async () => {
+      const { error } = await supabase.auth.updateUser(
+        { email },
+        { emailRedirectTo: `${window.location.origin}/settings/account` },
+      );
+      if (error) throw toAuthError(error);
+      return {
+        message: `Te hemos enviado un enlace de confirmación. El email no cambia hasta que lo abras (revisa también tu email actual).`,
+      };
+    });
+  }
+
+  /** Cambia la contraseña comprobando antes la actual (volviendo a iniciar sesión con ella). */
+  changePassword(currentPassword: string, newPassword: string): Observable<{ message: string }> {
+    return defer(async () => {
+      const { data } = await supabase.auth.getUser();
+      const email = data.user?.email;
+      if (!email) throw { status: 401, error: { message: 'Debes iniciar sesión' } } as ApiError;
+
+      const { error: checkError } = await supabase.auth.signInWithPassword({ email, password: currentPassword });
+      if (checkError) {
+        if (checkError.code === 'invalid_credentials') {
+          throw { status: 400, error: { message: 'La contraseña actual no es correcta', code: checkError.code } } as ApiError;
+        }
+        throw toAuthError(checkError);
+      }
+
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw toAuthError(error);
+      return { message: 'Contraseña actualizada correctamente.' };
+    });
+  }
+
+  /**
+   * Borra la cuenta y todos sus datos (Edge Function delete-account) y cierra la sesión.
+   * `confirmation` es el Riot ID o "BORRAR", igual que pide el modal.
+   */
+  deleteAccount(confirmation: string): Observable<{ message: string }> {
+    return invokeFunction<{ message: string }>('delete-account', { confirmation }).pipe(
+      switchMap(async (res) => {
+        // El usuario ya no existe en el servidor: basta con olvidar la sesión local
+        await supabase.auth.signOut({ scope: 'local' });
+        this.currentUserSignal.set(null);
+        this.sessionSignal.set(null);
+        return res;
+      }),
+    );
   }
 
   /**

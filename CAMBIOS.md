@@ -4,6 +4,51 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-03 · Ajustes de cuenta: email, contraseña y borrado
+
+**Commit:** este commit
+
+**Qué y por qué:** punto 6 del backlog. La usuaria no podía cambiar su email o su contraseña ni borrar su cuenta desde la web.
+
+**Cambios:**
+- Ruta nueva `/settings/account` (protegida, junto a `/settings/profile`): `pages/account-settings/` con tres bloques.
+  - **Email:** `supabase.auth.updateUser({ email })` con vuelta a la misma página. Avisa de que llega un correo de confirmación y muestra el cambio pendiente (`new_email`).
+  - **Contraseña:** pide la actual, la nueva y su repetición. La actual se comprueba volviendo a iniciar sesión con ella antes de `updateUser({ password })`. Si la cuenta solo entra con Google o Discord, explica que no hay contraseña de PremadeGG en vez de mostrar el formulario.
+  - **Borrar cuenta:** botón con `$color-brand` (aviso de peligro) que abre un `alertdialog` con `appDialog`. Hay que escribir el Riot ID (sin distinguir mayúsculas) o `BORRAR`; el botón final está desactivado hasta entonces.
+- `AuthService`: `getAccountInfo`, `changeEmail`, `changePassword` y `deleteAccount` (cierra la sesión local al terminar). Dos errores de Auth más traducidos.
+- Menú del usuario: "Configuración" pasa a llamarse "Editar perfil" y se añade "Ajustes de cuenta".
+- Edge Function nueva `delete-account` (`requireUser`): repite la comprobación del Riot ID o `BORRAR`, borra los avatares de `avatars/<uid>/` (en bucle, porque `list` no pagina) y después `auth.admin.deleteUser`. Storage va primero a propósito: si falla `deleteUser`, como mucho se pierde la foto y se reintenta; al revés quedarían fotos públicas de una cuenta que ya no existe.
+- Migración `20261103000002_delete_account.sql`: decisión de **borrar en cascada, sin anonimizar**. Una valoración o un mensaje de una cuenta que ya no existe no aporta nada y el karma de los demás no debe depender de ella. Las FK ya eran `on delete cascade`; el trigger `on_profile_deleted` (antes del borrado del perfil) arregla lo que la cascada deja incoherente:
+  - grupos LFG ajenos llenos en los que estaba aceptado vuelven a `open`;
+  - los equipos que creó pasan al jugador más antiguo (si no, al coach; si no, al staff más antiguo), también como admin del chat del equipo. Solo se borran si no queda nadie;
+  - sus chats directos se borran;
+  - los chats de grupo que administraba pasan al participante más antiguo, o se borran si no queda nadie;
+  - la vista previa del último mensaje se recalcula sin sus mensajes;
+  - avisa por Realtime (`conversation:removed` / `conversation:updated`) a los demás participantes, igual que las RPC de equipo.
+  - El karma de los jugadores que valoró ya lo recalculaba el trigger de reputación.
+  - La función del trigger no se puede ejecutar desde fuera (`revoke execute`) y hay índices nuevos en `messages.sender_id`, `conversations.admin_id` y `conversations.last_message_sender` para que el borrado no recorra tablas enteras.
+- `supabase/templates/email_change.html` y su entrada en `config.toml`: correo de cambio de email en español. `config.toml` también declara `delete-account` con `verify_jwt = false`, como las otras funciones.
+- `seed.sql`: cuenta de prueba `borrame@premade.gg` (contraseña del seed) con datos en todo lo que limpia el trigger.
+- `DEPLOY.md`: despliegue de `delete-account` y la plantilla nueva.
+
+**Verificación:**
+- `ng build` sin errores (solo el aviso de presupuesto del bundle inicial, que ya existía; la página va en un chunk aparte de 16,8 kB).
+- En el navegador (puerto 4303) con `borrame@premade.gg`: cambio de email con los dos correos en Mailpit y el enlace aplicado; contraseña actual errónea (error con `role="alert"` y foco en el campo), cambio correcto y login con la nueva; rama OAuth simulando `providers = [discord, google]`; borrado escribiendo el Riot ID en minúsculas, que cierra la sesión y lleva a la portada.
+- En la base de datos tras borrar: usuario y avatar fuera, karma de TestUser1 de 1,0 a 5,0, dúo de nuevo `open`, equipo y su chat pasados a TestUser3, chat directo eliminado, admin del grupo pasado a TestUser2, vista previa recalculada y cuatro eventos en `realtime.messages` para los afectados. El segundo borrado se hizo escribiendo `BORRAR`.
+- `delete-account` con curl: 401 sin sesión, 400 con confirmación incorrecta, 405 con GET.
+- Modal: foco al abrir en el campo, Tab cíclico, Esc cierra y devuelve el foco al botón. Móvil a 375 px sin scroll horizontal y controles de 44 px.
+- Contraste medido: título de peligro 5,8:1, error 5,5:1, éxito 7,8:1, aviso pendiente 9,4:1, botón de borrar 5,3:1.
+- Subagente `revisor-supabase` sobre la migración y la función. Sin fallos de seguridad (el `id` sale siempre del token). Se aplicaron sus propuestas de traspasar equipos, avisar por Realtime, índices, `revoke` y paginar Storage.
+
+**Pendiente:**
+- La confirmación es contra accidentes, no autenticación: con una sesión robada se puede borrar la cuenta. Se podría exigir haber iniciado sesión hace pocos minutos.
+- Las notificaciones que envió desaparecen de las bandejas de los demás sin aviso por Realtime (se ven bien al recargar).
+- Publicar: `db push --linked` de la migración, `functions deploy delete-account --no-verify-jwt` y pegar la plantilla de cambio de email en el panel de Supabase.
+- En local, la plantilla nueva se aplica al reiniciar Supabase (no lo he reiniciado porque el entorno es compartido).
+- La migración se aplicó en local con `psql` y se registró a mano en `schema_migrations`: `migration up` se negaba porque `20261103000001` (filtro de palabrotas, otra rama) aún no está en esta carpeta.
+
+---
+
 ## 2026-11-03 · Vault de Obsidian, backlog y agentes de Claude Code
 
 **Commit:** este commit

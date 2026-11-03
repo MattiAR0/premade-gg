@@ -58,8 +58,9 @@ Están en `.impeccable/critique/`. Obsidian oculta las carpetas que empiezan por
 - `20261025000006_lfg_edit.sql`: editar, cerrar y borrar grupos LFG.
 - `20261025000007_multi_roles.sql`: varios roles por jugador.
 - `20261025000008_lfg_edit_size.sql`: cambiar el tamaño del grupo.
+- `20261103000002_delete_account.sql`: limpieza al borrar una cuenta (equipos, chats, LFG).
 
-**Edge Functions** (`supabase/functions/`): `riot-validate` (público, valida un Riot ID), `riot-link` (onboarding), `riot-refresh` (refresca rango, con 1 h de espera).
+**Edge Functions** (`supabase/functions/`): `riot-validate` (público, valida un Riot ID), `riot-link` (onboarding), `riot-refresh` (refresca rango, con 1 h de espera), `delete-account` (borra la cuenta del usuario que llama).
 
 ## Agentes de Claude Code
 

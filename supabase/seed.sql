@@ -180,3 +180,60 @@ begin
   where id = v_conv;
 end;
 $$;
+
+-- ── Cuenta para probar el borrado (Ajustes de cuenta) ────────
+-- borrame@premade.gg / password123 · Riot ID Borrame#TEST
+-- Tiene datos en todo lo que arregla el trigger on_profile_deleted
+-- (20261103000002_delete_account.sql): una valoración a TestUser1, una
+-- plaza aceptada en un dúo lleno de TestUser3, un equipo con TestUser3
+-- (debe pasar a él), un chat directo con TestUser1 y un chat de grupo que
+-- administra.
+do $$
+declare
+  v_me uuid := pg_temp.seed_auth_user('borrame@premade.gg');
+  v_test1 uuid := (select id from auth.users where email = 'test1@premade.gg');
+  v_test2 uuid := (select id from auth.users where email = 'test2@premade.gg');
+  v_test3 uuid := (select id from auth.users where email = 'test3@premade.gg');
+  v_post uuid;
+  v_conv uuid;
+  v_team uuid;
+begin
+  update public.profiles set
+    riot_id = 'Borrame#TEST', puuid = 'test-puuid-borrame', rank = 'Gold', role = 'Sentinel',
+    schedule = 'Evenings', bio = 'Cuenta de prueba para borrar', onboarded = true
+  where id = v_me;
+
+  insert into public.reputations (author_id, target_id, rating, comment)
+  values (v_me, v_test1, 1, 'Valoración de la cuenta de prueba de borrado');
+
+  insert into public.lfg_posts (author_id, title, description, team_size, status)
+  values (v_test3, 'Dúo lleno con Borrame', 'Debe volver a abierto al borrar la cuenta.', 2, 'full')
+  returning id into v_post;
+  insert into public.lfg_members (post_id, user_id, status)
+  values (v_post, v_test3, 'accepted'), (v_post, v_me, 'accepted');
+
+  insert into public.teams (name, tag, description, owner_id, region, target_rank)
+  values ('Equipo de Borrame', 'BRR', 'Debe pasar a TestUser3 al borrar la cuenta.', v_me, 'eu', 'Gold')
+  returning id into v_team;
+  insert into public.team_players (team_id, user_id, role, joined_at)
+  values (v_team, v_me, 'Sentinel', now() - interval '1 day'), (v_team, v_test3, 'Initiator', now());
+  insert into public.conversations (type, name, admin_id, team_id) values ('group', 'Team Equipo de Borrame', v_me, v_team)
+  returning id into v_conv;
+  insert into public.conversation_participants (conversation_id, user_id) values (v_conv, v_me), (v_conv, v_test3);
+
+  insert into public.conversations (type) values ('direct') returning id into v_conv;
+  insert into public.conversation_participants (conversation_id, user_id) values (v_conv, v_test1), (v_conv, v_me);
+  insert into public.messages (conversation_id, sender_id, content) values (v_conv, v_me, 'Mensaje directo de Borrame');
+  update public.conversations set last_message_content = 'Mensaje directo de Borrame', last_message_sender = v_me,
+    last_message_at = now() where id = v_conv;
+
+  insert into public.conversations (type, name, admin_id) values ('group', 'Grupo de Borrame', v_me) returning id into v_conv;
+  insert into public.conversation_participants (conversation_id, user_id, joined_at)
+  values (v_conv, v_me, now() - interval '2 hours'), (v_conv, v_test2, now() - interval '1 hour'), (v_conv, v_test1, now());
+  insert into public.messages (conversation_id, sender_id, content, created_at)
+  values (v_conv, v_test1, 'Mensaje de TestUser1 en el grupo', now() - interval '10 minutes'),
+         (v_conv, v_me, 'Último mensaje, de Borrame', now() - interval '5 minutes');
+  update public.conversations set last_message_content = 'Último mensaje, de Borrame', last_message_sender = v_me,
+    last_message_at = now() - interval '5 minutes' where id = v_conv;
+end;
+$$;

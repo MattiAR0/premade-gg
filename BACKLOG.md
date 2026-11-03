@@ -16,13 +16,13 @@ Lista de mejoras acordada con la usuaria el 2026-10-25. El orden de los pendient
 - [x] 11 · Varios roles por jugador.
 - [x] Perfil sin nivel de cuenta.
 - [x] Emblema de rango más grande (32px en tarjetas, 52px en perfil).
+- [x] 6 · Ajustes de cuenta: cambiar email y contraseña, borrar cuenta (`/settings/account`). Pendiente de publicar.
 
 ## Pendientes (en orden)
 
 - [ ] 5 · "Agregar en el juego": Riot no tiene API de amigos → botón **Copiar Riot ID**.
 - [ ] 12 · Palabras malsonantes: censurar con asteriscos en general; en biografía y comentarios de valoraciones, bloquear el guardado.
 - [ ] 13 · Moderación de imágenes con un servicio externo (Sightengine o Google Vision). Necesita una cuenta de la usuaria.
-- [ ] 6 · Ajustes de cuenta: cambiar email y contraseña, borrar cuenta.
 - [ ] 7 · Búsqueda de equipo más automática. Falta definir qué es "automático".
 - [ ] 8 · Modo claro / oscuro.
 - [ ] 9 · Idiomas inglés / español.

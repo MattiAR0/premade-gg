@@ -1,0 +1,172 @@
+@use 'utilities/variables' as v;
+@use 'utilities/mixins' as m;
+
+.c-account {
+  &__section {
+    background: v.$color-bg-card;
+    border: 1px solid v.$color-border;
+    border-radius: v.$radius-lg;
+    padding: v.$spacing-lg;
+    margin-bottom: v.$spacing-md;
+
+    @include m.respond-below(sm) {
+      padding: v.$spacing-md;
+    }
+
+    // Zona de peligro: borde de 1px en el color de marca, sin franjas
+    &--danger {
+      border-color: rgba(255, 70, 85, 0.45);
+    }
+  }
+
+  &__title {
+    font-size: v.$font-size-base;
+    font-weight: 700;
+    color: v.$color-text-heading;
+    margin-bottom: v.$spacing-sm;
+
+    &--danger {
+      color: v.$color-danger-text;
+    }
+  }
+
+  &__text {
+    font-size: v.$font-size-md;
+    line-height: 1.55;
+    color: v.$color-text-muted;
+    max-width: 65ch;
+  }
+
+  &__value {
+    color: v.$color-text-heading;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  &__pending {
+    margin-top: v.$spacing-sm;
+    padding: v.$spacing-sm v.$spacing-md;
+    font-size: v.$font-size-sm;
+    line-height: 1.5;
+    color: v.$color-text-primary;
+    background: rgba(245, 196, 81, 0.06);
+    border: 1px solid rgba(245, 196, 81, 0.3);
+    border-radius: v.$radius-md;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-md;
+    margin-top: v.$spacing-md;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: v.$spacing-md;
+
+    @include m.respond-below(sm) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 0;
+  }
+
+  &__label {
+    @include m.ui-label;
+  }
+
+  &__input {
+    @include m.form-control;
+    min-height: 44px;
+  }
+
+  &__hint {
+    margin-top: -0.5rem;
+    font-size: v.$font-size-xs;
+    color: v.$color-text-subtle;
+  }
+
+  &__error,
+  &__success {
+    padding: v.$spacing-sm v.$spacing-md;
+    font-size: v.$font-size-sm;
+    line-height: 1.5;
+    border-radius: v.$radius-md;
+  }
+
+  &__error {
+    color: v.$color-danger-text;
+    background: rgba(255, 70, 85, 0.06);
+    border: 1px solid rgba(255, 70, 85, 0.25);
+    margin-bottom: v.$spacing-md;
+
+    .c-account__form & {
+      margin-bottom: 0;
+    }
+  }
+
+  &__success {
+    color: v.$color-positive;
+    background: rgba(47, 216, 176, 0.06);
+    border: 1px solid rgba(47, 216, 176, 0.2);
+  }
+
+  &__actions {
+    display: flex;
+    margin-top: v.$spacing-md;
+
+    .c-account__form & {
+      margin-top: 0;
+    }
+
+    @include m.respond-below(sm) {
+      .c-btn {
+        width: 100%;
+      }
+    }
+  }
+
+  &__link {
+    color: v.$color-text-heading;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: v.$color-border-light;
+    transition: text-decoration-color v.$transition-fast;
+    @include m.touch-hit;
+
+    &:hover {
+      text-decoration-color: currentColor;
+    }
+  }
+
+  // Riot ID dentro de una etiqueta en mayúsculas: se ve tal cual hay que escribirlo
+  &__literal {
+    text-transform: none;
+    letter-spacing: 0.02em;
+    color: v.$color-text-heading;
+  }
+
+  &__spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(236, 232, 225, 0.3);
+    border-top-color: v.$color-text-heading;
+    border-radius: 50%;
+    animation: account-spin 0.7s linear infinite;
+  }
+}
+
+@keyframes account-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
