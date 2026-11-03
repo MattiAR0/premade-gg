@@ -140,6 +140,11 @@
     min-height: 80px;
   }
 
+  &__textarea--invalid,
+  &__textarea--invalid:focus {
+    border-color: v.$color-danger-text;
+  }
+
   &__char-count {
     font-size: v.$font-size-2xs;
     color: v.$color-text-subtle;

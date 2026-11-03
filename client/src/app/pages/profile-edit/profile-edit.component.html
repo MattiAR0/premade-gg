@@ -87,8 +87,13 @@
       <h2 class="c-settings__section-title">Sobre ti</h2>
       <label class="c-settings__field">
         <span class="c-settings__label">Biografía</span>
-        <textarea class="c-settings__textarea" [(ngModel)]="bio" name="bio" rows="3" maxlength="500"
+        <textarea #bioField class="c-settings__textarea" [class.c-settings__textarea--invalid]="bioError"
+          [(ngModel)]="bio" (ngModelChange)="bioError = ''" name="bio" rows="3" maxlength="500"
+          [attr.aria-invalid]="bioError ? true : null" [attr.aria-describedby]="bioError ? 'bio-error' : null"
           placeholder="Cuéntanos sobre ti, tu estilo de juego..."></textarea>
+        @if (bioError) {
+        <span class="c-settings__hint c-settings__hint--error" id="bio-error" role="alert">{{ bioError }}</span>
+        }
         <span class="c-settings__char-count">{{ bio.length }}/500</span>
       </label>
     </section>

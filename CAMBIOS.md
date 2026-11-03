@@ -4,6 +4,40 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-03 · Filtro de palabras malsonantes y errores de perfil en español
+
+**Commit:** este commit
+
+**Qué y por qué:** punto 12 del backlog y el pendiente "traducir los errores de base de datos al editar el perfil", que tocan el mismo formulario. Decisión de la usuaria: censurar con asteriscos en general y bloquear el guardado en la biografía y en los comentarios de valoraciones.
+
+**Cambios:**
+- `supabase/migrations/20261103000001_profanity_filter.sql` (nueva):
+  - `has_profanity` y `censor_profanity`: lista de palabras en español e inglés. Detecta mayúsculas, tildes, letras repetidas ("puuuta") y sustituciones típicas (0→o, 1→i, 3→e, 4/@→a, 5/$→s, 7→t) en palabras con al menos una letra, así que "455" no cuenta. Solo palabras completas: "computadora" o "disputa" no se tocan.
+  - El texto se parte en palabras en una sola pasada (`profanity_tokens`): censurar un mensaje de 2000 caracteres lleno de palabrotas tarda unos 9 ms.
+  - La regla se aplica con triggers en las tablas que escriben las RPC, así cubre también las RPC futuras sin copiar sus cuerpos. Los triggers solo miran un texto si cambia: lo guardado antes de la migración no se modifica ni impide guardar el resto de la fila.
+  - Bloqueo (error `23514`, detalle `profanity:<campo>`): `profiles.bio`, `reputations.comment` y los nombres visibles que no admiten asteriscos (nombre y tag de equipo, nombre de chat de grupo; con asteriscos chocarían con el `unique` del nombre).
+  - Censura con asteriscos: detalles LFT y coach, horario, título y descripción de grupos LFG, descripción y reclutamiento de equipos, solicitudes a equipos, mensajes y la vista previa del último mensaje de cada conversación.
+  - Las funciones auxiliares no se exponen por la API (`revoke execute`); los dos triggers genéricos son `security definer`.
+- `supabase/tests/database/profanity.test.sql` (nuevo): 26 tests (detección, números, ñ, censura, texto largo, bloqueo de bio, comentario y nombre de equipo, censura en LFG, equipos y mensajes, funciones no expuestas). Archivo aparte de `security.test.sql` para no chocar con otras ramas.
+- `client/src/app/services/db-errors.ts` (nuevo): `translateDbError` traduce los errores en inglés de Postgres, PostgREST y Storage (restricciones del perfil, enums, booleanos, sesión caducada, sin conexión, imagen demasiado grande o de formato no admitido). Los mensajes de las RPC, que ya están en español, pasan tal cual.
+- `supabase.client.ts`: `toApiError` traduce el mensaje y conserva `details`. `auth.service`: la subida de avatar también traduce el error.
+- `profile-edit`: el bloqueo de la biografía se muestra junto al campo (borde rojo, `aria-invalid`, mensaje con `role="alert"`) y el foco vuelve a la biografía. El error se borra al escribir. Tras guardar, los detalles LFT y coach se muestran tal como quedaron (censurados).
+
+**Verificación:**
+- `npm run db:test`: 52 tests en verde (26 de seguridad y 26 del filtro).
+- Subagente `revisor-supabase` sobre la migración. Corregido lo que encontró: censura cuadrática (3 s con un mensaje largo), "455" leído como "ass", nombres de equipo censurados que chocaban con el `unique`, lista de palabras legible por la API, censura de textos antiguos al guardar otra cosa y falsos positivos (`mongolo`, `dick`, `pinche`).
+- Navegador en local (puerto 4302): una biografía con "gilipollas" o "m13rd4" no se guarda y sale el mensaje bajo el campo; con una biografía limpia guarda. Los detalles LFT con "pendejos" se guardan como "********". Un grupo "Duo ranked sin pendejos" / "Nada de shit talk" se publica como "Duo ranked sin ********" / "Nada de **** talk".
+- Contraste del error: texto `#ff6b76` sobre la sección `#16232f` 5,79:1; borde sobre el campo `#0b131b` 6,78:1.
+- `translateDbError` probado con los mensajes reales que devuelve Postgres local (agentes favoritos, enum de rol, booleano, longitud de detalles LFT).
+
+**Pendiente:**
+- Publicar: `npx supabase db push --linked` de la migración antes del push.
+- El comentario de valoración bloqueado solo se probó en los tests de BD; en el navegador hace falta haber jugado con el jugador para poder valorarlo. El mensaje sale en el aviso que ya había bajo el comentario.
+- No se cubren los logros de equipo (`teams.achievements`) ni las redes sociales (`social_links`), que son JSON, ni separaciones con espacios o puntos ("p u t a"), sufijos fuera de la lista ("puta2") u homoglifos.
+- En la BD local la migración se aplicó con `psql` y se registró a mano en `schema_migrations`, porque otra rama ya había aplicado `20261103000002` y `migration up` se negaba.
+
+---
+
 ## 2026-11-03 · Vault de Obsidian, backlog y agentes de Claude Code
 
 **Commit:** este commit

@@ -1,6 +1,7 @@
 import { createClient, FunctionsHttpError, type PostgrestError } from '@supabase/supabase-js';
 import { Observable, defer } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { translateDbError } from './db-errors';
 
 /**
  * Cliente Supabase único para toda la app.
@@ -20,7 +21,8 @@ export const supabase = createClient(environment.supabaseUrl, environment.supaba
  */
 export interface ApiError {
   status: number;
-  error: { message: string; code?: string };
+  /** `details` viene de Postgres: 'profanity:<campo>' marca el campo con palabras malsonantes. */
+  error: { message: string; code?: string; details?: string };
 }
 
 const STATUS_BY_CODE: Record<string, number> = {
@@ -31,9 +33,10 @@ const STATUS_BY_CODE: Record<string, number> = {
 
 export const toApiError = (err: PostgrestError | Error | null, status = 400): ApiError => {
   const code = (err as PostgrestError | null)?.code;
+  const details = (err as PostgrestError | null)?.details || undefined;
   return {
     status: (code && STATUS_BY_CODE[code]) || status,
-    error: { message: err?.message || 'Error inesperado', code },
+    error: { message: translateDbError(err?.message), code, details },
   };
 };
 

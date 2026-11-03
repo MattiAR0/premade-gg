@@ -5,6 +5,7 @@ import type { AuthError, Session } from '@supabase/supabase-js';
 import { User } from '../models/user.model';
 import { LoginRequest, RegisterRequest, AuthResponse, OnboardingRequest } from '../models/auth.model';
 import { ApiError, invokeFunction, rpc, supabase } from './supabase.client';
+import { translateDbError } from './db-errors';
 
 export type OAuthProvider = 'google' | 'discord';
 
@@ -251,7 +252,7 @@ export class AuthService {
         contentType: file.type,
         cacheControl: '31536000',
       });
-      if (error) throw { status: 400, error: { message: error.message } } as ApiError;
+      if (error) throw { status: 400, error: { message: translateDbError(error.message) } } as ApiError;
 
       const { data } = supabase.storage.from('avatars').getPublicUrl(path);
       return { url: data.publicUrl, message: 'Avatar subido correctamente' };
