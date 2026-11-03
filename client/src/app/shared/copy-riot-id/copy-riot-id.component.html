@@ -1,0 +1,37 @@
+<span class="c-copy-riot-id" [class.c-copy-riot-id--icon]="variant === 'icon'">
+  @if (variant === 'button') {
+    <button
+      type="button"
+      class="c-btn c-btn--secondary c-btn--sm c-copy-riot-id__btn"
+      [class.c-copy-riot-id__btn--copied]="state() === 'copied'"
+      [title]="'Copiar ' + riotId + ' para agregarle en Valorant'"
+      (click)="copy($event)">
+      @if (state() === 'copied') {
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+      } @else {
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      }
+      <span aria-hidden="true">{{ state() === 'idle' ? 'Copiar Riot ID' : message() }}</span>
+      <span class="u-sr-only">Copiar Riot ID {{ riotId }}</span>
+    </button>
+  } @else {
+    <button
+      type="button"
+      class="c-copy-riot-id__icon-btn"
+      [class.c-copy-riot-id__icon-btn--copied]="state() === 'copied'"
+      [title]="'Copiar Riot ID (' + riotId + ')'"
+      [attr.aria-label]="'Copiar Riot ID ' + riotId"
+      (click)="copy($event)">
+      @if (state() === 'copied') {
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+      } @else {
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      }
+    </button>
+    @if (state() !== 'idle') {
+      <span class="c-copy-riot-id__bubble" [class.c-copy-riot-id__bubble--error]="state() === 'error'" aria-hidden="true">{{ message() }}</span>
+    }
+  }
+  <!-- Aviso para lectores de pantalla: la región existe siempre para que el cambio se anuncie -->
+  <span class="u-sr-only" role="status" aria-live="polite">{{ message() }}</span>
+</span>

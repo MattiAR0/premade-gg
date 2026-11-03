@@ -146,6 +146,17 @@
     }
   }
 
+  // Copiar Riot ID + mensaje; con pantalla táctil los dos botones crecen a 44px
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-xs;
+
+    @include m.touch {
+      gap: v.$spacing-md;
+    }
+  }
+
   &__msg-btn {
     display: inline-flex;
     align-items: center;

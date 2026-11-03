@@ -161,25 +161,23 @@
     max-width: 600px;
   }
 
-  &__edit-btn {
-    align-self: flex-start;
+  // Editar perfil / Enviar mensaje + Copiar Riot ID en una fila
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: v.$spacing-sm;
     margin-top: v.$spacing-xs;
 
     @include m.respond-below(sm) {
-      align-self: center;
+      justify-content: center;
     }
   }
 
   &__msg-btn {
-    align-self: flex-start;
-    margin-top: v.$spacing-xs;
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-
-    @include m.respond-below(sm) {
-      align-self: center;
-    }
   }
 
   // ── Sections ────────────────────────────────────

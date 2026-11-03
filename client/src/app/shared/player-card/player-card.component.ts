@@ -3,6 +3,7 @@ import { UpperCasePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { KarmaBadgeComponent } from '../karma-badge/karma-badge.component';
 import { RankBadgeComponent } from '../rank-badge/rank-badge.component';
+import { CopyRiotIdComponent } from '../copy-riot-id/copy-riot-id.component';
 import { User, rolesOf } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
 import { MessageService } from '../../services/message.service';
@@ -11,7 +12,7 @@ import { LabelPipe } from '../pipes/label.pipe';
 @Component({
   selector: 'app-player-card',
   standalone: true,
-  imports: [KarmaBadgeComponent, RankBadgeComponent, UpperCasePipe, RouterLink, LabelPipe],
+  imports: [KarmaBadgeComponent, RankBadgeComponent, CopyRiotIdComponent, UpperCasePipe, RouterLink, LabelPipe],
   templateUrl: './player-card.component.html',
   styleUrl: './player-card.component.scss',
 })

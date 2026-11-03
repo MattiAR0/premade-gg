@@ -4,6 +4,32 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-03 · Botón "Copiar Riot ID" para agregar en el juego
+
+**Commit:** `07ffdec`
+
+**Qué y por qué:** punto 5 del backlog. Riot no tiene API de amigos, así que para agregar a alguien en Valorant se copia su Riot ID (`Nombre#TAG`) al portapapeles.
+
+**Cambios:**
+- `shared/copy-riot-id` (nuevo): componente `app-copy-riot-id` con dos variantes.
+  - `button`: botón secundario con texto; al copiar cambia a "Riot ID copiado" con un check en `$color-positive`.
+  - `icon`: botón de icono (30px, 44px con pantalla táctil vía `m.touch`) con aviso flotante "Riot ID copiado".
+  - Copia con `navigator.clipboard.writeText` y, si falla (sin permiso o http en la red local), con un textarea oculto y `execCommand('copy')`. Si fallan los dos dice "No se pudo copiar".
+  - Región `role="status"` / `aria-live="polite"` siempre presente que anuncia el resultado; sin `alert()`. El foco vuelve al botón.
+- Perfil (`pages/profile`): "Copiar Riot ID" en una fila nueva `c-profile__actions` junto a "Enviar mensaje" o "Editar perfil". Es el sitio principal: donde se decide agregar a alguien.
+- Tarjeta de jugador (`shared/player-card`): icono de copiar al lado del de mensaje, en el pie. No añade texto, así que no satura la tarjeta; el clic no abre el perfil. El botón de mensaje gana `aria-label`.
+- Detalle LFG (`pages/lfg-detail`): icono de copiar en cada miembro aceptado salvo uno mismo, porque es justo donde hay que agregar al resto del grupo. En las solicitudes pendientes no se pone.
+
+**Verificación:**
+- `npm --prefix client run build` sin errores (sigue el aviso de presupuesto inicial, que ya existía; el componente solo va en chunks lazy).
+- Navegador en local (puerto 4301), con y sin sesión: el portapapeles del sistema recibe `TestUser1#EUW`, `Player10#EUW` y `Borrame#TEST`; el estado anuncia "Riot ID copiado". Con `writeText` forzado a fallar, el respaldo copia igual con un clic real; con los dos fallando sale "No se pudo copiar".
+- 375px: botones de 44×44, fila de acciones del perfil en una línea, sin scroll horizontal en perfil, `/players` ni detalle LFG.
+- Contraste medido: icono en reposo 5,30:1 (tarjeta) y 4,80:1 (fila de miembro); copiado 8,79:1 y 7,97:1; aviso "copiado" 7,97:1 y "no se pudo copiar" 5,25:1; texto del botón 13,07:1.
+
+**Pendiente:** el borde del botón secundario global (`.c-btn--secondary`) da 2,82:1 sobre la tarjeta; no es de esta tarea y el texto ya identifica el botón, pero conviene subirlo a 3:1.
+
+---
+
 ## 2026-11-03 · Primera auditoría de seguridad, SEO y cumplimiento
 
 **Commit:** este commit

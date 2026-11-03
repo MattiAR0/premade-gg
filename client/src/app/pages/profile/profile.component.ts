@@ -13,6 +13,7 @@ import { LfgPost } from '../../models/lfg-post.model';
 import { RankBadgeComponent } from '../../shared/rank-badge/rank-badge.component';
 import { KarmaBadgeComponent } from '../../shared/karma-badge/karma-badge.component';
 import { LfgCardComponent } from '../../shared/lfg-card/lfg-card.component';
+import { CopyRiotIdComponent } from '../../shared/copy-riot-id/copy-riot-id.component';
 import { LabelPipe } from '../../shared/pipes/label.pipe';
 
 @Component({
@@ -20,7 +21,7 @@ import { LabelPipe } from '../../shared/pipes/label.pipe';
   standalone: true,
   imports: [
     RouterLink, UpperCasePipe, DatePipe, FormsModule,
-    RankBadgeComponent, KarmaBadgeComponent, LfgCardComponent,
+    RankBadgeComponent, KarmaBadgeComponent, LfgCardComponent, CopyRiotIdComponent,
     LabelPipe,
   ],
   templateUrl: './profile.component.html',
