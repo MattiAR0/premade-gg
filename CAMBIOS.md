@@ -4,6 +4,23 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-03 · README del frontend al día con Supabase
+
+**Commit:** este commit
+
+**Qué y por qué:** `client/README.md` seguía describiendo la API Express de `/server`, Socket.IO y el proxy al puerto 4000, que ya no existen desde la migración a Supabase.
+
+**Cambios:**
+- `client/README.md`: introducción y sección "Relación con el Backend" reescritas para Supabase (entornos local y cloud, RPC de lectura y escritura, Realtime, `supabase.client.ts`, enlace a `DEPLOY.md`).
+- Tabla de componentes compartidos con `oauth-buttons`, `user-picker`, `dialog` y `pipes`. Tabla de páginas con `onboarding`, `/messages/:id` y la ruta real de edición de perfil (`/settings/profile`).
+- Lista de mixins sin `gradient-text` (prohibido en `CLAUDE.md`) y con `touch` y `touch-hit`. Instalación local: requiere el Supabase local en vez del backend en el 4000.
+
+**Verificación:** rutas cotejadas con `app.routes.ts`, mixins con `_mixins.scss`, servicios y componentes con sus carpetas, y el uso de `rpc()` con `api.service.ts`.
+
+**Pendiente:** en paralelo hay tres sesiones en sus propios worktrees con los puntos 5 (Copiar Riot ID), 12 (palabras malsonantes y errores de BD traducidos) y 6 (ajustes de cuenta) de `BACKLOG.md`. Cada una commitea en su rama; falta revisarlas y fusionarlas en `migrate-supabase`.
+
+---
+
 ## 2026-11-03 · Vault de Obsidian, backlog y agentes de Claude Code
 
 **Commit:** este commit

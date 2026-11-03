@@ -1,6 +1,6 @@
 # PremadeGG — Frontend (Angular)
 
-Frontend de la plataforma **PremadeGG**, una aplicación LFG (Looking For Group) para Valorant basada en reputación (Karma). Consume la API REST del backend (`/server`) y se comunica en tiempo real mediante Socket.IO.
+Frontend de la plataforma **PremadeGG**, una aplicación LFG (Looking For Group) para Valorant basada en reputación (Karma). Habla directamente con **Supabase** (Auth, Postgres por RPC, Realtime, Storage y Edge Functions) mediante `@supabase/supabase-js`; no hay API propia intermedia.
 
 ## Stack Tecnológico
 
@@ -11,10 +11,12 @@ Frontend de la plataforma **PremadeGG**, una aplicación LFG (Looking For Group)
 
 ## Relación con el Backend
 
-El frontend se conecta a la API Express del directorio `/server`:
-- En **desarrollo**: usa un proxy (`proxy.conf.json`) que redirige `/api` a `http://localhost:4000`.
-- En **producción Docker**: nginx redirige `/api` al contenedor de la API.
-- En **producción cloud**: `environment.prod.ts` apunta a la URL de Render.
+El backend está en `supabase/`, en la raíz del monorepo (migraciones SQL, RPC y Edge Functions):
+- En **desarrollo**: `environment.ts` apunta al Supabase local (`http://127.0.0.1:44321`), que se arranca con `npm run db:start` desde la raíz.
+- En **producción**: `environment.prod.ts` apunta al proyecto de Supabase cloud y el frontend se despliega en Vercel (`vercel.json`). Ver [`DEPLOY.md`](../DEPLOY.md).
+- Lecturas con RPC `security invoker` y escrituras solo con RPC `security definer` (`services/api.service.ts`).
+- Tiempo real con canales privados de Supabase Realtime por usuario (`services/realtime.service.ts`).
+- El cliente de Supabase se crea una sola vez en `services/supabase.client.ts`.
 
 ## Arquitectura SASS
 
@@ -22,7 +24,7 @@ El frontend se conecta a la API Express del directorio `/server`:
 src/scss/
 ├── utilities/        # Variables, mixins, funciones
 │   ├── _variables.scss   → Design tokens (colores, spacing, radii, breakpoints, z-index)
-│   ├── _mixins.scss      → respond-to, flex-center, glass-effect, social-card, gradient-text, line-clamp...
+│   ├── _mixins.scss      → respond-to, touch, touch-hit, line-clamp...
 │   └── _functions.scss   → spacing(), z() con mapa de capas
 ├── global/           # Reset, tipografía, grid
 │   ├── _reset.scss       → Reset moderno + focus-visible + ::selection
@@ -51,6 +53,10 @@ src/scss/
 | `karma-badge` | Badge de karma con color dinámico (alto/medio/bajo) |
 | `rank-badge` | Badge de rango de Valorant |
 | `message-panel` | Panel de chat con DMs y conversaciones grupales |
+| `oauth-buttons` | Botones de inicio de sesión con Google y Discord |
+| `user-picker` | Buscador de jugadores para invitar |
+| `dialog` | Directiva `appDialog`: foco, Tab y Esc en modales |
+| `pipes` | Pipe `label`: rangos, roles y franjas en español al mostrarlos |
 
 ### Páginas (`/app/pages/`)
 | Página | Ruta | Descripción |
@@ -62,12 +68,13 @@ src/scss/
 | `teams` | `/teams` | Listado de equipos |
 | `team-detail` | `/teams/:id` | Detalle de equipo con roster y solicitudes |
 | `profile` | `/profile/:id` | Perfil público con reviews y karma |
-| `profile-edit` | `/profile/edit` | Edición de perfil con feedback visual |
-| `login` | `/login` | Inicio de sesión |
+| `profile-edit` | `/settings/profile` | Edición de perfil con feedback visual |
+| `login` | `/login` | Inicio de sesión (email, Google o Discord) |
 | `register` | `/register` | Registro con validación de Riot ID |
+| `onboarding` | `/onboarding` | Vincular la cuenta de Riot tras el primer inicio de sesión |
 | `forgot-password` | `/forgot-password` | Solicitar restablecimiento |
 | `reset-password` | `/reset-password` | Restablecer contraseña |
-| `messages` | `/messages` | Chat con DMs y grupos |
+| `messages` | `/messages`, `/messages/:id` | Chat con DMs y grupos |
 
 ## Instalación Local
 
@@ -77,7 +84,7 @@ npm install
 npm run start
 ```
 
-El frontend se sirve en `http://localhost:4200`. Necesita el backend corriendo en `http://localhost:4000` (ver README principal).
+El frontend se sirve en `http://localhost:4200`. Necesita el Supabase local arrancado (`npm run db:start` en la raíz, requiere Docker Desktop; ver README principal).
 
 ## Build de Producción
 
