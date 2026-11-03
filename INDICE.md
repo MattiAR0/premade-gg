@@ -59,6 +59,7 @@ Están en `.impeccable/critique/`. Obsidian oculta las carpetas que empiezan por
 - `20261025000006_lfg_edit.sql`: editar, cerrar y borrar grupos LFG.
 - `20261025000007_multi_roles.sql`: varios roles por jugador.
 - `20261025000008_lfg_edit_size.sql`: cambiar el tamaño del grupo.
+- `20261103000001_profanity_filter.sql`: filtro de palabras malsonantes (censura con asteriscos; bloqueo en biografía, comentarios y nombres de equipo).
 
 **Edge Functions** (`supabase/functions/`): `riot-validate` (público, valida un Riot ID), `riot-link` (onboarding), `riot-refresh` (refresca rango, con 1 h de espera).
 

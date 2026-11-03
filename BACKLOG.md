@@ -17,10 +17,10 @@ Lista de mejoras acordada con la usuaria el 2026-10-25. El orden de los pendient
 - [x] Perfil sin nivel de cuenta.
 - [x] Emblema de rango más grande (32px en tarjetas, 52px en perfil).
 - [x] 5 · "Agregar en el juego": botón **Copiar Riot ID** en perfil, tarjeta de jugador y miembros del detalle LFG (sin publicar).
+- [x] 12 · Palabras malsonantes: censura con asteriscos en general; en biografía y comentarios de valoraciones se bloquea el guardado. Migración `20261103000001_profanity_filter.sql` (sin publicar).
 
 ## Pendientes (en orden)
 
-- [ ] 12 · Palabras malsonantes: censurar con asteriscos en general; en biografía y comentarios de valoraciones, bloquear el guardado.
 - [ ] 13 · Moderación de imágenes con un servicio externo (Sightengine o Google Vision). Necesita una cuenta de la usuaria.
 - [ ] 6 · Ajustes de cuenta: cambiar email y contraseña, borrar cuenta.
 - [ ] 7 · Búsqueda de equipo más automática. Falta definir qué es "automático".
@@ -33,7 +33,7 @@ Lista de mejoras acordada con la usuaria el 2026-10-25. El orden de los pendient
 - [ ] OAuth de Google y Discord en Supabase cloud.
 - [ ] Regenerar `HENRIK_API_KEY`.
 - [ ] Pedir una Personal API key de Riot (la de desarrollo caduca cada 24 h).
-- [ ] Traducir los errores de base de datos al editar el perfil.
+- [x] Traducir los errores de base de datos al editar el perfil (`client/src/app/services/db-errors.ts`, misma rama que el punto 12); falta publicar.
 - [ ] Capturas del README.
 - [ ] Apagar Render y MongoDB Atlas.
 

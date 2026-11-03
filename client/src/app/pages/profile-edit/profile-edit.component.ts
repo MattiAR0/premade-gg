@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ElementRef, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -17,8 +17,12 @@ import { LabelPipe } from '../../shared/pipes/label.pipe';
   styleUrl: './profile-edit.component.scss',
 })
 export class ProfileEditComponent implements OnInit {
+  @ViewChild('bioField') bioField?: ElementRef<HTMLTextAreaElement>;
+
   // Profile data
   bio = '';
+  /** Error de la biografía (palabras malsonantes), se muestra junto al campo */
+  bioError = '';
   profileImageType: 'upload' | 'avatar' | 'riot_card' = 'riot_card';
   profileImage: string | null = null;
   favoriteAgents: string[] = [];
@@ -211,6 +215,7 @@ export class ProfileEditComponent implements OnInit {
     this.saving = true;
     this.saved = false;
     this.errorMessage = '';
+    this.bioError = '';
 
     const doSave = (imageUrl?: string) => {
       const data: Partial<User> = {
@@ -229,7 +234,10 @@ export class ProfileEditComponent implements OnInit {
       };
 
       this.authService.updateProfile(data).subscribe({
-        next: () => {
+        next: (user) => {
+          // La base de datos censura estos textos: se muestran tal como quedaron
+          this.lftDetails = user.lftDetails || '';
+          this.coachDetails = user.coachDetails || '';
           this.saving = false;
           this.saved = true;
           this.selectedFile = null;
@@ -239,6 +247,12 @@ export class ProfileEditComponent implements OnInit {
         },
         error: (err) => {
           this.saving = false;
+          if (err.error?.details === 'profanity:bio') {
+            this.bioError = err.error.message;
+            this.cdr.detectChanges();
+            this.bioField?.nativeElement.focus();
+            return;
+          }
           this.errorMessage = err.error?.message || 'Error al guardar el perfil';
           this.cdr.markForCheck();
         },
