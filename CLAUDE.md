@@ -2,7 +2,7 @@
 
 ## Proyecto
 
-- TFG: plataforma LFG (looking for group) de Valorant basada en reputación (karma).
+- Proyecto personal: plataforma LFG (looking for group) de Valorant basada en reputación (karma). Empezó como TFG; ahora el objetivo es presentarlo a Riot Games (registro del producto y clave de producción).
 - Frontend Angular en `client/`, backend Supabase en `supabase/` (migraciones SQL, RPC, Edge Functions).
 - Toda la UI y la documentación van en español.
 - Arranque local: `npm run db:start` (Supabase, puertos 443xx) y `npm --prefix client start` (Angular, puerto 4200).
@@ -49,6 +49,20 @@ Cada vez que modifiques el proyecto (código, estilos, configuración, base de d
 - Muchos archivos usan saltos de línea CRLF: cualquier script que edite archivos debe respetar `\r\n`.
 - En un commit mete solo los archivos de la tarea. Si un archivo mezcla cambios de otra tarea, prepara solo tus bloques.
 - Comprueba en el navegador los cambios visibles antes de darlos por terminados.
+
+## Agentes y skills
+
+Agentes en `.claude/agents/`. Úsalos cuando la tarea encaje:
+
+- Se tocó `supabase/` → `revisor-supabase`.
+- Se tocó `client/src` con cambios visibles → `verificador-ui`.
+- Cambios de auth, secretos, cabeceras o Edge Functions → `auditor-seguridad`.
+- Páginas públicas nuevas, rutas o meta → `auditor-seo`.
+- Datos personales, cookies, analítica, reseñas, moderación o integración con Riot → `auditor-legal`.
+- Textos dirigidos a Riot (registro del producto, pitch) → `redactor-riot`.
+- Al cerrar la tarea → `documentador`.
+
+Los auditores y revisores son de solo lectura: devuelven hallazgos y la sesión principal decide qué se arregla. Las skills `cumplimiento-legal` y `politicas-riot` (en `.claude/skills/`) recogen las checklists legal y de Riot.
 
 ## Estilo de respuesta
 

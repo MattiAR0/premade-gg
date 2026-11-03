@@ -4,6 +4,51 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-03 · Primera auditoría de seguridad, SEO y cumplimiento
+
+**Commit:** este commit
+
+**Qué y por qué:** primera pasada de los agentes `auditor-seguridad`, `auditor-seo` y `auditor-legal` para saber qué falta antes de presentar PremadeGG a Riot.
+
+**Cambios:**
+- `AUDITORIA-2026-11-03.md`: informe que junta los tres análisis, con prioridades (P0 bloquea a Riot, P1 seguridad y SEO, P2 datos), los textos legales que faltan, los datos que debe aportar el titular y un orden de trabajo.
+- `INDICE.md`: enlace a la auditoría, agentes y skills nuevos, y el proyecto descrito como personal (ya no TFG).
+
+**Verificación:** los agentes leyeron el código, las migraciones y las Edge Functions; comprobaron las cabeceras reales de producción con `curl -I`, pasaron `npm audit` en la raíz y en `client/`, y leyeron con WebFetch las políticas vigentes de Riot. No se tocó código de la aplicación.
+
+**Pendiente:**
+- Nada del informe está arreglado todavía.
+- No se revisaron los paneles de Supabase cloud ni de Vercel.
+- Faltan los datos del titular para los textos legales.
+- Conviene pasar los puntos al `BACKLOG.md`.
+
+---
+
+## 2026-11-03 · Agentes y skills para Riot, SEO, seguridad y cumplimiento legal
+
+**Commit:** este commit
+
+**Qué y por qué:** PremadeGG deja de ser un TFG y pasa a ser un proyecto personal que se quiere presentar a Riot Games. Hacen falta agentes que preparen ese material y auditen el SEO, la seguridad y el cumplimiento legal de la web.
+
+**Cambios:**
+- `.claude/agents/redactor-riot.md`: redacta en inglés el material para Riot (registro del producto, clave de producción, pitch) y lo guarda en `presentacion-riot/`. Solo afirma lo que puede comprobar en el código.
+- `.claude/agents/auditor-seo.md` (solo lectura): SEO de la SPA de Angular (prerender, título y meta por ruta, `noindex` en rutas privadas, 404 blandos, sitemap, JSON-LD, rendimiento). Carga las skills `seo-audit` y `schema`.
+- `.claude/agents/auditor-seguridad.md` (solo lectura): secretos, cabeceras de `vercel.json`, Edge Functions, auth, XSS, Storage, abuso del karma y `npm audit`. Carga las skills `security-and-hardening` y `security-best-practices`.
+- `.claude/agents/auditor-legal.md` (solo lectura): RGPD, LOPDGDD, LSSI-CE, cookies, DSA y políticas de Riot. Devuelve tablas de cumplimiento y borradores de textos legales.
+- `.claude/skills/cumplimiento-legal/SKILL.md`: checklist legal española y europea adaptada a PremadeGG.
+- `.claude/skills/politicas-riot/SKILL.md`: checklist de políticas de Riot (claves, RSO, datos de jugadores, riesgo de acoso con el karma, aviso "Legal Jibber Jabber") y guion para el registro del producto.
+- `CLAUDE.md`: el proyecto ya no es un TFG. Nueva sección "Agentes y skills" que dice qué agente usar según lo que toque la tarea.
+
+**Verificación:** frontmatter revisado (nombres, `tools`, `skills` y descripciones sin secuencias que rompan el YAML). Las dos skills nuevas aparecen como disponibles en la sesión. Los agentes no se han lanzado todavía.
+
+**Pendiente:**
+- Lanzar los auditores por primera vez y priorizar sus hallazgos.
+- El pie de `client/src/app/app.html` aún dice "Proyecto Final de Grado".
+- La web no tiene todavía política de privacidad, aviso legal ni términos de uso.
+- Las skills legal y de Riot resumen normas que cambian: los agentes deben contrastarlas con la fuente oficial, y los textos legales finales debería revisarlos un abogado.
+
+---
+
 ## 2026-11-03 · README del frontend al día con Supabase
 
 **Commit:** este commit
