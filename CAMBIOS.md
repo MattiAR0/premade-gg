@@ -4,6 +4,21 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-03 · Enlaces entre Editar perfil y Ajustes de cuenta
+
+**Commit:** este commit
+
+**Qué y por qué:** la sesión coordinadora pidió dejar los ajustes en `settings/account`, junto a `settings/profile`, y enlazar las dos pantallas. La ruta ya era esa. El enlace a Editar perfil iba dentro de la descripción de la cabecera, que se oculta en móvil.
+
+**Cambios:**
+- `account-settings.component.html`: botón "Editar perfil" en `c-page-header__actions`. La descripción queda solo como texto.
+- `profile-edit.component.html`: botón "Ajustes de cuenta" en la misma posición.
+- `account-settings.component.scss`: fuera el estilo `c-account__link`, que ya no se usa.
+
+**Verificación:** `ng build` sin errores. En el navegador (puerto 4303) los dos botones llevan a la otra pantalla. A 375 px se ven bajo el título, miden 44 px y no hay scroll horizontal.
+
+---
+
 ## 2026-11-03 · Ajustes de cuenta: email, contraseña y borrado
 
 **Commit:** este commit

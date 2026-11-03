@@ -133,20 +133,6 @@
     }
   }
 
-  &__link {
-    color: v.$color-text-heading;
-    font-weight: 600;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    text-decoration-color: v.$color-border-light;
-    transition: text-decoration-color v.$transition-fast;
-    @include m.touch-hit;
-
-    &:hover {
-      text-decoration-color: currentColor;
-    }
-  }
-
   // Riot ID dentro de una etiqueta en mayúsculas: se ve tal cual hay que escribirlo
   &__literal {
     text-transform: none;
