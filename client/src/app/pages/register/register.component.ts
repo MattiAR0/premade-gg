@@ -72,7 +72,7 @@ export class RegisterComponent {
 
     // Validaciones
     if (!this.email || !this.password || !this.confirmPassword) {
-      this.errorMessage = 'Por favor completa todos los campos obligatorios';
+      this.errorMessage = 'Rellena todos los campos del formulario.';
       return;
     }
 
@@ -142,7 +142,7 @@ export class RegisterComponent {
           return;
         }
         this.loading = false;
-        this.errorMessage = err.error?.message || 'Error al registrarse';
+        this.errorMessage = err.error?.message || 'No se pudo crear la cuenta. Inténtalo de nuevo.';
         this.cdr.markForCheck();
       },
     });

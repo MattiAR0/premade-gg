@@ -23,7 +23,7 @@ export class ForgotPasswordComponent {
 
   onSubmit(): void {
     if (!this.email) {
-      this.errorMessage = 'Por favor ingresa tu email';
+      this.errorMessage = 'Escribe tu email.';
       return;
     }
 
@@ -39,7 +39,7 @@ export class ForgotPasswordComponent {
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage = err.error?.message || 'Error al procesar la solicitud';
+        this.errorMessage = err.error?.message || 'No se pudo enviar el enlace. Inténtalo de nuevo.';
         this.cdr.markForCheck();
       },
     });

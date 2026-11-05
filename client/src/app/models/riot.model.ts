@@ -1,6 +1,5 @@
 export interface RiotAccountValidation {
   valid: boolean;
-  puuid: string;
   gameName: string;
   tagLine: string;
   /** Riot ID normalizado ("Nombre#Tag") */

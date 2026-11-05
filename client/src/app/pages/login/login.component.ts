@@ -32,7 +32,7 @@ export class LoginComponent {
 
   onSubmit(): void {
     if (!this.email || !this.password) {
-      this.errorMessage = 'Por favor completa todos los campos';
+      this.errorMessage = 'Escribe tu email y tu contraseña.';
       return;
     }
 
@@ -50,7 +50,7 @@ export class LoginComponent {
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage = err.error?.message || 'Error al iniciar sesión';
+        this.errorMessage = err.error?.message || 'No se pudo iniciar sesión. Inténtalo de nuevo.';
         this.cdr.markForCheck();
       },
     });

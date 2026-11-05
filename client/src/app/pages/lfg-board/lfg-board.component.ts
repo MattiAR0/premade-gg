@@ -234,7 +234,7 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       error: (err) => {
         if (requestId !== this.requestId) return;
-        this.errorMessage = 'Error al cargar los grupos. Comprueba que el servidor está en marcha.';
+        this.errorMessage = 'No se pudieron cargar los grupos. Inténtalo de nuevo en unos minutos.';
         console.error('Error loading LFG posts:', err);
         this.initialLoading = false;
         this.loadingMore = false;
@@ -352,7 +352,7 @@ export class LfgBoardComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       error: (err) => {
         this.creatingPost = false;
-        this.createError = err.error?.message || 'Error al crear el grupo.';
+        this.createError = err.error?.message || 'No se pudo crear el grupo. Inténtalo de nuevo.';
         this.cdr.markForCheck();
       },
     });

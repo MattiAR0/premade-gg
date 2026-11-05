@@ -102,5 +102,9 @@ export const routes: Routes = [
       import('./pages/account-settings/account-settings.component').then((m) => m.AccountSettingsComponent),
     canActivate: [authGuard],
   },
-  { path: '**', redirectTo: '' },
+  {
+    path: '**',
+    title: 'Página no encontrada · PremadeGG',
+    loadComponent: () => import('./pages/not-found/not-found.component').then((m) => m.NotFoundComponent),
+  },
 ];

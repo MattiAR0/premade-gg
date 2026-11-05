@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { MessageService } from '../../services/message.service';
@@ -13,10 +13,20 @@ import { Conversation, ConversationParticipant } from '../../models/message.mode
   styleUrl: './message-panel.component.scss',
 })
 export class MessagePanelComponent {
+  @ViewChild('panelButton') private panelButton?: ElementRef<HTMLButtonElement>;
+
   constructor(
     readonly messageService: MessageService,
     private readonly auth: AuthService,
   ) {}
+
+  /** Esc cierra el panel y devuelve el foco al botón */
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (!this.messageService.panelOpen()) return;
+    this.messageService.closePanel();
+    this.panelButton?.nativeElement.focus();
+  }
 
   /** Abre el panel y carga conversaciones */
   toggle(): void {

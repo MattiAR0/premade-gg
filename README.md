@@ -1,9 +1,11 @@
 # PremadeGG - Valorant LFG Platform
 
-**PremadeGG** es el proyecto final de grado diseñado para conectar jugadores de Valorant basándose no solo en su rango, sino en su reputación (Karma) y compatibilidad de roles.
+**PremadeGG** es un proyecto independiente para conectar jugadores de Valorant según su rango, su reputación (karma) y la compatibilidad de roles. Empezó como Trabajo de Fin de Grado.
 
 ## Visión del Proyecto
-Una plataforma "Looking For Group" (LFG) que penaliza la toxicidad. Los usuarios con Karma < 3 son filtrados del matchmaking principal.
+Una plataforma "Looking For Group" (LFG) basada en reputación: los jugadores se valoran entre sí de 1 a 5 y, con un karma por debajo de 3, no se pueden crear grupos nuevos.
+
+> PremadeGG isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
 
 ## 🎬 Video Explicativo
 [![Ver Video](https://img.shields.io/badge/Ver%20Video%20Explicativo-Google%20Drive-blue?style=for-the-badge&logo=googledrive)](https://drive.google.com/file/d/1ghoKyXdTBNtKZwR7niyRDcn0XRcBcAn9/view?usp=sharing)

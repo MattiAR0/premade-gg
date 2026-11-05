@@ -4,7 +4,6 @@ export interface User {
   // Identidad
   email?: string;
   riotId: string;
-  puuid: string | null;
   region: 'eu' | 'na' | 'ap' | 'kr';
 
   // Datos de juego

@@ -120,7 +120,7 @@ export class TeamDetailComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (err) => {
-        this.actionError = err.error?.message || 'Error al procesar acción';
+        this.actionError = err.error?.message || 'No se pudo completar la acción. Inténtalo de nuevo.';
         this.actionLoading = false;
         this.cdr.markForCheck();
       },
@@ -137,7 +137,7 @@ export class TeamDetailComponent implements OnInit {
         this.loadTeam(this.team!._id);
       },
       error: (err) => {
-        this.actionError = err.error?.message || 'Error';
+        this.actionError = err.error?.message || 'No se pudo completar la acción. Inténtalo de nuevo.';
         this.actionLoading = false;
       },
     });
@@ -153,7 +153,7 @@ export class TeamDetailComponent implements OnInit {
         this.loadTeam(this.team!._id);
       },
       error: (err) => {
-        this.actionError = err.error?.message || 'Error';
+        this.actionError = err.error?.message || 'No se pudo completar la acción. Inténtalo de nuevo.';
         this.actionLoading = false;
       },
     });
@@ -169,7 +169,7 @@ export class TeamDetailComponent implements OnInit {
         this.loadTeam(this.team!._id);
       },
       error: (err) => {
-        this.actionError = err.error?.message || 'Error';
+        this.actionError = err.error?.message || 'No se pudo completar la acción. Inténtalo de nuevo.';
         this.actionLoading = false;
       },
     });
@@ -202,7 +202,7 @@ export class TeamDetailComponent implements OnInit {
         setTimeout(() => this.router.navigate(['/teams']), 1500);
       },
       error: (err) => {
-        this.actionError = err.error?.message || 'Error al eliminar el equipo';
+        this.actionError = err.error?.message || 'No se pudo eliminar el equipo. Inténtalo de nuevo.';
         this.actionLoading = false;
         this.cdr.markForCheck();
       }
@@ -242,7 +242,7 @@ export class TeamDetailComponent implements OnInit {
       },
       error: (err) => {
         this.joinLoading = false;
-        this.joinError = err.error?.message || 'Error al enviar la solicitud';
+        this.joinError = err.error?.message || 'No se pudo enviar la solicitud. Inténtalo de nuevo.';
         this.cdr.markForCheck();
       }
     });
@@ -261,7 +261,7 @@ export class TeamDetailComponent implements OnInit {
         this.loadTeam(this.team!._id);
       },
       error: (err) => {
-        this.actionError = err.error?.message || 'Error al procesar la solicitud';
+        this.actionError = err.error?.message || 'No se pudo responder a la solicitud. Inténtalo de nuevo.';
         this.actionLoading = false;
         this.cdr.markForCheck();
       }

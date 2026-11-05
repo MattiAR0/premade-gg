@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { NotificationService } from '../../services/notification.service';
@@ -12,7 +12,17 @@ import { AppNotification } from '../../models/notification.model';
   styleUrl: './notification-bell.component.scss',
 })
 export class NotificationBellComponent {
+  @ViewChild('bellButton') private bellButton?: ElementRef<HTMLButtonElement>;
+
   constructor(readonly notificationService: NotificationService) {}
+
+  /** Esc cierra el panel y devuelve el foco a la campana */
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (!this.notificationService.panelOpen()) return;
+    this.notificationService.closePanel();
+    this.bellButton?.nativeElement.focus();
+  }
 
   /** Icono según tipo de notificación */
   getIcon(type: AppNotification['type']): string {

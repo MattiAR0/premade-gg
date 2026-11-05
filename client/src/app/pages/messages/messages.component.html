@@ -18,25 +18,28 @@
     @if (showGroupForm) {
     <div class="c-messages__group-form">
       <input type="text" class="c-messages__group-input" placeholder="Nombre del grupo..." [(ngModel)]="groupName"
-        maxlength="60" />
+        maxlength="60" aria-label="Nombre del chat de grupo" />
       <!-- Busqueda de usuarios -->
       <div class="c-messages__user-search">
         <input type="text" class="c-messages__group-input" placeholder="Buscar jugadores..." [ngModel]="searchQuery"
-          (ngModelChange)="onSearchChange($event)" autocomplete="off" />
+          (ngModelChange)="onSearchChange($event)" autocomplete="off" aria-label="Buscar jugadores para añadir" />
         @if (searchResults.length > 0) {
         <ul class="c-messages__search-results">
           @for (user of searchResults; track user._id) {
-          <li class="c-messages__search-result-item" (click)="selectUserForGroup(user)">
-            <div class="c-messages__search-result-avatar">
-              @if (user.profileImage || user.cardImage) {
-              <img [src]="user.profileImage || user.cardImage" [alt]="user.riotId">
-              } @else {
-              <div class="c-messages__avatar-placeholder c-messages__avatar-placeholder--xs">
-                {{ user.riotId.charAt(0).toUpperCase() }}
-              </div>
-              }
-            </div>
-            <span class="c-messages__search-result-name">{{ user.riotId }}</span>
+          <li>
+            <button type="button" class="c-messages__search-result-item" (click)="selectUserForGroup(user)"
+              [attr.aria-label]="'Añadir a ' + user.riotId">
+              <span class="c-messages__search-result-avatar">
+                @if (user.profileImage || user.cardImage) {
+                <img [src]="user.profileImage || user.cardImage" alt="">
+                } @else {
+                <span class="c-messages__avatar-placeholder c-messages__avatar-placeholder--xs" aria-hidden="true">
+                  {{ user.riotId.charAt(0).toUpperCase() }}
+                </span>
+                }
+              </span>
+              <span class="c-messages__search-result-name">{{ user.riotId }}</span>
+            </button>
           </li>
           }
         </ul>
@@ -47,13 +50,15 @@
       @if (selectedUsers.length > 0) {
       <div class="c-messages__selected-users">
         @for (user of selectedUsers; track user._id) {
-        <span class="c-messages__selected-badge" (click)="removeUserFromGroup(user)" title="Quitar usuario">
+        <button type="button" class="c-messages__selected-badge" (click)="removeUserFromGroup(user)"
+          [attr.aria-label]="'Quitar a ' + user.riotId">
           {{ user.riotId }}
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            aria-hidden="true">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
-        </span>
+        </button>
         }
       </div>
       }
@@ -188,7 +193,8 @@
     </header>
 
     <!-- Messages area -->
-    <div class="c-messages__chat-body" #messagesContainer (scroll)="onScroll()">
+    <div class="c-messages__chat-body" #messagesContainer (scroll)="onScroll()" role="log" aria-live="polite"
+      aria-relevant="additions" aria-label="Mensajes de la conversación">
 
       @if (messageService.loadingMessages() && messageService.messages().length === 0) {
       <div class="c-messages__chat-loading">
@@ -238,7 +244,8 @@
       </div>
       }
 
-      <!-- Typing indicator -->
+      <!-- Typing indicator (el contenedor existe siempre para que el lector de pantalla lo anuncie) -->
+      <div role="status">
       @if (getActiveTypingUsers().length > 0) {
       <div class="c-messages__typing">
         <span class="c-messages__typing-dots">
@@ -253,6 +260,7 @@
         </span>
       </div>
       }
+      </div>
     </div>
 
     <!-- Message input -->
@@ -260,10 +268,11 @@
       <div class="c-messages__input-wrap">
         <input #messageInput type="text" class="c-messages__input" placeholder="Escribe un mensaje..."
           [(ngModel)]="newMessage" (keydown)="onKeyDown($event)" (input)="onTyping()" maxlength="2000"
-          autocomplete="off" />
-        <button class="c-messages__send-btn" [disabled]="!newMessage.trim()" (click)="send()">
+          autocomplete="off" aria-label="Escribe un mensaje" />
+        <button type="button" class="c-messages__send-btn" [disabled]="!newMessage.trim()" (click)="send()"
+          aria-label="Enviar mensaje">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <line x1="22" y1="2" x2="11" y2="13" />
             <polygon points="22 2 15 22 11 13 2 9 22 2" />
           </svg>

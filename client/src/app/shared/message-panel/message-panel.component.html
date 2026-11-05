@@ -1,17 +1,19 @@
 <div class="c-msg-panel">
   <!-- Message bell button -->
-  <button class="c-msg-panel__bell" (click)="toggle()" aria-label="Mensajes">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <button #panelButton type="button" class="c-msg-panel__bell" (click)="toggle()"
+    [attr.aria-label]="messageService.hasUnread() ? 'Mensajes, ' + messageService.unreadCount() + ' sin leer' : 'Mensajes'"
+    [attr.aria-expanded]="messageService.panelOpen()" aria-controls="msg-panel">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
     </svg>
     @if (messageService.hasUnread()) {
-      <span class="c-msg-panel__badge">{{ messageService.unreadCount() }}</span>
+      <span class="c-msg-panel__badge" aria-hidden="true">{{ messageService.unreadCount() }}</span>
     }
   </button>
 
   <!-- Panel dropdown -->
   @if (messageService.panelOpen()) {
-    <div class="c-msg-panel__panel">
+    <div class="c-msg-panel__panel" id="msg-panel">
       <header class="c-msg-panel__header">
         <h3 class="c-msg-panel__title">Mensajes</h3>
         <a class="c-msg-panel__view-all" routerLink="/messages" (click)="messageService.closePanel()">

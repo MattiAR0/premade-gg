@@ -76,7 +76,12 @@
   }
 
   &__copy {
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-xs;
+    max-width: 72ch;
     font-size: v.$font-size-xs;
+    line-height: 1.5;
     color: v.$color-text-subtle;
 
     @include m.respond-to(md) {

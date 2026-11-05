@@ -4,7 +4,7 @@
 -- ════════════════════════════════════════════════════════════
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(26);
+select plan(27);
 
 -- ── Fixtures: tres usuarios (A, B, C) ────────────────────────
 insert into auth.users (id, email, aud, role)
@@ -157,6 +157,16 @@ values ('a0000000-0000-0000-0000-00000000000a', 'c0000000-0000-0000-0000-0000000
 select pg_temp.login('b0000000-0000-0000-0000-00000000000b');
 set local role authenticated;
 select is(public.get_unread_notification_count(), 0, 'B no ve las notificaciones de A');
+
+-- ── El puuid no sale en las respuestas de las RPC ────────────
+reset role;
+update public.profiles set puuid = 'puuid-de-prueba-a' where id = 'a0000000-0000-0000-0000-00000000000a';
+select pg_temp.login('b0000000-0000-0000-0000-00000000000b');
+set local role authenticated;
+select ok(
+  not (public.user_json_by_id('a0000000-0000-0000-0000-00000000000a') ? 'puuid'),
+  'user_json no expone el puuid'
+);
 
 select * from finish();
 rollback;

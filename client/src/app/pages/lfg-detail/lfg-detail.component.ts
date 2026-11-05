@@ -187,7 +187,7 @@ export class LfgDetailComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (err) => {
-        this.actionError = err.error?.message || 'Error al enviar solicitud';
+        this.actionError = err.error?.message || 'No se pudo enviar la solicitud. Inténtalo de nuevo.';
         this.actionLoading = false;
         this.cdr.markForCheck();
       },
@@ -210,7 +210,7 @@ export class LfgDetailComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (err) => {
-        this.actionError = err.error?.message || 'Error al procesar solicitud';
+        this.actionError = err.error?.message || 'No se pudo responder a la solicitud. Inténtalo de nuevo.';
         this.actionLoading = false;
         this.cdr.markForCheck();
       },
@@ -233,7 +233,7 @@ export class LfgDetailComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (err) => {
-        this.actionError = err.error?.message || 'Error al procesar acción';
+        this.actionError = err.error?.message || 'No se pudo completar la acción. Inténtalo de nuevo.';
         this.actionLoading = false;
         this.cdr.markForCheck();
       },

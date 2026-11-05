@@ -182,7 +182,7 @@ export class TeamsComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       error: (err) => {
         if (requestId !== this.requestId) return;
-        this.errorMessage = 'Error al cargar los equipos.';
+        this.errorMessage = 'No se pudieron cargar los equipos. Inténtalo de nuevo.';
         console.error('Error loading teams:', err);
         this.initialLoading = false;
         this.loadingMore = false;
@@ -312,7 +312,7 @@ export class TeamsComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       error: (err) => {
         this.creatingTeam = false;
-        this.createError = err.error?.message || 'Error al crear el equipo.';
+        this.createError = err.error?.message || 'No se pudo crear el equipo. Inténtalo de nuevo.';
         this.cdr.markForCheck();
       },
     });

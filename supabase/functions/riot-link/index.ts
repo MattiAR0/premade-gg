@@ -14,8 +14,8 @@ Deno.serve(handle(async (req) => {
 
   const { gameName, tagLine } = parseRiotId(body.riotId);
   const region = assertRegion(body.region);
-  if (!body.role || !ROLES.includes(body.role)) throw new HttpError(400, 'Rol inválido');
-  if (!body.schedule?.trim()) throw new HttpError(400, 'El horario es obligatorio');
+  if (!body.role || !ROLES.includes(body.role)) throw new HttpError(400, 'Elige un rol de la lista.');
+  if (!body.schedule?.trim()) throw new HttpError(400, 'Elige cuándo sueles jugar.');
 
   const account = await validateAccount(gameName, tagLine);
   const riotId = `${account.gameName}#${account.tagLine}`;

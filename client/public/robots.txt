@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /messages
+Disallow: /settings/
+Disallow: /onboarding
+Disallow: /reset-password
+
+Sitemap: https://premade-gg.vercel.app/sitemap.xml

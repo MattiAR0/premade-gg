@@ -160,7 +160,7 @@ export class PlayersComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       error: (err) => {
         if (requestId !== this.requestId) return;
-        this.errorMessage = 'Error al cargar jugadores. Comprueba que el servidor está en marcha.';
+        this.errorMessage = 'No se pudieron cargar los jugadores. Inténtalo de nuevo en unos minutos.';
         console.error('Error loading players:', err);
         this.initialLoading = false;
         this.loadingMore = false;

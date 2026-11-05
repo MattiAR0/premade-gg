@@ -40,7 +40,7 @@ export class ResetPasswordComponent implements OnInit {
     this.errorMessage = '';
 
     if (!this.password || !this.confirmPassword) {
-      this.errorMessage = 'Por favor completa todos los campos';
+      this.errorMessage = 'Escribe la nueva contraseña en los dos campos.';
       return;
     }
 
@@ -64,7 +64,7 @@ export class ResetPasswordComponent implements OnInit {
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage = err.error?.message || 'Error al restablecer la contraseña';
+        this.errorMessage = err.error?.message || 'No se pudo cambiar la contraseña. Inténtalo de nuevo.';
         this.cdr.markForCheck();
       },
     });

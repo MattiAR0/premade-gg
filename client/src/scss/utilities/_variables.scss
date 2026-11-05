@@ -49,6 +49,8 @@ $color-hover-border: rgba(236, 232, 225, 0.3);
 // Borders & Surfaces
 $color-border: #233240;
 $color-border-light: #35495b;
+// Borde de campos de formulario (WCAG 1.4.11): 3,26:1 sobre elevated, 3,59:1 sobre card y 4,21:1 sobre bg-input
+$color-border-input: #667a8c;
 $color-glass-bg: rgba(15, 25, 35, 0.94);
 $color-glass-border: rgba(236, 232, 225, 0.06);
 $color-glass-hover: rgba(236, 232, 225, 0.08);

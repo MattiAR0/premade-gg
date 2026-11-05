@@ -4,9 +4,60 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
-## 2026-11-05 · Anexo de la re-auditoría con agentes de VoltAgent
+## 2026-11-05 · Fase 1 antes de presentar a Riot: avisos, textos, SEO, cabeceras y accesibilidad
 
 **Commit:** este commit
+
+**Qué y por qué:** primera tanda del orden de trabajo de `AUDITORIA-2026-11-05.md`: lo que se podía hacer sin datos del titular ni cambios de producto. Quitar lo que hace parecer el producto oficial de Riot o un trabajo académico, enseñar algo útil al compartir el enlace, endurecer cabeceras y CORS, y arreglar los incumplimientos AA del chat.
+
+**Cambios:**
+- Avisos y textos:
+  - `app.html`: fuera "Proyecto Final de Grado". El pie lleva una frase en español y los dos avisos de Riot en inglés (`lang="en"`): el de las políticas del portal y el de "Legal Jibber Jabber". El lema ya no dice "reputación real". El `<nav>` del pie tiene `aria-label`.
+  - `home.component.html` y `onboarding.component.html`: fuera "los jugadores tóxicos se quedan fuera", "se sincronizan con tu cuenta real" y "así el matchmaking es real". El onboarding avisa de que el Riot ID y el rango serán visibles para los demás.
+  - `README.md`: el proyecto se presenta como independiente (empezó como TFG), sin "matchmaking", y con el aviso de Riot.
+  - `_shared/riot.ts`, `riot-validate` y `riot-link`: los errores ya no nombran la API key, HenrikDev, `gameName`/`tagLine` ni los códigos de región. Los fallos de la clave y el 429 de HenrikDev se registran solo en los logs.
+  - Unos 25 mensajes "Error al…" o "Por favor…" de las páginas pasan a "No se pudo X. Inténtalo de nuevo." o a qué campo rellenar.
+  - `db-errors.ts`: los mensajes de las RPC se ajustan al vocabulario de la UI ("post LFG" → grupo, "review" → valoración, "dueño" → propietario, "remover" → quitar, "agregar" → añadir, decimales con coma) sin redefinir las RPC.
+- SEO y vista previa:
+  - `index.html`: description de 150 caracteres, `theme-color`, Open Graph, Twitter Card e imagen `og-premadegg-v1.png` (1200x630, generada con Edge sin interfaz a partir de los colores y fuentes de la marca). Sin `canonical` ni `og:url` estáticos: sin SSR marcarían todas las páginas como la home.
+  - `client/public/robots.txt` y `sitemap.xml` (`/`, `/lfg`, `/players`, `/teams`).
+  - `pages/not-found` (nuevo): la ruta `**` muestra "Esta página no existe" con `noindex` en lugar de redirigir a la home. Vercel sigue respondiendo 200 (sin SSR no hay 404 HTTP).
+- Cabeceras y Edge Functions:
+  - `client/vercel.json`: `Content-Security-Policy`, `Referrer-Policy`, `Permissions-Policy` y `X-Robots-Tag: noindex` en login, registro, onboarding, contraseñas, mensajes y ajustes. La CSP permite por hash (`'unsafe-hashes'`) el `onload="this.media='all'"` que Angular pone en el CSS; `img-src` admite cualquier `https:` porque los logos y avatares pueden venir de cualquier dominio. La caché `immutable` queda solo para JS, CSS y fuentes con hash (ya no para `favicon.ico` ni la imagen OG).
+  - `_shared/http.ts`: CORS con lista de orígenes (producción, localhost y el secreto opcional `ALLOWED_ORIGINS`) en lugar de `*`, con `Vary: Origin`; a un origen ajeno no se le devuelve cabecera.
+  - `riot-validate` ya no devuelve el `puuid`. Sigue siendo pública porque el registro la llama antes de que haya sesión.
+  - `verify_jwt` sigue en `false`, como explica `config.toml` (las funciones validan el token dentro).
+- Datos:
+  - `20261105000001_user_json_sin_puuid.sql` (nueva): `user_json` deja de incluir el `puuid`, así que ninguna RPC lo devuelve. Test nuevo en `security.test.sql`.
+  - `user.model.ts` y `riot.model.ts`: fuera el campo `puuid`.
+- Fuentes: Anton, Barlow y Barlow Condensed se sirven desde el propio dominio con `@fontsource/*` (OFL, solo el subconjunto latino, en `angular.json`). Fuera Google Fonts de `index.html`: ya no se envía la IP de los visitantes a Google.
+- Accesibilidad:
+  - `messages.component.html`: el botón de enviar tiene nombre; los tres campos tienen `aria-label`; la lista de mensajes es `role="log"` con `aria-live`; "escribiendo…" va en un `role="status"` que existe siempre; los resultados de búsqueda y las etiquetas de usuarios elegidos son botones (antes `li` y `span` con `click`).
+  - `notification-bell` y `message-panel`: `aria-expanded`, `aria-controls`, el número sin leer en el nombre del botón, Esc cierra el panel y devuelve el foco, `type="button"` y SVG con `aria-hidden`. "Ver grupo" también marca la notificación como leída.
+  - Nuevo `$color-border-input` (`#667a8c`): 3,26:1 sobre elevated, 3,59:1 sobre card y 4,21:1 sobre el fondo del campo. Lo usan el mixin `form-control` y los campos de login, registro, contraseñas, chat, perfil, edición de perfil y equipos (antes 1,2–2,0:1).
+- Angular de 21.1.4 a 21.2.26 (`@angular/build` y `cli` a 21.2.29) con `ng update`.
+
+**Verificación:**
+- `npm --prefix client run build` sin errores; el aviso de presupuesto sube de 554 a 569 kB.
+- `npm audit --omit=dev` en `client/`: 0 vulnerabilidades (antes 6 altas).
+- `npx supabase migration up` en local y `npm run db:test`: 53 de 53.
+- Build de producción servida en local con las cabeceras de `vercel.json`: sin errores de CSP en consola, el CSS pasa a `media=all`, las fuentes se cargan desde el propio dominio, `get_lfg_posts` responde 200 y una ruta inexistente muestra la página nueva con `noindex`.
+- Navegador en local con `test1@premade.gg`: botones del chat y de la búsqueda con nombre y 44 px de alto, Esc cierra la campana y el foco vuelve a ella, borde de los campos `#667a8c`. A 375 px el pie no provoca scroll horizontal.
+- `revisor-supabase`: sin bloqueantes. `auditor-seguridad`: detectó que la CSP bloqueaba el `fetch` de `agent-icons.service.ts` a `valorant-api.com`; se añadió a `connect-src`.
+
+**Pendiente:**
+- Publicar: `npx supabase db push --linked`, `supabase functions deploy riot-validate riot-link riot-refresh delete-account --no-verify-jwt` y push a `migrate-supabase` y `main`. Si se usa un dominio propio o las previews de Vercel, definir antes `ALLOWED_ORIGINS`.
+- Comprobar en producción las cabeceras reales (`curl -I`) y la vista previa al compartir el enlace.
+- `profiles.puuid` sigue siendo legible con un `select` directo a la tabla. No se puede revocar la columna porque las RPC de lectura usan la fila entera; el arreglo completo es moverlo a una tabla privada (fase 2). No está resuelto del todo.
+- `riot-validate` sigue sin límite de frecuencia (fase 2).
+- `account_level` no se ha dejado de guardar: se muestra en la tarjeta del jugador ("Nv."), así que la auditoría se equivocaba al decir que no se usa.
+- No hay enlaces a privacidad ni a términos: faltan los textos legales (fase 3).
+
+---
+
+## 2026-11-05 · Anexo de la re-auditoría con agentes de VoltAgent
+
+**Commit:** `55fed06`
 
 **Qué y por qué:** completar la re-auditoría con lo que no se había mirado (accesibilidad, rendimiento, diseño de la base de datos contra el abuso, calidad del cliente Angular y textos de la UI), usando cinco agentes del repositorio VoltAgent/awesome-claude-code-subagents.
 

@@ -253,7 +253,7 @@ export class ProfileEditComponent implements OnInit {
             this.bioField?.nativeElement.focus();
             return;
           }
-          this.errorMessage = err.error?.message || 'Error al guardar el perfil';
+          this.errorMessage = err.error?.message || 'No se pudo guardar el perfil. Inténtalo de nuevo.';
           this.cdr.markForCheck();
         },
       });
@@ -271,7 +271,7 @@ export class ProfileEditComponent implements OnInit {
         error: (err) => {
           this.uploadingAvatar = false;
           this.saving = false;
-          this.errorMessage = err.error?.message || 'Error al subir la imagen';
+          this.errorMessage = err.error?.message || 'No se pudo subir la imagen. Inténtalo de nuevo.';
           this.cdr.markForCheck();
         },
       });
