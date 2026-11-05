@@ -4,9 +4,25 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
-## 2026-11-05 · Fuera las skills que no encajan con el stack
+## 2026-11-05 · Re-auditoría antes de presentar a Riot
 
 **Commit:** este commit
+
+**Qué y por qué:** comprobar si PremadeGG está listo para el registro del producto en Riot y la clave de producción. Los agentes `auditor-legal`, `auditor-seguridad` y `auditor-seo` revisaron el commit `1b0a4d9` y producción frente a la auditoría del 2026-11-03.
+
+**Cambios:**
+- `AUDITORIA-2026-11-05.md` (nuevo): informe conjunto con el estado de cada punto anterior, hallazgos nuevos, lo que pedirá Riot en el registro y el orden de trabajo.
+- `INDICE.md`: enlace a la nueva auditoría.
+
+**Verificación:** los agentes son de solo lectura; en producción solo hicieron peticiones sin sesión. Veredicto: no está listo. Los cuatro bloqueantes P0 siguen abiertos (Riot ID sin verificar, sin textos legales, sin denuncias, karma manipulable) y el borrado de cuenta permite limpiar el karma volviendo a registrarse con el mismo Riot ID.
+
+**Pendiente:** todo el orden de trabajo de la auditoría. Hacen falta los datos del titular para los textos legales y comprobar en los paneles la región de Supabase, la confirmación de email y el SMTP.
+
+---
+
+## 2026-11-05 · Fuera las skills que no encajan con el stack
+
+**Commit:** `1b0a4d9`
 
 **Qué y por qué:** cada skill añade su descripción al contexto de cada sesión. Cuatro no sirven para PremadeGG: `resend` (los correos los manda Supabase Auth), `vercel-react-best-practices` (el frontend es Angular) y `mongodb-schema-design` y `mongodb-query-optimizer` (la base de datos es Postgres desde la migración a Supabase).
 

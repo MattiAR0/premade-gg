@@ -20,6 +20,7 @@ Proyecto personal (empezó como TFG): plataforma LFG de Valorant basada en reput
 - [[CAMBIOS]]: registro de cambios en orden cronológico inverso. Cada cambio añade una entrada.
 - [[BACKLOG]]: mejoras hechas, pendientes en orden y flujo de publicación.
 - [[DEPLOY]]: despliegue gratuito con Supabase cloud y Vercel.
+- [[AUDITORIA-2026-11-05]]: re-auditoría para decidir si se puede presentar a Riot. Veredicto: todavía no; bloqueantes y orden de trabajo.
 - [[AUDITORIA-2026-11-03]]: primera auditoría de seguridad, SEO y cumplimiento legal y de Riot, con prioridades.
 - [[README]]: portada del TFG.
 
@@ -71,7 +72,7 @@ Definidos en `.claude/agents/` (carpeta oculta en Obsidian):
 - `revisor-supabase`: revisa migraciones, RLS y Edge Functions. Solo lectura.
 - `verificador-ui`: comprueba en el navegador los cambios visibles.
 - `documentador`: actualiza [[CAMBIOS]], [[BACKLOG]] y este índice al cerrar una tarea.
-- `auditor-seguridad`, `auditor-seo` y `auditor-legal`: auditorías de solo lectura. La primera está en [[AUDITORIA-2026-11-03]].
+- `auditor-seguridad`, `auditor-seo` y `auditor-legal`: auditorías de solo lectura. La primera está en [[AUDITORIA-2026-11-03]] y la segunda en [[AUDITORIA-2026-11-05]].
 - `redactor-riot`: material en inglés para presentar el producto a Riot.
 
 Skills propias en `.claude/skills/`: `cumplimiento-legal` y `politicas-riot`.
