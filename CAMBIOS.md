@@ -4,9 +4,33 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-05 · Publicación de la fase 2
+
+**Commit:** este commit (publica `3c34593`)
+
+**Qué y por qué:** llevar a producción la fase 2 (karma no manipulable).
+
+**Cambios:**
+- Producción: `supabase db push --linked` de `20261105000002_invitaciones_tipos.sql` y `20261105000003_anti_abuso_karma.sql`.
+- Producción: `supabase functions deploy riot-validate riot-link delete-account --no-verify-jwt`.
+- Git: push de `migrate-supabase` y avance rápido de `main` a `3c34593`; Vercel desplegó la web.
+
+**Verificación:**
+- `supabase migration list --linked`: las dos migraciones constan en remoto.
+- Con la clave publicable de producción: `played_pairs`, `team_invites`, `rate_counters`, `rpc/rl_check` y `rpc/played_together` responden 401; `lfg_members?status=eq.invited` devuelve `[]`; `get_lfg_posts` responde 200.
+- `riot-validate` con el cuerpo vacío pasa por el límite de frecuencia y devuelve el mensaje de validación; `delete-account` sin sesión, 401.
+- Vercel sirve el mismo `main-*.js` que la build local. En una pestaña nueva, la home (con el texto nuevo del paso 3), `/players` y `/teams` cargan sin errores de consola.
+
+**Pendiente:**
+- `RATE_LIMIT_SECRET` no está definido: `ipKey` usa la service role key como clave del HMAC. Funciona, pero conviene un secreto propio (`supabase secrets set RATE_LIMIT_SECRET=...`).
+- Probar en producción con sesión: una invitación de verdad y una valoración tras 15 minutos juntos.
+- Fallo anterior a esta fase: una pestaña abierta durante un despliegue pide chunks que ya no existen; la reescritura de `vercel.json` devuelve `index.html` y la navegación falla ("Failed to fetch dynamically imported module"). Arreglo: no reescribir las rutas `*.js` y recargar la página ante ese error del router.
+
+---
+
 ## 2026-11-05 · Fase 2: que el karma no se pueda manipular
 
-**Commit:** este commit
+**Commit:** `3c34593`
 
 **Qué y por qué:** el bloqueante "karma manipulable" de `AUDITORIA-2026-11-05.md`. Decisiones del titular: solo se puede valorar a quien coincidió contigo, aceptado por los dos, y los miembros que añade el creador de un grupo o el propietario de un equipo pasan a ser invitaciones que hay que aceptar.
 
