@@ -4,9 +4,25 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-05 · Prueba descartada: quitar el preset angular de Vercel
+
+**Commit:** este commit (la prueba está en `d80664a`, solo en la rama `prueba/vercel-sin-preset`)
+
+**Qué y por qué:** comprobar si con `"framework": null` en `client/vercel.json` un chunk que no existe pasaba a dar 404 en lugar de `index.html`.
+
+**Cambios:**
+- Ninguno en `migrate-supabase` ni en producción: `client/vercel.json` sigue con `"framework": "angular"`.
+- Rama `prueba/vercel-sin-preset` subida a GitHub; Vercel creó su preview y la compiló bien.
+
+**Verificación:** en el preview (con la sesión de Vercel del titular, porque los previews están protegidos), las rutas de la app, `robots.txt`, `sitemap.xml`, la imagen OG, la CSP y `X-Robots-Tag` funcionan igual que en producción. Pero `/chunk-NOEXISTE123.js` y `/styles-NOEXISTE.css` siguen respondiendo 200 con `index.html`. El preset no era la causa, o no la única: Vercel aplica alguna regla de respaldo más que no se ve desde el repositorio.
+
+**Pendiente:** nada urgente. Para el usuario el problema ya lo resuelve la recarga del router (`stale-chunk-reload.ts`). Si se quiere el 404, mirar en el panel de Vercel la configuración del proyecto (Framework Preset y Root Directory) o la salida de la build. Se puede borrar la rama `prueba/vercel-sin-preset`.
+
+---
+
 ## 2026-11-05 · Publicación del arreglo de chunks: la regla de vercel.json no tiene efecto
 
-**Commit:** este commit (publica `944373b`)
+**Commit:** `79d4316` (publica `944373b`)
 
 **Qué y por qué:** al publicar el arreglo de las pestañas abiertas durante un despliegue se vio que la mitad de `vercel.json` no funciona en Vercel.
 
