@@ -4,9 +4,29 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-05 · Publicación del arreglo de chunks: la regla de vercel.json no tiene efecto
+
+**Commit:** este commit (publica `944373b`)
+
+**Qué y por qué:** al publicar el arreglo de las pestañas abiertas durante un despliegue se vio que la mitad de `vercel.json` no funciona en Vercel.
+
+**Cambios:**
+- Git: push de `migrate-supabase` y avance rápido de `main` a `944373b`; Vercel desplegó la web.
+- Nada más. Este registro corrige lo que decía la entrada anterior sobre `vercel.json`.
+
+**Verificación:**
+- Vercel sirve el mismo `main-*.js` que la build local, así que la recarga del router (`stale-chunk-reload.ts`) está en producción.
+- `curl` a producción: las rutas de la app responden 200 con HTML, y `robots.txt`, `sitemap.xml`, la imagen OG y `main-*.js` con su tipo. Pero `/chunk-NOEXISTE123.js` y `/styles-NOEXISTE.css` siguen respondiendo 200 con `index.html`, no 404.
+- Causa: el preset `angular` de Vercel (`"framework": "angular"` en `vercel.json`) añade sus propias rutas por defecto (`handle: filesystem` y después `/(.*)` → `/index.html`) detrás de las reescrituras del proyecto. Comprobado en `packages/frameworks/src/frameworks.ts` del repositorio de Vercel. La exclusión de extensiones es correcta (probada con `path-to-regexp` 6, el que usa Vercel), pero esa ruta por defecto la recoge igualmente.
+- No afecta al arreglo para el usuario: con HTML en lugar del chunk, el navegador da el mismo error ("Failed to fetch dynamically imported module") y el router recarga la página.
+
+**Pendiente:** para que un chunk inexistente responda 404 de verdad haría falta quitar el preset (`"framework": null`, con `buildCommand` y `outputDirectory`, que ya están puestos) y comprobarlo en un despliegue de prueba antes de producción.
+
+---
+
 ## 2026-11-05 · Pestañas abiertas durante un despliegue
 
-**Commit:** este commit
+**Commit:** `944373b`
 
 **Qué y por qué:** tras cada despliegue, una pestaña que ya estaba abierta seguía con el JavaScript anterior y, al navegar a una ruta con carga diferida, pedía un chunk que ya no existía. La reescritura de `vercel.json` devolvía `index.html` en su lugar y la navegación fallaba ("Failed to fetch dynamically imported module"). Se vio al comprobar la publicación de la fase 2.
 
