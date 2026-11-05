@@ -4,6 +4,22 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-05 · Skills de terceros versionadas
+
+**Commit:** este commit
+
+**Qué y por qué:** `.claude/skills/` tenía 21 skills importadas el 2026-10-24 sin versionar. Los agentes `auditor-seo` y `auditor-seguridad` cargan `seo-audit`, `schema`, `security-and-hardening` y `security-best-practices`, así que sin ellas un clon del repositorio deja a los agentes cojos.
+
+**Cambios:**
+- `.claude/skills/` (288 archivos, ~4 MB): las 21 skills entran en git tal como estaban.
+- `.claude/skills/README.md`: nota de que el registro es de la época Express + MongoDB, columna "¿Encaja?" puesta al día con Supabase, qué agente usa cada skill, las dos skills de MongoDB marcadas como que ya no aplican y nueva sección con las skills propias (`cumplimiento-legal` y `politicas-riot`).
+
+**Verificación:** búsqueda de claves y secretos en `.claude/skills/` sin resultados. El archivo más grande es `impeccable/scripts/data/font-index.json` (1,1 MB); no hay binarios.
+
+**Pendiente:** decidir si se borran `resend`, `vercel-react-best-practices` y las dos de MongoDB, que no encajan con el stack y añaden su descripción al contexto de cada sesión.
+
+---
+
 ## 2026-11-03 · Fusión de los puntos 5, 12 y 6 y arreglo de un test
 
 **Commit:** este commit (fusiones `e82c177`, `f937a19` y `1f5c0fc`)
