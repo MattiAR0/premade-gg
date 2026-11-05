@@ -4,6 +4,20 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-05 · Fuera las skills que no encajan con el stack
+
+**Commit:** este commit
+
+**Qué y por qué:** cada skill añade su descripción al contexto de cada sesión. Cuatro no sirven para PremadeGG: `resend` (los correos los manda Supabase Auth), `vercel-react-best-practices` (el frontend es Angular) y `mongodb-schema-design` y `mongodb-query-optimizer` (la base de datos es Postgres desde la migración a Supabase).
+
+**Cambios:**
+- `.claude/skills/`: borradas las cuatro carpetas. Siguen en el historial de git (commit `54cfb68`).
+- `.claude/skills/README.md`: nota con el borrado, fuera sus filas de las tablas y el punto del pendiente que proponía quitarlas.
+
+**Verificación:** ningún agente, `CLAUDE.md` ni otra skill las menciona (búsqueda en `*.md` y `*.json`). Quedan 17 skills de terceros y las 2 propias.
+
+---
+
 ## 2026-11-05 · Publicación del filtro de palabras y del borrado de cuenta
 
 **Commit:** este commit (publicación de lo fusionado el 2026-11-03)
