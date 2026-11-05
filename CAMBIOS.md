@@ -4,9 +4,30 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-05 · Publicación de la fase 1
+
+**Commit:** este commit (publica `edf03ca`)
+
+**Qué y por qué:** llevar a producción la fase 1 antes de presentar a Riot.
+
+**Cambios:**
+- Producción: `supabase db push --linked` de `20261105000001_user_json_sin_puuid.sql`.
+- Producción: `supabase functions deploy riot-validate riot-link riot-refresh delete-account --no-verify-jwt`.
+- Git: push de `migrate-supabase` y avance rápido de `main` a `edf03ca`; Vercel desplegó la web.
+
+**Verificación:**
+- `curl -I https://premade-gg.vercel.app/`: llegan `Content-Security-Policy`, `Referrer-Policy`, `Permissions-Policy`, `X-Frame-Options`, `X-Content-Type-Options` y HSTS. `/login` lleva `X-Robots-Tag: noindex` y `/lfg` no.
+- `robots.txt` se sirve como `text/plain`, `sitemap.xml` como `application/xml` y `og-premadegg-v1.png` como `image/png`; el HTML inicial lleva `og:image` y ya no carga Google Fonts.
+- CORS de `riot-validate`: el preflight desde `https://premade-gg.vercel.app` devuelve ese origen y desde un origen ajeno no devuelve ninguno. `delete-account` sin sesión da 401; `riot-validate` con el cuerpo vacío da el mensaje nuevo.
+- Navegador en producción: home, `/players` y una ruta inexistente sin errores de consola; el CSS en `media=all`, 4 fuentes cargadas desde el propio dominio, las RPC de Supabase con 200 y un `fetch` a `valorant-api.com` permitido por la CSP (200).
+
+**Pendiente:** probar en producción con sesión (chat, campana, onboarding) y la vista previa al pegar el enlace en Discord o WhatsApp.
+
+---
+
 ## 2026-11-05 · Fase 1 antes de presentar a Riot: avisos, textos, SEO, cabeceras y accesibilidad
 
-**Commit:** este commit
+**Commit:** `edf03ca`
 
 **Qué y por qué:** primera tanda del orden de trabajo de `AUDITORIA-2026-11-05.md`: lo que se podía hacer sin datos del titular ni cambios de producto. Quitar lo que hace parecer el producto oficial de Riot o un trabajo académico, enseñar algo útil al compartir el enlace, endurecer cabeceras y CORS, y arreglar los incumplimientos AA del chat.
 
