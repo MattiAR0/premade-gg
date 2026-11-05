@@ -4,9 +4,35 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-05 · Publicación del filtro de palabras y del borrado de cuenta
+
+**Commit:** este commit (publicación de lo fusionado el 2026-11-03)
+
+**Qué y por qué:** quedaba pendiente llevar a producción las dos migraciones del 2026-11-03, la Edge Function `delete-account` y los commits sin subir de `migrate-supabase`.
+
+**Cambios:**
+- Supabase local: `db reset` con la cadena completa de migraciones en orden (las del 2026-11-03 se habían aplicado al revés en local). Aplican sin errores y el seed carga.
+- Producción: `supabase db push --linked` de `20261103000001_profanity_filter.sql` y `20261103000002_delete_account.sql`.
+- Producción: `supabase functions deploy delete-account --no-verify-jwt` (versión 1, activa).
+- Git: push de `migrate-supabase` y avance rápido de `main` hasta el mismo commit.
+- Docker Desktop 4.41.2 no arrancaba ("initializing Inference manager… The file cannot be accessed by the system") por un socket viejo `dockerInference`. Se renombró `%LOCALAPPDATA%\Docker\run` a `run.old-20261105` y arrancó. Es un problema del equipo, no del repositorio.
+
+**Verificación:**
+- `npm run db:test`: 52 de 52 en verde tras el `db reset`.
+- `npm --prefix client run build` sin errores (solo el aviso de presupuesto del bundle inicial, que ya existía).
+- `supabase migration list --linked`: las dos migraciones constan en remoto.
+- `delete-account` en producción con curl: 405 con GET y 401 con POST sin sesión.
+
+**Pendiente:**
+- Pegar `supabase/templates/email_change.html` en el panel de Supabase (Authentication → Email Templates → Change Email Address). No se hizo con `supabase config push` porque sube toda la configuración de auth local y podría pisar la de producción.
+- Comprobar en `premade-gg.vercel.app` el despliegue de `main` (Copiar Riot ID, ajustes de cuenta y censura en el chat).
+- Borrar `%LOCALAPPDATA%\Docker\run.old-20261105` cuando Windows lo permita (contiene el socket bloqueado).
+
+---
+
 ## 2026-11-05 · Skills de terceros versionadas
 
-**Commit:** este commit
+**Commit:** `54cfb68`
 
 **Qué y por qué:** `.claude/skills/` tenía 21 skills importadas el 2026-10-24 sin versionar. Los agentes `auditor-seo` y `auditor-seguridad` cargan `seo-audit`, `schema`, `security-and-hardening` y `security-best-practices`, así que sin ellas un clon del repositorio deja a los agentes cojos.
 
