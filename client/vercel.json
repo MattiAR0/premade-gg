@@ -5,7 +5,7 @@
   "outputDirectory": "dist/premadegg/browser",
   "rewrites": [
     {
-      "source": "/((?!assets/).*)",
+      "source": "/((?!assets/)(?!.*\\.(?:js|mjs|css|map|woff2?|png|jpe?g|gif|svg|ico|webp|txt|xml|json)$).*)",
       "destination": "/index.html"
     }
   ],

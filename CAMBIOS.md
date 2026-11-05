@@ -4,9 +4,28 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-05 · Pestañas abiertas durante un despliegue
+
+**Commit:** este commit
+
+**Qué y por qué:** tras cada despliegue, una pestaña que ya estaba abierta seguía con el JavaScript anterior y, al navegar a una ruta con carga diferida, pedía un chunk que ya no existía. La reescritura de `vercel.json` devolvía `index.html` en su lugar y la navegación fallaba ("Failed to fetch dynamically imported module"). Se vio al comprobar la publicación de la fase 2.
+
+**Cambios:**
+- `client/vercel.json`: la reescritura a `index.html` deja fuera las rutas que acaban en una extensión de archivo (`js`, `mjs`, `css`, `map`, fuentes, imágenes, `txt`, `xml`, `json`). Un chunk que no existe responde 404 en vez de HTML.
+- `services/stale-chunk-reload.ts` (nuevo) y `app.config.ts`: `withNavigationErrorHandler` recarga la página en la URL de destino cuando falla la carga de un chunk (mensajes de Chrome, Firefox y Safari). Si vuelve a fallar en menos de 10 segundos no reintenta, para no entrar en bucle.
+
+**Verificación:**
+- El patrón nuevo, probado con Node: `/`, `/lfg`, `/profile/abc`, `/settings/account` y `/lfg/a.b` van a `index.html`; `/chunk-*.js`, `/styles-*.css`, `/media/*.woff2`, `/robots.txt` y `/assets/*` no.
+- Build de producción servida en local con las reglas de Vercel (archivo, reescritura o 404): con la web abierta se quitó el chunk de `/players`. Al pulsar el enlace, el chunk respondió 404 y la página se recargó una sola vez en `/players`. Al restaurar el chunk, la recarga cargó "Jugadores · PremadeGG".
+- `npm --prefix client run build` sin errores.
+
+**Pendiente:** publicar (push a `migrate-supabase` y `main`) y comprobar con `curl` en producción que un chunk inexistente responde 404.
+
+---
+
 ## 2026-11-05 · Publicación de la fase 2
 
-**Commit:** este commit (publica `3c34593`)
+**Commit:** `c3fd59b` (publica `3c34593`)
 
 **Qué y por qué:** llevar a producción la fase 2 (karma no manipulable).
 
