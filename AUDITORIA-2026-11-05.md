@@ -149,3 +149,92 @@ El portal no lista los campos exactos del formulario. Esto es lo que se deduce d
 Nombre o razón social, NIF, domicilio, email de contacto y edad mínima. Además, comprobar en los paneles: región de Supabase, confirmación de email, SMTP y límites de Auth. Decidir cómo verificar el Riot ID mientras no haya RSO y qué hacer con el karma al borrar una cuenta.
 
 Corrección al informe de seguridad: habla de la "clave de producción" en `riot-validate`, pero todavía no hay ninguna. El riesgo es el mismo con la clave actual.
+
+## Anexo · Revisión con agentes de VoltAgent
+
+El mismo día se pasaron cinco agentes del repositorio [VoltAgent/awesome-claude-code-subagents](https://github.com/VoltAgent/awesome-claude-code-subagents) para cubrir lo que la auditoría no había mirado: `accessibility-tester`, `performance-engineer`, `postgres-pro`, `angular-architect` y `ux-microcopy-reviewer`. Se descartaron `security-auditor`, `seo-specialist`, `legal-advisor` y `gdpr-ccpa-compliance` porque repetían lo anterior.
+
+No se instalaron en `.claude/agents/`: cada uno corrió como agente genérico con la definición del repositorio como guía de qué revisar, en solo lectura. Solo se ejecutaron el build, unos `curl -I` a producción y `npm outdated`.
+
+**Conclusión:** ninguno de estos frentes bloquea la presentación a Riot. Los bloqueantes siguen siendo los P0 de arriba. Lo más urgente de este anexo son los textos que sugieren respaldo de Riot y el posible fallo de concurrencia del karma.
+
+### Textos de la UI (`ux-microcopy-reviewer`)
+
+Referencia usada: español de España, tuteo, mayúscula solo al inicio. El repositorio no tiene glosario ni guía de estilo.
+
+Alta (comprobado con grep):
+
+| Dónde | Texto actual | Problema | Propuesta |
+|---|---|---|---|
+| `app.html:17` | "PremadeGG — Proyecto Final de Grado. No afiliado a Riot Games." | Resto del TFG en todas las páginas y aviso de Riot incompleto | Avisos de Riot de la sección P0 |
+| `onboarding.component.html:6` | "tu rango se obtiene de Riot, así el matchmaking es real." | Sugiere datos oficiales; "matchmaking" es el sistema de Riot | "Un último paso: comprobamos tu Riot ID para mostrar tu rango en tu perfil." |
+| `home.component.html:104` | "Tu rango y nivel se sincronizan con tu cuenta real de Valorant." | Promete una sincronización continua y oficial | "Comprobamos tu Riot ID y mostramos tu rango y nivel de Valorant." |
+| `home.component.html:15` | "Los jugadores tóxicos se quedan fuera." | Promesa que el producto no cumple | "Filtra por reputación, no solo por rango." |
+| `supabase/functions/_shared/riot.ts:55` | "La API key de Riot es inválida o ha expirado" | Detalle interno; se vería en el onboarding si la clave caduca durante la revisión | "No hemos podido comprobar tu cuenta de Riot ahora mismo. Inténtalo de nuevo en unos minutos." |
+| `supabase/functions/_shared/riot.ts:94` | "Límite de la API de HenrikDev alcanzado…" | Nombra al usuario una API no oficial | Mismo mensaje genérico |
+
+Patrones:
+
+- Más de 12 mensajes "Error" o "Error al…" sin siguiente paso (`lfg-detail.ts`, `team-detail.ts`, `teams.ts`, `profile-edit.ts`, auth). Patrón propuesto: "No se pudo X. Inténtalo de nuevo."
+- Mensajes técnicos al usuario: "Comprueba que el servidor está en marcha" (`lfg-board.ts:237`, `players.ts:163`), "gameName y tagLine son obligatorios" (`riot-validate/index.ts:12`), códigos de región en `riot.ts:104`.
+- Giros latinoamericanos y calcos del inglés: "ingresa" (`forgot-password.ts:26`), "ustedes" (`team-detail.html:424`), "agregar", "remover"/"removido", "post", "review", "Owner", "card".
+- Mayúscula en cada palabra en `team-detail.html` y `messages.html` ("Eliminar Equipo", "Solicitar Unirse", "Crear Grupo").
+- Las RPC devuelven sus mensajes sin traducir (`db-errors.ts:47`) y con punto decimal ("Mínimo: 3.0"), mientras la UI usa coma.
+- "Por favor completa todos los campos obligatorios" en lugar de un mensaje por campo (registro, login, onboarding, restablecer contraseña).
+- `register.html:117` dice que el horario se elige luego, pero el onboarding lo pide como obligatorio.
+- `profile.html:182` y `:253`: "verificada"/"Verificado" puede leerse como verificado por Riot.
+- "Una cuenta nueva cuenta como karma 3,5" (`lfg-detail.html:113`, `players.html:42`): repetición confusa.
+
+Términos con varios nombres (elegir uno): valoración / reseña / review; grupo / post LFG; propietario / dueño / owner; quitar / remover / expulsar; correo / email; tarjeta / card; Flex / Flexible (no es un rol de Valorant).
+
+### Base de datos (`postgres-pro`)
+
+Diseño propuesto, sin aplicar ni probar. Cada migración debe pasar por `revisor-supabase`.
+
+1. **Posible carrera en el recálculo del karma (sin verificar).** En READ COMMITTED, el `update profiles set karma = (select avg…)` de `recalculate_karma` (`20261025000001_review_count.sql:14-40`) toma su snapshot antes de esperar el bloqueo de la fila. Con dos valoraciones simultáneas al mismo jugador, la segunda puede no ver la primera y dejar `karma` y `review_count` desfasados en una valoración hasta el siguiente cambio. Arreglo: llevar `review_sum` y `review_count` de forma incremental dentro del propio `update`, o `select … for update` del perfil al inicio del trigger.
+2. **Límites de frecuencia en Postgres.** Tabla `unlogged` `private.rate_counters (key, action, window_start, n)` con ventana fija y una sola upsert por llamada (`private.rl_check`, error `PT429`, que PostgREST devuelve como HTTP 429). Limpieza con el pg_cron existente. Límites propuestos: `create_review` 10/día; `create_lfg_post` 5/h y máximo 3 grupos abiertos; `join_lfg_post` 20/h; `create_team` 2/día; `create_group_conversation` 5/h; `send_message` 20/min y 300/h; `update_my_profile` 30/h; `delete-account` 1/día. Para las Edge Functions, una RPC solo para `service_role`, por IP (con hash y sal diaria) en `riot-validate` y por usuario en `riot-link`.
+3. **Interacción real.** Miembros iniciales de grupos y equipos como `pending` con `invited_by` y una RPC para aceptar. Tabla persistente `played_pairs (user_a, user_b, first_at, last_at, source)` alimentada por triggers al aceptar, porque hoy la prueba desaparece cuando el cron borra el grupo a las 24 h. `create_review` exigiría un par en los últimos 14-30 días, una cuenta con 24 h o más y 10 minutos desde que se aceptó al jugador.
+4. **Borrado de cuenta sin limpiar el karma.** Tabla `private.identity_blocklist` con HMAC del `puuid` (pepper en Vault), solo para cuentas con karma bajo o sanción y durante 12 meses. Al volver a vincular el mismo `puuid`, se heredan las valoraciones recibidas o se rechaza si hay sanción. Las valoraciones escritas por la cuenta borrada se conservan sin autor ni comentario (`on delete set null`). Es dato seudónimo: hay que validarlo con `auditor-legal` y contarlo en la política de privacidad.
+5. **Índices y bloqueos.** Índice parcial `lfg_members (user_id, post_id) where status = 'accepted'`. El CTE de equipos de `played_together` (`20261024000003_api_read.sql:128-152`) recorre todos los equipos. Dos borrados simultáneos de usuarios que se valoraron entre sí pueden dar un deadlock (poco probable).
+
+Orden propuesto: karma (1) → límites (2) → `played_pairs` (3) → invitaciones (3) → borrado de cuenta (4) → límites en las Edge Functions.
+
+### Accesibilidad (`accessibility-tester`)
+
+Revisión estática WCAG 2.2 AA, sin lector de pantalla ni navegador. **No bloquea.** Bien: `lang="es"`, skip link, foco al título al navegar, `:focus-visible` (13:1), `prefers-reduced-motion`, diálogos con trampa de foco y Esc, `role="alert"`/`status` en la mayoría de los errores, badges con `role="img"` y `aria-label`.
+
+Contraste medido con los hex de `_variables.scss`: el texto principal pasa con margen. Rozan o no llegan: `$color-text-subtle` sobre elevated (4,10:1), `$color-brand` como texto sobre elevated (4,31:1) y los bordes de los campos (1,7–2,0:1, por debajo del 3:1 de 1.4.11).
+
+Incumplimientos AA a arreglar antes de presentar:
+
+- `messages.component.html:264`: botón de enviar solo con icono, sin nombre accesible (4.1.2).
+- `messages.component.html:191-243`: el chat no tiene región viva; los mensajes entrantes y "escribiendo…" no se anuncian (4.1.3).
+- `messages.component.html:20, 23, 264`: tres campos solo con placeholder (1.3.1, 3.3.2).
+- `messages.component.html:29, 50` y `notification-bell.component.html:37-39`: elementos con `(click)` que no se usan con teclado (2.1.1).
+- Bordes de `input`, `select` y `textarea` (`_mixins.scss:103-104`) por debajo de 3:1 (1.4.11).
+
+Mejoras: errores asociados al campo con `aria-invalid` y `aria-describedby` (solo lo hacen `account-settings` y `profile-edit`); campana y panel de mensajes con `aria-expanded`, Esc y retorno del foco; `role="alert"`/`status` en los avisos de valoraciones (`profile.html`); `aria-label` distinto en los dos `<nav>` y `ariaCurrentWhenActive="page"`.
+
+### Rendimiento (`performance-engineer`)
+
+**No bloquea.** Bundle inicial de 553,94 kB sin comprimir y 135,8 kB transferidos. El 86 % es el núcleo de Angular, RxJS y supabase-js; no hay nada grande evitable. Rutas en carga diferida (el mayor chunk diferido pesa 36 kB). Caché correcta: `index.html` con `max-age=0` y los assets `immutable`.
+
+- Lo único que nota un usuario: `provideAppInitializer` (`app.config.ts:16`) espera a `getSession()` y a `get_me` antes de pintar, así que quien tiene sesión ve 0,2–0,8 s en blanco en cada recarga. Arreglo: esperar solo a la sesión local y cargar el perfil en segundo plano.
+- Google Fonts bloquea el render (ya en P2).
+- SQL a escala futura: N+1 en `get_lfg_posts` y `lfg_post_json`; `unreadCount` por conversación en `get_conversations`; el índice `profiles_rank_role_trust_idx` no se usa porque `get_users` filtra por `roles`; faltan índices parciales `where onboarded`.
+- Imágenes de avatares y logos sin `width`/`height` ni `loading="lazy"` (`player-card`, `team-card`, `navbar`, `messages`, `profile`): saltos de diseño leves en los listados.
+- El aviso de presupuesto es interno: se puede subir a 600 kB.
+
+### Cliente Angular (`angular-architect`)
+
+**Calidad aceptable.** Servicios claros, guards que esperan a la sesión, carga diferida completa, modo estricto, errores de Supabase traducidos de forma centralizada (`toApiError`, `translateDbError`) y Realtime sin fugas. La app no usa zone.js (comprobado: no está en `package.json`, `angular.json`, `app.config.ts` ni `node_modules`).
+
+- Antes de presentar: subir Angular de 21.1.4 a 21.2.x (cierra las 6 vulnerabilidades altas; el rango `^21.1.0` ya lo admite) y añadir tests. Hoy no hay ningún `*.spec.ts` aunque vitest está configurado.
+- `auth.service.ts` (`loadProfile`): cualquier error de `get_me`, también uno de red, deja al usuario como deslogueado y el guard lo manda a `/login`.
+- El initializer no tiene timeout: si Supabase tarda, la app se queda en blanco.
+- Las páginas guardan el estado en campos normales con unas 120 llamadas a `ChangeDetectorRef` y sin `OnPush`. Sin zone.js, un `markForCheck` olvidado deja la pantalla sin actualizar.
+- `route.params.subscribe` sin `switchMap` en `lfg-detail`, `profile`, `team-detail` y `messages`: si navegas rápido entre dos perfiles, puede pintarse la respuesta antigua.
+- `message.service.ts` (~L284): si `send_message` falla, el mensaje desaparece sin aviso.
+- Sin tipos generados de Supabase: un cambio de esquema no da error al compilar.
+
+Mejoras por orden: subir Angular, tests de guards y servicios, tipos generados de Supabase, sesión más resistente a fallos de red y, a medio plazo, pasar las páginas a signals con `OnPush`.

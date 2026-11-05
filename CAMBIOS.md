@@ -4,9 +4,25 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
-## 2026-11-05 · Re-auditoría antes de presentar a Riot
+## 2026-11-05 · Anexo de la re-auditoría con agentes de VoltAgent
 
 **Commit:** este commit
+
+**Qué y por qué:** completar la re-auditoría con lo que no se había mirado (accesibilidad, rendimiento, diseño de la base de datos contra el abuso, calidad del cliente Angular y textos de la UI), usando cinco agentes del repositorio VoltAgent/awesome-claude-code-subagents.
+
+**Cambios:**
+- `AUDITORIA-2026-11-05.md`: nuevo anexo con los informes de `ux-microcopy-reviewer`, `postgres-pro`, `accessibility-tester`, `performance-engineer` y `angular-architect`.
+- Los agentes no se instalaron en `.claude/agents/`: corrieron como agentes genéricos con la definición del repositorio como guía, en solo lectura.
+
+**Verificación:** antes de usarlas se leyeron las cinco definiciones (solo instrucciones de rol, sin scripts). Se comprobaron con grep los textos de alta severidad (`onboarding.component.html:6`, `home.component.html:15`, `riot.ts:55` y `:94`), que el botón de enviar del chat no tiene `aria-label` y que el cliente no usa zone.js (los agentes se contradecían en esto). Ninguno de estos frentes bloquea la presentación a Riot.
+
+**Pendiente:** la posible carrera en el recálculo del karma (`recalculate_karma`) está sin reproducir. El resto de los arreglos del anexo están sin hacer.
+
+---
+
+## 2026-11-05 · Re-auditoría antes de presentar a Riot
+
+**Commit:** `f4270b1`
 
 **Qué y por qué:** comprobar si PremadeGG está listo para el registro del producto en Riot y la clave de producción. Los agentes `auditor-legal`, `auditor-seguridad` y `auditor-seo` revisaron el commit `1b0a4d9` y producción frente a la auditoría del 2026-11-03.
 
