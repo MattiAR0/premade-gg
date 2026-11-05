@@ -67,6 +67,10 @@ select lives_ok(
 );
 
 -- ── Bloqueo: comentario de valoración ────────────────────────
+-- Solo se valora a quien coincidió contigo: A y B estuvieron en un grupo
+reset role;
+insert into public.played_pairs (user_a, user_b, source, confirmed_at) values ('a0000000-0000-0000-0000-00000000000a', 'b0000000-0000-0000-0000-00000000000b', 'lfg', now());
+set local role authenticated;
 select throws_ok(
   $$ select public.create_review('b0000000-0000-0000-0000-00000000000b', 1, 'menudo imbécil') $$,
   '23514', 'Tu comentario contiene palabras malsonantes. Cámbialo para poder publicar la valoración.',

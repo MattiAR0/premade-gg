@@ -194,6 +194,20 @@ export class ApiService {
     return rpc<Message>('join_lfg_post', { p_id: postId }).pipe(tap(() => this.invalidateByPrefix('get_lfg_posts')));
   }
 
+  /** El invitado acepta o rechaza la invitación a un grupo */
+  respondLfgInvite(postId: string, accept: boolean): Observable<Message> {
+    return rpc<Message>('respond_lfg_invite', { p_post_id: postId, p_accept: accept }).pipe(
+      tap(() => this.invalidateByPrefix('get_lfg_posts')),
+    );
+  }
+
+  /** El invitado acepta o rechaza la invitación a un equipo */
+  respondTeamInvite(teamId: string, accept: boolean): Observable<Message> {
+    return rpc<Message>('respond_team_invite', { p_team_id: teamId, p_accept: accept }).pipe(
+      tap(() => this.invalidateByPrefix('get_teams')),
+    );
+  }
+
   handleLfgMember(postId: string, userId: string, action: 'accept' | 'reject'): Observable<{ message: string; post?: LfgPost }> {
     return rpc<{ message: string; post?: LfgPost }>('handle_lfg_member', {
       p_post_id: postId,

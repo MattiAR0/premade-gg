@@ -227,10 +227,11 @@
 
           <div class="c-modal__field">
             <span class="c-modal__label">
-              Jugadores iniciales
+              Invitar a jugadores
               <span class="c-modal__label-hint">{{ selectedInitialMembers.length }}/9</span>
             </span>
             <app-user-picker [(selected)]="selectedInitialMembers" [max]="9" />
+            <span class="c-modal__hint">Les llegará una invitación y entrarán al equipo cuando la acepten.</span>
           </div>
         </div>
       </details>

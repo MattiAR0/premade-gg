@@ -1,5 +1,5 @@
 import { Injectable, signal, computed, OnDestroy, effect } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription, tap } from 'rxjs';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
 import { RealtimeService } from './realtime.service';
@@ -113,6 +113,23 @@ export class NotificationService implements OnDestroy {
         this.unreadCountSignal.set(0);
       },
     });
+  }
+
+  /**
+   * Responde a una invitación (grupo o equipo). El servidor borra la notificación de la
+   * invitación, así que se quita de la lista al responder.
+   */
+  respondToInvite(notification: AppNotification, accept: boolean): Observable<{ message: string }> {
+    const request =
+      notification.type === 'team_invite'
+        ? this.api.respondTeamInvite(notification.team?._id ?? '', accept)
+        : this.api.respondLfgInvite(notification.lfgPost?._id ?? '', accept);
+    return request.pipe(
+      tap(() => {
+        this.notificationsSignal.update((list) => list.filter((n) => n._id !== notification._id));
+        if (!notification.read) this.unreadCountSignal.update((c) => Math.max(0, c - 1));
+      }),
+    );
   }
 
   /** Elimina una notificación */

@@ -4,12 +4,13 @@
 // auth.users, que arrastra el perfil y todos sus datos (ver 20261103000002_delete_account.sql).
 // Borrar de auth.users necesita service role, por eso no es una RPC.
 import { handle, json, readJson, HttpError } from '../_shared/http.ts';
-import { admin, requireUser } from '../_shared/supabase.ts';
+import { admin, rateLimit, requireUser } from '../_shared/supabase.ts';
 
 const CONFIRM_WORD = 'BORRAR';
 
 Deno.serve(handle(async (req) => {
   const user = await requireUser(req);
+  await rateLimit(user.id, 'delete_account', 5, 86400);
   const body = await readJson<{ confirmation?: string }>(req);
 
   // Misma comprobación que el modal: evita borrados por una llamada accidental.

@@ -53,6 +53,38 @@
                     Ver grupo
                   </a>
                 }
+                @if (notification.team) {
+                  <a
+                    class="c-notif__link"
+                    [routerLink]="['/teams', notification.team._id]"
+                    (click)="onNotificationClick(notification); notificationService.closePanel()"
+                  >
+                    Ver equipo
+                  </a>
+                }
+                @if (isInvite(notification)) {
+                  <div class="c-notif__actions">
+                    <button
+                      type="button"
+                      class="c-btn c-btn--primary c-btn--sm"
+                      [disabled]="respondingId === notification._id"
+                      (click)="$event.stopPropagation(); respond(notification, true)"
+                    >
+                      Aceptar
+                    </button>
+                    <button
+                      type="button"
+                      class="c-btn c-btn--ghost c-btn--sm"
+                      [disabled]="respondingId === notification._id"
+                      (click)="$event.stopPropagation(); respond(notification, false)"
+                    >
+                      Rechazar
+                    </button>
+                  </div>
+                  @if (inviteErrors[notification._id]) {
+                    <p class="c-notif__error" role="alert">{{ inviteErrors[notification._id] }}</p>
+                  }
+                }
               </div>
               <button
                 type="button"

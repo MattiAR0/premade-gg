@@ -4,9 +4,58 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-05 · Fase 2: que el karma no se pueda manipular
+
+**Commit:** este commit
+
+**Qué y por qué:** el bloqueante "karma manipulable" de `AUDITORIA-2026-11-05.md`. Decisiones del titular: solo se puede valorar a quien coincidió contigo, aceptado por los dos, y los miembros que añade el creador de un grupo o el propietario de un equipo pasan a ser invitaciones que hay que aceptar.
+
+**Cambios:**
+- `20261105000002_invitaciones_tipos.sql` (nueva): `member_status` admite `invited` y `notification_type` admite `lfg_invite` y `team_invite`. Va aparte porque un valor nuevo de un enum no se puede usar en la misma transacción.
+- `20261105000003_anti_abuso_karma.sql` (nueva):
+  - `recalculate_karma` bloquea la fila del perfil con `for no key update` antes de recalcular. Con dos valoraciones simultáneas al mismo jugador, la segunda no veía la primera.
+  - `played_pairs`: registro persistente de quién ha coincidido con quién (los grupos LFG se borran a las 24 h y con ellos la prueba). La pareja se forma al aceptar y el cron `confirm_played_pairs` (cada 5 min) solo la confirma si siguen juntos 15 minutos después; si se forma de nuevo sin confirmar, el reloj vuelve a empezar. Se rellenó con los grupos y equipos actuales, ya confirmados.
+  - `played_together`: pareja confirmada y renovada en los últimos 30 días. Es `security definer` y solo responde si quien pregunta es uno de los dos; `anon` no puede llamarla.
+  - `create_review` exige `played_together` y perfil completo. `get_review_eligibility` devuelve `reason: 'not_played_together'`. Las valoraciones que ya existían se conservan.
+  - Grupos LFG: `create_lfg_post` deja a los añadidos como `invited` y les manda una notificación. Nueva `respond_lfg_invite`. `join_lfg_post` acepta la invitación si ya estabas invitado. `handle_lfg_member` solo actúa sobre solicitudes `pending` (el creador no puede "aceptar" a un invitado por él). `leave_lfg_post` cancela una invitación sin aviso de expulsión. Los invitados solo los ven el creador y el invitado, también leyendo `lfg_members` directamente (política nueva).
+  - Equipos: tabla `team_invites`. `create_team` y `add_team_player` invitan en lugar de añadir. Nueva `respond_team_invite`. `notifications.team_id` y `notification_json` con el equipo.
+  - Límites de frecuencia: tabla `unlogged` `rate_counters`, `rl_check` (ventana fija, error `PT429` → HTTP 429, solo para `service_role`) y el trigger `enforce_rate_limits` para las peticiones con usuario: 10 valoraciones al día; 5 grupos por hora, 15 al día y máximo 3 abiertos; 20 solicitudes a grupos por hora; 30 invitaciones al día; 20 solicitudes a equipos al día; 2 equipos al día; 5 chats de grupo y 20 directos por hora; 20 mensajes por minuto y 300 por hora; 30 ediciones de perfil por hora.
+  - Cron `premadegg-anti-abuse-cleanup`: contadores de más de 2 días, parejas sin coincidir en 12 meses e invitaciones a equipo de más de 30 días.
+- Edge Functions: `rateLimit` e `ipKey` en `_shared/supabase.ts`. `riot-validate` 30 por hora por IP (HMAC de la IP de `cf-connecting-ip` o de la última entrada de `x-forwarded-for`, con la fecha y un secreto: `RATE_LIMIT_SECRET` o, si no existe, la service role key). `riot-link` 10 por hora y `delete-account` 5 al día por usuario. `riot-refresh` ya tenía una espera de 1 hora.
+- Cliente:
+  - Campana con Aceptar y Rechazar en las invitaciones, enlace "Ver equipo" e icono propio (`notification-bell`, `notification.service.ts`, `_notifications.scss`).
+  - Detalle del grupo: el invitado ve "Aceptar invitación" y "Rechazar"; el creador ve "Invitaciones sin responder" y puede cancelarlas (`lfg-detail`).
+  - Perfil: aviso de que solo se valora a quien estuvo contigo al menos 15 minutos, y el sello "Verificado" pasa a "Jugaron juntos".
+  - Textos de "Invitar a jugadores" al crear grupos y equipos, paso 3 de la home y `README.md`.
+  - Modelos: `invited`, `lfg_invite`, `team_invite`, `team` y `not_played_together`.
+
+**Verificación:**
+- `npx supabase db reset` con la cadena completa de migraciones en orden y `npm run db:test`: 69 de 69. Tests nuevos: no se valora sin haber coincidido, el invitado no cuenta hasta aceptar, el creador no acepta por el invitado, `anon` no ve invitaciones, la pareja no cuenta hasta 15 minutos juntos, invitación a equipo, `rl_check` no se puede llamar desde la API, corte con `PT429` y más de 20 mensajes por minuto cortados por el trigger.
+- Carrera del karma reproducida en local: con la función antigua, dos valoraciones simultáneas dejaban `review_count` en 1 con 2 filas; con la nueva, 2 de 2 en tres pasadas y sin interbloqueos.
+- PostgREST local: `rl_check` responde 204 y luego 429 con código `PT429`; con la clave publicable, 401; `played_pairs` no se puede leer.
+- Navegador en local: Player1 invita a TestUser2; la campana de TestUser2 muestra la invitación con Aceptar y Rechazar; al aceptar desaparece y el grupo dice "Estás en este grupo". En el perfil de alguien con quien no ha coincidido sale el aviso y no hay botón Valorar.
+- `npm --prefix client run build` sin errores.
+- `revisor-supabase` y `auditor-seguridad` revisaron el diff. Se aplicaron: `for no key update` (el `for update` podía interbloquearse con el `key share` de la FK), `played_together` restringida a la pareja, política de `lfg_members`, 15 minutos de coexistencia, IP fiable con HMAC, límite a `team_join_requests` y caducidad de parejas e invitaciones.
+
+**Pendiente:**
+- Publicar: `db push --linked` de las dos migraciones, `functions deploy riot-validate riot-link delete-account --no-verify-jwt` y push. Opcional: `supabase secrets set RATE_LIMIT_SECRET=...`.
+- Sigue abierto (fase 3), según `auditor-seguridad`:
+  - colusión entre cuentas propias (dos cuentas que estén juntas 15 minutos pueden valorarse);
+  - cuentas desechables (confirmación de email desactivada en local, falta verlo en producción);
+  - Riot ID sin verificar;
+  - borrar la cuenta y volver con el mismo Riot ID limpia el karma;
+  - no hay bloquear ni denunciar;
+  - los chats de grupo, el coach y el staff se asignan sin aceptación.
+
+  El arreglo de fondo de "habéis jugado juntos" es comprobar partidas reales con la API de Riot cuando haya clave de producción.
+- El coach y el staff de un equipo ya no forman pareja para valorar, porque se asignan sin que acepten. Antes sí contaban.
+- No hay forma de que el propietario cancele una invitación a equipo, y las invitaciones a un grupo que se llena se quedan hasta que el grupo caduca.
+
+---
+
 ## 2026-11-05 · Publicación de la fase 1
 
-**Commit:** este commit (publica `edf03ca`)
+**Commit:** `8916b86` (publica `edf03ca`)
 
 **Qué y por qué:** llevar a producción la fase 1 antes de presentar a Riot.
 

@@ -12,7 +12,7 @@ export interface Reputation {
 
 export interface ReviewEligibility {
   canReview: boolean;
-  reason: 'self' | 'already_reviewed' | null;
+  reason: 'self' | 'already_reviewed' | 'not_played_together' | null;
   playedTogether: boolean;
   existingReview: Reputation | null;
 }

@@ -9,7 +9,7 @@ import { LabelPipe } from '../pipes/label.pipe';
 
 /**
  * Buscador de jugadores con autocompletado y chips de seleccionados.
- * Se usa al crear grupos LFG y equipos para añadir miembros iniciales.
+ * Se usa al crear grupos LFG y equipos para invitar a jugadores.
  */
 @Component({
   selector: 'app-user-picker',

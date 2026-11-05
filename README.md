@@ -3,7 +3,7 @@
 **PremadeGG** es un proyecto independiente para conectar jugadores de Valorant según su rango, su reputación (karma) y la compatibilidad de roles. Empezó como Trabajo de Fin de Grado.
 
 ## Visión del Proyecto
-Una plataforma "Looking For Group" (LFG) basada en reputación: los jugadores se valoran entre sí de 1 a 5 y, con un karma por debajo de 3, no se pueden crear grupos nuevos.
+Una plataforma "Looking For Group" (LFG) basada en reputación: los jugadores que han coincidido en un grupo o un equipo se valoran de 1 a 5 y, con un karma por debajo de 3, no se pueden crear grupos nuevos.
 
 > PremadeGG isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
 

@@ -2,7 +2,8 @@ import { User } from './user.model';
 
 export interface LfgMember {
   user: User;
-  status: 'pending' | 'accepted';
+  /** invited: lo añadió el creador y aún no ha aceptado (solo lo ven el creador y el invitado) */
+  status: 'pending' | 'accepted' | 'invited';
   joinedAt: string;
 }
 

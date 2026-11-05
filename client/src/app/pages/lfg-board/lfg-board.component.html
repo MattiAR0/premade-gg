@@ -232,11 +232,11 @@
 
             <div class="c-modal__field">
               <span class="c-modal__label">
-                Ya juegan contigo
+                Invitar a jugadores
                 <span class="c-modal__label-hint">{{ selectedMembers.length }}/{{ maxMembers }}</span>
               </span>
               <app-user-picker [(selected)]="selectedMembers" [max]="maxMembers" />
-              <span class="c-modal__hint">Se añaden directamente al grupo, sin pasar por solicitud.</span>
+              <span class="c-modal__hint">Les llegará una invitación y entrarán al grupo cuando la acepten.</span>
             </div>
           </div>
         </details>

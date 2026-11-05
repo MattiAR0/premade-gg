@@ -196,6 +196,20 @@
     }
   }
 
+  // Aceptar / Rechazar de las invitaciones
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: v.$spacing-xs;
+    margin-top: v.$spacing-sm;
+  }
+
+  &__error {
+    margin-top: v.$spacing-xs;
+    font-size: v.$font-size-2xs;
+    color: v.$color-danger-text;
+  }
+
   &__delete {
     flex-shrink: 0;
     display: flex;

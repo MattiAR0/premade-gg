@@ -76,7 +76,7 @@ export class LfgDetailComponent implements OnInit {
   }
 
   /** Es miembro actual (aceptado o pendiente)? */
-  get currentMemberStatus(): 'accepted' | 'pending' | null {
+  get currentMemberStatus(): LfgMember['status'] | null {
     if (!this.post || !this.auth.isAuthenticated()) return null;
     const userId = this.auth.currentUser()?._id;
     const member = this.post.members?.find((m) => m.user?._id === userId);
@@ -133,6 +133,11 @@ export class LfgDetailComponent implements OnInit {
   /** Miembros aceptados */
   get acceptedMembers(): LfgMember[] {
     return this.post?.members?.filter((m) => m.status === 'accepted') || [];
+  }
+
+  /** Invitaciones que el creador ha enviado y aún no tienen respuesta */
+  get invitedMembers(): LfgMember[] {
+    return this.post?.members?.filter((m) => m.status === 'invited') || [];
   }
 
   /** Solicitudes pendientes */
@@ -215,6 +220,34 @@ export class LfgDetailComponent implements OnInit {
         this.cdr.markForCheck();
       },
     });
+  }
+
+  /** El invitado acepta o rechaza la invitación */
+  respondInvite(accept: boolean): void {
+    if (!this.post) return;
+    this.actionLoading = true;
+    this.actionMessage = '';
+    this.actionError = '';
+    this.feedbackAt = 'join';
+
+    this.api.respondLfgInvite(this.post._id, accept).subscribe({
+      next: (res) => {
+        this.actionMessage = res.message;
+        this.actionLoading = false;
+        this.loadPost(this.post!._id, true, true);
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.actionError = err.error?.message || 'No se pudo responder a la invitación. Inténtalo de nuevo.';
+        this.actionLoading = false;
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  /** El creador cancela una invitación sin responder */
+  cancelInvite(userId: string): void {
+    this.removeMember(userId);
   }
 
   /** Expulsar miembro / abandonar grupo */

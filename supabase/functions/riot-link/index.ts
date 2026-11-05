@@ -3,13 +3,14 @@
 // Onboarding: valida la cuenta en Riot, obtiene rango/card/nivel de HenrikDev y los
 // guarda en el perfil. Solo esta función (service role) puede escribir rank/puuid/riot_id.
 import { handle, json, readJson, HttpError } from '../_shared/http.ts';
-import { admin, requireUser, userJson } from '../_shared/supabase.ts';
+import { admin, rateLimit, requireUser, userJson } from '../_shared/supabase.ts';
 import { assertRegion, getPlayerAccount, getPlayerRank, parseRiotId, validateAccount } from '../_shared/riot.ts';
 
 const ROLES = ['Duelist', 'Controller', 'Initiator', 'Sentinel', 'Flex'];
 
 Deno.serve(handle(async (req) => {
   const user = await requireUser(req);
+  await rateLimit(user.id, 'riot_link', 10, 3600);
   const body = await readJson<{ riotId?: string; region?: string; role?: string; schedule?: string }>(req);
 
   const { gameName, tagLine } = parseRiotId(body.riotId);

@@ -110,7 +110,7 @@
             <!-- Invitado: el siguiente paso, sin dejar la página sin salida -->
             <div class="c-join__action c-join__action--guest">
               <p class="c-join__text">
-                Para unirte necesitas una cuenta. Una cuenta nueva cuenta como karma 3,5 hasta recibir valoraciones.
+                Para unirte necesitas una cuenta. Las cuentas nuevas parten de karma 3,5 hasta recibir valoraciones.
               </p>
               <div class="c-join__buttons">
                 <a class="c-btn c-btn--primary" routerLink="/login" [queryParams]="{ returnUrl: currentUrl }">
@@ -119,6 +119,18 @@
                 <a class="c-btn c-btn--secondary" routerLink="/register" [queryParams]="{ returnUrl: currentUrl }">
                   Crear cuenta
                 </a>
+              </div>
+            </div>
+          } @else if (currentMemberStatus === 'invited') {
+            <div class="c-join__action">
+              <p class="c-join__text">{{ post.author.riotId }} te ha invitado a este grupo.</p>
+              <div class="c-join__buttons">
+                <button class="c-btn c-btn--primary" type="button" [disabled]="actionLoading" (click)="respondInvite(true)">
+                  Aceptar invitación
+                </button>
+                <button class="c-btn c-btn--ghost" type="button" [disabled]="actionLoading" (click)="respondInvite(false)">
+                  Rechazar
+                </button>
               </div>
             </div>
           } @else if (currentMemberStatus === 'pending') {
@@ -197,6 +209,34 @@
           }
         </ul>
       </section>
+
+      <!-- Invitaciones sin responder (solo creador): no cuentan como miembros -->
+      @if (isCreator && invitedMembers.length > 0) {
+        <section class="c-detail__section">
+          <h2 class="c-detail__section-title">
+            Invitaciones sin responder
+            <span class="c-detail__count">{{ invitedMembers.length }}</span>
+          </h2>
+          <ul class="c-detail__member-list">
+            @for (member of invitedMembers; track member.user._id) {
+              <li class="c-member">
+                <a class="c-member__link" [routerLink]="['/profile', member.user._id]">
+                  <div class="c-member__avatar">{{ member.user.riotId.charAt(0) }}</div>
+                  <div class="c-member__info">
+                    <span class="c-member__name">{{ member.user.riotId }}</span>
+                  </div>
+                </a>
+                <div class="c-member__actions">
+                  <button class="c-btn c-btn--ghost c-btn--xs" type="button" [disabled]="actionLoading"
+                    (click)="cancelInvite(member.user._id)" [attr.aria-label]="'Cancelar la invitación a ' + member.user.riotId">
+                    Cancelar
+                  </button>
+                </div>
+              </li>
+            }
+          </ul>
+        </section>
+      }
 
       <!-- Panel de solicitudes pendientes (solo creador) -->
       @if (isCreator && pendingMembers.length > 0) {
