@@ -4,9 +4,30 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-07 · Publicación de los textos legales
+
+**Commit:** este commit (publica `da3c702`)
+
+**Qué y por qué:** llevar a producción los textos legales y la aceptación obligatoria de los términos.
+
+**Cambios:**
+- Producción: `supabase db push --linked` de `20261107000003_aceptacion_terminos.sql` y `supabase functions deploy riot-link --no-verify-jwt`.
+- Git: push de `migrate-supabase` y avance rápido de `main` a `da3c702`; Vercel desplegó la web.
+- Antes de subir se rehízo el commit de los textos (`9181ff7` → `da3c702`) para que el NIF y el domicilio no llegaran al repositorio, que es público.
+
+**Verificación:**
+- `supabase migration list --linked`: la migración consta en remoto. `consents` responde 401 sin sesión y `riot-link` sin sesión, 401.
+- Navegador en producción: `/aviso-legal` muestra titular y email, sin NIF ni domicilio (tampoco en el `main-*.js`); el pie enlaza a términos, privacidad, cookies, aviso legal y contacto; `/privacidad`, `/terminos` y `/cookies` se sirven.
+
+**Pendiente:**
+- Todas las cuentas de producción, también la del titular, tienen que aceptar los términos desde el aviso de arriba para volver a escribir.
+- Lo demás sigue en la entrada de los textos legales (revisión por un abogado, buzón de contacto, proveedor de email, DPA y documentos internos).
+
+---
+
 ## 2026-11-07 · Textos legales y aceptación de los términos
 
-**Commit:** este commit
+**Commit:** `da3c702`
 
 **Qué y por qué:** el bloqueante "no hay ningún texto legal" de `AUDITORIA-2026-11-05.md`, también exigido para el registro del producto en Riot. Son borradores pendientes de revisión por un abogado.
 
