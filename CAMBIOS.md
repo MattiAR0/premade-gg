@@ -4,9 +4,31 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-07 · Publicación de denuncias y moderación
+
+**Commit:** este commit (publica `b0a1955`)
+
+**Qué y por qué:** llevar a producción las denuncias, la moderación, los bloqueos y las suspensiones.
+
+**Cambios:**
+- Producción: `supabase db push --linked` de `20261107000001_moderacion_tipos.sql` y `20261107000002_denuncias_moderacion.sql`.
+- Git: push de `migrate-supabase` y avance rápido de `main` a `b0a1955`; Vercel desplegó la web.
+
+**Verificación:**
+- `supabase migration list --linked`: las dos migraciones constan en remoto.
+- Con la clave publicable de producción: `reports`, `blocks`, `moderators` y `suspensions` responden 401; `rpc/get_reports` 401; `is_blocked_between`, `report_json` y `create_report` sin sesión no son invocables; `profiles.suspended_until` ya no existe; `get_lfg_posts` 200.
+- Navegador en producción: el `main-*.js` servido incluye `/moderacion` y la recarga de chunks; `/moderacion` sin sesión lleva al login; `/players` sin errores de consola.
+
+**Pendiente:**
+- Dar de alta al titular como moderador en el editor SQL de Supabase: `insert into public.moderators (user_id) select id from auth.users where email = '<email del titular>';`
+- Probar en producción con sesión: denunciar, resolver y recurrir.
+- Durante la comprobación, Vercel empezó a responder 403 con su "Security Checkpoint" a todas las peticiones de `curl` desde este equipo, también con el user agent de Googlebot, Discord o WhatsApp (en el navegador el reto se pasa solo). Lo más probable es una mitigación temporal por IP tras cientos de peticiones automáticas, pero hay que revisar en Vercel (Firewall: Attack Challenge Mode y Bot Protection) que no esté activa para todo el tráfico: bloquearía a Google y las vistas previas de enlaces.
+
+---
+
 ## 2026-11-07 · Denuncias, moderación, bloqueos y suspensiones
 
-**Commit:** este commit
+**Commit:** `b0a1955`
 
 **Qué y por qué:** el bloqueante "no hay denuncias ni moderación" de `AUDITORIA-2026-11-05.md`. Pensado para la DSA: cualquiera puede denunciar con un motivo, la persona afectada recibe la decisión motivada y puede recurrirla, y el denunciante recibe el resultado. Modera el titular (tabla `moderators`, se añaden a mano).
 
