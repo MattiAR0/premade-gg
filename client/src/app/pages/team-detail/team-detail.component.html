@@ -61,7 +61,7 @@
             <polyline points="3 6 5 6 21 6"></polyline>
             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
           </svg>
-          Eliminar Equipo
+          Eliminar equipo
         </button>
         } @else if (auth.isAuthenticated() && !isPlayerInTeam) {
         @if (isPendingRequest) {
@@ -69,13 +69,16 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
-          Solicitud Pendiente
+          Solicitud pendiente
         </button>
         } @else {
         <button class="c-btn c-btn--primary c-btn--sm" (click)="openJoinModal()">
-          Solicitar Unirse
+          Solicitar unirse
         </button>
         }
+        }
+        @if (!isOwner) {
+        <app-report-button targetType="team" [targetId]="team._id" [targetLabel]="team.name" />
         }
       </div>
     </header>

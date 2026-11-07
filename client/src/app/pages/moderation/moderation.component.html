@@ -1,0 +1,159 @@
+<main class="l-container l-container--medium l-section">
+  <header class="c-page-header">
+    <div class="c-page-header__text">
+      <h1 class="c-page-header__title">Moderación</h1>
+      <p class="c-page-header__desc">
+        Revisa las denuncias y los recursos. El motivo que escribas lo reciben el denunciante y la persona afectada.
+      </p>
+    </div>
+  </header>
+
+  <div class="c-segmented" role="group" aria-label="Cola de moderación">
+    @for (q of queues; track q.value) {
+      <button type="button" class="c-segmented__btn" [class.c-segmented__btn--active]="queue === q.value"
+        [attr.aria-pressed]="queue === q.value" (click)="setQueue(q.value)">{{ q.label }}</button>
+    }
+  </div>
+
+  <div role="status" class="c-mod__notice">{{ notice }}</div>
+
+  @if (loading) {
+    <p class="c-mod__muted">Cargando…</p>
+  } @else if (loadError) {
+    <p class="c-error" role="alert">{{ loadError }}</p>
+  } @else if (reports.length === 0) {
+    <div class="c-empty">
+      <p class="c-empty__title">
+        @switch (queue) {
+          @case ('open') { No hay denuncias abiertas }
+          @case ('appeals') { No hay recursos pendientes }
+          @default { Aún no hay nada resuelto }
+        }
+      </p>
+    </div>
+  } @else {
+    <ul class="c-mod__list">
+      @for (report of reports; track report._id) {
+        <li class="c-mod__item">
+          <article class="c-mod__card" [attr.aria-labelledby]="'report-' + report._id">
+            <header class="c-mod__head">
+              <h2 class="c-mod__title" [id]="'report-' + report._id">
+                {{ targetLabel[report.targetType] }} · {{ reasonLabel[report.reason] }}
+              </h2>
+              <time class="c-mod__date">{{ report.createdAt | date: 'dd/MM/yyyy HH:mm' }}</time>
+            </header>
+
+            <dl class="c-mod__meta">
+              <div>
+                <dt>Denunciado</dt>
+                <dd>
+                  @if (report.targetUser) {
+                    <a [routerLink]="['/profile', report.targetUser._id]">{{ report.targetUser.riotId }}</a>
+                  } @else { Cuenta borrada }
+                </dd>
+              </div>
+              <div>
+                <dt>Denuncia</dt>
+                <dd>
+                  @if (report.reporter) {
+                    <a [routerLink]="['/profile', report.reporter._id]">{{ report.reporter.riotId }}</a>
+                  } @else { Cuenta borrada }
+                </dd>
+              </div>
+              @if (contentLink(report); as link) {
+                <div>
+                  <dt>Contenido</dt>
+                  <dd><a [routerLink]="link">Ver en la web</a></dd>
+                </div>
+              }
+            </dl>
+
+            <p class="c-mod__label">Contenido al denunciarlo</p>
+            <blockquote class="c-mod__snapshot">{{ report.snapshot || '(sin texto)' }}</blockquote>
+
+            @if (report.details) {
+              <p class="c-mod__label">Qué cuenta quien denuncia</p>
+              <p class="c-mod__text">{{ report.details }}</p>
+            }
+
+            @if (queue === 'resolved' || queue === 'appeals') {
+              <p class="c-mod__label">Decisión</p>
+              <p class="c-mod__text">
+                <strong>{{ actionText(report.action, report.suspendedUntil) }}.</strong> {{ report.resolutionNote }}
+              </p>
+            }
+
+            @if (queue === 'appeals') {
+              <p class="c-mod__label">Recurso de la persona afectada</p>
+              <p class="c-mod__text">{{ report.appealText }}</p>
+            }
+
+            @if (queue === 'resolved' && report.appealStatus) {
+              <p class="c-mod__label">Recurso</p>
+              <p class="c-mod__text">
+                {{ report.appealStatus === 'pending' ? 'Pendiente' : report.appealStatus === 'reversed' ? 'Aceptado: decisión revocada' : 'Rechazado: decisión mantenida' }}
+                @if (report.appealNote) { · {{ report.appealNote }} }
+              </p>
+            }
+
+            @if (queue !== 'resolved') {
+              @let draft = drafts[report._id];
+              <form class="c-mod__form" (ngSubmit)="$event.preventDefault()">
+                @if (queue === 'open') {
+                  <fieldset class="c-mod__measures">
+                    <legend class="c-mod__label">Medidas</legend>
+                    <label class="c-mod__check">
+                      <input type="checkbox" [(ngModel)]="draft.removeContent" [name]="'remove-' + report._id" />
+                      Retirar el contenido
+                      @if (report.targetType === 'profile' || report.targetType === 'team') {
+                        <span class="c-mod__muted">(borra la descripción, la biografía y la imagen)</span>
+                      }
+                    </label>
+                    <label class="c-mod__field">
+                      <span>Suspender la cuenta</span>
+                      <select class="c-mod__select" [(ngModel)]="draft.suspendDays" [name]="'suspend-' + report._id">
+                        @for (opt of suspendOptions; track opt.label) {
+                          <option [ngValue]="opt.value">{{ opt.label }}</option>
+                        }
+                      </select>
+                    </label>
+                  </fieldset>
+                }
+
+                <label class="c-mod__field">
+                  <span>Motivo de la decisión</span>
+                  <textarea class="c-mod__textarea" rows="3" maxlength="1000" [(ngModel)]="draft.note" [name]="'note-' + report._id"
+                    [attr.aria-invalid]="draft.error ? true : null"
+                    [attr.aria-describedby]="draft.error ? 'error-' + report._id : null"
+                    placeholder="Qué norma incumple o por qué no la incumple. Lo leerán las dos partes."></textarea>
+                </label>
+
+                @if (draft.error) {
+                  <p class="c-mod__error" role="alert" [id]="'error-' + report._id">{{ draft.error }}</p>
+                }
+
+                <div class="c-mod__buttons">
+                  @if (queue === 'open') {
+                    <button type="button" class="c-btn c-btn--ghost c-btn--sm" [disabled]="draft.busy" (click)="resolve(report, true)">
+                      Desestimar
+                    </button>
+                    <button type="button" class="c-btn c-btn--primary c-btn--sm" [disabled]="draft.busy" (click)="resolve(report, false)">
+                      Aplicar medidas
+                    </button>
+                  } @else {
+                    <button type="button" class="c-btn c-btn--ghost c-btn--sm" [disabled]="draft.busy" (click)="resolveAppeal(report, false)">
+                      Mantener la decisión
+                    </button>
+                    <button type="button" class="c-btn c-btn--primary c-btn--sm" [disabled]="draft.busy" (click)="resolveAppeal(report, true)">
+                      Revocar la decisión
+                    </button>
+                  }
+                </div>
+              </form>
+            }
+          </article>
+        </li>
+      }
+    </ul>
+  }
+</main>

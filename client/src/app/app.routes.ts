@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, onboardingGuard } from './guards/auth.guard';
+import { authGuard, moderatorGuard, onboardingGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -100,6 +100,19 @@ export const routes: Routes = [
     title: 'Ajustes de cuenta · PremadeGG',
     loadComponent: () =>
       import('./pages/account-settings/account-settings.component').then((m) => m.AccountSettingsComponent),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'moderacion',
+    title: 'Moderación · PremadeGG',
+    loadComponent: () => import('./pages/moderation/moderation.component').then((m) => m.ModerationComponent),
+    canActivate: [moderatorGuard],
+  },
+  {
+    path: 'moderacion/decision/:id',
+    title: 'Decisión de moderación · PremadeGG',
+    loadComponent: () =>
+      import('./pages/moderation-decision/moderation-decision.component').then((m) => m.ModerationDecisionComponent),
     canActivate: [authGuard],
   },
   {

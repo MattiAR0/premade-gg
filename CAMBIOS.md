@@ -4,9 +4,72 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-07 · Denuncias, moderación, bloqueos y suspensiones
+
+**Commit:** este commit
+
+**Qué y por qué:** el bloqueante "no hay denuncias ni moderación" de `AUDITORIA-2026-11-05.md`. Pensado para la DSA: cualquiera puede denunciar con un motivo, la persona afectada recibe la decisión motivada y puede recurrirla, y el denunciante recibe el resultado. Modera el titular (tabla `moderators`, se añaden a mano).
+
+**Cambios:**
+- `20261107000001_moderacion_tipos.sql` (nueva): enums `report_target`, `report_reason`, `report_status` y `appeal_status`, y los tipos de notificación `report_update`, `moderation_notice` y `appeal_update`.
+- `20261107000002_denuncias_moderacion.sql` (nueva):
+  - Tablas privadas (RLS sin políticas y `revoke all`): `moderators`, `reports` (con copia del contenido al denunciarlo), `blocks` y `suspensions`. `notifications.report_id`, y `sender_id` admite null para no identificar al moderador.
+  - Denunciar (`create_report`): perfil, valoración, mensaje (solo de un chat en el que estás), equipo o grupo LFG, con motivo de una lista y detalles. Exige perfil completo, una denuncia abierta por persona y contenido, y 10 al día. Avisa a los moderadores salvo al denunciado.
+  - Moderar (`get_reports`, `resolve_report`): desestimar, retirar el contenido y/o suspender de 1 a 365 días, con un motivo obligatorio que reciben el denunciante y el afectado. Un moderador no ve ni resuelve denuncias sobre él ni las que ha puesto él. Retirar un mensaje también limpia la vista previa del chat.
+  - Decisión y recurso (`get_moderation_decision`, `get_my_moderation_decisions`, `appeal_report`, `resolve_appeal`): el afectado ve qué se hizo, por qué y sobre qué contenido, y puede recurrir una vez en 6 meses. Al revocar se recalcula la suspensión con las demás decisiones que siguen en pie.
+  - Suspensión: una cuenta suspendida no puede crear, editar, unirse, aceptar, escribir ni valorar (`enforce_rate_limits` y el trigger nuevo `enforce_not_suspended`); sí denunciar y recurrir. `get_me` devuelve `isModerator` y `suspendedUntil`.
+  - Bloqueos (`set_block`, `get_block_status`, `get_my_blocks`): sin chats directos, invitaciones, solicitudes ni notificaciones entre los dos. Bloquear cancela las invitaciones y solicitudes pendientes. Los errores son genéricos para no delatar el bloqueo, no afectan a las valoraciones (si no, bloquear serviría para que no te valoren) ni a los chats de equipo. 30 bloqueos al día. Nadie puede saber quién le ha bloqueado.
+  - Limpieza diaria: denuncias resueltas hace más de 12 meses y suspensiones cumplidas. Los avisos de decisión duran 7 meses (más que el plazo de recurso).
+- `supabase/tests/database/moderation.test.sql` (nuevo, 25 tests).
+- Cliente:
+  - `shared/report-button` (nuevo): botón "Denunciar" con diálogo accesible, en perfiles, valoraciones, mensajes de otros, equipos y grupos LFG.
+  - Perfil: "Bloquear" / "Desbloquear".
+  - `pages/moderation` (nueva, `/moderacion`, solo moderadores con `moderatorGuard`): denuncias abiertas, recursos y resueltas, con la copia del contenido y el formulario de decisión.
+  - `pages/moderation-decision` (nueva, `/moderacion/decision/:id`): decisión motivada y recurso.
+  - Ajustes de cuenta: lista de decisiones de moderación sobre la cuenta, para no depender de la notificación.
+  - Campana: enlaces "Ver la decisión y recurrir" y "Abrir moderación". Menú: "Moderación" para moderadores. Aviso fijo cuando la cuenta está suspendida.
+  - `team-detail`: "Eliminar equipo", "Solicitud pendiente" y "Solicitar unirse" con mayúscula solo al inicio.
+  - `/moderacion` con `noindex` en `vercel.json` y `Disallow` en `robots.txt`.
+
+**Verificación:**
+- `npx supabase db reset` y `npm run db:test`: 94 de 94 (25 nuevos).
+- Navegador en local:
+  - test2 denuncia a Player1 desde su perfil: el diálogo avisa si falta el motivo y confirma el envío. "Bloquear" y "Desbloquear" funcionan.
+  - test1 (moderador) ve la denuncia en `/moderacion` con la copia del perfil y la suspende 1 día.
+  - Player1 ve el aviso de suspensión, la notificación con "Ver la decisión y recurrir", la decisión completa y la lista en Ajustes de cuenta, y envía un recurso. Por la API, editar su perfil devuelve 403 con el mensaje de suspensión.
+  - `profiles?select=suspended_until` ya no existe para nadie.
+- `npm --prefix client run build` sin errores.
+- `revisor-supabase`, `auditor-seguridad` y `auditor-legal` revisaron el diff. Se aplicó:
+  - suspensión en tabla privada y aplicada también a ediciones y aceptaciones;
+  - errores de bloqueo genéricos y fuera de las valoraciones;
+  - avisos sin el nombre del moderador;
+  - el moderador no resuelve lo que ha denunciado él;
+  - acceso a la decisión durante todo el plazo de recurso;
+  - textos sin promesas de "equipo" ni de anonimato garantizado.
+
+**Pendiente:**
+- Publicar (`db push`, push a `migrate-supabase` y `main`) y añadir al titular como moderador en producción.
+- Lo legal, según `auditor-legal`, va con los textos legales:
+  - punto de contacto (DSA 11 y 12);
+  - términos con las normas, las medidas, su duración, el recurso y las denuncias abusivas (DSA 14);
+  - política de privacidad con denuncias, bloqueos, copia del contenido y retención (RGPD 13 y 14);
+  - protocolo de delitos graves (DSA 18);
+  - registro de actividades.
+- No hecho:
+  - el denunciante no puede reclamar una desestimación (DSA 20 no aplica a microempresas, pero sería buena práctica);
+  - el motivo en la notificación al denunciante se corta a 300 caracteres;
+  - sin plazo de respuesta comprometido;
+  - con un solo moderador, el recurso lo revisa la misma persona que decidió;
+  - borrar la cuenta evita una suspensión;
+  - un tercero puede juntar a dos bloqueados en un chat de grupo;
+  - en chats de grupo y equipo los bloqueos no impiden ver mensajes;
+  - `get_reports` no pagina.
+
+---
+
 ## 2026-11-05 · Prueba descartada: quitar el preset angular de Vercel
 
-**Commit:** este commit (la prueba está en `d80664a`, solo en la rama `prueba/vercel-sin-preset`)
+**Commit:** `89e15a9` (la prueba está en `d80664a`, solo en la rama `prueba/vercel-sin-preset`)
 
 **Qué y por qué:** comprobar si con `"framework": null` en `client/vercel.json` un chunk que no existe pasaba a dar 404 en lugar de `index.html`.
 

@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, ElementRef, HostListener, ViewChild } fro
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { NotificationService } from '../../services/notification.service';
+import { AuthService } from '../../services/auth.service';
 import { AppNotification } from '../../models/notification.model';
 
 @Component({
@@ -21,8 +22,14 @@ export class NotificationBellComponent {
 
   constructor(
     readonly notificationService: NotificationService,
+    readonly auth: AuthService,
     private readonly cdr: ChangeDetectorRef,
   ) {}
+
+  /** Aviso a moderadores de una denuncia o un recurso nuevos (no el resultado de una denuncia propia) */
+  isModeratorQueueNotice(notification: AppNotification): boolean {
+    return /^Nuev[ao] (denuncia|recurso)/.test(notification.message);
+  }
 
   isInvite(notification: AppNotification): boolean {
     return notification.type === 'lfg_invite' || notification.type === 'team_invite';
@@ -67,6 +74,10 @@ export class NotificationBellComponent {
       case 'lfg_invite':
       case 'team_invite':
         return '✉️';
+      case 'report_update':
+      case 'moderation_notice':
+      case 'appeal_update':
+        return '⚖️';
       default:
         return '🔔';
     }

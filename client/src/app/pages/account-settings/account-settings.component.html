@@ -111,6 +111,30 @@
     }
   </section>
 
+  @if (decisions.length > 0) {
+  <!-- ── Decisiones de moderación ──────────────────── -->
+  <section class="c-account__section" aria-labelledby="account-moderation-title">
+    <h2 class="c-account__title" id="account-moderation-title">Decisiones de moderación</h2>
+    <p class="c-account__text">Medidas que hemos tomado sobre tu cuenta o tu contenido. Puedes ver el motivo y recurrir cada una en los 6 meses siguientes.</p>
+    <ul class="c-account__decisions">
+      @for (d of decisions; track d._id) {
+      <li>
+        <a [routerLink]="['/moderacion/decision', d._id]">{{ d.actionText }}</a>
+        <span class="c-account__hint">
+          · {{ d.resolvedAt | date: 'dd/MM/yyyy' }}
+          @switch (d.appealStatus) {
+            @case ('pending') { · recurso en revisión }
+            @case ('reversed') { · revocada tras tu recurso }
+            @case ('upheld') { · mantenida tras tu recurso }
+            @default { @if (d.canAppeal) { · puedes recurrirla } }
+          }
+        </span>
+      </li>
+      }
+    </ul>
+  </section>
+  }
+
   <!-- ── Borrar cuenta ─────────────────────────────── -->
   <section class="c-account__section c-account__section--danger" aria-labelledby="account-delete-title">
     <h2 class="c-account__title c-account__title--danger" id="account-delete-title">Borrar cuenta</h2>

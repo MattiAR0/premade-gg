@@ -15,6 +15,7 @@ import { KarmaBadgeComponent } from '../../shared/karma-badge/karma-badge.compon
 import { LfgCardComponent } from '../../shared/lfg-card/lfg-card.component';
 import { CopyRiotIdComponent } from '../../shared/copy-riot-id/copy-riot-id.component';
 import { LabelPipe } from '../../shared/pipes/label.pipe';
+import { ReportButtonComponent } from '../../shared/report-button/report-button.component';
 
 @Component({
   selector: 'app-profile',
@@ -22,7 +23,7 @@ import { LabelPipe } from '../../shared/pipes/label.pipe';
   imports: [
     RouterLink, UpperCasePipe, DatePipe, FormsModule,
     RankBadgeComponent, KarmaBadgeComponent, LfgCardComponent, CopyRiotIdComponent,
-    LabelPipe,
+    LabelPipe, ReportButtonComponent,
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
@@ -33,6 +34,12 @@ export class ProfileComponent implements OnInit {
   lfgPosts: LfgPost[] = [];
   loading = true;
   errorMessage = '';
+
+  // ── Bloqueo ────────────────────────────────────────
+  blockedByMe = false;
+  blockBusy = false;
+  blockMessage = '';
+  blockError = '';
 
   // ── Review form state ──────────────────────────────
   eligibility: ReviewEligibility | null = null;
@@ -163,6 +170,12 @@ export class ProfileComponent implements OnInit {
 
         // Comprobar elegibilidad de review (solo si está logueado y no es su propio perfil)
         if (this.authService.isAuthenticated() && !this.isOwnProfile) {
+          this.apiService.getBlockStatus(id).subscribe({
+            next: (status) => {
+              this.blockedByMe = status.blockedByMe;
+              this.cdr.markForCheck();
+            },
+          });
           this.apiService.checkReviewEligibility(id).subscribe({
             next: (elig) => {
               this.eligibility = elig;
@@ -174,6 +187,29 @@ export class ProfileComponent implements OnInit {
       error: () => {
         this.loading = false;
         this.errorMessage = 'No se pudo cargar el perfil';
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  /** Bloquear o desbloquear: sin mensajes, invitaciones ni valoraciones entre los dos */
+  toggleBlock(): void {
+    if (!this.user) return;
+    this.blockBusy = true;
+    this.blockMessage = '';
+    this.blockError = '';
+    this.apiService.setBlock(this.user._id, !this.blockedByMe).subscribe({
+      next: (res) => {
+        this.blockBusy = false;
+        this.blockedByMe = res.blocked;
+        this.blockMessage = res.blocked
+          ? 'Has bloqueado a este jugador: no podréis escribiros, invitaros ni valoraros.'
+          : 'Has desbloqueado a este jugador.';
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.blockBusy = false;
+        this.blockError = err.error?.message || 'No se pudo completar la acción. Inténtalo de nuevo.';
         this.cdr.markForCheck();
       },
     });

@@ -92,6 +92,23 @@
   }
 }
 
+// ── Aviso de cuenta suspendida ──
+.c-suspended {
+  margin: 0;
+  padding: v.$spacing-sm v.$spacing-md;
+  text-align: center;
+  font-size: v.$font-size-sm;
+  line-height: 1.5;
+  color: v.$color-text-heading;
+  background: v.$color-bg-elevated;
+  border-bottom: 1px solid rgba(255, 70, 85, 0.45);
+
+  a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
+
 // ── Saltar al contenido (visible solo al recibir foco) ──
 .c-skip-link {
   position: fixed;

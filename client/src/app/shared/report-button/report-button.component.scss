@@ -1,0 +1,19 @@
+@use 'utilities/variables' as v;
+
+:host {
+  display: contents;
+}
+
+// Enlace pequeño para tarjetas de valoración y burbujas de mensaje
+.c-report-link {
+  padding: 0;
+  min-height: 24px;
+  font-size: v.$font-size-2xs;
+  color: v.$color-text-muted;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+
+  &:hover {
+    color: v.$color-text-heading;
+  }
+}

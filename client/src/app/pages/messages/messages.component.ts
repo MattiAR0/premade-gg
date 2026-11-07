@@ -10,10 +10,11 @@ import { User } from '../../models/user.model';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
+import { ReportButtonComponent } from '../../shared/report-button/report-button.component';
 @Component({
   selector: 'app-messages',
   standalone: true,
-  imports: [RouterLink, DatePipe, FormsModule],
+  imports: [RouterLink, DatePipe, FormsModule, ReportButtonComponent],
   templateUrl: './messages.component.html',
   styleUrl: './messages.component.scss',
 })

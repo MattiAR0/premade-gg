@@ -146,6 +146,12 @@
           @if (actionError && feedbackAt === 'join') {
             <p class="c-join__feedback c-join__feedback--err" role="alert">{{ actionError }}</p>
           }
+
+          @if (!isCreator) {
+            <div class="c-join__report">
+              <app-report-button targetType="lfg_post" [targetId]="post._id" [targetLabel]="post.author.riotId" variant="link" />
+            </div>
+          }
         </section>
       </header>
 

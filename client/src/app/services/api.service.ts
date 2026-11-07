@@ -7,6 +7,7 @@ import { LfgPost } from '../models/lfg-post.model';
 import { Team } from '../models/team.model';
 import { RiotAccountValidation, RiotRankData } from '../models/riot.model';
 import { AppNotification } from '../models/notification.model';
+import { ModerationDecision, MyModerationDecision, Report, ReportReason, ReportTarget } from '../models/report.model';
 import { invokeFunction, rpc } from './supabase.client';
 
 /** Respuesta paginada genérica (cursor-based) */
@@ -348,5 +349,47 @@ export class ApiService {
 
   deleteNotification(id: string): Observable<Message> {
     return rpc<Message>('delete_notification', { p_id: id });
+  }
+
+  // ── Denuncias y bloqueos ────────────────────────────
+  createReport(targetType: ReportTarget, targetId: string, reason: ReportReason, details: string): Observable<Message> {
+    return rpc<Message>('create_report', {
+      p_target_type: targetType, p_target_id: targetId, p_reason: reason, p_details: details,
+    });
+  }
+
+  setBlock(userId: string, block: boolean): Observable<Message & { blocked: boolean }> {
+    return rpc<Message & { blocked: boolean }>('set_block', { p_user: userId, p_block: block });
+  }
+
+  getBlockStatus(userId: string): Observable<{ blockedByMe: boolean }> {
+    return rpc<{ blockedByMe: boolean }>('get_block_status', { p_user: userId });
+  }
+
+  // ── Moderación ──────────────────────────────────────
+  getReports(queue: 'open' | 'appeals' | 'resolved' = 'open'): Observable<Report[]> {
+    return rpc<Report[]>('get_reports', { p_queue: queue });
+  }
+
+  resolveReport(reportId: string, removeContent: boolean, suspendDays: number | null, note: string): Observable<Message> {
+    return rpc<Message>('resolve_report', {
+      p_report_id: reportId, p_remove_content: removeContent, p_suspend_days: suspendDays, p_note: note,
+    });
+  }
+
+  resolveAppeal(reportId: string, reverse: boolean, note: string): Observable<Message> {
+    return rpc<Message>('resolve_appeal', { p_report_id: reportId, p_reverse: reverse, p_note: note });
+  }
+
+  getModerationDecision(reportId: string): Observable<ModerationDecision> {
+    return rpc<ModerationDecision>('get_moderation_decision', { p_report_id: reportId });
+  }
+
+  getMyModerationDecisions(): Observable<MyModerationDecision[]> {
+    return rpc<MyModerationDecision[]>('get_my_moderation_decisions');
+  }
+
+  appealReport(reportId: string, text: string): Observable<Message> {
+    return rpc<Message>('appeal_report', { p_report_id: reportId, p_text: text });
   }
 }

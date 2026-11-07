@@ -1,0 +1,67 @@
+<main class="l-container l-container--medium l-section">
+  <header class="c-page-header">
+    <div class="c-page-header__text">
+      <h1 class="c-page-header__title">Decisión de moderación</h1>
+      <p class="c-page-header__desc">Qué hemos decidido sobre tu cuenta o tu contenido, por qué, y cómo recurrirlo.</p>
+    </div>
+  </header>
+
+  @if (loading) {
+    <p class="c-mod__muted">Cargando…</p>
+  } @else if (loadError) {
+    <p class="c-error" role="alert">{{ loadError }}</p>
+  } @else if (decision) {
+    <article class="c-mod__card">
+      <h2 class="c-mod__title">{{ decision.actionText }}</h2>
+      <p class="c-mod__date">{{ decision.resolvedAt | date: 'dd/MM/yyyy HH:mm' }}</p>
+
+      <p class="c-mod__label">Motivo de la denuncia</p>
+      <p class="c-mod__text">{{ reasonLabel[decision.reason] }} ({{ targetLabel[decision.targetType].toLowerCase() }})</p>
+
+      <p class="c-mod__label">Por qué lo hemos decidido</p>
+      <p class="c-mod__text">{{ decision.resolutionNote }}</p>
+
+      <p class="c-mod__label">Contenido revisado</p>
+      <blockquote class="c-mod__snapshot">{{ decision.snapshot || '(sin texto)' }}</blockquote>
+
+      @if (decision.suspendedUntil) {
+        <p class="c-mod__text">
+          Mientras dure la suspensión no puedes publicar, escribir mensajes ni valorar. Sí puedes recurrir.
+        </p>
+      }
+
+      @if (appealStatusText) {
+        <p class="c-mod__label">Recurso</p>
+        <p class="c-mod__text" role="status">{{ appealStatusText }}</p>
+        @if (decision.appealNote) {
+          <p class="c-mod__text">{{ decision.appealNote }}</p>
+        }
+      }
+
+      @if (decision.canAppeal) {
+        <form class="c-mod__form" (ngSubmit)="appeal()">
+          <label class="c-mod__field">
+            <span>¿No estás de acuerdo? Recurre la decisión</span>
+            <textarea class="c-mod__textarea" name="appeal" rows="4" maxlength="1000" [(ngModel)]="appealText"
+              [attr.aria-invalid]="appealError ? true : null" [attr.aria-describedby]="appealError ? 'appeal-error' : 'appeal-hint'"
+              placeholder="Explica qué pasó y por qué crees que la decisión no es correcta."></textarea>
+          </label>
+          <p class="c-mod__muted" id="appeal-hint">Una persona de moderación volverá a revisarla. Puedes recurrir una vez, en los 6 meses siguientes.</p>
+          @if (appealError) {
+            <p class="c-mod__error" role="alert" id="appeal-error">{{ appealError }}</p>
+          }
+          <div class="c-mod__buttons">
+            <button type="submit" class="c-btn c-btn--primary c-btn--sm" [disabled]="sending">
+              {{ sending ? 'Enviando…' : 'Enviar recurso' }}
+            </button>
+          </div>
+        </form>
+      }
+      @if (appealSent) {
+        <p class="c-mod__notice" role="status">{{ appealSent }}</p>
+      }
+    </article>
+
+    <p class="c-mod__muted c-mod__back"><a routerLink="/">Volver al inicio</a></p>
+  }
+</main>

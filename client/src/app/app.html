@@ -1,5 +1,11 @@
 <a class="c-skip-link" href="#contenido" (click)="skipToContent($event)">Saltar al contenido</a>
 <app-navbar />
+@if (suspendedUntil(); as until) {
+<p class="c-suspended" role="status">
+  Tu cuenta está suspendida hasta el {{ until | date: 'dd/MM/yyyy HH:mm' }}: no puedes publicar, escribir, valorar ni
+  unirte a grupos. Puedes ver la decisión y recurrirla en <a routerLink="/settings/account">Ajustes de cuenta</a>.
+</p>
+}
 <div id="contenido" class="c-skip-target" tabindex="-1"></div>
 <router-outlet />
 <footer class="c-footer">

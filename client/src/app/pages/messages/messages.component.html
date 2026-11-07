@@ -239,7 +239,12 @@
           <span class="c-messages__bubble-sender">{{ msg.sender.riotId }}</span>
           }
           <p class="c-messages__bubble-text">{{ msg.content }}</p>
-          <span class="c-messages__bubble-time">{{ msg.createdAt | date: 'HH:mm' }}</span>
+          <span class="c-messages__bubble-time">
+            {{ msg.createdAt | date: 'HH:mm' }}
+            @if (!isOwnMessage(msg.sender._id)) {
+              · <app-report-button targetType="message" [targetId]="msg._id" [targetLabel]="msg.sender.riotId" variant="link" />
+            }
+          </span>
         </div>
       </div>
       }

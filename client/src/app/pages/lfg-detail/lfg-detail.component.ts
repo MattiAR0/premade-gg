@@ -13,10 +13,11 @@ import { CopyRiotIdComponent } from '../../shared/copy-riot-id/copy-riot-id.comp
 import { LabelPipe } from '../../shared/pipes/label.pipe';
 import { DialogDirective } from '../../shared/dialog/dialog.directive';
 
+import { ReportButtonComponent } from '../../shared/report-button/report-button.component';
 @Component({
   selector: 'app-lfg-detail',
   standalone: true,
-  imports: [RouterLink, FormsModule, RankBadgeComponent, KarmaBadgeComponent, CopyRiotIdComponent, LabelPipe, DecimalPipe, DialogDirective],
+  imports: [RouterLink, FormsModule, RankBadgeComponent, KarmaBadgeComponent, CopyRiotIdComponent, LabelPipe, DecimalPipe, DialogDirective, ReportButtonComponent],
   templateUrl: './lfg-detail.component.html',
   styleUrl: './lfg-detail.component.scss',
 })

@@ -37,3 +37,16 @@ export const onboardingGuard: CanActivateFn = async () => {
   }
   return authService.isOnboarded() ? router.createUrlTree(['/']) : true;
 };
+
+/** Solo moderadores: el resto vuelve a la portada. El servidor lo comprueba igualmente. */
+export const moderatorGuard: CanActivateFn = async (_route, state) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  await authService.whenSessionRestored;
+
+  if (!authService.isAuthenticated()) {
+    return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
+  }
+  return authService.currentUser()?.isModerator ? true : router.createUrlTree(['/']);
+};

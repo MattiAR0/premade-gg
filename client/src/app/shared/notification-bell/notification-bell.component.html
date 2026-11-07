@@ -62,6 +62,24 @@
                     Ver equipo
                   </a>
                 }
+                @if ((notification.type === 'moderation_notice' || notification.type === 'appeal_update') && notification.reportId) {
+                  <a
+                    class="c-notif__link"
+                    [routerLink]="['/moderacion/decision', notification.reportId]"
+                    (click)="onNotificationClick(notification); notificationService.closePanel()"
+                  >
+                    Ver la decisión y recurrir
+                  </a>
+                }
+                @if (notification.type === 'report_update' && auth.currentUser()?.isModerator && notification.recipient === auth.currentUser()?._id && notification.sender?._id !== auth.currentUser()?._id && isModeratorQueueNotice(notification)) {
+                  <a
+                    class="c-notif__link"
+                    routerLink="/moderacion"
+                    (click)="onNotificationClick(notification); notificationService.closePanel()"
+                  >
+                    Abrir moderación
+                  </a>
+                }
                 @if (isInvite(notification)) {
                   <div class="c-notif__actions">
                     <button

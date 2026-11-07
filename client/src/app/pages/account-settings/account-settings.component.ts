@@ -4,6 +4,9 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { AccountInfo } from '../../models/auth.model';
 import { DialogDirective } from '../../shared/dialog/dialog.directive';
+import { DatePipe } from '@angular/common';
+import { ApiService } from '../../services/api.service';
+import { MyModerationDecision } from '../../models/report.model';
 
 const PROVIDER_LABELS: Record<string, string> = { google: 'Google', discord: 'Discord' };
 
@@ -17,13 +20,16 @@ export const DELETE_CONFIRM_WORD = 'BORRAR';
 @Component({
   selector: 'app-account-settings',
   standalone: true,
-  imports: [FormsModule, RouterLink, DialogDirective],
+  imports: [FormsModule, RouterLink, DialogDirective, DatePipe],
   templateUrl: './account-settings.component.html',
   styleUrl: './account-settings.component.scss',
 })
 export class AccountSettingsComponent implements OnInit {
   account: AccountInfo | null = null;
   loadError = '';
+
+  /** Decisiones de moderación sobre la cuenta (para verlas y recurrirlas sin depender de la notificación) */
+  decisions: MyModerationDecision[] = [];
 
   // Email
   newEmail = '';
@@ -52,12 +58,19 @@ export class AccountSettingsComponent implements OnInit {
 
   constructor(
     readonly authService: AuthService,
+    private readonly api: ApiService,
     private readonly router: Router,
     private readonly cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
     this.loadAccount();
+    this.api.getMyModerationDecisions().subscribe({
+      next: (decisions) => {
+        this.decisions = decisions;
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   private loadAccount(): void {

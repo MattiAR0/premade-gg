@@ -10,10 +10,11 @@ import { RankBadgeComponent } from '../../shared/rank-badge/rank-badge.component
 import { DialogDirective } from '../../shared/dialog/dialog.directive';
 import { LabelPipe } from '../../shared/pipes/label.pipe';
 
+import { ReportButtonComponent } from '../../shared/report-button/report-button.component';
 @Component({
   selector: 'app-team-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, RankBadgeComponent, DialogDirective, LabelPipe],
+  imports: [CommonModule, FormsModule, RouterLink, RankBadgeComponent, DialogDirective, LabelPipe, ReportButtonComponent],
   templateUrl: './team-detail.component.html',
   styleUrl: './team-detail.component.scss',
 })

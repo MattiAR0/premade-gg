@@ -71,6 +71,21 @@
     }
   }
 
+  &__decisions {
+    margin: v.$spacing-sm 0 0;
+    padding-left: v.$spacing-lg;
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-xs;
+    font-size: v.$font-size-md;
+
+    a {
+      color: v.$color-text-heading;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+  }
+
   &__field {
     display: flex;
     flex-direction: column;

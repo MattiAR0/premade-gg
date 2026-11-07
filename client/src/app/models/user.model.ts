@@ -47,6 +47,11 @@ export interface User {
   /** false hasta que el usuario vincula su Riot ID (p. ej. tras entrar con Google/Discord) */
   onboarded?: boolean;
 
+  /** Solo en get_me: puede moderar denuncias */
+  isModerator?: boolean;
+  /** Solo en get_me: hasta cuándo está suspendida la cuenta (null si no lo está) */
+  suspendedUntil?: string | null;
+
   createdAt: string;
 }
 

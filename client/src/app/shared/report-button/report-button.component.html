@@ -1,0 +1,67 @@
+@if (auth.isAuthenticated()) {
+  @if (variant === 'link') {
+    <button type="button" class="c-report-link" (click)="openDialog()" [attr.aria-label]="title">Denunciar</button>
+  } @else {
+    <button type="button" class="c-btn c-btn--ghost c-btn--sm" (click)="openDialog()" [attr.aria-label]="title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+      Denunciar
+    </button>
+  }
+}
+
+@if (open) {
+  <div class="c-modal-overlay" (click)="close()">
+    <div class="c-modal" role="dialog" aria-modal="true" [attr.aria-labelledby]="uid + '-title'" appDialog (dismiss)="close()" (click)="$event.stopPropagation()">
+      <header class="c-modal__header">
+        <div>
+          <h2 class="c-modal__title" [id]="uid + '-title'">{{ title }}</h2>
+          <p class="c-modal__subtitle">La revisa una persona de moderación. No compartimos tu identidad con la persona denunciada, aunque podría deducirla por el contenido.</p>
+        </div>
+        <button class="c-modal__close" type="button" (click)="close()" aria-label="Cerrar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </header>
+
+      @if (done) {
+        <div class="c-modal__form">
+          <p class="c-modal__text" role="status">{{ done }}</p>
+          <footer class="c-modal__footer">
+            <button class="c-btn c-btn--primary" type="button" (click)="close()">Cerrar</button>
+          </footer>
+        </div>
+      } @else {
+        @if (error) {
+          <p class="c-modal__error" role="alert" [id]="uid + '-error'">{{ error }}</p>
+        }
+        <form class="c-modal__form" (ngSubmit)="submit()">
+          <label class="c-modal__field">
+            <span class="c-modal__label">Motivo</span>
+            <select class="c-modal__select" name="reason" [(ngModel)]="reason" required
+              [attr.aria-invalid]="error && !reason ? true : null" [attr.aria-describedby]="error ? uid + '-error' : null">
+              <option value="" disabled>Elige un motivo</option>
+              @for (r of reasons; track r.value) {
+                <option [value]="r.value">{{ r.label }}</option>
+              }
+            </select>
+          </label>
+
+          <label class="c-modal__field">
+            <span class="c-modal__label">
+              Qué ha pasado (opcional)
+              <span class="c-modal__label-hint">{{ details.length }}/1000</span>
+            </span>
+            <textarea class="c-modal__textarea" name="details" [(ngModel)]="details" maxlength="1000" rows="4"
+              placeholder="Cuéntanos lo necesario para entenderlo: cuándo pasó, en qué partida o chat…"></textarea>
+          </label>
+
+          <footer class="c-modal__footer">
+            <button class="c-btn c-btn--ghost" type="button" (click)="close()">Cancelar</button>
+            <button class="c-btn c-btn--primary" type="submit" [disabled]="sending">
+              {{ sending ? 'Enviando…' : 'Enviar denuncia' }}
+            </button>
+          </footer>
+        </form>
+      }
+    </div>
+  </div>
+}

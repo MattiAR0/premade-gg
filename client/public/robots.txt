@@ -4,5 +4,6 @@ Disallow: /messages
 Disallow: /settings/
 Disallow: /onboarding
 Disallow: /reset-password
+Disallow: /moderacion
 
 Sitemap: https://premade-gg.vercel.app/sitemap.xml

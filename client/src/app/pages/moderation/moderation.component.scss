@@ -1,0 +1,184 @@
+@use 'utilities/variables' as v;
+@use 'utilities/mixins' as m;
+
+.c-mod {
+  &__notice:not(:empty) {
+    margin-top: v.$spacing-md;
+    font-size: v.$font-size-sm;
+    color: v.$color-positive;
+  }
+
+  &__muted {
+    color: v.$color-text-muted;
+    font-size: v.$font-size-sm;
+  }
+
+  &__list {
+    list-style: none;
+    margin: v.$spacing-lg 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-md;
+  }
+
+  &__card {
+    background: v.$color-bg-card;
+    border: 1px solid v.$color-border;
+    border-radius: v.$radius-lg;
+    padding: v.$spacing-lg;
+
+    @include m.respond-below(sm) {
+      padding: v.$spacing-md;
+    }
+  }
+
+  &__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: v.$spacing-sm;
+  }
+
+  &__title {
+    font-size: v.$font-size-base;
+    font-weight: 700;
+    color: v.$color-text-heading;
+  }
+
+  &__date {
+    font-size: v.$font-size-xs;
+    color: v.$color-text-muted;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: v.$spacing-sm v.$spacing-lg;
+    margin: v.$spacing-sm 0 0;
+    font-size: v.$font-size-sm;
+
+    dt {
+      color: v.$color-text-muted;
+    }
+
+    dd {
+      margin: 0;
+      color: v.$color-text-heading;
+
+      a {
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+    }
+  }
+
+  &__label {
+    margin-top: v.$spacing-md;
+    font-size: v.$font-size-xs;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: v.$color-text-muted;
+  }
+
+  &__snapshot {
+    margin: v.$spacing-xs 0 0;
+    padding: v.$spacing-sm v.$spacing-md;
+    background: v.$color-bg-input;
+    border: 1px solid v.$color-border;
+    border-radius: v.$radius-md;
+    color: v.$color-text-primary;
+    font-size: v.$font-size-sm;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  &__text {
+    margin-top: v.$spacing-xs;
+    font-size: v.$font-size-sm;
+    line-height: 1.5;
+    color: v.$color-text-primary;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-sm;
+    margin-top: v.$spacing-md;
+    padding-top: v.$spacing-md;
+    border-top: 1px solid v.$color-border;
+  }
+
+  &__measures {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-sm;
+
+    .c-mod__label {
+      margin-top: 0;
+      padding: 0;
+    }
+  }
+
+  &__check {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: v.$spacing-xs;
+    min-height: 24px;
+    font-size: v.$font-size-sm;
+    color: v.$color-text-primary;
+
+    input {
+      width: 18px;
+      height: 18px;
+      accent-color: v.$color-selected;
+    }
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: v.$font-size-sm;
+    color: v.$color-text-primary;
+  }
+
+  &__select,
+  &__textarea {
+    @include m.form-control;
+  }
+
+  &__textarea {
+    resize: vertical;
+  }
+
+  &__error {
+    font-size: v.$font-size-sm;
+    color: v.$color-danger-text;
+  }
+
+  &__back {
+    margin-top: v.$spacing-md;
+
+    a {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+  }
+
+  &__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: v.$spacing-sm;
+  }
+}

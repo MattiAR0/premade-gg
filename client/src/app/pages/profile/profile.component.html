@@ -55,7 +55,21 @@
 
             <!-- Riot no tiene API de amigos: se copia el Riot ID para agregarle en el juego -->
             <app-copy-riot-id [riotId]="user.riotId" />
+
+            @if (canMessage) {
+              <app-report-button targetType="profile" [targetId]="user._id" [targetLabel]="user.riotId" />
+              <button type="button" class="c-btn c-btn--ghost c-btn--sm" [disabled]="blockBusy" (click)="toggleBlock()"
+                [attr.aria-pressed]="blockedByMe">
+                {{ blockedByMe ? 'Desbloquear' : 'Bloquear' }}
+              </button>
+            }
           </div>
+          @if (blockMessage) {
+            <p class="c-profile__notice" role="status">{{ blockMessage }}</p>
+          }
+          @if (blockError) {
+            <p class="c-profile__notice c-profile__notice--error" role="alert">{{ blockError }}</p>
+          }
         </div>
 
         <!-- Rango y karma juntos: lo que define a un jugador en PremadeGG -->
@@ -264,7 +278,13 @@
               @if (review.comment) {
                 <p class="c-review-card__comment">{{ review.comment }}</p>
               }
-              <time class="c-review-card__date">{{ review.createdAt | date:'dd/MM/yyyy' }}</time>
+              <footer class="c-review-card__footer">
+                <time class="c-review-card__date">{{ review.createdAt | date:'dd/MM/yyyy' }}</time>
+                @if (!isOwnReview(review)) {
+                  <app-report-button targetType="review" [targetId]="review._id"
+                    [targetLabel]="review.author ? review.author.riotId : ''" variant="link" />
+                }
+              </footer>
             </article>
           }
         </div>

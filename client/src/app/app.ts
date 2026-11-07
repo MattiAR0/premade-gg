@@ -1,15 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './shared/navbar/navbar.component';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterLink, RouterOutlet, NavbarComponent],
+  imports: [RouterLink, RouterOutlet, NavbarComponent, DatePipe],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App {
+  private readonly auth = inject(AuthService);
+
+  /** Fin de la suspensión de la cuenta, si está suspendida ahora */
+  readonly suspendedUntil = computed(() => {
+    const until = this.auth.currentUser()?.suspendedUntil;
+    return until && new Date(until).getTime() > Date.now() ? until : null;
+  });
+
   /**
    * Una página nueva empieza arriba. Solo cuando cambia la ruta: los filtros cambian
    * los query params y no deben mover el scroll.
