@@ -1,7 +1,7 @@
 import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners, provideAppInitializer, inject } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
-import { provideRouter, withNavigationErrorHandler } from '@angular/router';
+import { provideRouter, withInMemoryScrolling, withNavigationErrorHandler } from '@angular/router';
 
 import { routes } from './app.routes';
 import { AuthService } from './services/auth.service';
@@ -14,7 +14,12 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     // Tras un despliegue, una pestaña abierta recarga si pide un chunk que ya no existe
-    provideRouter(routes, withNavigationErrorHandler(reloadOnStaleChunk)),
+    provideRouter(
+      routes,
+      withNavigationErrorHandler(reloadOnStaleChunk),
+      // Los índices de las páginas legales enlazan a sus apartados (#fragmento)
+      withInMemoryScrolling({ anchorScrolling: 'enabled' }),
+    ),
     { provide: LOCALE_ID, useValue: 'es' },
     // Bloquea el arranque de Angular hasta que la sesión se haya restaurado
     provideAppInitializer(() => inject(AuthService).whenSessionRestored),

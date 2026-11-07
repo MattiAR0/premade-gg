@@ -114,7 +114,16 @@
           </select>
         </label>
       </div>
-      <p class="c-auth-card__hint">El horario y tus agentes favoritos los eliges luego en tu perfil.</p>
+      <p class="c-auth-card__hint">Tu horario, tus agentes favoritos y tu disponibilidad los eliges luego en tu perfil.</p>
+
+      <label class="c-auth-card__terms">
+        <input type="checkbox" name="acceptTerms" [(ngModel)]="acceptTerms" required
+          [attr.aria-invalid]="termsError ? true : null" />
+        <span>
+          Acepto los <a href="/terminos" target="_blank" rel="noopener">términos de uso</a>, he leído la
+          <a href="/privacidad" target="_blank" rel="noopener">política de privacidad</a> y tengo 16 años o más.
+        </span>
+      </label>
 
       <button
         class="c-btn c-btn--primary c-auth-card__submit"

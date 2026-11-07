@@ -51,6 +51,8 @@ export interface User {
   isModerator?: boolean;
   /** Solo en get_me: hasta cuándo está suspendida la cuenta (null si no lo está) */
   suspendedUntil?: string | null;
+  /** Solo en get_me: última versión de términos y privacidad aceptada */
+  termsVersion?: string | null;
 
   createdAt: string;
 }

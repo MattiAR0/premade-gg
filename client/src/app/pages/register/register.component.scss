@@ -217,6 +217,31 @@
   }
 }
 
+
+// Casilla de términos, privacidad y edad (registro y onboarding)
+.c-auth-card__terms {
+  display: flex;
+  align-items: flex-start;
+  gap: v.$spacing-sm;
+  font-size: v.$font-size-sm;
+  line-height: 1.5;
+  color: v.$color-text-primary;
+
+  input {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    margin-top: 0.15rem;
+    accent-color: v.$color-selected;
+  }
+
+  a {
+    color: v.$color-text-heading;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);

@@ -1,0 +1,154 @@
+<main class="l-container l-container--medium l-section">
+  <article class="c-legal">
+    <header class="c-page-header">
+      <div class="c-page-header__text">
+        <h1 class="c-page-header__title">Términos de uso</h1>
+        <p class="c-legal__updated">Última actualización: {{ legal.updatedAt }}</p>
+      </div>
+    </header>
+
+    <p>
+      Estos términos regulan el uso de {{ legal.siteName }} ({{ legal.siteUrl }}), una plataforma gratuita para
+      encontrar compañeros de Valorant según su reputación. Al crear tu cuenta y vincular tu Riot ID los aceptas,
+      junto con la <a routerLink="/privacidad">política de privacidad</a>.
+    </p>
+
+    <nav class="c-legal__toc" aria-label="Índice">
+      <p class="c-legal__toc-title">Índice</p>
+      <ol>
+        <li><a routerLink="." fragment="quien">Quién presta el servicio</a></li>
+        <li><a routerLink="." fragment="requisitos">Requisitos y cuenta</a></li>
+        <li><a routerLink="." fragment="normas">Normas de la comunidad</a></li>
+        <li><a routerLink="." fragment="valoraciones">Valoraciones y karma</a></li>
+        <li><a routerLink="." fragment="moderacion">Denuncias, moderación y recursos</a></li>
+        <li><a routerLink="." fragment="contenido">Tu contenido</a></li>
+        <li><a routerLink="." fragment="riot">Riot Games y Valorant</a></li>
+        <li><a routerLink="." fragment="responsabilidad">Responsabilidad</a></li>
+        <li><a routerLink="." fragment="baja">Baja y cambios</a></li>
+        <li><a routerLink="." fragment="ley">Ley aplicable y contacto</a></li>
+      </ol>
+    </nav>
+
+    <h2 id="quien">1. Quién presta el servicio</h2>
+    <p>
+      {{ legal.siteName }} lo ofrece {{ legal.ownerName }}. Punto de contacto para usuarios y autoridades:
+      <a [href]="mailto">{{ legal.contactEmail }}</a> (en español o en inglés).
+    </p>
+
+    <h2 id="requisitos">2. Requisitos y cuenta</h2>
+    <ul>
+      <li>Tienes que tener <strong>{{ legal.minAge }} años o más</strong>.</li>
+      <li>Solo puedes vincular <strong>tu propio Riot ID</strong>. Usar el de otra persona es suplantación.</li>
+      <li>Una persona, una cuenta. No se permiten cuentas para inflar o hundir el karma de nadie.</li>
+      <li>Eres responsable de lo que se haga con tu cuenta: guarda bien tu contraseña.</li>
+      <li>El servicio es gratuito y se ofrece tal cual, sin garantía de disponibilidad continua.</li>
+    </ul>
+
+    <h2 id="normas">3. Normas de la comunidad</h2>
+    <p>En perfiles, valoraciones, mensajes, grupos y equipos no está permitido:</p>
+    <ul>
+      <li><strong>Acosar o insultar</strong> a otras personas, también de forma repetida o en grupo.</li>
+      <li>Contenido de <strong>odio o discriminación</strong> por origen, género, orientación, religión, discapacidad u otra condición.</li>
+      <li><strong>Amenazas</strong> o incitar a la violencia.</li>
+      <li><strong>Publicar datos personales</strong> de otra persona sin su permiso (nombre real, dirección, teléfono, fotos…).</li>
+      <li>Contenido <strong>sexual</strong>, y cualquier contenido que sexualice a menores.</li>
+      <li><strong>Suplantar</strong> a otra persona o hacerte pasar por Riot Games o por {{ legal.siteName }}.</li>
+      <li>Promocionar o vender <strong>trampas</strong>, cuentas, subidas de rango (boosting) o cualquier cosa contraria a las normas de Riot.</li>
+      <li><strong>Spam</strong>, publicidad o enlaces engañosos.</li>
+      <li>Cualquier contenido <strong>ilegal</strong>.</li>
+    </ul>
+    <p>
+      Hay un filtro automático de palabras malsonantes: en algunos textos censura las palabras y en otros impide
+      publicarlos. El filtro no decide sanciones; las decide siempre una persona.
+    </p>
+
+    <h2 id="valoraciones">4. Valoraciones y karma</h2>
+    <ul>
+      <li>Solo puedes valorar a quien haya estado contigo al menos 15 minutos en un grupo o un equipo de {{ legal.siteName }} en los últimos 30 días, y una vez por persona.</li>
+      <li>Tus valoraciones tienen que ser <strong>sinceras y sobre la conducta</strong> de la persona como compañera. No sobre su nivel, ni para vengarte ni por encargo.</li>
+      <li>Tus valoraciones se publican con tu Riot ID.</li>
+      <li>El karma es la media de las valoraciones y mide la conducta, no la habilidad. No es un sistema de clasificación de Riot ni lo sustituye.</li>
+      <li>Con un karma ajustado por debajo de 3 no puedes crear grupos nuevos, y cada grupo puede pedir un karma mínimo.</li>
+    </ul>
+
+    <h2 id="moderacion">5. Denuncias, moderación y recursos</h2>
+    <h3>Cómo denunciar</h3>
+    <p>
+      Cualquier usuario puede denunciar un perfil, una valoración, un mensaje, un equipo o un grupo con el botón
+      «Denunciar», eligiendo el motivo y explicando lo que ha pasado. Para contenido ilegal también puedes escribirnos
+      a <a [href]="mailto">{{ legal.contactEmail }}</a> indicando dónde está y por qué crees que es ilegal.
+    </p>
+    <h3>Qué medidas podemos tomar</h3>
+    <ul>
+      <li><strong>Retirar el contenido</strong>: borrar una valoración o un grupo, sustituir un mensaje por «[Mensaje retirado por moderación]» o vaciar la descripción, la biografía y la imagen de un perfil o equipo. Lo retirado no se puede recuperar.</li>
+      <li><strong>Suspender la cuenta</strong> entre 1 y 365 días. Mientras dure no puedes publicar, escribir, valorar, unirte ni aceptar a nadie; sí puedes denunciar y recurrir.</li>
+    </ul>
+    <p>
+      Las decisiones las toma siempre una persona. Revisamos las denuncias lo antes posible; nuestro objetivo es
+      responder en un plazo de 7 días.
+    </p>
+    <h3>Decisión motivada y recurso</h3>
+    <p>
+      Si tomamos una medida contra tu cuenta o tu contenido, te lo comunicamos con el motivo de la decisión. Lo
+      encontrarás en tus notificaciones y en Ajustes de cuenta. Puedes <strong>recurrir</strong> cada decisión una
+      vez, gratis, en los seis meses siguientes; una persona la revisará de nuevo y te comunicará el resultado. A quien
+      denuncia le comunicamos lo que hemos decidido; si no está de acuerdo, puede pedirnos que lo revisemos escribiendo
+      a <a [href]="mailto">{{ legal.contactEmail }}</a>.
+    </p>
+    <p>
+      Esto no limita tu derecho a acudir a los tribunales ni a las autoridades competentes.
+    </p>
+    <h3>Denuncias abusivas</h3>
+    <p>
+      Denunciar a sabiendas contenido que no incumple nada, o usar las denuncias para acosar, es en sí un
+      incumplimiento de estas normas y puede llevar a la suspensión de la cuenta.
+    </p>
+    <h3>Bloqueos</h3>
+    <p>
+      Puedes bloquear a cualquier jugador desde su perfil: no podréis escribiros por privado, invitaros ni enviaros
+      solicitudes. El bloqueo no impide valorar a alguien con quien has jugado.
+    </p>
+
+    <h2 id="contenido">6. Tu contenido</h2>
+    <p>
+      Lo que publicas sigue siendo tuyo. Nos das permiso, gratis y solo para prestar el servicio, para alojarlo,
+      guardarlo y mostrarlo dentro de {{ legal.siteName }} mientras esté publicado y, si se denuncia, para conservar una
+      copia hasta 12 meses después de resolver la denuncia. Eres responsable de lo que publicas y de tener
+      derecho a publicarlo (por ejemplo, una foto).
+    </p>
+
+    <h2 id="riot">7. Riot Games y Valorant</h2>
+    <p>
+      {{ legal.siteName }} es un proyecto independiente: no está respaldado por Riot Games ni afiliado a ella. Valorant,
+      Riot Games y sus recursos (nombres, iconos de agentes, emblemas de rango y tarjetas) son marcas o propiedad de
+      Riot Games, Inc. y se usan según su política «Legal Jibber Jabber». Usar {{ legal.siteName }} no cambia las
+      normas de Riot que aceptaste al jugar a Valorant.
+    </p>
+
+    <h2 id="responsabilidad">8. Responsabilidad</h2>
+    <p>
+      Hacemos lo posible por que el servicio funcione y sea seguro, pero no podemos garantizar que esté siempre
+      disponible ni sin errores, ni controlar lo que hagan otros jugadores dentro o fuera de Valorant. No respondemos
+      del contenido que publican los usuarios salvo cuando, sabiendo que es ilegal, no actuemos con rapidez para
+      retirarlo. Nada de esto limita los derechos que te reconoce la ley como consumidor.
+    </p>
+
+    <h2 id="baja">9. Baja y cambios</h2>
+    <p>
+      Puedes borrar tu cuenta cuando quieras desde Ajustes de cuenta. Si cambiamos estos términos de forma importante,
+      te avisaremos en la web con al menos 15 días de antelación (salvo cambios exigidos por la ley) y te pediremos que
+      los aceptes de nuevo; si no estás de acuerdo, puedes borrar tu cuenta.
+    </p>
+
+    <h2 id="ley">10. Ley aplicable y contacto</h2>
+    <p>
+      Se aplica la ley española. Si eres consumidor, puedes acudir a los tribunales de tu domicilio. Para cualquier
+      duda o reclamación, escríbenos a <a [href]="mailto">{{ legal.contactEmail }}</a>.
+    </p>
+
+    <p class="c-legal__note">
+      Consulta también la <a routerLink="/privacidad">política de privacidad</a>, el
+      <a routerLink="/aviso-legal">aviso legal</a> y la <a routerLink="/cookies">política de cookies</a>.
+    </p>
+  </article>
+</main>

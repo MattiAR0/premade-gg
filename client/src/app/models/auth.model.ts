@@ -11,6 +11,8 @@ export interface OnboardingRequest {
   region: string;
   role: string;
   schedule: string;
+  /** Acepta los términos y la privacidad y declara tener la edad mínima */
+  acceptTerms: boolean;
 }
 
 export interface RegisterRequest extends OnboardingRequest {

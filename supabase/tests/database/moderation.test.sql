@@ -21,6 +21,11 @@ update public.profiles set riot_id = 'ModM#1', rank = 'Gold', role = 'Controller
 where id = 'e1000000-0000-0000-0000-00000000000e';
 insert into public.moderators (user_id) values ('e1000000-0000-0000-0000-00000000000e');
 
+-- Han aceptado los términos vigentes (sin eso no se puede escribir)
+insert into public.consents (user_id, document, version)
+select id, 'terms_privacy', public.current_terms_version() from public.profiles
+on conflict do nothing;
+
 create function pg_temp.login(p_id uuid) returns void language sql as $$
   select set_config('request.jwt.claims', json_build_object('sub', p_id, 'role', 'authenticated')::text, true);
 $$;

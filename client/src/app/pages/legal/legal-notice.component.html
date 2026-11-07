@@ -1,0 +1,55 @@
+<main class="l-container l-container--medium l-section">
+  <article class="c-legal">
+    <header class="c-page-header">
+      <div class="c-page-header__text">
+        <h1 class="c-page-header__title">Aviso legal</h1>
+        <p class="c-legal__updated">Última actualización: {{ legal.updatedAt }}</p>
+      </div>
+    </header>
+
+    <h2 id="titular">Titular</h2>
+    <ul>
+      <li><strong>Titular:</strong> {{ legal.ownerName }}</li>
+      <li><strong>Email de contacto:</strong> <a [href]="mailto">{{ legal.contactEmail }}</a></li>
+      <li><strong>Sitio web:</strong> {{ legal.siteUrl }}</li>
+    </ul>
+    <p>
+      Este email es también el punto de contacto único para usuarios y para las autoridades de los Estados miembros,
+      la Comisión Europea y el Comité Europeo de Servicios Digitales (Reglamento (UE) 2022/2065, arts. 11 y 12). Puedes
+      escribir en español o en inglés. Si para una reclamación necesitas más datos del titular, pídelos a ese email.
+    </p>
+
+    <h2 id="objeto">Objeto</h2>
+    <p>
+      {{ legal.siteName }} es una plataforma gratuita y sin ánimo de lucro para encontrar compañeros de Valorant
+      según su reputación. El uso del servicio se rige por los <a routerLink="/terminos">términos de uso</a> y el
+      tratamiento de datos por la <a routerLink="/privacidad">política de privacidad</a>.
+    </p>
+
+    <h2 id="propiedad">Propiedad intelectual</h2>
+    <p>
+      El código, el diseño y los textos propios de {{ legal.siteName }} son de su titular. El contenido que publican
+      los usuarios es de cada usuario.
+    </p>
+    <p lang="en">
+      {{ legal.siteName }} isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or
+      anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated
+      properties are trademarks or registered trademarks of Riot Games, Inc.
+    </p>
+    <p lang="en">
+      {{ legal.siteName }} was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games.
+      Riot Games does not endorse or sponsor this project.
+    </p>
+
+    <h2 id="enlaces">Enlaces</h2>
+    <p>
+      Los enlaces a otros sitios (perfiles de redes sociales, Riot Games…) llevan a páginas que no controlamos y de
+      cuyo contenido no somos responsables.
+    </p>
+
+    <p class="c-legal__note">
+      Consulta también los <a routerLink="/terminos">términos de uso</a>, la
+      <a routerLink="/privacidad">política de privacidad</a> y la <a routerLink="/cookies">política de cookies</a>.
+    </p>
+  </article>
+</main>

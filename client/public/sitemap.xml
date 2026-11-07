@@ -4,4 +4,8 @@
   <url><loc>https://premade-gg.vercel.app/lfg</loc><changefreq>hourly</changefreq><priority>0.9</priority></url>
   <url><loc>https://premade-gg.vercel.app/players</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
   <url><loc>https://premade-gg.vercel.app/teams</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://premade-gg.vercel.app/terminos</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://premade-gg.vercel.app/privacidad</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://premade-gg.vercel.app/cookies</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://premade-gg.vercel.app/aviso-legal</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
 </urlset>

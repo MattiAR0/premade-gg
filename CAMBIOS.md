@@ -4,9 +4,67 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-07 · Textos legales y aceptación de los términos
+
+**Commit:** este commit
+
+**Qué y por qué:** el bloqueante "no hay ningún texto legal" de `AUDITORIA-2026-11-05.md`, también exigido para el registro del producto en Riot. Son borradores pendientes de revisión por un abogado.
+
+**Cambios:**
+- `client/src/app/legal/legal-info.ts` (nuevo): titular (nombre) y email de contacto, edad mínima (16), versión de los términos (`2026-11-07`) y fecha. Es el único sitio donde se cambian. Por decisión del titular no se publican NIF ni domicilio (sin actividad económica no los exige la LSSI) y no están en el código, porque el repositorio es público.
+- `pages/legal/` (nuevo): `/privacidad`, `/terminos`, `/aviso-legal` y `/cookies`, con índice y estilos comunes (`legal.scss`).
+  - Privacidad (RGPD 13 y 14): responsable, datos y su origen, qué datos son obligatorios, bases legales, qué es público (incluido el PUUID, que hoy sigue legible), karma y decisiones automáticas con revisión humana, denuncias y bloqueos, plazos reales de conservación, encargados (Supabase en París, Vercel, proveedor de email) y comunicaciones (Riot, HenrikDev, Google/Discord, imágenes externas), transferencias, derechos, AEPD, edad mínima y cambios con 15 días de aviso.
+  - Términos: punto de contacto, requisitos, normas de la comunidad, valoraciones y karma, denuncias, medidas (retirar y suspender de 1 a 365 días), decisión motivada, recurso en 6 meses, denuncias abusivas, bloqueos, licencia sobre el contenido, Riot, responsabilidad, baja, cambios y ley aplicable.
+  - Aviso legal (LSSI art. 10 y DSA arts. 11 y 12) y cookies (solo almacenamiento técnico, sin banner; si se añaden analítica o anuncios, banner con consentimiento previo).
+- Pie: enlaces a términos, privacidad, cookies, aviso legal y contacto. `sitemap.xml` con las cuatro páginas. `app.config.ts`: `withInMemoryScrolling` para que el índice lleve a cada apartado.
+- Registro y onboarding: casilla obligatoria "Acepto los términos de uso, he leído la política de privacidad y tengo 16 años o más". El onboarding avisa de que el Riot ID, el rango, el nivel, la tarjeta y el karma serán públicos. El formulario de valoración avisa de que se publica con tu Riot ID.
+- `20261107000003_aceptacion_terminos.sql` (nueva):
+  - tabla privada `consents` (usuario, versión, fecha), `current_terms_version()`, `accept_terms` (solo la versión vigente) y `termsVersion` en `get_me`;
+  - `assert_not_suspended` ahora también exige haber aceptado la versión vigente, así que sin aceptar no se puede publicar, escribir ni valorar.
+- `riot-link`: exige `acceptTerms` y guarda la aceptación antes de activar la cuenta. `_shared/legal.ts` con la versión.
+- Aviso para las cuentas que ya existían: "Acepto y tengo 16 años o más" (`app.html`, `auth.service.acceptTerms`).
+- `seed.sql` y los tests: los usuarios de prueba han aceptado la versión vigente. `terms.test.sql` (nuevo, 7 tests).
+
+**Verificación:**
+- `npx supabase db reset` y `npm run db:test`: 101 de 101.
+- Navegador en local:
+  - las cuatro páginas se ven, el índice lleva a cada apartado y el pie enlaza a todas y al email;
+  - el registro no deja seguir sin la casilla y lo explica;
+  - Player1 (cuenta anterior) ve el aviso, acepta y la aceptación queda guardada con versión y fecha;
+  - sin scroll horizontal.
+- `npm --prefix client run build` sin errores.
+- `auditor-legal` revisó los textos frente al código. Se corrigieron:
+  - la obligatoriedad del aviso;
+  - los plazos de notificaciones y denuncias abiertas;
+  - los chats directos que se borran;
+  - el PUUID público;
+  - el "cierre de cuenta" que no existía;
+  - el preaviso de cambios;
+  - la información del art. 13;
+  - la licencia sobre el contenido;
+  - la vía para quien vea su Riot ID usado por otro;
+  - la redacción de la casilla.
+
+**Pendiente:**
+- Revisión por un abogado.
+- Comprobar que el buzón `premagegg.app@gmail.com` existe y se revisa (el titular confirmó que la dirección es así).
+- Si llegan anuncios o ingresos: añadir NIF y domicilio al aviso legal y quitar "sin ánimo de lucro".
+- Nombrar el proveedor de email en la privacidad cuando se confirme cuál es (¿Brevo?).
+- Aceptar los DPA de Supabase, Vercel y el proveedor de email.
+- Documentos internos: registro de actividades (art. 30), procedimiento de brechas (72 h) y procedimiento para las solicitudes de borrado que reenvíe Riot.
+- No implementado:
+  - mover el PUUID a una tabla privada;
+  - borrar cuentas sin onboarding o inactivas;
+  - caducidad de las denuncias abiertas;
+  - informar al denunciante de la vía de revisión dentro de la propia notificación.
+- Antes de activar anuncios o Google Analytics: banner de cookies con Aceptar y Rechazar del mismo peso y actualizar privacidad y cookies.
+- Riot: RSO y verificar la propiedad del Riot ID; preguntar por HenrikDev.
+
+---
+
 ## 2026-11-07 · Publicación de denuncias y moderación
 
-**Commit:** este commit (publica `b0a1955`)
+**Commit:** `3eb171b` (publica `b0a1955`)
 
 **Qué y por qué:** llevar a producción las denuncias, la moderación, los bloqueos y las suspensiones.
 

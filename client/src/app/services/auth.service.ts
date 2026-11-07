@@ -190,7 +190,15 @@ export class AuthService {
       region: data.region,
       role: data.role,
       schedule: data.schedule,
+      acceptTerms: data.acceptTerms,
     }).pipe(tap((user) => this.currentUserSignal.set(user)));
+  }
+
+  /** Acepta la versión vigente de los términos (cuentas creadas antes de que existieran) */
+  acceptTerms(version: string): Observable<{ message: string }> {
+    return rpc<{ message: string }>('accept_terms', { p_version: version }).pipe(
+      tap(() => this.currentUserSignal.update((u) => (u ? { ...u, termsVersion: version } : u))),
+    );
   }
 
   /** Datos de Riot que el usuario dejó en el registro (para rellenar el onboarding). */

@@ -37,6 +37,11 @@ where id = 'a0000000-0000-0000-0000-00000000000a';
 update public.profiles set riot_id = 'B#1', rank = 'Gold', role = 'Flex', schedule = 'Evenings', onboarded = true
 where id = 'b0000000-0000-0000-0000-00000000000b';
 
+-- Han aceptado los términos vigentes (sin eso no se puede escribir)
+insert into public.consents (user_id, document, version)
+select id, 'terms_privacy', public.current_terms_version() from public.profiles
+on conflict do nothing;
+
 create function pg_temp.login(p_id uuid) returns void language sql as $$
   select set_config('request.jwt.claims', json_build_object('sub', p_id, 'role', 'authenticated')::text, true);
 $$;

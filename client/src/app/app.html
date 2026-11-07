@@ -6,6 +6,21 @@
   unirte a grupos. Puedes ver la decisión y recurrirla en <a routerLink="/settings/account">Ajustes de cuenta</a>.
 </p>
 }
+@if (needsTerms()) {
+<section class="c-terms-banner" aria-labelledby="terms-banner-title">
+  <p id="terms-banner-title">
+    Hemos publicado los <a routerLink="/terminos">términos de uso</a> y la
+    <a routerLink="/privacidad">política de privacidad</a>. Hasta que aceptes los términos y confirmes que tienes 16 años
+    o más, no podrás publicar, escribir ni valorar.
+  </p>
+  <button type="button" class="c-btn c-btn--primary c-btn--sm" [disabled]="acceptingTerms()" (click)="acceptTerms()">
+    Acepto y tengo 16 años o más
+  </button>
+  @if (termsError()) {
+  <p class="c-terms-banner__error" role="alert">{{ termsError() }}</p>
+  }
+</section>
+}
 <div id="contenido" class="c-skip-target" tabindex="-1"></div>
 <router-outlet />
 <footer class="c-footer">
@@ -18,6 +33,13 @@
       <a class="c-footer__link" routerLink="/lfg">Grupos LFG</a>
       <a class="c-footer__link" routerLink="/players">Jugadores</a>
       <a class="c-footer__link" routerLink="/teams">Equipos</a>
+    </nav>
+    <nav class="c-footer__legal" aria-label="Información legal">
+      <a routerLink="/terminos">Términos de uso</a>
+      <a routerLink="/privacidad">Privacidad</a>
+      <a routerLink="/cookies">Cookies</a>
+      <a routerLink="/aviso-legal">Aviso legal</a>
+      <a [href]="'mailto:' + contactEmail">Contacto</a>
     </nav>
     <div class="c-footer__copy">
       <p>PremadeGG es un proyecto independiente: no está respaldado por Riot Games ni afiliado a ella.</p>

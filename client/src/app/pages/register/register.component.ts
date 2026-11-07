@@ -67,6 +67,10 @@ export class RegisterComponent {
     this.errorMessage = '';
   }
 
+  /** Casilla de términos, privacidad y edad mínima */
+  acceptTerms = false;
+  termsError = false;
+
   onSubmit(): void {
     this.errorMessage = '';
 
@@ -95,6 +99,13 @@ export class RegisterComponent {
       this.errorMessage = 'Selecciona tu rol principal';
       return;
     }
+
+    if (!this.acceptTerms) {
+      this.termsError = true;
+      this.errorMessage = 'Para crear la cuenta tienes que aceptar los términos de uso y tener 16 años o más.';
+      return;
+    }
+    this.termsError = false;
 
     this.loading = true;
 
@@ -125,6 +136,7 @@ export class RegisterComponent {
       region: this.region,
       role: this.role,
       schedule: this.schedule,
+      acceptTerms: this.acceptTerms,
     }).subscribe({
       next: (res) => {
         if (res.emailConfirmationRequired) {

@@ -1,8 +1,9 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { AuthService } from './services/auth.service';
+import { LEGAL } from './legal/legal-info';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +14,27 @@ import { AuthService } from './services/auth.service';
 })
 export class App {
   private readonly auth = inject(AuthService);
+  readonly contactEmail = LEGAL.contactEmail;
+
+  /** Cuentas que aún no han aceptado la versión vigente de términos y privacidad */
+  readonly needsTerms = computed(() => {
+    const user = this.auth.currentUser();
+    return !!user?.onboarded && user.termsVersion !== LEGAL.termsVersion;
+  });
+  readonly acceptingTerms = signal(false);
+  readonly termsError = signal('');
+
+  acceptTerms(): void {
+    this.acceptingTerms.set(true);
+    this.termsError.set('');
+    this.auth.acceptTerms(LEGAL.termsVersion).subscribe({
+      next: () => this.acceptingTerms.set(false),
+      error: (err) => {
+        this.acceptingTerms.set(false);
+        this.termsError.set(err.error?.message || 'No se pudo guardar. Inténtalo de nuevo.');
+      },
+    });
+  }
 
   /** Fin de la suspensión de la cuenta, si está suspendida ahora */
   readonly suspendedUntil = computed(() => {

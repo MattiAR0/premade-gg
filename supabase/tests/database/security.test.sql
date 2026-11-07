@@ -20,6 +20,11 @@ where id = 'b0000000-0000-0000-0000-00000000000b';
 update public.profiles set riot_id = 'C#1', rank = 'Diamond', role = 'Sentinel', schedule = 'Evenings', onboarded = true
 where id = 'c0000000-0000-0000-0000-00000000000c';
 
+
+-- Han aceptado los términos vigentes (sin eso no se puede escribir)
+insert into public.consents (user_id, document, version)
+select id, 'terms_privacy', public.current_terms_version() from public.profiles
+on conflict do nothing;
 -- Cambia el usuario autenticado de la sesión
 create function pg_temp.login(p_id uuid) returns void language sql as $$
   select set_config('request.jwt.claims', json_build_object('sub', p_id, 'role', 'authenticated')::text, true);

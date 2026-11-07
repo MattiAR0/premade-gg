@@ -62,8 +62,18 @@ export class OnboardingComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
+  /** Casilla de términos, privacidad y edad mínima */
+  acceptTerms = false;
+  termsError = false;
+
   onSubmit(): void {
     this.errorMessage = '';
+    if (!this.acceptTerms) {
+      this.termsError = true;
+      this.errorMessage = 'Para usar PremadeGG tienes que aceptar los términos de uso y tener 16 años o más.';
+      return;
+    }
+    this.termsError = false;
 
     if (!this.gameName.trim() || !this.tagLine.trim()) {
       this.errorMessage = 'Introduce tu nombre de juego y tag';
@@ -81,6 +91,7 @@ export class OnboardingComponent implements OnInit {
         region: this.region,
         role: this.role,
         schedule: this.schedule,
+        acceptTerms: this.acceptTerms,
       })
       .subscribe({
         next: () => this.router.navigateByUrl(this.returnUrl),

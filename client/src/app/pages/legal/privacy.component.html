@@ -1,0 +1,229 @@
+<main class="l-container l-container--medium l-section">
+  <article class="c-legal">
+    <header class="c-page-header">
+      <div class="c-page-header__text">
+        <h1 class="c-page-header__title">Política de privacidad</h1>
+        <p class="c-legal__updated">Última actualización: {{ legal.updatedAt }}</p>
+      </div>
+    </header>
+
+    <p>
+      En esta página te explicamos qué datos tuyos trata {{ legal.siteName }}, para qué, con qué base legal, cuánto
+      tiempo los guardamos, con quién los compartimos y qué derechos tienes. Si algo no queda claro, escríbenos a
+      <a [href]="mailto">{{ legal.contactEmail }}</a>.
+    </p>
+
+    <nav class="c-legal__toc" aria-label="Índice">
+      <p class="c-legal__toc-title">Índice</p>
+      <ol>
+        <li><a routerLink="." fragment="responsable">Quién es el responsable</a></li>
+        <li><a routerLink="." fragment="datos">Qué datos tratamos</a></li>
+        <li><a routerLink="." fragment="finalidades">Para qué y con qué base legal</a></li>
+        <li><a routerLink="." fragment="publico">Qué ven los demás</a></li>
+        <li><a routerLink="." fragment="karma">Karma y decisiones automáticas</a></li>
+        <li><a routerLink="." fragment="moderacion">Denuncias, moderación y bloqueos</a></li>
+        <li><a routerLink="." fragment="conservacion">Cuánto tiempo los guardamos</a></li>
+        <li><a routerLink="." fragment="destinatarios">Con quién los compartimos</a></li>
+        <li><a routerLink="." fragment="derechos">Tus derechos</a></li>
+        <li><a routerLink="." fragment="menores">Edad mínima</a></li>
+        <li><a routerLink="." fragment="cambios">Cambios en esta política</a></li>
+      </ol>
+    </nav>
+
+    <h2 id="responsable">1. Quién es el responsable</h2>
+    <ul>
+      <li><strong>Responsable:</strong> {{ legal.ownerName }}</li>
+      <li><strong>Email de contacto:</strong> <a [href]="mailto">{{ legal.contactEmail }}</a></li>
+    </ul>
+    <p>
+      {{ legal.siteName }} es un proyecto personal e independiente. No está respaldado por Riot Games ni afiliado a
+      ella. No tenemos delegado de protección de datos; para cualquier cuestión sobre tus datos, usa el email de
+      contacto.
+    </p>
+
+    <h2 id="datos">2. Qué datos tratamos</h2>
+    <h3>Los que nos das tú</h3>
+    <ul>
+      <li><strong>Cuenta:</strong> email y contraseña (guardada cifrada por nuestro proveedor de autenticación). Si entras con Google o Discord, recibimos de ellos tu email y el identificador de tu cuenta.</li>
+      <li><strong>Riot ID</strong> (nombre y tag), región, roles que juegas y horario.</li>
+      <li><strong>Perfil:</strong> biografía, foto o imagen de perfil, agentes favoritos, redes sociales, disponibilidad, si buscas equipo y si eres coach.</li>
+      <li><strong>Lo que publicas:</strong> grupos LFG, equipos, valoraciones a otros jugadores, mensajes y solicitudes.</li>
+      <li><strong>Denuncias y recursos</strong> que envías, y a quién bloqueas.</li>
+      <li><strong>Aceptación</strong> de los términos y de esta política, con la versión y la fecha, junto con tu declaración de tener {{ legal.minAge }} años o más.</li>
+    </ul>
+    <h3>Los que obtenemos de otras fuentes</h3>
+    <ul>
+      <li><strong>Riot Games:</strong> al vincular tu Riot ID comprobamos con la API de Riot que la cuenta existe y guardamos su identificador interno (PUUID).</li>
+      <li><strong>HenrikDev API</strong> (servicio de terceros, no oficial de Riot): tu rango competitivo, nivel de cuenta y tarjeta de jugador de Valorant.</li>
+      <li><strong>Otros usuarios:</strong> las valoraciones que te dejan (y tu karma, que es su media), las denuncias sobre ti y lo que cuentan en ellas.</li>
+    </ul>
+    <h3>Los que se generan al usar el servicio</h3>
+    <ul>
+      <li>Con quién has coincidido en grupos y equipos (para saber a quién puedes valorar).</li>
+      <li>Notificaciones, mensajes leídos y decisiones de moderación sobre tu cuenta.</li>
+      <li>Contadores técnicos para limitar abusos: tu identificador de usuario o, si no has iniciado sesión, un código derivado de tu IP que cambia cada día y no permite recuperarla.</li>
+      <li>Registros técnicos de nuestros proveedores de alojamiento (por ejemplo, la IP y la fecha de cada petición), por seguridad.</li>
+    </ul>
+    <p>No usamos analítica, publicidad ni cookies de terceros. Si algún día lo hacemos, te pediremos permiso antes y actualizaremos esta política.</p>
+    <h3>Qué datos son obligatorios</h3>
+    <p>
+      Para crear la cuenta necesitamos tu email (o tu cuenta de Google o Discord), tu Riot ID, tu región, tu rol y tu
+      horario: sin ellos no podemos prestarte el servicio. El resto de datos del perfil es opcional.
+    </p>
+
+    <h2 id="finalidades">3. Para qué y con qué base legal</h2>
+    <div class="c-legal__table-wrap">
+      <table>
+        <thead>
+          <tr><th scope="col">Para qué</th><th scope="col">Base legal (RGPD)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Crear y mantener tu cuenta, tu perfil y prestarte el servicio: grupos, equipos, mensajes, valoraciones y notificaciones.</td>
+            <td>Ejecución del contrato que aceptas con los términos de uso (art. 6.1.b).</td>
+          </tr>
+          <tr>
+            <td>Comprobar tu Riot ID y mostrar tu rango.</td>
+            <td>Ejecución del contrato (art. 6.1.b).</td>
+          </tr>
+          <tr>
+            <td>Calcular el karma, decidir a quién puedes valorar, limitar abusos y mantener la plataforma segura.</td>
+            <td>Interés legítimo en que el sistema de reputación sea fiable y en prevenir el acoso, el fraude y el spam (art. 6.1.f).</td>
+          </tr>
+          <tr>
+            <td>Atender denuncias, moderar contenidos, motivar decisiones y resolver recursos.</td>
+            <td>Cumplimiento de obligaciones legales del Reglamento de Servicios Digitales (UE) 2022/2065 (art. 6.1.c) e interés legítimo en un entorno seguro y en defender nuestros derechos (art. 6.1.f).</td>
+          </tr>
+          <tr>
+            <td>Enviarte emails necesarios del servicio (confirmar el email, recuperar la contraseña, cambiar el email).</td>
+            <td>Ejecución del contrato (art. 6.1.b). No enviamos publicidad.</td>
+          </tr>
+          <tr>
+            <td>Guardar la prueba de que aceptaste los términos y esta política.</td>
+            <td>Interés legítimo en poder demostrarlo (art. 6.1.f).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Cuando la base es el interés legítimo, puedes oponerte escribiéndonos (ver «Tus derechos»).</p>
+
+    <h2 id="publico">4. Qué ven los demás</h2>
+    <p>
+      {{ legal.siteName }} es una plataforma para encontrar compañeros, así que parte de tu información es pública,
+      también para quien no tiene cuenta: tu Riot ID, región, rango, nivel, tarjeta, roles, horario, biografía,
+      agentes favoritos, redes sociales, foto, karma y número de valoraciones, las valoraciones que recibes (con el
+      Riot ID de quien las escribe), tus grupos LFG y tus equipos. Ahora mismo también es técnicamente accesible tu
+      identificador interno de Riot (PUUID), que no permite entrar en tu cuenta; vamos a restringirlo.
+    </p>
+    <p>
+      Si alguien ha vinculado tu Riot ID sin tu permiso, denúncialo desde su perfil o escríbenos a
+      <a [href]="mailto">{{ legal.contactEmail }}</a> y lo retiraremos, aunque no tengas cuenta en {{ legal.siteName }}.
+    </p>
+    <p>
+      Tus mensajes solo los ven las personas del chat. Tu email, las denuncias, los bloqueos y las decisiones de
+      moderación no son públicos.
+    </p>
+
+    <h2 id="karma">5. Karma y decisiones automáticas</h2>
+    <p>
+      Tu karma es la media de las valoraciones que recibes (de 1 a 5). Para ordenar y filtrar usamos un karma ajustado
+      que tiene en cuenta cuántas valoraciones tienes; una cuenta nueva parte de 3,5. Solo puede valorarte alguien que
+      haya estado contigo al menos 15 minutos en un grupo o un equipo de {{ legal.siteName }} en los últimos 30 días.
+    </p>
+    <p>
+      Hay dos decisiones automáticas basadas en el karma: con un karma ajustado por debajo de 3 no puedes crear grupos
+      nuevos, y cada grupo puede exigir un karma mínimo para unirse. No tienen otros efectos sobre ti. Si crees que
+      tu karma es injusto, puedes denunciar las valoraciones concretas o pedirnos que lo revise una persona escribiendo
+      a <a [href]="mailto">{{ legal.contactEmail }}</a>.
+    </p>
+
+    <h2 id="moderacion">6. Denuncias, moderación y bloqueos</h2>
+    <p>
+      Cuando denuncias un perfil, una valoración, un mensaje, un equipo o un grupo, guardamos el motivo, lo que
+      escribes, una copia del contenido denunciado en ese momento y quién lo denuncia. Lo revisa siempre una persona,
+      nunca un sistema automático. No compartimos tu identidad con la persona denunciada, aunque podría deducirla por
+      el contenido.
+    </p>
+    <p>
+      Si se toma una medida contra tu cuenta o tu contenido (retirarlo o suspender la cuenta), te comunicamos qué se
+      ha hecho, por qué, y cómo recurrirlo durante seis meses. A quien denuncia le comunicamos el resultado.
+    </p>
+    <p>
+      Si bloqueas a alguien, lo guardamos para impedir mensajes directos, invitaciones y solicitudes entre los dos.
+      La otra persona no sabe que la has bloqueado.
+    </p>
+
+    <h2 id="conservacion">7. Cuánto tiempo los guardamos</h2>
+    <ul>
+      <li><strong>Cuenta y perfil:</strong> hasta que borres tu cuenta (Ajustes de cuenta → Borrar cuenta). Al borrarla eliminamos tu perfil, tus fotos, tus grupos LFG, tus mensajes, los chats directos en los que participabas (también los mensajes de la otra persona) y las valoraciones que escribiste y recibiste. Los equipos que creaste pasan a otro miembro (se borran si no queda nadie).</li>
+      <li><strong>Mensajes:</strong> 90 días.</li>
+      <li><strong>Grupos LFG:</strong> 24 horas.</li>
+      <li><strong>Notificaciones:</strong> 30 días; el resultado de una denuncia, 90 días; las decisiones de moderación y de recursos, 7 meses.</li>
+      <li><strong>Registro de con quién has coincidido:</strong> 12 meses desde la última vez.</li>
+      <li><strong>Denuncias y decisiones de moderación:</strong> mientras estén abiertas y 12 meses desde que se resuelven (o desde que se resuelve el recurso). Las conservamos aunque se borre una cuenta, para poder atender reclamaciones y defendernos de ellas.</li>
+      <li><strong>Suspensiones:</strong> hasta que terminan.</li>
+      <li><strong>Contadores contra abusos:</strong> 2 días.</li>
+      <li><strong>Aceptación de los términos:</strong> mientras tengas cuenta.</li>
+      <li><strong>Registros técnicos y copias de seguridad</strong> de nuestros proveedores: según sus propios plazos, normalmente unos días o semanas.</li>
+    </ul>
+
+    <h2 id="destinatarios">8. Con quién los compartimos</h2>
+    <p>No vendemos tus datos ni los cedemos con fines comerciales. Los tratan, por cuenta nuestra, estos proveedores:</p>
+    <ul>
+      <li><strong>Supabase Inc.</strong> (base de datos, autenticación, archivos, tiempo real y funciones). Los datos se alojan en la Unión Europea (París).</li>
+      <li><strong>Vercel Inc.</strong> (alojamiento de la web y entrega de contenidos).</li>
+      <li><strong>El proveedor de envío de emails</strong> configurado en Supabase para los correos de la cuenta.</li>
+    </ul>
+    <p>Y, para que el servicio funcione, se comunican datos a:</p>
+    <ul>
+      <li><strong>Riot Games, Inc.</strong>: tu Riot ID, para comprobar la cuenta.</li>
+      <li><strong>HenrikDev API</strong>: tu Riot ID y región, para obtener tu rango, nivel y tarjeta.</li>
+      <li><strong>Google o Discord</strong>, si eliges entrar con ellos.</li>
+      <li><strong>valorant-api.com</strong> y los sitios donde estén alojadas las fotos de perfil o logos que enlazan los usuarios: al cargar esas imágenes, tu navegador les envía tu IP.</li>
+    </ul>
+    <p>
+      Algunos de estos proveedores son estadounidenses o tienen servidores fuera del Espacio Económico Europeo. En ese
+      caso, las transferencias se basan en el Marco de Privacidad de Datos UE-EE. UU. o en las cláusulas contractuales
+      tipo de la Comisión Europea. Puedes pedirnos una copia de esas garantías escribiendo al email de contacto.
+    </p>
+    <p>También podemos comunicar datos a jueces, tribunales o autoridades cuando la ley nos obligue.</p>
+
+    <h2 id="derechos">9. Tus derechos</h2>
+    <p>Puedes pedirnos, en cualquier momento y gratis:</p>
+    <ul>
+      <li><strong>Acceso</strong> a tus datos y una copia.</li>
+      <li><strong>Rectificación</strong> de los que no sean correctos (muchos los puedes cambiar tú en tu perfil).</li>
+      <li><strong>Supresión</strong> (puedes borrar la cuenta tú mismo desde Ajustes de cuenta).</li>
+      <li><strong>Oposición</strong> a los tratamientos basados en el interés legítimo.</li>
+      <li><strong>Limitación</strong> del tratamiento.</li>
+      <li><strong>Portabilidad</strong> de los datos que nos diste, en un formato de uso común.</li>
+      <li>Que una <strong>persona revise</strong> una decisión automática que te afecte.</li>
+    </ul>
+    <p>
+      Escríbenos a <a [href]="mailto">{{ legal.contactEmail }}</a> desde el email de tu cuenta. Te responderemos en un
+      mes como máximo. Podemos limitar el acceso a datos que identifiquen a quien te denunció, para proteger sus
+      derechos.
+    </p>
+    <p>
+      Si no estás conforme con nuestra respuesta, puedes reclamar ante la Agencia Española de Protección de Datos
+      (<a href="https://www.aepd.es" target="_blank" rel="noopener noreferrer">www.aepd.es</a>).
+    </p>
+
+    <h2 id="menores">10. Edad mínima</h2>
+    <p>
+      {{ legal.siteName }} es para personas de {{ legal.minAge }} años o más. Al crear la cuenta declaras tener esa
+      edad. Si sabemos que una cuenta es de alguien menor, la borraremos.
+    </p>
+
+    <h2 id="cambios">11. Cambios en esta política</h2>
+    <p>
+      Si cambiamos esta política de forma importante, te avisaremos en la web con al menos 15 días de antelación,
+      salvo que el cambio lo exija la ley.
+    </p>
+
+    <p class="c-legal__note">
+      Consulta también los <a routerLink="/terminos">términos de uso</a>, el <a routerLink="/aviso-legal">aviso legal</a>
+      y la <a routerLink="/cookies">política de cookies</a>.
+    </p>
+  </article>
+</main>

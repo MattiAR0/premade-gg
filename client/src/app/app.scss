@@ -75,6 +75,33 @@
     }
   }
 
+  // Términos, privacidad, cookies, aviso legal y contacto
+  &__legal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: v.$spacing-xs v.$spacing-md;
+    font-size: v.$font-size-sm;
+
+    @include m.respond-to(md) {
+      flex-basis: 100%;
+      justify-content: flex-start;
+    }
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      color: v.$color-text-muted;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+
+      &:hover {
+        color: v.$color-text-heading;
+      }
+    }
+  }
+
   &__copy {
     display: flex;
     flex-direction: column;
@@ -106,6 +133,37 @@
   a {
     text-decoration: underline;
     text-underline-offset: 2px;
+  }
+}
+
+// ── Aviso de términos para cuentas anteriores ──
+.c-terms-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: v.$spacing-sm v.$spacing-md;
+  padding: v.$spacing-sm v.$spacing-md;
+  font-size: v.$font-size-sm;
+  line-height: 1.5;
+  color: v.$color-text-heading;
+  background: v.$color-bg-elevated;
+  border-bottom: 1px solid v.$color-border;
+  text-align: center;
+
+  p {
+    margin: 0;
+    max-width: 70ch;
+  }
+
+  a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  &__error {
+    flex-basis: 100%;
+    color: v.$color-danger-text;
   }
 }
 

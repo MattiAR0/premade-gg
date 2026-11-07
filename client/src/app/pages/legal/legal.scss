@@ -1,0 +1,131 @@
+@use 'utilities/variables' as v;
+@use 'utilities/mixins' as m;
+
+// Páginas legales: texto largo, legible, con índice
+.c-legal {
+  max-width: 72ch;
+
+  &__updated {
+    margin-top: v.$spacing-xs;
+    font-size: v.$font-size-sm;
+    color: v.$color-text-muted;
+  }
+
+  &__toc {
+    margin: v.$spacing-lg 0;
+    padding: v.$spacing-md v.$spacing-lg;
+    background: v.$color-bg-card;
+    border: 1px solid v.$color-border;
+    border-radius: v.$radius-lg;
+
+    ol {
+      margin: v.$spacing-xs 0 0;
+      padding-left: v.$spacing-lg;
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    a {
+      color: v.$color-text-primary;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+  }
+
+  &__toc-title {
+    font-size: v.$font-size-sm;
+    font-weight: 700;
+    color: v.$color-text-heading;
+  }
+
+  h2 {
+    margin-top: v.$spacing-2xl;
+    margin-bottom: v.$spacing-sm;
+    font-family: v.$font-heading;
+    font-size: v.$font-size-xl;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: v.$color-text-heading;
+    scroll-margin-top: 5rem;
+  }
+
+  h3 {
+    margin-top: v.$spacing-lg;
+    margin-bottom: v.$spacing-xs;
+    font-size: v.$font-size-base;
+    font-weight: 700;
+    color: v.$color-text-heading;
+  }
+
+  p,
+  li {
+    font-size: v.$font-size-md;
+    line-height: 1.65;
+    color: v.$color-text-primary;
+  }
+
+  p + p {
+    margin-top: v.$spacing-sm;
+  }
+
+  ul,
+  ol {
+    padding-left: v.$spacing-lg;
+    margin: v.$spacing-sm 0;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  a {
+    color: v.$color-text-heading;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  strong {
+    color: v.$color-text-heading;
+  }
+
+  &__table-wrap {
+    overflow-x: auto;
+    margin: v.$spacing-sm 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: v.$font-size-sm;
+
+    th,
+    td {
+      padding: v.$spacing-xs v.$spacing-sm;
+      border: 1px solid v.$color-border;
+      text-align: left;
+      vertical-align: top;
+      color: v.$color-text-primary;
+      line-height: 1.5;
+    }
+
+    th {
+      background: v.$color-bg-card;
+      color: v.$color-text-heading;
+      font-weight: 700;
+    }
+  }
+
+  &__note {
+    margin-top: v.$spacing-lg;
+    padding: v.$spacing-sm v.$spacing-md;
+    background: v.$color-bg-card;
+    border: 1px solid v.$color-border;
+    border-radius: v.$radius-md;
+    font-size: v.$font-size-sm;
+  }
+
+  @include m.respond-below(sm) {
+    &__toc {
+      padding: v.$spacing-md;
+    }
+  }
+}

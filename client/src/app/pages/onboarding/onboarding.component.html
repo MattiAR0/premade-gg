@@ -3,7 +3,7 @@
     <header class="c-auth-card__header">
       <h1 class="c-auth-card__title">Vincula tu cuenta de Valorant</h1>
       <p class="c-auth-card__subtitle">
-        Un último paso: comprobamos tu Riot ID para mostrar tu rango en tu perfil. Tu Riot ID y tu rango serán visibles para los demás jugadores.
+        Un último paso: comprobamos tu Riot ID para mostrar tu rango en tu perfil. Al vincularlo, tu Riot ID, rango, nivel, tarjeta y karma serán visibles para cualquiera, también sin cuenta.
       </p>
     </header>
 
@@ -67,6 +67,15 @@
             <option [value]="s">{{ s | label: 'schedule' }}</option>
           }
         </select>
+      </label>
+
+      <label class="c-auth-card__terms">
+        <input type="checkbox" name="acceptTerms" [(ngModel)]="acceptTerms" required
+          [attr.aria-invalid]="termsError ? true : null" />
+        <span>
+          Acepto los <a href="/terminos" target="_blank" rel="noopener">términos de uso</a>, he leído la
+          <a href="/privacidad" target="_blank" rel="noopener">política de privacidad</a> y tengo 16 años o más.
+        </span>
       </label>
 
       <button class="c-btn c-btn--primary c-auth-card__submit" type="submit" [disabled]="loading">

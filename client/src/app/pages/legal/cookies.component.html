@@ -1,0 +1,78 @@
+<main class="l-container l-container--medium l-section">
+  <article class="c-legal">
+    <header class="c-page-header">
+      <div class="c-page-header__text">
+        <h1 class="c-page-header__title">Política de cookies</h1>
+        <p class="c-legal__updated">Última actualización: {{ legal.updatedAt }}</p>
+      </div>
+    </header>
+
+    <p>
+      {{ legal.siteName }} <strong>no usa cookies de analítica, de publicidad ni de terceros</strong>. Solo guarda en
+      tu navegador lo imprescindible para que la web funcione, y para eso la ley no exige pedirte permiso (art. 22.2 de
+      la Ley 34/2002, LSSI). Por eso no verás un banner de cookies.
+    </p>
+
+    <h2 id="que-guardamos">Qué guardamos en tu navegador</h2>
+    <div class="c-legal__table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Nombre</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Para qué</th>
+            <th scope="col">Duración</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>sb-…-auth-token</code></td>
+            <td>Almacenamiento local, propio</td>
+            <td>Mantener tu sesión iniciada (lo crea Supabase, nuestro proveedor de autenticación).</td>
+            <td>Hasta que cierras sesión o caduca la sesión</td>
+          </tr>
+          <tr>
+            <td><code>premadegg:agents:v2</code></td>
+            <td>Almacenamiento local, propio</td>
+            <td>Guardar la lista de agentes de Valorant para no pedirla en cada visita. No contiene datos tuyos.</td>
+            <td>Hasta que se actualiza la lista</td>
+          </tr>
+          <tr>
+            <td><code>premadegg:stale-chunk-reload</code></td>
+            <td>Almacenamiento de sesión, propio</td>
+            <td>Recargar la página una sola vez si se publica una versión nueva mientras la tienes abierta.</td>
+            <td>Hasta que cierras la pestaña</td>
+          </tr>
+          <tr>
+            <td>Cookies de seguridad de Vercel</td>
+            <td>Cookie técnica del proveedor de alojamiento</td>
+            <td>Solo si el sistema anti-ataques de Vercel te pide comprobar que no eres un robot.</td>
+            <td>La que fije Vercel</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Puedes borrar estos datos desde la configuración de tu navegador; si borras la sesión, tendrás que volver a
+      iniciarla.
+    </p>
+
+    <h2 id="terceros">Contenido de otros sitios</h2>
+    <p>
+      Los iconos de agentes y emblemas de rango se cargan desde valorant-api.com, y las fotos de perfil o logos que
+      enlazan los usuarios, desde el sitio donde estén. Al cargarlos, tu navegador les envía tu IP, como al visitar
+      cualquier web, pero no instalan cookies a través de {{ legal.siteName }}.
+    </p>
+
+    <h2 id="cambios">Si esto cambia</h2>
+    <p>
+      Si algún día añadimos analítica o publicidad, no las activaremos hasta que nos des tu permiso mediante un aviso
+      en el que podrás aceptar o rechazar con la misma facilidad, y actualizaremos esta página.
+    </p>
+
+    <p class="c-legal__note">
+      Más información en la <a routerLink="/privacidad">política de privacidad</a>. Dudas:
+      <a [href]="mailto">{{ legal.contactEmail }}</a>.
+    </p>
+  </article>
+</main>

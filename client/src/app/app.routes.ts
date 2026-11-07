@@ -103,6 +103,26 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'privacidad',
+    title: 'Política de privacidad · PremadeGG',
+    loadComponent: () => import('./pages/legal/privacy.component').then((m) => m.PrivacyComponent),
+  },
+  {
+    path: 'terminos',
+    title: 'Términos de uso · PremadeGG',
+    loadComponent: () => import('./pages/legal/terms.component').then((m) => m.TermsComponent),
+  },
+  {
+    path: 'aviso-legal',
+    title: 'Aviso legal · PremadeGG',
+    loadComponent: () => import('./pages/legal/legal-notice.component').then((m) => m.LegalNoticeComponent),
+  },
+  {
+    path: 'cookies',
+    title: 'Política de cookies · PremadeGG',
+    loadComponent: () => import('./pages/legal/cookies.component').then((m) => m.CookiesComponent),
+  },
+  {
     path: 'moderacion',
     title: 'Moderación · PremadeGG',
     loadComponent: () => import('./pages/moderation/moderation.component').then((m) => m.ModerationComponent),

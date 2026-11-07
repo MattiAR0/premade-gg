@@ -5,13 +5,21 @@
 import { handle, json, readJson, HttpError } from '../_shared/http.ts';
 import { admin, rateLimit, requireUser, userJson } from '../_shared/supabase.ts';
 import { assertRegion, getPlayerAccount, getPlayerRank, parseRiotId, validateAccount } from '../_shared/riot.ts';
+import { TERMS_VERSION } from '../_shared/legal.ts';
 
 const ROLES = ['Duelist', 'Controller', 'Initiator', 'Sentinel', 'Flex'];
 
 Deno.serve(handle(async (req) => {
   const user = await requireUser(req);
   await rateLimit(user.id, 'riot_link', 10, 3600);
-  const body = await readJson<{ riotId?: string; region?: string; role?: string; schedule?: string }>(req);
+  const body = await readJson<{
+    riotId?: string; region?: string; role?: string; schedule?: string; acceptTerms?: boolean;
+  }>(req);
+
+  // Aceptación de los términos y la privacidad, con la declaración de edad mínima
+  if (body.acceptTerms !== true) {
+    throw new HttpError(400, 'Para usar PremadeGG tienes que aceptar los términos de uso y tener 16 años o más.');
+  }
 
   const { gameName, tagLine } = parseRiotId(body.riotId);
   const region = assertRegion(body.region);
@@ -34,6 +42,15 @@ Deno.serve(handle(async (req) => {
     getPlayerAccount(account.gameName, account.tagLine),
   ]);
 
+  // Primero la prueba de la aceptación; después se activa la cuenta (onboarded)
+  const { error: consentError } = await admin
+    .from('consents')
+    .upsert(
+      { user_id: user.id, document: 'terms_privacy', version: TERMS_VERSION },
+      { onConflict: 'user_id,document,version', ignoreDuplicates: true },
+    );
+  if (consentError) throw consentError;
+
   const { error } = await admin
     .from('profiles')
     .update({
@@ -55,5 +72,5 @@ Deno.serve(handle(async (req) => {
     throw error;
   }
 
-  return json(await userJson(user.id, user.email));
+  return json({ ...(await userJson(user.id, user.email)), termsVersion: TERMS_VERSION });
 }));

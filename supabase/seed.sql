@@ -237,3 +237,8 @@ begin
     last_message_at = now() - interval '5 minutes' where id = v_conv;
 end;
 $$;
+
+-- Los usuarios de prueba ya han aceptado los términos vigentes
+insert into public.consents (user_id, document, version)
+select id, 'terms_privacy', public.current_terms_version() from public.profiles
+on conflict do nothing;
