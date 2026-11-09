@@ -4,6 +4,41 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-09 · Procedimiento para las solicitudes de borrado de Riot
+
+**Commit:** este commit
+
+**Qué y por qué:** faltaba en el registro del producto: qué hacer cuando Riot reenvía una solicitud de supresión de un jugador o si se pierde el acceso a la API. Los términos de la API de Riot dicen que Riot pasa listas de identificadores (ejemplo: `accountId`) y que al terminar el acceso hay que borrar toda la información del juego; no fijan plazo, así que se usa el del RGPD (un mes).
+
+**Cambios:**
+- `PROCEDIMIENTO-BORRADO-RIOT.md` (nuevo): responsable, buzones y plazo; qué identificador llega; qué se borra (PUUID, Riot ID, rango, nivel, tarjeta, retos y hash contra la evasión) y qué no (la cuenta de PremadeGG); SQL para buscar, borrar en una transacción y comprobar; texto libre con el Riot ID (avisos y denuncias); email al usuario; registro fuera del repositorio; copias de seguridad; y borrado total si se pierde el acceso a la API.
+- `RIOT-REGISTRO.md`: la sección "Data protection" describe el procedimiento y pregunta a Riot qué identificador mandan.
+- `INDICE.md`: enlace al procedimiento.
+
+**Verificación:** los bloques SQL se ejecutaron en la base local con TestUser1: el borrado deja a 0 identidades, retos, hashes e historial, y la cuenta queda sin Riot ID y sin onboarding. El bloque de pérdida de acceso también se ejecutó (por error, sin transacción externa) y borró los datos de Riot de la base local; se restauró con `db reset`. Producción no se tocó.
+
+**Pendiente:**
+- Confirmar con Riot qué identificador mandan para VALORANT (no guardamos `accountId`).
+- Comprobar cuántos días guarda Supabase las copias de seguridad y ponerlo en la política de privacidad.
+
+---
+
+## 2026-11-09 · Borrador del registro en el Riot Developer Portal
+
+**Commit:** este commit
+
+**Qué y por qué:** preparar el texto en inglés para registrar el producto y pedir la clave de producción, con notas internas en español.
+
+**Cambios:**
+- `RIOT-REGISTRO.md` (nuevo): notas internas, texto campo a campo y lista de lo que no se pudo verificar.
+- `INDICE.md`: enlace `[[RIOT-REGISTRO]]`.
+
+**Verificación:** afirmaciones contrastadas con las Edge Functions `riot-*`, las migraciones de moderación y karma, `app.routes.ts` y las páginas de Riot (docs de Valorant y políticas generales), leídas el 2026-11-09. Revisado después contra el código y corregido: el login con Google y Discord no está en producción (quitado del texto), el orden y los requisitos usan el karma ajustado, el bloqueo cubre mensajes, chats, grupos, equipos, valoraciones y notificaciones, el borrado de cuenta guarda el historial de 90 días, y HenrikDev figura como origen de datos, no como encargado. El titular decidió mantener el orden de `/players` por karma; el texto lo justifica como orden por reputación. Comprobados en el SQL: caducidad de 24 h de los grupos, un recurso por decisión en 6 meses y valorar solo con pareja de los últimos 30 días.
+
+**Pendiente:** capturas, procedimiento de borrado pedido por Riot, comprobar que el buzón de contacto existe y las comprobaciones de la sección "Sin verificar". No se ha enviado nada a Riot.
+
+---
+
 ## 2026-11-09 · Publicación del PUUID privado y el desvincular
 
 **Commit:** este commit (publica `d20a7e2`)
