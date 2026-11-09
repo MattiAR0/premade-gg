@@ -4,6 +4,29 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-09 · Publicación de la verificación del Riot ID
+
+**Commit:** este commit (publica `42f4015`)
+
+**Qué y por qué:** llevar a producción la verificación del Riot ID, el karma que se conserva al borrar la cuenta y la versión `2026-11-09` de los términos.
+
+**Cambios:**
+- Producción: `supabase db push --linked` de `20261109000001_verificacion_tipos.sql`, `20261109000002_verificacion_riot_id.sql` y `20261109000003_terminos_version.sql`.
+- `supabase functions deploy --no-verify-jwt` de `riot-verify` (nueva), `riot-link`, `riot-validate`, `riot-refresh` y `delete-account` (todas usan `_shared`, que cambió).
+- Git: push de `migrate-supabase` y avance rápido de `main` a `42f4015`; Vercel desplegó la web.
+
+**Verificación:**
+- `db push --dry-run` antes: solo las tres migraciones nuevas.
+- Con la clave publicable de producción: `riot_challenges`, `riot_account_history` y `app_secrets` responden 401; `restore_riot_account`, `release_unverified_riot_id` y `puuid_hash`, "permission denied"; `riot-verify` sin sesión, 401; `profiles.riot_verified_at` existe.
+- `supabase secrets list`: no hay `RIOT_BASE_URL` ni `HENRIK_BASE_URL` en producción.
+- Navegador en producción: `/privacidad` muestra la fecha del 9 de noviembre y los textos nuevos, sin errores de consola.
+
+**Pendiente:**
+- Todas las cuentas, también la del titular, tienen que aceptar los términos nuevos desde el aviso de arriba.
+- Probar el reto con una cuenta real de Valorant (lo demás sigue en la entrada anterior).
+
+---
+
 ## 2026-11-09 · Verificación del Riot ID con la tarjeta de jugador y karma que no se limpia al borrar la cuenta
 
 **Commit:** este commit
