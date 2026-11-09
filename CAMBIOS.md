@@ -4,6 +4,32 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-09 · Publicación del PUUID privado y el desvincular
+
+**Commit:** este commit (publica `d20a7e2`)
+
+**Qué y por qué:** llevar a producción el PUUID privado, el vínculo en una sola transacción y el botón para desvincular el Riot ID.
+
+**Cambios:**
+- Producción: `supabase db push --linked` de `20261109000004_riot_identities.sql`. Justo después, `functions deploy --no-verify-jwt` de `riot-link`, `riot-verify`, `riot-validate`, `riot-refresh` y `delete-account`.
+- Git: push de `migrate-supabase` y avance rápido de `main` a `d20a7e2`; Vercel desplegó la web.
+
+**Verificación:**
+- `db push --dry-run` antes: solo la migración nueva.
+- Base de producción: 3 cuentas vinculadas y 3 PUUID copiados a `riot_identities`, ninguna sin PUUID; los crons de limpieza existen.
+- Con la clave publicable:
+  - `profiles?select=puuid` responde 42703 (la columna ya no existe);
+  - `riot_identities` y `riot_identity_hashes`, 401;
+  - `unlink_my_riot_account` y `link_riot_account` sin sesión, "permission denied";
+  - `get_users`, 200;
+  - `riot-link` sin sesión, 401.
+- Navegador en producción: `/privacidad` con los textos nuevos y `/players` con 3 jugadores, sin errores de consola.
+
+**Pendiente:**
+- Probar con sesión en producción: desvincular y volver a vincular un Riot ID real.
+
+---
+
 ## 2026-11-09 · PUUID privado, vincular en una transacción y desvincular el Riot ID sin borrar la cuenta
 
 **Commit:** este commit
