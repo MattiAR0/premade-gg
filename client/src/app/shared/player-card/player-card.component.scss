@@ -76,6 +76,14 @@
     @include m.text-truncate;
   }
 
+  // Riot ID verificado con la tarjeta de jugador
+  &__verified {
+    display: inline-flex;
+    margin-left: v.$spacing-xs;
+    vertical-align: middle;
+    color: v.$color-text-heading;
+  }
+
   &__standing {
     display: flex;
     flex-wrap: wrap;

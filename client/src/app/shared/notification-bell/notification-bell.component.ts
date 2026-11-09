@@ -78,6 +78,9 @@ export class NotificationBellComponent {
       case 'moderation_notice':
       case 'appeal_update':
         return '⚖️';
+      case 'riot_id_claimed':
+      case 'riot_history_restored':
+        return '🪪';
       default:
         return '🔔';
     }

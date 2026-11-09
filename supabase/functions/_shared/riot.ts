@@ -3,8 +3,16 @@
 // · HenrikDev API: rango (MMR), nivel y card de Valorant
 import { HttpError } from './http.ts';
 
-const RIOT_BASE_URL = 'https://europe.api.riotgames.com';
-const HENRIK_BASE_URL = 'https://api.henrikdev.xyz';
+// Para pruebas locales contra un servidor falso se pueden cambiar con RIOT_BASE_URL y
+// HENRIK_BASE_URL, pero solo hacia una dirección local: así un secreto mal puesto en
+// producción nunca manda las claves de API a otro sitio.
+const LOCAL_URL = /^http:\/\/(localhost|127\.0\.0\.1|host\.docker\.internal)(:\d+)?$/;
+const localOverride = (name: string): string | null => {
+  const url = Deno.env.get(name);
+  return url && LOCAL_URL.test(url) ? url : null;
+};
+const RIOT_BASE_URL = localOverride('RIOT_BASE_URL') ?? 'https://europe.api.riotgames.com';
+const HENRIK_BASE_URL = localOverride('HENRIK_BASE_URL') ?? 'https://api.henrikdev.xyz';
 const TIMEOUT_MS = 10_000;
 
 export const REGIONS = ['eu', 'na', 'ap', 'kr'] as const;
@@ -108,6 +116,49 @@ export const getPlayerRank = async (gameName: string, tagLine: string, region: R
   const data = (await res.json())?.data;
   const currentRank = (data?.current?.tier?.name as string) ?? null;
   return { currentRank, normalizedRank: normalizeRank(currentRank), elo: (data?.current?.elo as number) ?? null };
+};
+
+/** Tarjeta de jugador por defecto («VALORANT Card»): la tienen todas las cuentas. */
+export const DEFAULT_CARD = { id: '9fb348bc-41a0-91ad-8a3e-818035c4e561', name: 'VALORANT Card' };
+
+export interface MatchCard {
+  startedAt: number;
+  card: string;
+}
+
+/**
+ * Tarjeta que llevaba el jugador en sus últimas partidas, de la más reciente a la más antigua.
+ * La tarjeta equipada no se puede leer en directo: solo aparece en las partidas jugadas.
+ */
+export const getRecentMatchCards = async (region: Region, puuid: string, size = 10): Promise<MatchCard[]> => {
+  let res: Response;
+  try {
+    res = await fetch(`${HENRIK_BASE_URL}/valorant/v4/by-puuid/matches/${region}/pc/${enc(puuid)}?size=${size}`, {
+      headers: henrikHeaders(),
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+  } catch (err) {
+    console.error('HenrikDev Matches API error:', err);
+    throw new HttpError(502, UNAVAILABLE);
+  }
+  if (res.status === 429) throw new HttpError(429, BUSY);
+  if (res.status === 404) return [];
+  if (!res.ok) {
+    console.error(`HenrikDev Matches API devolvió ${res.status}`);
+    throw new HttpError(502, UNAVAILABLE);
+  }
+
+  const matches = ((await res.json())?.data ?? []) as Array<{
+    metadata?: { started_at?: string };
+    players?: Array<{ puuid?: string; customization?: { card?: string } }>;
+  }>;
+  return matches
+    .map((m) => ({
+      startedAt: Date.parse(m.metadata?.started_at ?? ''),
+      card: m.players?.find((p) => p.puuid === puuid)?.customization?.card?.toLowerCase() ?? '',
+    }))
+    .filter((m) => Number.isFinite(m.startedAt) && m.card)
+    .sort((a, b) => b.startedAt - a.startedAt);
 };
 
 export const assertRegion = (region: unknown): Region => {

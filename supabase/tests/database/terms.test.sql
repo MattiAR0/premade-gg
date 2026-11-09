@@ -23,9 +23,9 @@ select throws_ok(
   $$ select public.accept_terms('2020-01-01') $$,
   'P0001', null, 'solo se acepta la versión vigente'
 );
-select lives_ok($$ select public.accept_terms('2026-11-07') $$, 'acepta la versión vigente');
-select is(public.get_me() ->> 'termsVersion', '2026-11-07', 'get_me devuelve la versión aceptada');
-select lives_ok($$ select public.accept_terms('2026-11-07') $$, 'aceptar dos veces no falla');
+select lives_ok($$ select public.accept_terms('2026-11-09') $$, 'acepta la versión vigente');
+select is(public.get_me() ->> 'termsVersion', '2026-11-09', 'get_me devuelve la versión aceptada');
+select lives_ok($$ select public.accept_terms('2026-11-09') $$, 'aceptar dos veces no falla');
 select throws_ok($$ select count(*) from public.consents $$, '42501', null, 'las aceptaciones no se leen desde la API');
 
 select * from finish();

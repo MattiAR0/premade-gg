@@ -22,6 +22,12 @@
         <div class="c-profile__info">
           <h1 class="c-profile__name">{{ user.riotId }}</h1>
           <div class="c-profile__badges">
+            @if (user.riotVerified) {
+              <span class="c-badge c-badge--riot-verified" title="Ha demostrado con su tarjeta de jugador que la cuenta de Riot es suya">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                Riot ID verificado
+              </span>
+            }
             @for (r of userRoles; track r) {
               <span class="c-badge c-badge--role">{{ r | label: 'role' }}</span>
             }

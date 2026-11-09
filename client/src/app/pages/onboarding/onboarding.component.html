@@ -4,11 +4,20 @@
       <h1 class="c-auth-card__title">Vincula tu cuenta de Valorant</h1>
       <p class="c-auth-card__subtitle">
         Un último paso: comprobamos tu Riot ID para mostrar tu rango en tu perfil. Al vincularlo, tu Riot ID, rango, nivel, tarjeta y karma serán visibles para cualquiera, también sin cuenta.
+        Después podrás verificar en Ajustes de cuenta que la cuenta de Riot es tuya; si no lo haces y otra persona
+        demuestra que ese Riot ID es suyo, se le asignará a ella.
       </p>
     </header>
 
     @if (errorMessage) {
       <div class="c-auth-card__error" role="alert">{{ errorMessage }}</div>
+    }
+
+    @if (claim) {
+      <section class="c-auth-card__claim" aria-labelledby="onboarding-claim-title">
+        <h2 class="c-auth-card__claim-title" id="onboarding-claim-title">Recupera {{ claim.riotId }}</h2>
+        <app-riot-verify [riotId]="claim.riotId" [region]="claim.region" (verified)="onClaimVerified()" />
+      </section>
     }
 
     <form class="c-auth-card__form" (ngSubmit)="onSubmit()">

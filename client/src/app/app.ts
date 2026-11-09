@@ -22,6 +22,8 @@ export class App {
     return !!user?.onboarded && user.termsVersion !== LEGAL.termsVersion;
   });
   readonly acceptingTerms = signal(false);
+  /** Ya aceptó una versión anterior: el aviso resume qué ha cambiado */
+  readonly termsUpdated = computed(() => !!this.auth.currentUser()?.termsVersion);
   readonly termsError = signal('');
 
   acceptTerms(): void {

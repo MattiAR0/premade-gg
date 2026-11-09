@@ -79,6 +79,22 @@
     margin-bottom: v.$spacing-sm;
   }
 
+  // Onboarding: recuperar un Riot ID que tiene otra cuenta sin verificar
+  &__claim {
+    padding: v.$spacing-md;
+    margin-bottom: v.$spacing-md;
+    background: v.$color-bg-elevated;
+    border: 1px solid v.$color-border-light;
+    border-radius: v.$radius-md;
+  }
+
+  &__claim-title {
+    margin: 0 0 v.$spacing-sm;
+    color: v.$color-text-heading;
+    font-size: v.$font-size-md;
+    overflow-wrap: anywhere;
+  }
+
   &__success {
     display: flex;
     align-items: center;

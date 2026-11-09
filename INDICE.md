@@ -1,6 +1,6 @@
 ---
 tags: [premadegg, indice]
-actualizado: 2026-11-03
+actualizado: 2026-11-09
 ---
 
 # PremadeGG · Índice del vault
@@ -9,10 +9,10 @@ Nota de entrada del vault de Obsidian. La raíz del repositorio es el vault: cad
 
 Proyecto personal (empezó como TFG): plataforma LFG de Valorant basada en reputación (karma), que se quiere presentar a Riot Games. Frontend Angular en `client/`, backend Supabase en `supabase/`. En producción en premade-gg.vercel.app.
 
-## Estado actual (2026-11-03)
+## Estado actual (2026-11-09)
 
-- Rama de trabajo `migrate-supabase`, igual que `origin/main` en `6cf8b3c`. Todo el código está commiteado y publicado.
-- Siguiente trabajo: el primer pendiente de [[BACKLOG]].
+- Rama de trabajo `migrate-supabase`. Lo último publicado (2026-11-09): la verificación provisional del Riot ID, el karma que se conserva al borrar la cuenta y la versión `2026-11-09` de los términos (ver [[CAMBIOS]]).
+- Siguiente trabajo: los pendientes de [[BACKLOG]], empezando por decidir si la verificación lleva una versión nueva de los términos.
 
 ## Documentos vivos
 
@@ -62,8 +62,11 @@ Están en `.impeccable/critique/`. Obsidian oculta las carpetas que empiezan por
 - `20261025000008_lfg_edit_size.sql`: cambiar el tamaño del grupo.
 - `20261103000001_profanity_filter.sql`: filtro de palabras malsonantes (censura con asteriscos; bloqueo en biografía, comentarios y nombres de equipo).
 - `20261103000002_delete_account.sql`: limpieza al borrar una cuenta (equipos, chats, LFG).
+- `20261109000001_verificacion_tipos.sql`: notificaciones de verificación del Riot ID.
+- `20261109000002_verificacion_riot_id.sql`: verificación del Riot ID, historial de 90 días al borrar una cuenta con karma o suspensión, y liberación de Riot ID sin verificar.
+- `20261109000003_terminos_version.sql`: versión `2026-11-09` de los términos y la privacidad.
 
-**Edge Functions** (`supabase/functions/`): `riot-validate` (público, valida un Riot ID), `riot-link` (onboarding), `riot-refresh` (refresca rango, con 1 h de espera), `delete-account` (borra la cuenta del usuario que llama).
+**Edge Functions** (`supabase/functions/`): `riot-validate` (público, valida un Riot ID), `riot-link` (onboarding), `riot-refresh` (refresca rango, con 1 h de espera), `delete-account` (borra la cuenta del usuario que llama), `riot-verify` (reto para verificar el Riot ID con la tarjeta de jugador).
 
 ## Agentes de Claude Code
 

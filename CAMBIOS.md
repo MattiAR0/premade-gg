@@ -4,6 +4,81 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-09 · Verificación del Riot ID con la tarjeta de jugador y karma que no se limpia al borrar la cuenta
+
+**Commit:** este commit
+
+**Qué y por qué:** dos bloqueantes de `AUDITORIA-2026-11-05.md`: el Riot ID no se verificaba (cualquiera podía vincular el de otro) y borrar la cuenta limpiaba el karma y las suspensiones. Decisiones del titular: verificar con la tarjeta de jugador mientras no haya RSO y guardar 90 días un hash del PUUID con el karma y la suspensión.
+
+**Cambios:**
+- `20261109000001_verificacion_tipos.sql` (nueva): notificaciones `riot_id_claimed` y `riot_history_restored`.
+- `20261109000002_verificacion_riot_id.sql` (nueva):
+  - `profiles.riot_verified_at` y `riotVerified` en `user_json`.
+  - `riot_challenges` (privada): reto de verificación por usuario, con la tarjeta de la última partida (`baseline_card`), el primer paso cumplido y la caducidad (24 h).
+  - `riot_account_history` (privada): al borrar un perfil con valoraciones o suspensión vigente (trigger `remember_deleted_riot_account`) se guardan 90 días la suma y el número de valoraciones y el fin de la suspensión, con un HMAC del PUUID. La clave está en `app_secrets` (privada), se genera en cada base de datos y no está en el repositorio.
+  - `restore_riot_account`: al vincular se hereda siempre la suspensión y el karma por debajo del neutro (3,5); el karma alto solo si quien vincula verifica. Si no, el historial se guarda para el dueño. Avisa con una notificación.
+  - `profiles.karma_carry_sum` y `karma_carry_count`, y `refresh_karma`. `recalculate_karma` cuenta lo heredado, así que `trust_karma` también.
+  - `suspensions.carried_until` y nueva `resolve_appeal`: revocar un recurso ya no borra la suspensión heredada.
+  - `release_unverified_riot_id`: quita el Riot ID a una cuenta sin verificar. La cuenta vuelve al onboarding sin los datos de esa cuenta de Riot, se cierran sus grupos LFG y recibe un aviso. Es idempotente y no toca cuentas verificadas.
+  - Cron `premadegg-riot-verification-cleanup`.
+- Edge Function `riot-verify` (nueva), con las acciones `status`, `start` y `check`. El reto pide dos partidas empezadas después de crearlo: una con otra tarjeta (la de por defecto o, si ya la llevabas, cualquier otra) y otra posterior con la de siempre. Usa las partidas v4 de HenrikDev por PUUID. Límites por usuario y por IP.
+- `riot-link`:
+  - Si el Riot ID lo tiene una cuenta sin verificar, responde `409 riot_id_claimable`; con el reto superado se lo quita a esa cuenta y vincula verificado.
+  - Primero pide los datos a HenrikDev y después libera, para que un fallo no deje a nadie sin Riot ID.
+  - Un verificado con otro PUUID (nombre antiguo) da `riot_id_stale`.
+  - Llama a `restore_riot_account` y borra el reto.
+- `_shared/http.ts`: los errores pueden llevar `code`. `_shared/riot.ts`: `getRecentMatchCards` y `DEFAULT_CARD`. `RIOT_BASE_URL` y `HENRIK_BASE_URL` solo se aceptan si apuntan a una dirección local (pruebas con un servidor falso).
+- Cliente:
+  - Componente `app-riot-verify`: pasos del reto, progreso y retomar el reto después de jugar.
+  - Ajustes de cuenta: sección "Riot ID".
+  - Onboarding: "Recupera tu Riot ID" cuando el Riot ID está ocupado sin verificar, y al superarlo vincula solo.
+  - El registro ya no bloquea un Riot ID ocupado.
+  - Sello "Riot ID verificado" en el perfil (`c-badge--riot-verified`) e icono en la tarjeta de jugador.
+  - Notificaciones nuevas en la campana.
+- Textos: privacidad (finalidades y bases, decisiones automáticas, conservación con la huella seudonimizada, supresión con excepciones, HenrikDev), términos (verificación, pérdida del Riot ID con revisión humana, reputación tras borrar), Ajustes de cuenta, modal de borrado y onboarding.
+- `config.toml` y `DEPLOY.md`: `riot-verify`.
+- Versión nueva de los términos y la privacidad, `2026-11-09`: `20261109000003_terminos_version.sql` (`current_terms_version()`), `legal-info.ts` (también la fecha mostrada), `_shared/legal.ts` y `terms.test.sql`. Todas las cuentas tienen que volver a aceptar. Sin los 15 días de aviso que prometen los términos, por decisión del titular: los únicos usuarios son amigos suyos y el producto aún no está lanzado.
+- El aviso de aceptar los términos (`app.html`) dice "Hemos actualizado…" y resume los cambios a quien ya había aceptado una versión anterior.
+- Arreglo de un fallo anterior: `riot-refresh` (cada hora) y editar el perfil sustituían el usuario entero en el cliente y se perdían `termsVersion`, `isModerator` y `suspendedUntil`, que solo da `get_me`. Volvía a salir el aviso de los términos a quien ya los había aceptado y desaparecía el enlace de moderación. Ahora se fusionan (`auth.service.ts`).
+
+**Verificación:**
+- `npx supabase db reset` y `npm run db:test`: 132 de 132. `riot_verification.test.sql` (nuevo, 31 tests):
+  - liberar el Riot ID, que repetirlo no avisa dos veces y que un verificado no se libera;
+  - el historial al borrar y que el hash lleva clave;
+  - restaurar con y sin verificar, y el karma heredado con valoraciones nuevas y borradas;
+  - revocar un recurso con suspensión heredada;
+  - el karma alto que no hereda un suplantador;
+  - el historial caducado y los permisos desde la API.
+- Prueba de punta a punta con un servidor falso de Riot y HenrikDev (`supabase functions serve` con las URL locales): 19 de 19 (verificar el propio Riot ID en dos pasos, recuperar un Riot ID ocupado, que el reto a medias no basta, y Riot ID verificado bloqueado).
+- Navegador en local:
+  - Ajustes de cuenta: reto, paso 1 "Hecho" y verificado.
+  - Onboarding: Riot ID ocupado → reto → vinculado y verificado; la cuenta anterior queda sin Riot ID y con aviso.
+  - El sello en el perfil (#ece8e1 sobre #16232f) y en la lista de jugadores. Sin scroll horizontal a 375 px.
+  - Una cuenta que había aceptado `2026-11-07` ve "Hemos actualizado…"; al aceptar desaparece y no vuelve tras recargar, aunque `riot-refresh` actualice el perfil.
+- `npm --prefix client run build` sin errores.
+- `revisor-supabase`, `auditor-seguridad` y `auditor-legal` revisaron la primera versión. Se aplicaron:
+  - el reto en dos partidas: con una bastaba con que el dueño ya hubiera cambiado de tarjeta;
+  - restaurar también a quien verifica, porque si no verificarse limpiaba el historial;
+  - que el karma alto ajeno no lo herede un suplantador;
+  - la suspensión heredada frente a `resolve_appeal`;
+  - el HMAC con clave secreta;
+  - la liberación idempotente y después de pedir los datos;
+  - la caducidad del reto superado;
+  - el override de URL solo local;
+  - el límite por IP;
+  - el reto de un PUUID distinto al vinculado;
+  - los nombres antiguos;
+  - las notificaciones y los textos legales.
+
+**Pendiente:**
+- Probar con una cuenta real de Valorant cuánto tarda HenrikDev en mostrar una partida, si `started_at` es el inicio real y si incluye todos los modos (combate a muerte).
+- Ponderación del interés legítimo por escrito (documento interno; borrador en el informe de `auditor-legal`).
+- La respuesta de `start` dice si el jugador lleva la tarjeta por defecto: un dato menor sobre terceros, necesario para dar las instrucciones.
+- Riot ID verificado con un nombre antiguo: hoy hay que resolverlo a mano (`riot_id_stale`).
+- `riot-link` no es una sola transacción: si falla la actualización del perfil después de liberar, quien reclama tiene que reintentarlo.
+
+---
+
 ## 2026-11-07 · Publicación de los textos legales
 
 **Commit:** este commit (publica `da3c702`)

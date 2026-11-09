@@ -28,7 +28,8 @@ const corsHeadersFor = (req: Request): Record<string, string> => {
 };
 
 export class HttpError extends Error {
-  constructor(public status: number, message: string) {
+  /** `code` (opcional) deja que el cliente distinga casos con el mismo status. */
+  constructor(public status: number, message: string, public code?: string) {
     super(message);
   }
 }
@@ -51,7 +52,9 @@ export const handle = (fn: (req: Request) => Promise<Response>) => async (req: R
   try {
     return withCors(await fn(req), req);
   } catch (err) {
-    if (err instanceof HttpError) return withCors(json({ message: err.message }, err.status), req);
+    if (err instanceof HttpError) {
+      return withCors(json({ message: err.message, ...(err.code ? { code: err.code } : {}) }, err.status), req);
+    }
     console.error(err);
     return withCors(json({ message: 'Error interno del servidor' }, 500), req);
   }

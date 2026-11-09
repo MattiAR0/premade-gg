@@ -1,0 +1,70 @@
+<div class="c-riot-verify">
+  @if (challenge(); as c) {
+    @if (c.verified) {
+      <p class="c-riot-verify__success" role="status">Comprobado: la cuenta de Riot {{ c.riotId }} es tuya.</p>
+    } @else {
+      <div class="c-riot-verify__challenge">
+        <img class="c-riot-verify__card" [src]="cardImage(c)" [alt]="'Tarjeta de jugador ' + c.card.name" width="96" height="96" />
+        <ol class="c-riot-verify__steps">
+          <li [class.c-riot-verify__step--done]="c.step1Done">
+            @if (c.mode === 'equip') {
+              En Valorant, equipa la tarjeta de jugador <strong>{{ c.card.name }}</strong> (la que viene por defecto)
+            } @else {
+              En Valorant, equipa cualquier tarjeta de jugador que no sea <strong>{{ c.card.name }}</strong>
+            }
+            y juega una partida con <strong>{{ c.riotId }}</strong> en la región {{ c.region | uppercase }}. Vale un combate a muerte.
+            @if (c.step1Done) {
+              <span class="c-riot-verify__done">Hecho</span>
+            }
+          </li>
+          <li>Después, vuelve a tu tarjeta de siempre y juega otra partida.</li>
+          <li>Cuando termine, pulsa Comprobar. Cada partida puede tardar unos minutos en aparecer.</li>
+        </ol>
+      </div>
+      <p class="c-riot-verify__hint">
+        Tienes hasta el {{ c.expiresAt | date: 'dd/MM/yyyy HH:mm' }}. Para comprobarlo consultamos tus últimas partidas
+        a través de HenrikDev; no guardamos tu historial. Más información en la
+        <a href="/privacidad" target="_blank" rel="noopener">política de privacidad</a>.
+      </p>
+
+      @if (info()) {
+        <p class="c-riot-verify__info" role="status">{{ info() }}</p>
+      }
+      @if (error()) {
+        <p class="c-riot-verify__error" role="alert">{{ error() }}</p>
+      }
+
+      <div class="c-riot-verify__actions">
+        <button class="c-btn c-btn--secondary" type="button" (click)="check()" [disabled]="checking() || loading()">
+          @if (checking()) {
+            <span class="c-riot-verify__spinner" aria-hidden="true"></span> Comprobando...
+          } @else {
+            Comprobar
+          }
+        </button>
+        <button class="c-btn c-btn--ghost c-btn--sm" type="button" (click)="start()" [disabled]="checking() || loading()">
+          Empezar de nuevo
+        </button>
+      </div>
+    }
+  } @else {
+    <p class="c-riot-verify__text">
+      Demuestra que la cuenta de Riot es tuya: te pediremos que cambies tu tarjeta de jugador, juegues una partida y
+      vuelvas a la tuya en otra. Solo quien entra en la cuenta puede cambiarla.
+    </p>
+
+    @if (error()) {
+      <p class="c-riot-verify__error" role="alert">{{ error() }}</p>
+    }
+
+    <div class="c-riot-verify__actions">
+      <button class="c-btn c-btn--secondary" type="button" (click)="start()" [disabled]="loading()">
+        @if (loading()) {
+          <span class="c-riot-verify__spinner" aria-hidden="true"></span> Preparando...
+        } @else {
+          Empezar verificación
+        }
+      </button>
+    </div>
+  }
+</div>

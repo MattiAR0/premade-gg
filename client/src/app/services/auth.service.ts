@@ -3,6 +3,7 @@ import { Observable, defer, firstValueFrom, switchMap, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import type { AuthError, Session } from '@supabase/supabase-js';
 import { User } from '../models/user.model';
+import { RiotChallenge, RiotChallengeResult } from '../models/riot.model';
 import { LoginRequest, RegisterRequest, AuthResponse, OnboardingRequest, AccountInfo } from '../models/auth.model';
 import { ApiError, invokeFunction, rpc, supabase } from './supabase.client';
 import { translateDbError } from './db-errors';
@@ -122,7 +123,8 @@ export class AuthService {
     if (!this.currentUserSignal()?.onboarded) return;
     invokeFunction<{ updated: boolean; user: User }>('riot-refresh', {}).subscribe({
       next: (res) => {
-        if (res.updated) this.currentUserSignal.set(res.user);
+        // Se fusiona: riot-refresh no trae lo que solo da get_me (termsVersion, isModerator, suspendedUntil)
+        if (res.updated) this.currentUserSignal.update((u) => (u ? { ...u, ...res.user } : res.user));
       },
       error: () => {
         // No bloquear la app si la API externa falla
@@ -192,6 +194,29 @@ export class AuthService {
       schedule: data.schedule,
       acceptTerms: data.acceptTerms,
     }).pipe(tap((user) => this.currentUserSignal.set(user)));
+  }
+
+  // ── Verificación del Riot ID con la tarjeta de jugador (Edge Function riot-verify) ──
+
+  /** Reto en curso, para retomarlo después de jugar la partida */
+  getRiotChallenge(): Observable<{ challenge: RiotChallenge | null }> {
+    return invokeFunction<{ challenge: RiotChallenge | null }>('riot-verify', { action: 'status' });
+  }
+
+  /** Empieza un reto. Sin onboarding hay que decir qué Riot ID y región (recuperar un Riot ID). */
+  startRiotChallenge(riotId?: string, region?: string): Observable<{ challenge: RiotChallenge }> {
+    return invokeFunction<{ challenge: RiotChallenge }>('riot-verify', { action: 'start', riotId, region });
+  }
+
+  /** Comprueba el reto; si es el Riot ID propio y se supera, el perfil queda verificado. */
+  checkRiotChallenge(): Observable<{ result: RiotChallengeResult; challenge: RiotChallenge; user?: User }> {
+    return invokeFunction<{ result: RiotChallengeResult; challenge: RiotChallenge; user?: User }>('riot-verify', {
+      action: 'check',
+    }).pipe(
+      tap((res) => {
+        if (res.user) this.currentUserSignal.update((u) => (u ? { ...u, ...res.user } : res.user!));
+      }),
+    );
   }
 
   /** Acepta la versión vigente de los términos (cuentas creadas antes de que existieran) */
@@ -313,7 +338,8 @@ export class AuthService {
   updateProfile(data: Partial<User>): Observable<User> {
     return rpc<User>('update_my_profile', { p_data: data }).pipe(
       tap((user) => {
-        this.currentUserSignal.set(user);
+        // Se fusiona para no perder lo que solo da get_me (termsVersion, isModerator, suspendedUntil)
+        this.currentUserSignal.update((u) => (u ? { ...u, ...user } : user));
       }),
     );
   }

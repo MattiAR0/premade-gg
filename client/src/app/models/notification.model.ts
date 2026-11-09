@@ -10,7 +10,11 @@ export type NotificationType =
   | 'team_invite'
   | 'report_update'
   | 'moderation_notice'
-  | 'appeal_update';
+  | 'appeal_update'
+  /** Otra cuenta ha demostrado que el Riot ID es suyo y se lo ha quedado */
+  | 'riot_id_claimed'
+  /** Al vincular se recuperó el karma o la suspensión de una cuenta borrada con ese Riot ID */
+  | 'riot_history_restored';
 
 export interface AppNotification {
   _id: string;

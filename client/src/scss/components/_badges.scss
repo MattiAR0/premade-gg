@@ -55,6 +55,13 @@
     border: 1px solid v.$color-border-light;
   }
 
+  // Riot ID verificado con la tarjeta de jugador: dato de confianza, neutro y legible
+  &--riot-verified {
+    background: transparent;
+    color: v.$color-text-heading;
+    border: 1px solid v.$color-border-light;
+  }
+
   &--lft {
     background: rgba(47, 216, 176, 0.1);
     color: v.$color-positive;

@@ -54,7 +54,7 @@
     <h3>Los que obtenemos de otras fuentes</h3>
     <ul>
       <li><strong>Riot Games:</strong> al vincular tu Riot ID comprobamos con la API de Riot que la cuenta existe y guardamos su identificador interno (PUUID).</li>
-      <li><strong>HenrikDev API</strong> (servicio de terceros, no oficial de Riot): tu rango competitivo, nivel de cuenta y tarjeta de jugador de Valorant.</li>
+      <li><strong>HenrikDev API</strong> (servicio de terceros, no oficial de Riot): tu rango competitivo, nivel de cuenta y tarjeta de jugador de Valorant. Si verificas tu Riot ID, también la tarjeta que llevabas en tus últimas partidas y cuándo empezaron (solo para comprobar el reto; no guardamos tu historial de partidas).</li>
       <li><strong>Otros usuarios:</strong> las valoraciones que te dejan (y tu karma, que es su media), las denuncias sobre ti y lo que cuentan en ellas.</li>
     </ul>
     <h3>Los que se generan al usar el servicio</h3>
@@ -87,6 +87,18 @@
             <td>Ejecución del contrato (art. 6.1.b).</td>
           </tr>
           <tr>
+            <td>Verificar, si lo pides, que el Riot ID es tuyo con tu tarjeta de jugador y mostrar el sello «Riot ID verificado».</td>
+            <td>Ejecución del contrato (art. 6.1.b).</td>
+          </tr>
+          <tr>
+            <td>Asignar un Riot ID sin verificar a otra cuenta que demuestra que es suyo.</td>
+            <td>Interés legítimo en evitar la suplantación de jugadores (art. 6.1.f).</td>
+          </tr>
+          <tr>
+            <td>Conservar el karma y la suspensión de una cuenta borrada para que no se puedan limpiar borrando la cuenta y volviendo con el mismo Riot ID.</td>
+            <td>Interés legítimo en que el sistema de reputación y las sanciones sean fiables (art. 6.1.f).</td>
+          </tr>
+          <tr>
             <td>Calcular el karma, decidir a quién puedes valorar, limitar abusos y mantener la plataforma segura.</td>
             <td>Interés legítimo en que el sistema de reputación sea fiable y en prevenir el acoso, el fraude y el spam (art. 6.1.f).</td>
           </tr>
@@ -110,7 +122,7 @@
     <h2 id="publico">4. Qué ven los demás</h2>
     <p>
       {{ legal.siteName }} es una plataforma para encontrar compañeros, así que parte de tu información es pública,
-      también para quien no tiene cuenta: tu Riot ID, región, rango, nivel, tarjeta, roles, horario, biografía,
+      también para quien no tiene cuenta: tu Riot ID (y si está verificado), región, rango, nivel, tarjeta, roles, horario, biografía,
       agentes favoritos, redes sociales, foto, karma y número de valoraciones, las valoraciones que recibes (con el
       Riot ID de quien las escribe), tus grupos LFG y tus equipos. Ahora mismo también es técnicamente accesible tu
       identificador interno de Riot (PUUID), que no permite entrar en tu cuenta; vamos a restringirlo.
@@ -136,6 +148,14 @@
       tu karma es injusto, puedes denunciar las valoraciones concretas o pedirnos que lo revise una persona escribiendo
       a <a [href]="mailto">{{ legal.contactEmail }}</a>.
     </p>
+    <p>
+      Hay otras dos decisiones automáticas ligadas al Riot ID. Si otra persona demuestra con su tarjeta de jugador que
+      un Riot ID que tú no habías verificado es suyo, tu cuenta pierde ese Riot ID y vuelve al paso de vincular uno
+      propio; te avisamos con una notificación. Y si vinculas un Riot ID cuya cuenta anterior se borró hace menos de
+      90 días, recuperas su suspensión y, si era bajo, su karma (el karma alto solo si lo verificas); también te
+      avisamos. Si crees que alguna es errónea, escríbenos a <a [href]="mailto">{{ legal.contactEmail }}</a> y la
+      revisará una persona. Verificar tu Riot ID evita la primera.
+    </p>
 
     <h2 id="moderacion">6. Denuncias, moderación y bloqueos</h2>
     <p>
@@ -155,7 +175,9 @@
 
     <h2 id="conservacion">7. Cuánto tiempo los guardamos</h2>
     <ul>
-      <li><strong>Cuenta y perfil:</strong> hasta que borres tu cuenta (Ajustes de cuenta → Borrar cuenta). Al borrarla eliminamos tu perfil, tus fotos, tus grupos LFG, tus mensajes, los chats directos en los que participabas (también los mensajes de la otra persona) y las valoraciones que escribiste y recibiste. Los equipos que creaste pasan a otro miembro (se borran si no queda nadie).</li>
+      <li><strong>Cuenta y perfil:</strong> hasta que borres tu cuenta (Ajustes de cuenta → Borrar cuenta). Al borrarla eliminamos tu perfil, tus fotos, tus grupos LFG, tus mensajes, los chats directos en los que participabas (también los mensajes de la otra persona) y las valoraciones que escribiste y recibiste. Los equipos que creaste pasan a otro miembro (se borran si no queda nadie). Solo se conservan, con los plazos de esta sección, el historial de karma y suspensión (90 días) y las denuncias y decisiones de moderación (12 meses).</li>
+      <li><strong>Karma de una cuenta borrada:</strong> si al borrarla tenías valoraciones o una suspensión vigente, guardamos hasta 90 días la suma y el número de valoraciones y la fecha de fin de la suspensión, junto a una huella de tu identificador de Riot (PUUID) calculada con una clave secreta. La huella nos permite reconocer el mismo Riot ID sin guardarlo, pero sigue siendo un dato personal (está seudonimizado, no anonimizado) y puedes ejercer tus derechos sobre ella. No guardamos el Riot ID, el PUUID ni las valoraciones en sí. Si en esos 90 días se vincula el mismo Riot ID, la cuenta nueva recupera la suspensión y, si era bajo, el karma; un karma alto solo se recupera verificando el Riot ID, para que no se lo lleve otra persona. Siempre avisamos de lo recuperado. Pasados los 90 días se borra, aunque la suspensión no hubiera terminado.</li>
+      <li><strong>Verificación del Riot ID:</strong> el reto (Riot ID, PUUID, la tarjeta de tu última partida y cuándo cumpliste cada paso), hasta 2 días; la fecha de verificación, mientras tengas cuenta.</li>
       <li><strong>Mensajes:</strong> 90 días.</li>
       <li><strong>Grupos LFG:</strong> 24 horas.</li>
       <li><strong>Notificaciones:</strong> 30 días; el resultado de una denuncia, 90 días; las decisiones de moderación y de recursos, 7 meses.</li>
@@ -177,7 +199,7 @@
     <p>Y, para que el servicio funcione, se comunican datos a:</p>
     <ul>
       <li><strong>Riot Games, Inc.</strong>: tu Riot ID, para comprobar la cuenta.</li>
-      <li><strong>HenrikDev API</strong>: tu Riot ID y región, para obtener tu rango, nivel y tarjeta.</li>
+      <li><strong>HenrikDev API</strong>: tu Riot ID y región, para obtener tu rango, nivel y tarjeta, y tu PUUID si verificas tu Riot ID, para consultar tus últimas partidas.</li>
       <li><strong>Google o Discord</strong>, si eliges entrar con ellos.</li>
       <li><strong>valorant-api.com</strong> y los sitios donde estén alojadas las fotos de perfil o logos que enlazan los usuarios: al cargar esas imágenes, tu navegador les envía tu IP.</li>
     </ul>
@@ -193,7 +215,7 @@
     <ul>
       <li><strong>Acceso</strong> a tus datos y una copia.</li>
       <li><strong>Rectificación</strong> de los que no sean correctos (muchos los puedes cambiar tú en tu perfil).</li>
-      <li><strong>Supresión</strong> (puedes borrar la cuenta tú mismo desde Ajustes de cuenta).</li>
+      <li><strong>Supresión</strong> (puedes borrar la cuenta tú mismo desde Ajustes de cuenta), con las excepciones de «Cuánto tiempo los guardamos».</li>
       <li><strong>Oposición</strong> a los tratamientos basados en el interés legítimo.</li>
       <li><strong>Limitación</strong> del tratamiento.</li>
       <li><strong>Portabilidad</strong> de los datos que nos diste, en un formato de uso común.</li>

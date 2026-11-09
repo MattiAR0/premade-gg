@@ -58,7 +58,10 @@ export function invokeFunction<T>(name: string, body: Record<string, unknown>): 
       if (error instanceof FunctionsHttpError) {
         const res = error.context as Response;
         const payload = await res.json().catch(() => null);
-        throw { status: res.status, error: { message: payload?.message || error.message } } as ApiError;
+        throw {
+          status: res.status,
+          error: { message: payload?.message || error.message, code: payload?.code },
+        } as ApiError;
       }
       throw toApiError(error, 502);
     }

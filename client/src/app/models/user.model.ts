@@ -4,6 +4,8 @@ export interface User {
   // Identidad
   email?: string;
   riotId: string;
+  /** Ha demostrado con la tarjeta de jugador que la cuenta de Riot es suya */
+  riotVerified?: boolean;
   region: 'eu' | 'na' | 'ap' | 'kr';
 
   // Datos de juego

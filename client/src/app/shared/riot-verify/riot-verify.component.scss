@@ -1,0 +1,118 @@
+@use 'utilities/variables' as v;
+@use 'utilities/mixins' as m;
+
+.c-riot-verify {
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-md;
+
+  &__text,
+  &__hint {
+    margin: 0;
+    color: v.$color-text-primary;
+    font-size: v.$font-size-sm;
+    line-height: 1.5;
+  }
+
+  &__hint {
+    color: v.$color-text-muted;
+  }
+
+  &__challenge {
+    display: flex;
+    gap: v.$spacing-md;
+    align-items: flex-start;
+
+    @include m.respond-below(sm) {
+      flex-direction: column;
+    }
+  }
+
+  &__card {
+    flex-shrink: 0;
+    width: 96px;
+    height: 96px;
+    border: 1px solid v.$color-border-light;
+    border-radius: v.$radius-md;
+    object-fit: cover;
+  }
+
+  &__steps {
+    margin: 0;
+    padding-left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-sm;
+    color: v.$color-text-primary;
+    font-size: v.$font-size-sm;
+    line-height: 1.5;
+
+    strong {
+      color: v.$color-text-heading;
+    }
+  }
+
+  &__step--done {
+    color: v.$color-text-muted;
+  }
+
+  &__done {
+    margin-left: v.$spacing-xs;
+    color: v.$color-positive;
+    font-weight: 700;
+  }
+
+  &__hint a {
+    color: v.$color-text-primary;
+    text-decoration: underline;
+  }
+
+  &__info,
+  &__success,
+  &__error {
+    margin: 0;
+    font-size: v.$font-size-sm;
+    line-height: 1.5;
+  }
+
+  &__info {
+    color: v.$color-text-primary;
+  }
+
+  &__success {
+    color: v.$color-positive;
+  }
+
+  &__error {
+    color: v.$color-danger-text;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: v.$spacing-sm;
+    align-items: center;
+  }
+
+  &__spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: c-riot-verify-spin 0.8s linear infinite;
+  }
+}
+
+@keyframes c-riot-verify-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-riot-verify__spinner {
+    animation-duration: 2s;
+  }
+}

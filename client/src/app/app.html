@@ -9,9 +9,16 @@
 @if (needsTerms()) {
 <section class="c-terms-banner" aria-labelledby="terms-banner-title">
   <p id="terms-banner-title">
+    @if (termsUpdated()) {
+    Hemos actualizado los <a routerLink="/terminos">términos de uso</a> y la
+    <a routerLink="/privacidad">política de privacidad</a>: ahora puedes verificar tu Riot ID en Ajustes de cuenta; si
+    no lo verificas y otra persona demuestra que es suyo, se le asigna a ella; y al borrar la cuenta guardamos 90 días
+    tu karma y tu suspensión. Hasta que los aceptes no podrás publicar, escribir ni valorar.
+    } @else {
     Hemos publicado los <a routerLink="/terminos">términos de uso</a> y la
     <a routerLink="/privacidad">política de privacidad</a>. Hasta que aceptes los términos y confirmes que tienes 16 años
     o más, no podrás publicar, escribir ni valorar.
+    }
   </p>
   <button type="button" class="c-btn c-btn--primary c-btn--sm" [disabled]="acceptingTerms()" (click)="acceptTerms()">
     Acepto y tengo 16 años o más

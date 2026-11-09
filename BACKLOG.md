@@ -1,6 +1,6 @@
 ---
 tags: [premadegg, backlog]
-actualizado: 2026-11-03
+actualizado: 2026-11-09
 ---
 
 # Backlog de PremadeGG
@@ -19,6 +19,8 @@ Lista de mejoras acordada con la usuaria el 2026-10-25. El orden de los pendient
 - [x] 5 · "Agregar en el juego": botón **Copiar Riot ID** en perfil, tarjeta de jugador y miembros del detalle LFG (sin publicar).
 - [x] 12 · Palabras malsonantes: censura con asteriscos en general; en biografía y comentarios de valoraciones se bloquea el guardado. Migración `20261103000001_profanity_filter.sql` (sin publicar).
 - [x] 6 · Ajustes de cuenta: cambiar email y contraseña, borrar cuenta (`/settings/account`). Pendiente de publicar.
+- [x] Verificación provisional del Riot ID con la tarjeta de jugador (paso 5 del orden de trabajo de [[AUDITORIA-2026-11-05]], mientras no haya RSO). Publicado el 2026-11-09. Migraciones `20261109000001_verificacion_tipos.sql`, `20261109000002_verificacion_riot_id.sql` y `20261109000003_terminos_version.sql`, Edge Function `riot-verify`, sección "Riot ID" en ajustes y "Recupera tu Riot ID" en el onboarding. Detalle en [[CAMBIOS]].
+- [x] Borrado de cuenta como vía de evasión del karma (P0 punto 4 de [[AUDITORIA-2026-11-05]]): al borrar una cuenta con valoraciones o suspensión se guardan 90 días un hash del PUUID con el karma y la suspensión, y se heredan al volver a vincular el mismo Riot ID. Publicado el 2026-11-09. Migración `20261109000002_verificacion_riot_id.sql`.
 
 ## Pendientes (en orden)
 
@@ -27,6 +29,19 @@ Lista de mejoras acordada con la usuaria el 2026-10-25. El orden de los pendient
 - [ ] 8 · Modo claro / oscuro.
 - [ ] 9 · Idiomas inglés / español.
 - [ ] RSO (login con Riot): necesita clave de producción aprobada por Riot (semanas).
+
+## Pendientes antes de publicar la verificación del Riot ID
+
+Estos puntos salen de la entrada de [[CAMBIOS]] del 2026-11-09. Antes de publicar hay que confirmarlo con la usuaria.
+
+- [x] Versión nueva de los términos `2026-11-09` sin los 15 días de aviso (decisión del titular: los usuarios son amigos). Todas las cuentas vuelven a aceptar.
+- [ ] Probar con una cuenta real de Valorant cuánto tarda HenrikDev en mostrar una partida, si `started_at` es el inicio real y si incluye todos los modos (combate a muerte).
+- [ ] Ponderación del interés legítimo por escrito (documento interno; borrador en el informe de `auditor-legal`).
+- [ ] Revisar si la respuesta de `start` debe decir si el jugador lleva la tarjeta por defecto. Es un dato menor sobre terceros, necesario para dar las instrucciones.
+- [ ] Riot ID verificado con un nombre antiguo: hoy hay que resolverlo a mano (`riot_id_stale`).
+- [ ] `riot-link` no es una sola transacción: si falla la actualización del perfil después de liberar el Riot ID de la otra cuenta, quien reclama tiene que reintentarlo.
+- [ ] Preguntar a Riot por HenrikDev como datos de la verificación (paso 5 del orden de [[AUDITORIA-2026-11-05]], todavía sin hacer).
+- [x] Publicar (2026-11-09): migraciones, `riot-verify` y las funciones que usan `_shared`, y push.
 
 ## Otros pendientes técnicos
 

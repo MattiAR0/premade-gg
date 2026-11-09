@@ -7,6 +7,7 @@ import { DialogDirective } from '../../shared/dialog/dialog.directive';
 import { DatePipe } from '@angular/common';
 import { ApiService } from '../../services/api.service';
 import { MyModerationDecision } from '../../models/report.model';
+import { RiotVerifyComponent } from '../../shared/riot-verify/riot-verify.component';
 
 const PROVIDER_LABELS: Record<string, string> = { google: 'Google', discord: 'Discord' };
 
@@ -20,7 +21,7 @@ export const DELETE_CONFIRM_WORD = 'BORRAR';
 @Component({
   selector: 'app-account-settings',
   standalone: true,
-  imports: [FormsModule, RouterLink, DialogDirective, DatePipe],
+  imports: [FormsModule, RouterLink, DialogDirective, DatePipe, RiotVerifyComponent],
   templateUrl: './account-settings.component.html',
   styleUrl: './account-settings.component.scss',
 })
@@ -62,6 +63,11 @@ export class AccountSettingsComponent implements OnInit {
     private readonly router: Router,
     private readonly cdr: ChangeDetectorRef,
   ) {}
+
+  /** El servicio ya ha actualizado el usuario (riotVerified); solo hay que repintar */
+  onRiotVerified(): void {
+    this.cdr.markForCheck();
+  }
 
   ngOnInit(): void {
     this.loadAccount();

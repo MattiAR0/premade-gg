@@ -111,13 +111,9 @@ export class RegisterComponent {
 
     // Validar Riot ID automáticamente antes de registrar
     this.apiService.validateRiotId(this.gameName, this.tagLine).subscribe({
-      next: (res) => {
-        if (res.taken) {
-          this.loading = false;
-          this.errorMessage = 'Este Riot ID ya está registrado';
-          this.cdr.markForCheck();
-          return;
-        }
+      next: () => {
+        // Si el Riot ID ya lo tiene otra cuenta se deja crear la cuenta igualmente: en el
+        // onboarding se puede recuperar demostrando con la tarjeta de jugador que es tuyo.
         this.finishRegistration();
       },
       error: (err) => {

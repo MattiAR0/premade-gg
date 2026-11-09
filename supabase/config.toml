@@ -455,3 +455,6 @@ verify_jwt = false
 
 [functions.delete-account]
 verify_jwt = false
+
+[functions.riot-verify]
+verify_jwt = false

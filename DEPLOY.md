@@ -42,6 +42,7 @@ npx supabase functions deploy riot-validate --no-verify-jwt
 npx supabase functions deploy riot-link --no-verify-jwt
 npx supabase functions deploy riot-refresh --no-verify-jwt
 npx supabase functions deploy delete-account --no-verify-jwt
+npx supabase functions deploy riot-verify --no-verify-jwt
 ```
 (`--no-verify-jwt` porque cada función valida la sesión por dentro; ya está así en `supabase/config.toml`).
 

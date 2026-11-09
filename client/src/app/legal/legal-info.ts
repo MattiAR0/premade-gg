@@ -12,7 +12,7 @@ export const LEGAL = {
   /** Edad mínima para usar el servicio */
   minAge: 16,
   /** Versión vigente de términos y privacidad. Debe coincidir con supabase/functions/_shared/legal.ts */
-  termsVersion: '2026-11-07',
+  termsVersion: '2026-11-09',
   /** Fecha de la última actualización, tal como se muestra en las páginas */
-  updatedAt: '7 de noviembre de 2026',
+  updatedAt: '9 de noviembre de 2026',
 } as const;

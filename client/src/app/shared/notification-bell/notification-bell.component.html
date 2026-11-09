@@ -62,6 +62,15 @@
                     Ver equipo
                   </a>
                 }
+                @if (notification.type === 'riot_id_claimed' && !auth.currentUser()?.onboarded) {
+                  <a
+                    class="c-notif__link"
+                    routerLink="/onboarding"
+                    (click)="onNotificationClick(notification); notificationService.closePanel()"
+                  >
+                    Vincular mi Riot ID
+                  </a>
+                }
                 @if ((notification.type === 'moderation_notice' || notification.type === 'appeal_update') && notification.reportId) {
                   <a
                     class="c-notif__link"

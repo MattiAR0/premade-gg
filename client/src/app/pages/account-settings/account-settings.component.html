@@ -56,6 +56,26 @@
     </form>
   </section>
 
+  <!-- ── Riot ID ───────────────────────────────────── -->
+  @if (authService.currentUser(); as me) {
+  @if (me.onboarded) {
+  <section class="c-account__section" aria-labelledby="account-riot-title">
+    <h2 class="c-account__title" id="account-riot-title">Riot ID</h2>
+    <p class="c-account__text">Riot ID vinculado: <strong class="c-account__value">{{ me.riotId }}</strong></p>
+    @if (me.riotVerified) {
+    <p class="c-account__success">Verificado: has demostrado que la cuenta de Riot es tuya. Nadie más puede vincularlo.</p>
+    } @else {
+    <p class="c-account__hint">
+      Sin verificar. Si otra persona demuestra que este Riot ID es suyo, se le asigna a ella: tu cuenta lo pierde, te
+      avisamos y tendrás que vincular otro. Verificarlo lo evita y muestra el sello «Riot ID verificado», visible para
+      todos.
+    </p>
+    <app-riot-verify (verified)="onRiotVerified()" />
+    }
+  </section>
+  }
+  }
+
   <!-- ── Contraseña ────────────────────────────────── -->
   <section class="c-account__section" aria-labelledby="account-password-title">
     <h2 class="c-account__title" id="account-password-title">Contraseña</h2>
@@ -140,7 +160,10 @@
     <h2 class="c-account__title c-account__title--danger" id="account-delete-title">Borrar cuenta</h2>
     <p class="c-account__text">
       Se borran tu perfil, tus grupos LFG, los equipos que creaste, tus mensajes y las valoraciones que has escrito y
-      recibido. El karma de los jugadores que valoraste se recalcula sin tus valoraciones.
+      recibido. El karma de los jugadores que valoraste se recalcula sin tus valoraciones. Si tenías valoraciones o una
+      suspensión, guardamos hasta 90 días una huella seudonimizada de tu identificador de Riot con tu karma y tu
+      suspensión: si se vuelve a vincular el mismo Riot ID, se recuperan y avisamos. También conservamos 12 meses las
+      denuncias y decisiones de moderación en las que participaste.
       <strong class="c-account__value">No se puede deshacer.</strong>
     </p>
     <div class="c-account__actions">
@@ -162,7 +185,9 @@
 
     <form class="c-modal__form" (ngSubmit)="deleteAccount()" novalidate>
       <p class="c-modal__text" id="account-delete-modal-text">
-        Vas a borrar tu cuenta y todos sus datos. <strong>Es irreversible</strong>: no podremos recuperarla.
+        Vas a borrar tu cuenta y tus datos. <strong>Es irreversible</strong>: no podremos recuperarla. Solo conservamos,
+        por seguridad y durante un tiempo limitado, una huella seudonimizada con tu karma y tu suspensión (90 días) y las
+        denuncias y decisiones de moderación en las que participaste (12 meses).
       </p>
 
       <label class="c-modal__field">
