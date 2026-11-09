@@ -46,6 +46,11 @@ export class AccountSettingsComponent implements OnInit {
   passwordError = '';
   passwordSuccess = '';
 
+  // Desvincular el Riot ID
+  showUnlinkModal = false;
+  unlinking = false;
+  unlinkError = '';
+
   // Borrar cuenta
   showDeleteModal = false;
   deleteConfirmation = '';
@@ -180,6 +185,34 @@ export class AccountSettingsComponent implements OnInit {
   get deleteConfirmed(): boolean {
     const value = this.deleteConfirmation.trim();
     return value === this.confirmWord || (!!this.riotId && value.toLowerCase() === this.riotId.toLowerCase());
+  }
+
+  openUnlinkModal(): void {
+    this.unlinkError = '';
+    this.showUnlinkModal = true;
+  }
+
+  closeUnlinkModal(): void {
+    if (this.unlinking) return;
+    this.showUnlinkModal = false;
+  }
+
+  unlinkRiot(): void {
+    if (this.unlinking) return;
+    this.unlinking = true;
+    this.unlinkError = '';
+    this.authService.unlinkRiotAccount().subscribe({
+      next: () => {
+        this.unlinking = false;
+        this.showUnlinkModal = false;
+        this.router.navigate(['/onboarding'], { replaceUrl: true });
+      },
+      error: (err) => {
+        this.unlinking = false;
+        this.unlinkError = err.error?.message || 'No se pudo desvincular. Inténtalo de nuevo.';
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   openDeleteModal(): void {

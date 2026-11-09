@@ -59,6 +59,20 @@ export const ipKey = async (req: Request): Promise<string> => {
   return `ip:${hex.slice(0, 32)}`;
 };
 
+/** PUUID vinculado a una cuenta (tabla privada riot_identities) o null. */
+export const getPuuid = async (userId: string): Promise<string | null> => {
+  const { data, error } = await admin.from('riot_identities').select('puuid').eq('user_id', userId).maybeSingle();
+  if (error) throw error;
+  return (data?.puuid as string | null) ?? null;
+};
+
+/** Cuenta que tiene vinculado un PUUID, si hay alguna. */
+export const getPuuidOwner = async (puuid: string): Promise<string | null> => {
+  const { data, error } = await admin.from('riot_identities').select('user_id').eq('puuid', puuid).maybeSingle();
+  if (error) throw error;
+  return (data?.user_id as string | null) ?? null;
+};
+
 /** Perfil en formato de la API (_id, camelCase), igual que la RPC get_me. */
 export const userJson = async (userId: string, email?: string | null) => {
   const { data, error } = await admin.rpc('user_json_by_id', { p_id: userId });

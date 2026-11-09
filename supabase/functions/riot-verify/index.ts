@@ -14,7 +14,7 @@
 // · Sin onboarding (el Riot ID lo tiene otra cuenta sin verificar) el reto superado deja que
 //   riot-link se lo quite a esa cuenta. Ver 20261109000002_verificacion_riot_id.sql.
 import { handle, json, readJson, HttpError } from '../_shared/http.ts';
-import { admin, ipKey, rateLimit, requireUser, userJson } from '../_shared/supabase.ts';
+import { admin, getPuuid, getPuuidOwner, ipKey, rateLimit, requireUser, userJson } from '../_shared/supabase.ts';
 import {
   assertRegion, DEFAULT_CARD, getRecentMatchCards, parseRiotId, validateAccount, type MatchCard, type Region,
 } from '../_shared/riot.ts';
@@ -53,14 +53,14 @@ const challengeJson = (c: ChallengeRow) => ({
 });
 
 const getProfile = async (userId: string) => {
-  const { data, error } = await admin
-    .from('profiles')
-    .select('onboarded, puuid, riot_id, region, riot_verified_at')
-    .eq('id', userId)
-    .single();
+  const [{ data, error }, puuid] = await Promise.all([
+    admin.from('profiles').select('onboarded, riot_id, region, riot_verified_at').eq('id', userId).single(),
+    getPuuid(userId), // tabla privada riot_identities
+  ]);
   if (error) throw error;
-  return data as {
-    onboarded: boolean; puuid: string | null; riot_id: string | null; region: string; riot_verified_at: string | null;
+  return {
+    ...(data as { onboarded: boolean; riot_id: string | null; region: string; riot_verified_at: string | null }),
+    puuid,
   };
 };
 
@@ -115,12 +115,10 @@ Deno.serve(handle(async (req) => {
       puuid = account.puuid;
       riotId = `${account.gameName}#${account.tagLine}`;
 
-      const { data: holder, error } = await admin
-        .from('profiles')
-        .select('riot_verified_at')
-        .eq('puuid', puuid)
-        .neq('id', user.id)
-        .maybeSingle();
+      const ownerId = await getPuuidOwner(puuid);
+      const { data: holder, error } = ownerId && ownerId !== user.id
+        ? await admin.from('profiles').select('riot_verified_at').eq('id', ownerId).single()
+        : { data: null, error: null };
       if (error) throw error;
       if (holder?.riot_verified_at) {
         throw new HttpError(

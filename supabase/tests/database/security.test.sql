@@ -4,7 +4,7 @@
 -- ════════════════════════════════════════════════════════════
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(43);
+select plan(45);
 
 -- ── Fixtures: tres usuarios (A, B, C) ────────────────────────
 insert into auth.users (id, email, aud, role)
@@ -174,13 +174,16 @@ select is(public.get_unread_notification_count(), 0, 'B no ve las notificaciones
 
 -- ── El puuid no sale en las respuestas de las RPC ────────────
 reset role;
-update public.profiles set puuid = 'puuid-de-prueba-a' where id = 'a0000000-0000-0000-0000-00000000000a';
+insert into public.riot_identities (user_id, puuid) values ('a0000000-0000-0000-0000-00000000000a', 'puuid-de-prueba-a')
+  on conflict (user_id) do update set puuid = excluded.puuid;
 select pg_temp.login('b0000000-0000-0000-0000-00000000000b');
 set local role authenticated;
 select ok(
   not (public.user_json_by_id('a0000000-0000-0000-0000-00000000000a') ? 'puuid'),
   'user_json no expone el puuid'
 );
+select throws_ok($$ select count(*) from public.riot_identities $$, '42501', null, 'los PUUID no se leen desde la API');
+select throws_ok($$ select puuid from public.profiles limit 1 $$, '42703', null, 'profiles ya no tiene la columna puuid');
 
 -- ── Invitaciones a grupos LFG ────────────────────────────────
 select pg_temp.login('a0000000-0000-0000-0000-00000000000a');

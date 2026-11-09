@@ -4,6 +4,63 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-09 · PUUID privado, vincular en una transacción y desvincular el Riot ID sin borrar la cuenta
+
+**Commit:** este commit
+
+**Qué y por qué:** dos pendientes de `AUDITORIA-2026-11-05.md` antes de presentar el producto a Riot. El PUUID se podía leer con un `select` directo a `profiles` (P1 16) y la política de privacidad prometía restringirlo. Además, solo se podía desvincular la cuenta de Riot borrando la cuenta entera (P0 3c), y Riot espera que el jugador pueda desvincularse y que se borren sus datos de Riot.
+
+**Cambios:**
+- `20261109000004_riot_identities.sql` (nueva):
+  - Tabla privada `riot_identities` (`user_id`, `puuid` único; RLS sin políticas y `revoke all`). Se copian los PUUID y se borra `profiles.puuid`. Revocar solo la columna no servía: las RPC de lectura usan la fila entera de `profiles`.
+  - Tabla privada `riot_identity_hashes`: HMAC de los PUUID que la cuenta tuvo vinculados en los últimos 90 días, al desvincular o al cambiar de Riot ID. Al borrar la cuenta, el historial de karma se guarda con el PUUID actual y con todos esos hashes, así que cambiar de Riot ID o desvincular antes de borrar no limpia el karma del anterior.
+  - `link_riot_account` (solo `service_role`): todo el vínculo en una transacción. Vuelve a comprobar los dueños del Riot ID y del PUUID (errores con `hint` `riot_id_claimable`, `riot_id_verified` o `riot_id_stale`), quita el Riot ID a las cuentas sin verificar si hay reto superado, guarda la aceptación de los términos, guarda el PUUID, actualiza el perfil, borra el reto y recupera el historial. Antes eran varias llamadas desde `riot-link` y un fallo a mitad podía dejar a alguien sin Riot ID o un PUUID sin perfil.
+  - `unlink_my_riot_account` (con sesión):
+    - borra el Riot ID, el PUUID, el rango, el nivel, la tarjeta y la verificación;
+    - cierra sus grupos LFG abiertos y su reto de verificación;
+    - guarda el hash del PUUID 90 días;
+    - la cuenta vuelve al onboarding y conserva perfil, karma, valoraciones y mensajes;
+    - funciona también con un perfil antiguo que tenga Riot ID sin PUUID guardado.
+  - `remember_deleted_riot_account` y `release_unverified_riot_id` leen `riot_identities`.
+  - Cron `premadegg-riot-identities-cleanup`: borra los hashes de más de 90 días.
+- Edge Functions:
+  - `getPuuid` y `getPuuidOwner` en `_shared/supabase.ts`.
+  - `riot-link` hace una comprobación previa (para no gastar llamadas a HenrikDev) y después llama a `link_riot_account`.
+  - `riot-verify` lee el PUUID de `riot_identities`.
+- `seed.sql`, `security.test.sql` y `riot_verification.test.sql` usan `riot_identities`. Tests nuevos:
+  - el PUUID y los hashes no se leen desde la API, y `profiles` ya no tiene la columna;
+  - desvincular borra los datos de Riot y conserva el karma, y no se puede desvincular dos veces;
+  - desvincular, vincular otro Riot ID y borrar la cuenta guarda el historial con los dos;
+  - sin reto superado `link_riot_account` no quita el Riot ID a otra cuenta ni toca nada; con el reto, sí, y el Riot ID anterior queda como hash.
+- Cliente:
+  - Ajustes de cuenta: botón "Desvincular Riot ID" con un diálogo que explica qué se borra; después lleva al onboarding.
+  - `auth.service.unlinkRiotAccount`.
+- Textos:
+  - La privacidad dice que el PUUID no es público desde el 9 de noviembre (antes sí se podía leer), y añade el plazo de los datos de la cuenta de Riot, el desvincular y el hash (seudonimizado) del Riot ID anterior.
+  - Los términos mencionan el desvincular en "Baja y cambios".
+
+**Verificación:**
+- `npx supabase db reset` y `npm run db:test`: 147 de 147.
+- Prueba de punta a punta con el servidor falso de Riot y HenrikDev: 19 de 19.
+- Navegador en local con TestUser3:
+  - desvincula desde Ajustes de cuenta (el foco va a Cancelar) y acaba en el onboarding;
+  - en la base: sin Riot ID ni rango, karma intacto, PUUID borrado con su hash y grupos LFG cerrados;
+  - vuelve a vincular desde el onboarding y queda con el PUUID nuevo y el hash del anterior.
+- `npm --prefix client run build` sin errores.
+- `revisor-supabase` y `auditor-seguridad` revisaron la primera versión. Se aplicaron:
+  - los hashes de todos los Riot ID anteriores: con un solo hash, vincular otro lo borraba;
+  - `link_riot_account` en una transacción, con el mismo orden de bloqueos que desvincular;
+  - desvincular sin fila de PUUID;
+  - el aviso de que el PUUID fue legible hasta hoy.
+
+**Pendiente:**
+- Publicar: aplicar la migración y desplegar enseguida `riot-link` y `riot-verify` (y las demás funciones que usan `_shared`). Las versiones publicadas leen `profiles.puuid` y fallan entre los dos pasos.
+- Quien tenga dos cuentas de Riot puede borrar la cuenta y volver con la otra: es lo mismo que crear una cuenta de Riot nueva y no se cubre. Desvincular y esperar 90 días antes de borrar tampoco deja historial.
+- Ya existía y no cambia: el aviso de aceptar los términos solo bloquea las escrituras de las cuentas con onboarding; una cuenta desvinculada puede seguir mandando mensajes sin aceptar la versión nueva.
+- `scripts/migrate-mongo-to-supabase.mjs` sigue escribiendo `profiles.puuid`. Es el script de la migración de octubre y ya no se usa.
+
+---
+
 ## 2026-11-09 · Publicación de la verificación del Riot ID
 
 **Commit:** este commit (publica `42f4015`)

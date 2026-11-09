@@ -66,7 +66,7 @@ begin
   v_test3 := pg_temp.seed_auth_user('test3@premade.gg');
 
   update public.profiles set
-    riot_id = 'TestUser1#EUW', puuid = 'test-puuid-1', rank = 'Diamond', role = 'Duelist',
+    riot_id = 'TestUser1#EUW', rank = 'Diamond', role = 'Duelist',
     schedule = 'Evenings', account_level = 100, bio = 'Usuario de prueba 1 - Main Duelist',
     favorite_agents = '{Jett,Reyna}', favorite_role = 'Duelist',
     social_links = '{"discord": "testuser1", "twitter": "", "twitch": ""}',
@@ -74,7 +74,7 @@ begin
   where id = v_test1;
 
   update public.profiles set
-    riot_id = 'TestUser2#EUW', puuid = 'test-puuid-2', rank = 'Ascendant', role = 'Controller',
+    riot_id = 'TestUser2#EUW', rank = 'Ascendant', role = 'Controller',
     schedule = 'Weekends', account_level = 150, bio = 'Usuario de prueba 2 - Main Controller',
     favorite_agents = '{Omen,Brimstone}', favorite_role = 'Controller', is_coach = true,
     coach_details = 'Coach de prueba para equipos Ascendant+',
@@ -82,20 +82,24 @@ begin
   where id = v_test2;
 
   update public.profiles set
-    riot_id = 'TestUser3#EUW', puuid = 'test-puuid-3', rank = 'Platinum', role = 'Initiator',
+    riot_id = 'TestUser3#EUW', rank = 'Platinum', role = 'Initiator',
     schedule = 'Flexible', account_level = 80, bio = 'Usuario de prueba 3 - Main Initiator',
     favorite_agents = '{Sova,Fade}', favorite_role = 'Initiator',
     social_links = '{"discord": "testuser3", "twitter": "", "twitch": ""}',
     looking_for_team = true, lft_details = 'Solo queue de prueba', onboarded = true
   where id = v_test3;
 
+  -- El PUUID va en una tabla privada (20261109000004_riot_identities.sql)
+  insert into public.riot_identities (user_id, puuid) values
+    (v_test1, 'test-puuid-1'), (v_test2, 'test-puuid-2'), (v_test3, 'test-puuid-3');
+
   -- ── 20 jugadores aleatorios (seed.js) ────────────────────────
   for i in 1..20 loop
     v_uid := pg_temp.seed_auth_user(format('player%s@premade.gg', i));
     v_players := v_players || v_uid;
+    insert into public.riot_identities (user_id, puuid) values (v_uid, format('seed-puuid-%s', i));
     update public.profiles set
       riot_id = format('Player%s#%s', i, (array['EUW', 'NA1', 'KR1', 'ESP'])[1 + floor(random() * 4)::int]),
-      puuid = format('seed-puuid-%s', i),
       region = (array['eu', 'na', 'ap', 'kr'])[1 + floor(random() * 4)::int]::public.region,
       rank = v_ranks[1 + floor(random() * 9)::int]::public.valorant_rank,
       role = v_roles[1 + floor(random() * 5)::int]::public.valorant_role,
@@ -199,9 +203,10 @@ declare
   v_team uuid;
 begin
   update public.profiles set
-    riot_id = 'Borrame#TEST', puuid = 'test-puuid-borrame', rank = 'Gold', role = 'Sentinel',
+    riot_id = 'Borrame#TEST', rank = 'Gold', role = 'Sentinel',
     schedule = 'Evenings', bio = 'Cuenta de prueba para borrar', onboarded = true
   where id = v_me;
+  insert into public.riot_identities (user_id, puuid) values (v_me, 'test-puuid-borrame');
 
   insert into public.reputations (author_id, target_id, rating, comment)
   values (v_me, v_test1, 1, 'Valoración de la cuenta de prueba de borrado');

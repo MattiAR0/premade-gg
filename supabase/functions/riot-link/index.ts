@@ -1,14 +1,15 @@
 // POST /functions/v1/riot-link  (requiere sesión)
 // Body: { riotId: "Nombre#Tag", region, role, schedule }
 // Onboarding: valida la cuenta en Riot, obtiene rango/card/nivel de HenrikDev y los
-// guarda en el perfil. Solo esta función (service role) puede escribir rank/puuid/riot_id.
+// guarda en el perfil. Solo esta función (service role) puede escribir rank/riot_id y el
+// PUUID, que va en la tabla privada riot_identities (20261109000004_riot_identities.sql).
 //
 // Si el Riot ID lo tiene otra cuenta sin verificar y quien llama ha superado el reto de la
 // tarjeta (riot-verify), se lo quita a esa cuenta. Al vincular se recupera el karma y la
 // suspensión de una cuenta borrada con el mismo Riot ID en los últimos 90 días.
 // Ver 20261109000002_verificacion_riot_id.sql.
 import { handle, json, readJson, HttpError } from '../_shared/http.ts';
-import { admin, rateLimit, requireUser, userJson } from '../_shared/supabase.ts';
+import { admin, getPuuid, getPuuidOwner, rateLimit, requireUser, userJson } from '../_shared/supabase.ts';
 import { assertRegion, getPlayerAccount, getPlayerRank, parseRiotId, validateAccount } from '../_shared/riot.ts';
 import { TERMS_VERSION } from '../_shared/legal.ts';
 
@@ -46,22 +47,32 @@ Deno.serve(handle(async (req) => {
   if (challengeError) throw challengeError;
 
   // Volver a vincular el mismo Riot ID ya verificado no quita la verificación
-  const { data: current, error: currentError } = await admin
-    .from('profiles')
-    .select('puuid, riot_verified_at')
-    .eq('id', user.id)
-    .single();
+  const [{ data: current, error: currentError }, currentPuuid] = await Promise.all([
+    admin.from('profiles').select('riot_verified_at').eq('id', user.id).single(),
+    getPuuid(user.id),
+  ]);
   if (currentError) throw currentError;
-  const verified = !!challenge || (current.puuid === account.puuid && !!current.riot_verified_at);
+  const verified = !!challenge || (currentPuuid === account.puuid && !!current.riot_verified_at);
 
   // Otras cuentas con este Riot ID o esta cuenta de Riot (normalmente la misma)
-  const [byRiotId, byPuuid] = await Promise.all([
-    admin.from('profiles').select('id, puuid, riot_verified_at').eq('riot_id', riotId).neq('id', user.id),
-    admin.from('profiles').select('id, puuid, riot_verified_at').eq('puuid', account.puuid).neq('id', user.id),
-  ]);
-  if (byRiotId.error) throw byRiotId.error;
-  if (byPuuid.error) throw byPuuid.error;
-  const holders = [...new Map([...byRiotId.data, ...byPuuid.data].map((h) => [h.id as string, h])).values()];
+  const puuidOwner = await getPuuidOwner(account.puuid);
+  const { data: byRiotId, error: byRiotIdError } = await admin
+    .from('profiles')
+    .select('id')
+    .eq('riot_id', riotId)
+    .neq('id', user.id);
+  if (byRiotIdError) throw byRiotIdError;
+  const holderIds = [...new Set([...byRiotId.map((h) => h.id as string), puuidOwner].filter(
+    (id): id is string => !!id && id !== user.id,
+  ))];
+  const holders = await Promise.all(holderIds.map(async (id) => {
+    const [{ data, error: holderError }, puuid] = await Promise.all([
+      admin.from('profiles').select('riot_verified_at').eq('id', id).single(),
+      getPuuid(id),
+    ]);
+    if (holderError) throw holderError;
+    return { id, puuid, riot_verified_at: data.riot_verified_at as string | null };
+  }));
 
   for (const holder of holders) {
     if (holder.riot_verified_at) {
@@ -94,53 +105,25 @@ Deno.serve(handle(async (req) => {
     getPlayerAccount(account.gameName, account.tagLine),
   ]);
 
-  // Reto superado: se quita el Riot ID a las cuentas sin verificar que lo tenían
-  for (const holder of holders) {
-    const { error: releaseError } = await admin.rpc('release_unverified_riot_id', {
-      p_holder: holder.id, p_riot_id: riotId, p_puuid: account.puuid,
-    });
-    if (releaseError) throw releaseError;
-  }
-
-  // Primero la prueba de la aceptación; después se activa la cuenta (onboarded)
-  const { error: consentError } = await admin
-    .from('consents')
-    .upsert(
-      { user_id: user.id, document: 'terms_privacy', version: TERMS_VERSION },
-      { onConflict: 'user_id,document,version', ignoreDuplicates: true },
-    );
-  if (consentError) throw consentError;
-
-  const { error } = await admin
-    .from('profiles')
-    .update({
-      riot_id: riotId,
-      puuid: account.puuid,
-      region,
-      rank: rankData.normalizedRank ?? 'Iron', // Sin ranked → Iron, como antes
-      role: body.role,
-      schedule: body.schedule.trim(),
-      account_level: accountData.accountLevel,
-      card_image: accountData.card?.large ?? null,
-      last_rank_update: new Date().toISOString(),
-      riot_verified_at: verified ? (current.riot_verified_at ?? new Date().toISOString()) : null,
-      onboarded: true,
-    })
-    .eq('id', user.id);
-
-  if (error) {
-    if (error.code === '23505') throw new HttpError(409, 'Este Riot ID ya está registrado por otro usuario');
-    throw error;
-  }
-
-  // El reto ya no sirve para nada (se haya usado o no)
-  await admin.from('riot_challenges').delete().eq('user_id', user.id);
-
-  // Karma y suspensión de una cuenta borrada con este Riot ID (90 días)
-  const { error: restoreError } = await admin.rpc('restore_riot_account', {
-    p_user: user.id, p_puuid: account.puuid, p_verified: verified,
+  // Todo el vínculo en una transacción (20261109000004_riot_identities.sql): quitar el Riot ID a
+  // las cuentas sin verificar que lo tenían, aceptar los términos, guardar el PUUID, actualizar
+  // el perfil y recuperar el historial. Vuelve a comprobar los dueños por si algo cambió.
+  const { error: linkError } = await admin.rpc('link_riot_account', {
+    p_user: user.id,
+    p_puuid: account.puuid,
+    p_riot_id: riotId,
+    p_region: region,
+    p_rank: rankData.normalizedRank ?? 'Iron', // Sin ranked → Iron, como antes
+    p_role: body.role,
+    p_schedule: body.schedule.trim(),
+    p_account_level: accountData.accountLevel,
+    p_card_image: accountData.card?.large ?? null,
   });
-  if (restoreError) throw restoreError;
+  if (linkError) {
+    if (linkError.hint?.startsWith('riot_id_')) throw new HttpError(409, linkError.message, linkError.hint);
+    if (linkError.code === '23505') throw new HttpError(409, 'Este Riot ID ya está registrado por otro usuario');
+    throw linkError;
+  }
 
   return json({ ...(await userJson(user.id, user.email)), termsVersion: TERMS_VERSION });
 }));

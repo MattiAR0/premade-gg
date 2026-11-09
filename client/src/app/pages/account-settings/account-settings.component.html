@@ -72,6 +72,14 @@
     </p>
     <app-riot-verify (verified)="onRiotVerified()" />
     }
+    <p class="c-account__hint">
+      Puedes desvincular tu Riot ID sin borrar la cuenta: borramos tu Riot ID, tu identificador de Riot (PUUID), tu rango,
+      tu nivel y tu tarjeta. Tu perfil, tu karma y tus mensajes se quedan, y tendrás que vincular un Riot ID para seguir
+      usando PremadeGG.
+    </p>
+    <div class="c-account__actions">
+      <button class="c-btn c-btn--ghost" type="button" (click)="openUnlinkModal()">Desvincular Riot ID</button>
+    </div>
   </section>
   }
   }
@@ -172,6 +180,39 @@
   </section>
   }
 </main>
+
+<!-- ── Modal: desvincular el Riot ID ──────────────── -->
+@if (showUnlinkModal) {
+<div class="c-modal-overlay" (click)="closeUnlinkModal()">
+  <div class="c-modal c-modal--small" role="alertdialog" aria-modal="true" aria-labelledby="account-unlink-modal-title"
+    aria-describedby="account-unlink-modal-text" appDialog (dismiss)="closeUnlinkModal()"
+    (click)="$event.stopPropagation()">
+    <header class="c-modal__header">
+      <h2 class="c-modal__title" id="account-unlink-modal-title">Desvincular Riot ID</h2>
+    </header>
+    <div class="c-modal__form">
+      <p class="c-modal__text" id="account-unlink-modal-text">
+        Borraremos tu Riot ID, tu identificador de Riot, tu rango, tu nivel y tu tarjeta, y se cerrarán tus grupos LFG
+        abiertos. Si lo tenías verificado, perderás el sello. Tu perfil, tu karma y tus mensajes se quedan. Durante 90 días
+        guardamos una huella seudonimizada de tu identificador de Riot para que borrar la cuenta después no limpie el karma.
+      </p>
+      @if (unlinkError) {
+      <p class="c-modal__error" role="alert">{{ unlinkError }}</p>
+      }
+      <footer class="c-modal__footer">
+        <button class="c-btn c-btn--ghost" type="button" [disabled]="unlinking" (click)="closeUnlinkModal()">Cancelar</button>
+        <button class="c-btn c-btn--primary" type="button" [disabled]="unlinking" (click)="unlinkRiot()">
+          @if (unlinking) {
+          <span class="c-modal__spinner" aria-hidden="true"></span> Desvinculando...
+          } @else {
+          Desvincular
+          }
+        </button>
+      </footer>
+    </div>
+  </div>
+</div>
+}
 
 <!-- ── Modal: confirmar borrado ────────────────────── -->
 @if (showDeleteModal) {

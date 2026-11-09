@@ -65,6 +65,7 @@ Están en `.impeccable/critique/`. Obsidian oculta las carpetas que empiezan por
 - `20261109000001_verificacion_tipos.sql`: notificaciones de verificación del Riot ID.
 - `20261109000002_verificacion_riot_id.sql`: verificación del Riot ID, historial de 90 días al borrar una cuenta con karma o suspensión, y liberación de Riot ID sin verificar.
 - `20261109000003_terminos_version.sql`: versión `2026-11-09` de los términos y la privacidad.
+- `20261109000004_riot_identities.sql`: PUUID en una tabla privada, vincular en una transacción (`link_riot_account`) y desvincular el Riot ID (`unlink_my_riot_account`).
 
 **Edge Functions** (`supabase/functions/`): `riot-validate` (público, valida un Riot ID), `riot-link` (onboarding), `riot-refresh` (refresca rango, con 1 h de espera), `delete-account` (borra la cuenta del usuario que llama), `riot-verify` (reto para verificar el Riot ID con la tarjeta de jugador).
 

@@ -320,6 +320,14 @@ export class AuthService {
    * Borra la cuenta y todos sus datos (Edge Function delete-account) y cierra la sesión.
    * `confirmation` es el Riot ID o "BORRAR", igual que pide el modal.
    */
+  /**
+   * Desvincula el Riot ID sin borrar la cuenta (RPC unlink_my_riot_account): se borran el
+   * Riot ID y los datos de Riot y la cuenta vuelve al onboarding.
+   */
+  unlinkRiotAccount(): Observable<User | null> {
+    return rpc<{ message: string }>('unlink_my_riot_account').pipe(switchMap(() => defer(() => this.loadProfile())));
+  }
+
   deleteAccount(confirmation: string): Observable<{ message: string }> {
     return invokeFunction<{ message: string }>('delete-account', { confirmation }).pipe(
       switchMap(async (res) => {

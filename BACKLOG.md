@@ -21,6 +21,7 @@ Lista de mejoras acordada con la usuaria el 2026-10-25. El orden de los pendient
 - [x] 6 · Ajustes de cuenta: cambiar email y contraseña, borrar cuenta (`/settings/account`). Pendiente de publicar.
 - [x] Verificación provisional del Riot ID con la tarjeta de jugador (paso 5 del orden de trabajo de [[AUDITORIA-2026-11-05]], mientras no haya RSO). Publicado el 2026-11-09. Migraciones `20261109000001_verificacion_tipos.sql`, `20261109000002_verificacion_riot_id.sql` y `20261109000003_terminos_version.sql`, Edge Function `riot-verify`, sección "Riot ID" en ajustes y "Recupera tu Riot ID" en el onboarding. Detalle en [[CAMBIOS]].
 - [x] Borrado de cuenta como vía de evasión del karma (P0 punto 4 de [[AUDITORIA-2026-11-05]]): al borrar una cuenta con valoraciones o suspensión se guardan 90 días un hash del PUUID con el karma y la suspensión, y se heredan al volver a vincular el mismo Riot ID. Publicado el 2026-11-09. Migración `20261109000002_verificacion_riot_id.sql`.
+- [x] PUUID privado (tabla `riot_identities`) y desvincular el Riot ID sin borrar la cuenta (P1 16 y P0 3c de [[AUDITORIA-2026-11-05]]). Migración `20261109000004_riot_identities.sql`. Publicado el 2026-11-09.
 
 ## Pendientes (en orden)
 
