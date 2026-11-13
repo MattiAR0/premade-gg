@@ -46,7 +46,7 @@ Estos puntos salen de la entrada de [[CAMBIOS]] del 2026-11-09. Antes de publica
 
 ## Otros pendientes técnicos
 
-- [ ] OAuth de Google y Discord en Supabase cloud.
+- [ ] OAuth de Google y Discord en Supabase cloud. Mientras no esté, los botones están ocultos (`oauthEnabled: false` en `client/src/environments/`); al activarlo, poner `true` y actualizar antes la política de privacidad.
 - [ ] Regenerar `HENRIK_API_KEY`.
 - [ ] ~~Pedir una Personal API key de Riot~~: ya no aplica. La página de VALORANT del Developer Portal dice que no admite solicitudes de clave personal; hay que pedir directamente la clave de producción registrando el producto (texto en [[RIOT-REGISTRO]]). Mientras tanto, la clave de desarrollo caduca cada 24 h.
 - [ ] Registrar el producto en el Riot Developer Portal y pedir la clave de producción con el texto de [[RIOT-REGISTRO]] (lo envía la titular).
@@ -56,7 +56,7 @@ Estos puntos salen de la entrada de [[CAMBIOS]] del 2026-11-09. Antes de publica
 
 ## Legal y Riot
 
-- [x] Documentos internos del RGPD: [[REGISTRO-ACTIVIDADES]] (art. 30) y [[PROCEDIMIENTO-BRECHAS]] (arts. 33 y 34), 2026-11-13. Quedan sus `[PENDIENTE]` (DPA aceptados, SMTP, verificación en dos pasos, plazos de los registros técnicos, plazo del buzón).
+- [x] Documentos internos del RGPD: [[REGISTRO-ACTIVIDADES]] (art. 30) y [[PROCEDIMIENTO-BRECHAS]] (arts. 33 y 34), 2026-11-13. Quedan sus `[PENDIENTE]` (DPA aceptados, SMTP, verificación en dos pasos, plazos de los registros técnicos). El buzón y el login con Google y Discord ya están en la política (2026-11-13).
 - [ ] Revisión de los textos legales sin abogado: clínica jurídica de una universidad, guías de la AEPD o primera consulta en el colegio de abogados; antes, pasar `auditor-legal`.
 - [ ] Anuncios, cuando Riot apruebe el producto (decisión de la titular, 2026-11-13). Antes de activarlos: leer la política vigente de Riot y pedir su aprobación, banner de cookies con CMP certificada, NIF y domicilio en el aviso legal (LSSI), privacidad y términos nuevos con aviso previo, anuncios no personalizados (menores, DSA) y consultar en Hacienda o una gestoría cómo declarar los ingresos. [[RIOT-REGISTRO]] ya dice que puede haber anuncios.
 

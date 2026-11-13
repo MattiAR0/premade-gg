@@ -9,4 +9,9 @@ export const environment = {
   production: true,
   supabaseUrl: 'https://taprgsiozhwralnzqxri.supabase.co',
   supabaseKey: 'sb_publishable_7Wns5ZkfRi0h6al1ZpZnHA_M8NVss_j',
+  /**
+   * Botones de Google y Discord. Activar solo con los proveedores configurados en Supabase
+   * (Authentication → Providers) y después de actualizar la política de privacidad.
+   */
+  oauthEnabled: false,
 };

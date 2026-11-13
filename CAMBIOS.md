@@ -4,6 +4,35 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-13 · Privacidad: buzón de contacto y sin botones de Google y Discord
+
+**Commit:** este commit (sin publicar)
+
+**Qué y por qué:** la revisión del registro de actividades encontró dos fallos en la política de privacidad publicada. No decía nada del buzón de contacto (Gmail), que recibe datos personales. Y describía el inicio de sesión con Google y Discord: la web mostraba esos botones, pero producción solo tiene activo el email (comprobado en `/auth/v1/settings`), así que fallaban al pulsarlos.
+
+**Cambios:**
+- `privacy.component.html`:
+  - apartado 2: "Lo que nos escribes" al email de contacto; la cuenta se crea solo con email;
+  - apartado 3: fila nueva para responder al email de contacto (obligación legal al ejercer derechos, interés legítimo para el resto);
+  - apartado 7: los emails se guardan hasta resolver la petición y, como máximo, 3 años después;
+  - apartado 8: Google LLC (Gmail) como proveedor; fuera "Google o Discord, si eliges entrar con ellos".
+- `environment.ts` y `environment.prod.ts`: `oauthEnabled: false`.
+- `oauth-buttons.component`: no se muestra mientras `oauthEnabled` sea `false` (login y registro quedan solo con email).
+- `REGISTRO-ACTIVIDADES.md` y `BACKLOG.md`: quitados los pendientes resueltos; plazo del buzón.
+
+No cambia la versión de los términos (`2026-11-09`): la política explica tratamientos que ya existían y quita uno que no funcionaba. La fecha de la privacidad sigue en el 13 de noviembre.
+
+**Verificación:**
+- `npm --prefix client run build` sin errores (sigue el aviso del presupuesto de tamaño, que ya existía).
+- Navegador en local:
+  - `/login` y `/register` sin botones de Google ni Discord y sin huecos;
+  - `/privacidad` muestra el buzón en los apartados 2, 3, 7 y 8 y no nombra a Discord;
+  - los errores de consola son de Supabase local apagado (Docker no arranca).
+
+**Pendiente:** publicar (push a `migrate-supabase` y `main`) con la confirmación de la titular.
+
+---
+
 ## 2026-11-13 · Registro de actividades (art. 30) y procedimiento de brechas
 
 **Commit:** este commit

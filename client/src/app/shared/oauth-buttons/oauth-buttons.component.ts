@@ -1,7 +1,11 @@
 import { Component, ChangeDetectorRef, Input } from '@angular/core';
 import { AuthService, OAuthProvider } from '../../services/auth.service';
+import { environment } from '../../../environments/environment';
 
-/** Botones "Continuar con Google / Discord" para login y registro. */
+/**
+ * Botones "Continuar con Google / Discord" para login y registro.
+ * No se muestran mientras `environment.oauthEnabled` sea false (proveedores sin configurar).
+ */
 @Component({
   selector: 'app-oauth-buttons',
   standalone: true,
@@ -12,6 +16,7 @@ export class OauthButtonsComponent {
   /** Ruta interna a la que volver tras el login */
   @Input() returnUrl = '/';
 
+  readonly enabled = environment.oauthEnabled;
   loadingProvider: OAuthProvider | null = null;
   errorMessage = '';
 

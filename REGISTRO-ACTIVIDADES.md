@@ -40,7 +40,7 @@ Cada actividad cita estos destinatarios por su letra. "Transferencia" significa 
 | I | valorant-api.com y sitios donde están las fotos y logos que enlazan los usuarios | La IP del navegador al cargar las imágenes | Varios | Ninguna; lo avisa la política (apartado 8). |
 | P | El público | Lo que es visible en la web sin cuenta (perfiles, valoraciones, grupos, equipos) | Mundial | No aplica: el usuario lo publica sabiendo que es público (aviso en el onboarding). |
 
-**Inicio de sesión con Google y Discord:** la política de privacidad (apartado 2) lo describe y el cliente muestra los botones (`client/src/app/shared/oauth-buttons`), pero según el BACKLOG no está configurado en Supabase cloud. [PENDIENTE: comprobar en el panel. Si no está activo, quitar los botones o ajustar la política; si se activa, Google y Discord pasan a ser destinatarios de la actividad 1.]
+**Inicio de sesión con Google y Discord:** no está activo (comprobado el 2026-11-13: producción solo tiene email). Los botones están ocultos (`environment.oauthEnabled = false`) y la política no lo menciona. Si se activa, Google y Discord pasan a ser destinatarios de la actividad 1 y hay que actualizar la política antes.
 
 ## Actividades
 
@@ -122,8 +122,8 @@ Cada actividad cita estos destinatarios por su letra. "Transferencia" significa 
 - **Base legal:** obligación legal (arts. 12 a 22 RGPD) y, para el resto de consultas, interés legítimo en atenderlas.
 - **Interesados:** usuarios, personas sin cuenta que escriben (por ejemplo, el dueño de un Riot ID vinculado por otro) y el personal de Riot que envía solicitudes.
 - **Datos:** email, nombre si lo da, contenido del mensaje, Riot ID si lo menciona.
-- **Destinatarios y transferencias:** G (EE. UU.). [PENDIENTE: la política de privacidad no menciona hoy este tratamiento ni a Google; hay que añadirlo (datos de los mensajes que nos envías, base legal, plazo y Google como proveedor).]
-- **Plazo:** el tiempo necesario para resolver la petición y, después, el de prescripción de posibles reclamaciones. [PENDIENTE: fijar un plazo concreto (por ejemplo, 3 años) y borrar el correo antiguo.]
+- **Destinatarios y transferencias:** G (EE. UU.). La política de privacidad lo recoge desde el 2026-11-13.
+- **Plazo:** hasta resolver la petición y, después, como máximo 3 años (lo dice la política). Borrar del buzón el correo más antiguo una vez al año.
 - **Plazo de respuesta:** un mes (art. 12.3).
 
 ## Medidas de seguridad (art. 32)
