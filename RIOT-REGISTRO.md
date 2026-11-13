@@ -181,7 +181,7 @@ The site and legal pages are currently in Spanish only. The footer shows, in Eng
 
 ## Screenshots to attach
 
-[Nota interna: las capturas 1 a 4 y 10 están en `screenshots/` (producción, 2026-11-13, 1440 px, tema oscuro). Las 5 a 9 necesitan sesión y las hace la titular; instrucciones en la entrada de CAMBIOS del 2026-11-13. Rehacer la 10 cuando se publique la política del 13 de noviembre.]
+[Nota interna: las capturas 1 a 4 y 10 están en `screenshots/` (producción, 2026-11-13, 1440 px, tema oscuro). Las 5 a 9 necesitan sesión y las hace la titular; instrucciones en la entrada de CAMBIOS del 2026-11-13. La 10 se rehízo tras publicar la política del 13 de noviembre.]
 
 1. Home page with the footer showing the Riot disclaimer. (`2026-11-inicio.png`, `2026-11-inicio-pie.png`)
 2. LFG board with filters. (`2026-11-tablon-lfg.png`)

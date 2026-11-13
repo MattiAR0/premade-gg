@@ -4,6 +4,27 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-13 · Publicación de las copias de seguridad en la privacidad y del límite en riot-refresh
+
+**Commit:** este commit (publica `67fd2d7`)
+
+**Qué y por qué:** llevar a producción la política de privacidad con el plazo de las copias de seguridad, el espacio del email de contacto y el límite por usuario de `riot-refresh`, con la confirmación de la titular.
+
+**Cambios:**
+- Git: push de `migrate-supabase` y avance rápido de `main` a `67fd2d7`; Vercel desplegó la web.
+- Producción: `npx supabase functions deploy riot-refresh --no-verify-jwt` (proyecto `taprgsiozhwralnzqxri`).
+- `screenshots/2026-11-privacidad.png` rehecha con la fecha nueva; `RIOT-REGISTRO.md` lo anota.
+
+**Verificación:**
+- `riot-refresh` sin sesión responde 401.
+- En producción, `/privacidad` muestra "Última actualización: 13 de noviembre de 2026", el punto "Copias de seguridad" y "Email de contacto: premagegg.app@gmail.com" con espacio; `/aviso-legal` sigue con el 9 de noviembre y también tiene el espacio.
+
+**Pendiente:**
+- Las capturas con sesión (5 a 9 de la lista de Riot) y las del README que necesitan sesión, como dice la entrada anterior.
+- Comprobar con sesión que `riot-refresh` sigue actualizando el rango (no se pudo probar en local porque Docker no arranca).
+
+---
+
 ## 2026-11-13 · Copias de seguridad en la privacidad, backlog, capturas para Riot y límite en riot-refresh
 
 **Commit:** este commit (sin publicar)
