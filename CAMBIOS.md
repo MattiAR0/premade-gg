@@ -4,6 +4,21 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-13 · Publicación de la privacidad con el buzón y de los documentos del RGPD
+
+**Commit:** este commit (publica `a627c17` y `e83884d`)
+
+**Qué y por qué:** llevar a producción la política de privacidad corregida y los botones de Google y Discord ocultos, con la confirmación de la titular. Los documentos internos del RGPD van en el mismo push.
+
+**Cambios:**
+- Git: push de `migrate-supabase` y avance rápido de `main` a `e83884d`; Vercel desplegó la web. Sin cambios en Supabase.
+
+**Verificación:** en producción, con Edge sin interfaz:
+- `/privacidad` muestra "13 de noviembre de 2026", "Lo que nos escribes", Google LLC como proveedor y el plazo de 3 años, y no nombra a Discord;
+- `/login` y `/register` tienen el formulario y ningún botón de Google ni Discord.
+
+---
+
 ## 2026-11-13 · Privacidad: buzón de contacto y sin botones de Google y Discord
 
 **Commit:** este commit (sin publicar)
