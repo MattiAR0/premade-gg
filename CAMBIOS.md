@@ -4,6 +4,22 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-13 · Anuncios futuros en el registro de Riot y pendientes legales en el backlog
+
+**Commit:** este commit
+
+**Qué y por qué:** la titular quiere poner anuncios cuando Riot apruebe el producto. La solicitud decía que no había planes, así que se cambia para que sea honesta desde el principio. También se apuntan en el backlog los pendientes legales que no estaban.
+
+**Cambios:**
+- `RIOT-REGISTRO.md`: en "Detailed description" y "Current status", hoy no hay anuncios, quizá en el futuro anuncios no personalizados, siempre con aprobación previa de Riot y sin cobrar por los datos de Riot. Nota interna con lo que hay que hacer antes de activarlos.
+- `BACKLOG.md`: sección "Legal y Riot" con el registro de actividades y el procedimiento de brechas, la revisión de los textos sin abogado y los pasos previos a los anuncios.
+
+**Verificación:** solo documentación; diff revisado.
+
+**Pendiente:** que la aprobación previa de Riot para monetizar sigue vigente sale de la auditoría del 2026-11-05; hay que confirmarlo en la política actual.
+
+---
+
 ## 2026-11-13 · Publicación de las copias de seguridad en la privacidad y del límite en riot-refresh
 
 **Commit:** este commit (publica `67fd2d7`)

@@ -19,6 +19,7 @@ Vuelta al [[INDICE]]. Contexto en [[BACKLOG]] y [[AUDITORIA-2026-11-05]].
 - El formulario del portal puede pedir campos que no conozco (tipo de producto, grupo, logo, plataformas). Rellénalo contra el formulario vigente.
 - El correo de contacto `premagegg.app@gmail.com` lleva esa "g" a propósito (lo confirmó el titular, ver CAMBIOS del 2026-11-07). Comprobar que el buzón existe y que se revisa: Riot y los usuarios escribirán ahí.
 - El login con Google y Discord no está configurado en producción (BACKLOG). El texto para Riot solo habla del registro con email.
+- Anuncios: la titular quiere poner anuncios cuando Riot apruebe el producto (2026-11-13). El texto lo anuncia como posibilidad y promete pedir aprobación antes. Según [[AUDITORIA-2026-11-05]], cambiar la monetización exige aprobación previa por escrito de Riot; no lo he comprobado en la política vigente. Antes de activarlos: política de Riot, banner de cookies con CMP, NIF y domicilio en el aviso legal, privacidad y términos nuevos, y anuncios no personalizados por los menores de 18 (DSA).
 
 **Qué he comprobado en el código y en las políticas**
 
@@ -73,7 +74,7 @@ How it works:
 
 What karma is not: it is not a skill ranking and it is not an MMR or ELO estimate. PremadeGG does not compute, estimate or show any hidden rating. The only competitive information shown is the player's current competitive rank, displayed as an icon.
 
-PremadeGG has no ads, no analytics and no payments, and there are no plans to charge players for access to Riot data.
+PremadeGG has no ads, no analytics and no payments today. In the future we may add non-intrusive, non-personalized ads to cover hosting costs. We would ask Riot for approval before adding them, the core features and all Riot data would stay free, and we will never charge players for access to Riot data.
 
 ## Use case / user flows
 
@@ -177,7 +178,7 @@ The site and legal pages are currently in Spanish only. The footer shows, in Eng
 - Linked accounts today: 3, all belonging to friends of the owner. We have no growth numbers and we don't claim any.
 - Working today: LFG groups (Duo/Trio/5-Stack), player search, amateur teams, messages, notifications, ratings with comments, Copy Riot ID, reports, moderation with appeal, blocking, suspensions, profanity filter, rate limits, invitations that must be accepted, account deletion and Riot ID unlinking.
 - Not working today: RSO (waiting for a production key), official rank data, moderation of images.
-- Monetization: none.
+- Monetization: none today. Possibly non-personalized ads in the future, only after Riot's approval.
 
 ## Screenshots to attach
 
