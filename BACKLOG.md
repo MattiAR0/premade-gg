@@ -56,7 +56,7 @@ Estos puntos salen de la entrada de [[CAMBIOS]] del 2026-11-09. Antes de publica
 
 ## Legal y Riot
 
-- [ ] Documentos internos que pide el RGPD y faltan: registro de actividades (art. 30) y procedimiento de brechas (aviso a la AEPD en 72 h). Ver P2 de [[AUDITORIA-2026-11-05]].
+- [x] Documentos internos del RGPD: [[REGISTRO-ACTIVIDADES]] (art. 30) y [[PROCEDIMIENTO-BRECHAS]] (arts. 33 y 34), 2026-11-13. Quedan sus `[PENDIENTE]` (DPA aceptados, SMTP, verificación en dos pasos, plazos de los registros técnicos, plazo del buzón).
 - [ ] Revisión de los textos legales sin abogado: clínica jurídica de una universidad, guías de la AEPD o primera consulta en el colegio de abogados; antes, pasar `auditor-legal`.
 - [ ] Anuncios, cuando Riot apruebe el producto (decisión de la titular, 2026-11-13). Antes de activarlos: leer la política vigente de Riot y pedir su aprobación, banner de cookies con CMP certificada, NIF y domicilio en el aviso legal (LSSI), privacidad y términos nuevos con aviso previo, anuncios no personalizados (menores, DSA) y consultar en Hacienda o una gestoría cómo declarar los ingresos. [[RIOT-REGISTRO]] ya dice que puede haber anuncios.
 

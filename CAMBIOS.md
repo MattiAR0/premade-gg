@@ -4,6 +4,60 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-13 · Registro de actividades (art. 30) y procedimiento de brechas
+
+**Commit:** este commit
+
+**Qué y por qué:** el RGPD pide un registro de actividades de tratamiento (art. 30) y documentar las brechas (arts. 33 y 34). Faltaban (P2 de `AUDITORIA-2026-11-05.md`) y Riot puede preguntar por la protección de datos.
+
+**Cambios:**
+- `REGISTRO-ACTIVIDADES.md` (nuevo):
+  - responsable, sin delegado de protección de datos;
+  - destinatarios y transferencias por proveedor, con país y garantía (Supabase, Vercel, email de Auth, Gmail, Riot, HenrikDev, valorant-api.com y el público);
+  - ocho actividades: cuentas, Riot ID, karma, grupos y mensajes, moderación, seguridad, aceptación de los términos y contacto. Cada una con finalidad, base legal, interesados, datos, destinatarios, plazo y tablas;
+  - medidas de seguridad.
+- `PROCEDIMIENTO-BRECHAS.md` (nuevo):
+  - qué es una brecha en PremadeGG y los plazos (72 h a la AEPD, aviso a los afectados si el riesgo es alto);
+  - pasos: contener (rotar cada secreto, cuentas de administración, sesiones, clave del HMAC), guardar pruebas, evaluar, notificar por la sede de la AEPD, avisar con plantilla, avisar a Riot y a proveedores, y registro privado;
+  - el incidente ya conocido del PUUID legible hasta el 9 de noviembre, con una evaluación propuesta;
+  - prevención.
+- `INDICE.md`: enlaces a los dos documentos.
+- `BACKLOG.md`: el punto de los documentos internos del RGPD se marca como hecho.
+
+**Verificación:** `auditor-legal` revisó los borradores contra la política de privacidad y el código. Confirmó que los plazos coinciden con la política y los cron, que todas las tablas tienen RLS y lo de la IP, la CSP y el borrado de cuenta. Se aplicaron sus hallazgos:
+- destinatarios y transferencias en todas las actividades;
+- país y garantía por proveedor;
+- interesados y datos que faltaban;
+- `reports` sin vínculo con la cuenta al borrarla;
+- HSTS, que lo pone Vercel y no `vercel.json`;
+- en brechas:
+  - regla de "visible en la web" en vez de "accesible por la API";
+  - plantilla con consecuencias y contacto;
+  - excepción del cifrado bien planteada;
+  - plazo cuando la brecha es de un encargado;
+  - cuenta del portal de Riot;
+  - qué hacer si el comprometido es el Gmail o Supabase Auth;
+  - la pérdida de datos sin copias como riesgo aceptado.
+
+La copia aparte de los emails que propuso el auditor no se adoptó: contradice la política de privacidad.
+
+**Pendiente:**
+- Los `[PENDIENTE]` de los dos documentos:
+  - DPA aceptados y certificación en el Marco de Privacidad de Supabase, Vercel, Google y Riot;
+  - SMTP de Supabase Auth;
+  - dónde está HenrikDev y su garantía;
+  - plazos de los registros técnicos;
+  - plazo del buzón;
+  - verificación en dos pasos en las cuentas de administración;
+  - existencia de las herramientas de la AEPD;
+  - si los términos de Riot obligan a avisarles de una brecha.
+- La titular tiene que anotar en su registro privado de brechas el incidente del PUUID, después de revisar la evaluación propuesta.
+- Política de privacidad (cambio público, pide confirmación):
+  - añadir el buzón de contacto (datos de los mensajes, base legal, plazo y Google como proveedor);
+  - aclarar el inicio de sesión con Google y Discord, que la política describe y el cliente muestra aunque no está configurado en producción.
+
+---
+
 ## 2026-11-13 · Anuncios futuros en el registro de Riot y pendientes legales en el backlog
 
 **Commit:** este commit

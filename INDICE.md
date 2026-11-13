@@ -23,6 +23,7 @@ Proyecto personal (empezó como TFG): plataforma LFG de Valorant basada en reput
 - [[AUDITORIA-2026-11-05]]: re-auditoría para decidir si se puede presentar a Riot. Veredicto: todavía no; bloqueantes y orden de trabajo.
 - [[AUDITORIA-2026-11-03]]: primera auditoría de seguridad, SEO y cumplimiento legal y de Riot, con prioridades.
 - [[RIOT-REGISTRO]] · [[PROCEDIMIENTO-BORRADO-RIOT]]: texto en inglés para el registro del producto en el Riot Developer Portal y la clave de producción, con notas internas.
+- [[REGISTRO-ACTIVIDADES]] · [[PROCEDIMIENTO-BRECHAS]]: documentos internos del RGPD (registro del art. 30 y qué hacer ante una brecha de datos).
 - [[README]]: portada del TFG.
 
 ## Registros históricos (no se reescriben)
