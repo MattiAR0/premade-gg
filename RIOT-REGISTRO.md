@@ -1,6 +1,6 @@
 ---
 tags: [premadegg, riot, registro]
-actualizado: 2026-11-09
+actualizado: 2026-11-13
 ---
 
 # Registro de PremadeGG en el Riot Developer Portal
@@ -11,7 +11,7 @@ Vuelta al [[INDICE]]. Contexto en [[BACKLOG]] y [[AUDITORIA-2026-11-05]].
 
 **Qué falta antes de enviar**
 
-- Capturas de pantalla (lista al final). Las hace la titular.
+- Capturas de pantalla (lista al final): hechas la 1 a 4 y la 10; faltan las cinco que necesitan sesión (las hace la titular).
 - Procedimiento para solicitudes de borrado reenviadas por Riot: escrito en [[PROCEDIMIENTO-BORRADO-RIOT]] (probado en local). Falta confirmar con Riot qué identificador mandan para VALORANT (no guardamos `accountId`).
 - La política de privacidad y los términos son un borrador sin revisar por un abogado (`client/src/app/legal/legal-info.ts`). Riot puede leerlos.
 - Los términos `2026-11-09` se publicaron sin los 15 días de aviso (BACKLOG). No lo he mencionado en el texto para Riot.
@@ -25,7 +25,7 @@ Vuelta al [[INDICE]]. Contexto en [[BACKLOG]] y [[AUDITORIA-2026-11-05]].
 - Rutas legales (`/privacidad`, `/terminos`, `/aviso-legal`, `/cookies`) existen en `app.routes.ts`.
 - Aviso de Riot y "Legal Jibber Jabber" en `client/src/app/app.html` (líneas 54 y 59) y en `/aviso-legal`.
 - `account-v1` by-riot-id con `europe.api.riotgames.com` en `supabase/functions/_shared/riot.ts`. La clave va en `RIOT_API_KEY` (secreto de la función).
-- Rate limits por usuario/IP: `riot-link` 10/h por usuario; `riot-validate` 30/h por IP; `riot-verify` start 10/h por usuario y 30/h por IP, check 30/h por usuario y 90/h por IP; `delete-account` 5/día. **`riot-refresh` no usa `rateLimit`**: solo tiene la espera de 1 h por jugador y exige sesión. No he escrito "límites en todas las funciones" por eso.
+- Rate limits por usuario/IP: `riot-link` 10/h por usuario; `riot-validate` 30/h por IP; `riot-verify` start 10/h por usuario y 30/h por IP, check 30/h por usuario y 90/h por IP; `delete-account` 5/día; `riot-refresh` 6/h por usuario (añadido el 2026-11-13; solo cuentan las llamadas que salen a HenrikDev) además de la espera de 1 h por jugador, y exige sesión.
 - Moderación (migración `20261107000002`): denuncias con motivo, copia del contenido, decisión motivada, recurso en 6 meses, bloqueos y suspensiones. Las denuncias se guardan 12 meses tras resolverse (privacidad, apartado 7).
 - Valoraciones: solo entre jugadores que coincidieron 15 minutos (cron `confirm_played_pairs`) y, según el comentario de la migración `20261105000003`, en los últimos 30 días. Sin crear grupos con karma ajustado menor de 3 (`create_lfg_post`).
 - Lo que dice la documentación de Riot que he leído hoy (https://developer.riotgames.com/docs/valorant y /policies/general):
@@ -36,7 +36,7 @@ Vuelta al [[INDICE]]. Contexto en [[BACKLOG]] y [[AUDITORIA-2026-11-05]].
   - Hay que mostrar el aviso "isn't endorsed by Riot Games".
   - La clave no puede ir en el código; una clave de producción por producto.
   - La página de políticas generales **no** dice nada sobre almacenamiento o borrado de datos, ni sobre productos de reputación o denuncias. Lo he dejado como práctica propia, sin citar una norma de Riot.
-  - "Personal API key": la página dice que no se admiten solicitudes de clave personal. Ojo: el backlog tiene "Pedir una Personal API key de Riot", que ya no parece posible.
+  - "Personal API key": la página dice que no se admiten solicitudes de clave personal. Hay que pedir directamente la clave de producción (el backlog ya está actualizado, 2026-11-13).
 
 **Puntos que Riot puede cuestionar (decidir cómo responder)**
 
@@ -100,7 +100,7 @@ HenrikDev is also used for the temporary Riot ID verification: the player change
 Request rates:
 
 - Account-v1: one request when linking, one when starting a verification, and one per public sign-up check. Per-user and per-IP limits are enforced in the Edge Functions: linking 10 per hour per user, public check 30 per hour per IP, verification start 10 per hour per user and 30 per hour per IP.
-- Rank refresh: at most once per hour per player (server-side cooldown, requires a signed-in session).
+- Rank refresh: at most once per hour per player (server-side cooldown, requires a signed-in session), plus a limit of 6 external lookups per hour per user. This refresh calls HenrikDev, not the Riot API.
 - API key: stored only as a secret of Supabase Edge Functions. It is not in the client, the environment files or the repository (the repository is public).
 
 All calls go over HTTPS and have a 10-second timeout. `429` and `401/403` responses are handled without exposing details to the player.
@@ -151,6 +151,7 @@ Planned, not done: moderation of uploaded images by an external service (avatars
 - **Unlink:** Account Settings, "Unlink Riot ID". It deletes the Riot ID, PUUID, rank, level, player card and verification, closes the user's open groups and returns the account to onboarding. Karma, ratings and messages stay. For 90 days a keyed hash of the PUUID is kept (this is still personal data) only to prevent karma evasion.
 - **Delete account:** Account Settings. A server function deletes the account, its uploaded images and all its data, including the Riot data. Reports and moderation decisions are kept for 12 months after being resolved to answer claims, and, if the account had ratings or a suspension, a keyed hash of the PUUID with that karma and suspension is kept for 90 days (see "Player safety").
 - Riot data refresh: at most once per hour per player.
+- Backups: our Supabase plan (Free) has no automatic database backups, so deleted data does not survive in any backup. If we move to a paid plan, daily backups are kept for 7 days and we will update the privacy policy before the change.
 - Requests to delete data forwarded by Riot: we have a written procedure. The owner checks the developer contact email and the site's contact email at least weekly and acts without undue delay, within one month at most. Players are identified by PUUID (or Riot ID); we store the PUUID, not the accountId, so if Riot sends another identifier we will ask for the PUUID. We delete the Riot ID, PUUID, rank, level, player card, verification challenges and the anti-evasion hash, and we email the affected user. If our API access ends, we delete all Riot data from every account. Question for Riot: which identifier do you send for VALORANT deletion requests?
 - The privacy policy names Riot Games and HenrikDev as the sources of the Riot data and lists what is sent to each of them.
 - Security: Row Level Security on the tables; private tables (PUUID, reports, suspensions, verification challenges) cannot be read from the public API, and writes go through server-side functions that check the session and the business rules.
@@ -180,18 +181,18 @@ The site and legal pages are currently in Spanish only. The footer shows, in Eng
 
 ## Screenshots to attach
 
-[PENDIENTE: the owner takes these in production]
+[Nota interna: las capturas 1 a 4 y 10 están en `screenshots/` (producción, 2026-11-13, 1440 px, tema oscuro). Las 5 a 9 necesitan sesión y las hace la titular; instrucciones en la entrada de CAMBIOS del 2026-11-13. Rehacer la 10 cuando se publique la política del 13 de noviembre.]
 
-1. Home page with the footer showing the Riot disclaimer.
-2. LFG board with filters.
-3. Player list.
-4. Public profile with karma, rank icon and the "Copy Riot ID" button.
-5. Rating form with comment.
-6. Report dialog with reasons.
-7. Moderation decision page shown to the affected user (with the appeal option).
-8. Onboarding with the public-data warning.
-9. Account Settings with "Unlink Riot ID" and "Delete account".
-10. Privacy policy.
+1. Home page with the footer showing the Riot disclaimer. (`2026-11-inicio.png`, `2026-11-inicio-pie.png`)
+2. LFG board with filters. (`2026-11-tablon-lfg.png`)
+3. Player list. (`2026-11-jugadores.png`)
+4. Public profile with karma, rank icon and the "Copy Riot ID" button. (`2026-11-perfil-publico.png`)
+5. Rating form with comment. [PENDIENTE]
+6. Report dialog with reasons. [PENDIENTE]
+7. Moderation decision page shown to the affected user (with the appeal option). [PENDIENTE]
+8. Onboarding with the public-data warning. [PENDIENTE]
+9. Account Settings with "Unlink Riot ID" and "Delete account". [PENDIENTE]
+10. Privacy policy. (`2026-11-privacidad.png`)
 
 ## Sin verificar
 

@@ -1,6 +1,6 @@
 ---
 tags: [premadegg, backlog]
-actualizado: 2026-11-09
+actualizado: 2026-11-13
 ---
 
 # Backlog de PremadeGG
@@ -16,9 +16,9 @@ Lista de mejoras acordada con la usuaria el 2026-10-25. El orden de los pendient
 - [x] 11 · Varios roles por jugador.
 - [x] Perfil sin nivel de cuenta.
 - [x] Emblema de rango más grande (32px en tarjetas, 52px en perfil).
-- [x] 5 · "Agregar en el juego": botón **Copiar Riot ID** en perfil, tarjeta de jugador y miembros del detalle LFG (sin publicar).
-- [x] 12 · Palabras malsonantes: censura con asteriscos en general; en biografía y comentarios de valoraciones se bloquea el guardado. Migración `20261103000001_profanity_filter.sql` (sin publicar).
-- [x] 6 · Ajustes de cuenta: cambiar email y contraseña, borrar cuenta (`/settings/account`). Pendiente de publicar.
+- [x] 5 · "Agregar en el juego": botón **Copiar Riot ID** en perfil, tarjeta de jugador y miembros del detalle LFG. Publicado el 2026-11-05.
+- [x] 12 · Palabras malsonantes: censura con asteriscos en general; en biografía y comentarios de valoraciones se bloquea el guardado. Migración `20261103000001_profanity_filter.sql`. Publicado el 2026-11-05.
+- [x] 6 · Ajustes de cuenta: cambiar email y contraseña, borrar cuenta (`/settings/account`). Publicado el 2026-11-05.
 - [x] Verificación provisional del Riot ID con la tarjeta de jugador (paso 5 del orden de trabajo de [[AUDITORIA-2026-11-05]], mientras no haya RSO). Publicado el 2026-11-09. Migraciones `20261109000001_verificacion_tipos.sql`, `20261109000002_verificacion_riot_id.sql` y `20261109000003_terminos_version.sql`, Edge Function `riot-verify`, sección "Riot ID" en ajustes y "Recupera tu Riot ID" en el onboarding. Detalle en [[CAMBIOS]].
 - [x] Borrado de cuenta como vía de evasión del karma (P0 punto 4 de [[AUDITORIA-2026-11-05]]): al borrar una cuenta con valoraciones o suspensión se guardan 90 días un hash del PUUID con el karma y la suspensión, y se heredan al volver a vincular el mismo Riot ID. Publicado el 2026-11-09. Migración `20261109000002_verificacion_riot_id.sql`.
 - [x] PUUID privado (tabla `riot_identities`) y desvincular el Riot ID sin borrar la cuenta (P1 16 y P0 3c de [[AUDITORIA-2026-11-05]]). Migración `20261109000004_riot_identities.sql`. Publicado el 2026-11-09.
@@ -40,7 +40,7 @@ Estos puntos salen de la entrada de [[CAMBIOS]] del 2026-11-09. Antes de publica
 - [ ] Ponderación del interés legítimo por escrito (documento interno; borrador en el informe de `auditor-legal`).
 - [ ] Revisar si la respuesta de `start` debe decir si el jugador lleva la tarjeta por defecto. Es un dato menor sobre terceros, necesario para dar las instrucciones.
 - [ ] Riot ID verificado con un nombre antiguo: hoy hay que resolverlo a mano (`riot_id_stale`).
-- [ ] `riot-link` no es una sola transacción: si falla la actualización del perfil después de liberar el Riot ID de la otra cuenta, quien reclama tiene que reintentarlo.
+- [x] `riot-link` no era una sola transacción. Resuelto con la RPC `link_riot_account` (migración `20261109000004_riot_identities.sql`, publicada el 2026-11-09).
 - [ ] Preguntar a Riot por HenrikDev como datos de la verificación (paso 5 del orden de [[AUDITORIA-2026-11-05]], todavía sin hacer).
 - [x] Publicar (2026-11-09): migraciones, `riot-verify` y las funciones que usan `_shared`, y push.
 
@@ -48,9 +48,10 @@ Estos puntos salen de la entrada de [[CAMBIOS]] del 2026-11-09. Antes de publica
 
 - [ ] OAuth de Google y Discord en Supabase cloud.
 - [ ] Regenerar `HENRIK_API_KEY`.
-- [ ] Pedir una Personal API key de Riot (la de desarrollo caduca cada 24 h).
-- [x] Traducir los errores de base de datos al editar el perfil (`client/src/app/services/db-errors.ts`, misma rama que el punto 12); falta publicar.
-- [ ] Capturas del README.
+- [ ] ~~Pedir una Personal API key de Riot~~: ya no aplica. La página de VALORANT del Developer Portal dice que no admite solicitudes de clave personal; hay que pedir directamente la clave de producción registrando el producto (texto en [[RIOT-REGISTRO]]). Mientras tanto, la clave de desarrollo caduca cada 24 h.
+- [ ] Registrar el producto en el Riot Developer Portal y pedir la clave de producción con el texto de [[RIOT-REGISTRO]] (lo envía la titular).
+- [x] Traducir los errores de base de datos al editar el perfil (`client/src/app/services/db-errors.ts`). Publicado el 2026-11-05 con el punto 12.
+- [ ] Capturas del README: rehechas en producción el 2026-11-13 las de inicio, grupos LFG, jugadores y perfil público. Faltan mensajes, notificaciones, editar perfil y equipos (necesitan sesión).
 - [ ] Apagar Render y MongoDB Atlas.
 
 ## Flujo de publicación

@@ -4,6 +4,44 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-13 · Copias de seguridad en la privacidad, backlog, capturas para Riot y límite en riot-refresh
+
+**Commit:** este commit (sin publicar)
+
+**Qué y por qué:** cerrar pendientes del registro en Riot. La política de privacidad decía que las copias de seguridad se guardaban "según los plazos del proveedor" sin dar un número; el backlog tenía puntos ya hechos y uno que ya no aplica (la clave personal de Riot); faltaban capturas actuales; y `riot-refresh` era la única función de Riot sin límite por usuario.
+
+**Cambios:**
+- Git: push de `b636c46` a `migrate-supabase` y avance rápido de `main` (solo documentos).
+- Copias de seguridad, comprobado con el MCP de Supabase: la organización está en el plan **Free** y, según la documentación de Supabase (Database Backups), solo Pro, Team y Enterprise tienen copias diarias (7, 14 y 30 días).
+  - `privacy.component.html`, apartado 7: punto nuevo "Copias de seguridad" (el plan gratuito no tiene copias automáticas; con un plan de pago serían 7 días y se avisará antes). Los registros técnicos quedan en su propio punto.
+  - `legal-info.ts`: `privacyUpdatedAt` (13 de noviembre) para la fecha de la privacidad, sin cambiar la de los términos ni la versión `2026-11-09` (no hace falta volver a aceptar).
+  - `PROCEDIMIENTO-BORRADO-RIOT.md`, paso 7: el plan y los plazos, no guardar volcados propios de producción y qué hacer si se cambia de plan.
+  - `RIOT-REGISTRO.md`: línea "Backups" en "Data protection".
+- Privacidad y aviso legal: faltaba el espacio entre "Email de contacto:" y el enlace (Angular quita los espacios entre etiquetas); se usa `&ngsp;`.
+- `BACKLOG.md`: la clave personal de Riot ya no aplica (la página de VALORANT no admite solicitudes de clave personal; se pide directamente la de producción) y se añade el registro en el portal; marcados como publicados los puntos 5, 12, 6 y los errores de perfil (2026-11-05); `riot-link` en una transacción, hecho con `link_riot_account`; estado de las capturas del README.
+- Capturas en `screenshots/` (producción, 1440 px, tema oscuro, con Edge sin interfaz por el protocolo de depuración): `2026-11-inicio.png`, `2026-11-inicio-pie.png` (pie con los dos avisos de Riot), `2026-11-tablon-lfg.png`, `2026-11-jugadores.png`, `2026-11-perfil-publico.png` y `2026-11-privacidad.png`. `RIOT-REGISTRO.md` dice qué archivo va con cada punto de la lista. El `README.md` usa las cuatro nuevas y avisa de que las demás son de la versión 1.0. Las capturas antiguas se conservan.
+- `riot-refresh`: `rateLimit(user.id, 'riot_refresh', 6, 3600)` justo antes de llamar a HenrikDev. Las llamadas que corta la espera de 1 h no cuentan. Sin el límite, un perfil sin tarjeta o sin nivel se salta la espera y cada carga de página volvía a llamar a HenrikDev. `RIOT-REGISTRO.md` lo recoge.
+
+**Verificación:**
+- `npm --prefix client run build` sin errores.
+- Navegador en local (`localhost:4200`): `/privacidad` muestra "Última actualización: 13 de noviembre de 2026", el punto de copias de seguridad y "Email de contacto: premagegg.app@gmail.com" con espacio; `/aviso-legal` sigue con el 9 de noviembre y también tiene el espacio. Sin errores de consola.
+- Capturas revisadas una a una.
+- `riot-refresh`: revisado por `revisor-supabase`. No se pudo probar con `functions serve`: Docker Desktop no arranca en este equipo (error al crear el socket `dockerInference`, que está bloqueado; suele arreglarse reiniciando Windows).
+
+**Pendiente:**
+- Publicar (pide confirmación): push a `migrate-supabase` y `main` para la privacidad, y `npx supabase functions deploy riot-refresh --no-verify-jwt` para el límite. Después, rehacer `2026-11-privacidad.png`.
+- Capturas con sesión para Riot (5 a 9 de la lista). Con Docker funcionando, en local con el seed (`npm run db:start`, `npm --prefix client start`, usuarios `test1@premade.gg`, `test2@…` y `test3@…`, contraseña `password123`):
+  - Onboarding: registrar una cuenta nueva en `/register`; sale el aviso de que los datos serán públicos.
+  - Ajustes de cuenta: con test1, `/settings/account`, sección Riot ID ("Desvincular Riot ID") y "Borrar cuenta".
+  - Denuncia: con test1, abrir el perfil de otro jugador y pulsar Denunciar; captura del diálogo con los motivos.
+  - Valoración: con test1, perfil de un jugador con el que haya coincidido; captura del formulario con comentario.
+  - Decisión de moderación: hacer moderadora a test1 en la base local (`insert into public.moderators (user_id) select id from auth.users where email = 'test1@premade.gg';`), denunciar con test2 el perfil de test3, decidir con test1 en `/moderacion` y abrir con test3 el aviso, que lleva a `/moderacion/decision/:id` con el botón de recurso.
+  - También en producción con su cuenta, salvo la decisión de moderación, que necesita a otra persona.
+- Capturas del README que necesitan sesión: mensajes, notificaciones, editar perfil y equipos.
+- Que la titular confirme que no guarda volcados de la base de producción fuera de Supabase; la política ahora dice que no hay copias.
+
+---
+
 ## 2026-11-09 · Procedimiento para las solicitudes de borrado de Riot
 
 **Commit:** este commit

@@ -12,19 +12,24 @@ Una plataforma "Looking For Group" (LFG) basada en reputación: los jugadores qu
 
 ## 📸 Capturas de Pantalla
 
-Vistas de la versión 1.0 (MEAN). El diseño actual ha cambiado: ver `CAMBIOS.md`.
+Vistas actuales, tomadas en producción el 13 de noviembre de 2026.
 
 ### Inicio
-![Inicio](./screenshots/inicio.png)
+![Inicio](./screenshots/2026-11-inicio.png)
+![Pie con los avisos de Riot Games](./screenshots/2026-11-inicio-pie.png)
 
-### Board LFG
-![LFG Board](./screenshots/lfg-board.png)
+### Grupos LFG
+![Grupos LFG](./screenshots/2026-11-tablon-lfg.png)
 
 ### Jugadores
-![Jugadores](./screenshots/jugadores.png)
+![Jugadores](./screenshots/2026-11-jugadores.png)
 
-### Perfil Público
-![Perfil Público](./screenshots/perfil-publico.png)
+### Perfil público
+![Perfil público](./screenshots/2026-11-perfil-publico.png)
+
+### Vistas de la versión 1.0 (MEAN)
+
+Estas son de antes del rediseño y faltan por rehacer (necesitan sesión).
 
 ### Mensajes y Notificaciones
 ![Mensajes](./screenshots/mensajes.png)

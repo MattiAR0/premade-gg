@@ -3,7 +3,7 @@
     <header class="c-page-header">
       <div class="c-page-header__text">
         <h1 class="c-page-header__title">Política de privacidad</h1>
-        <p class="c-legal__updated">Última actualización: {{ legal.updatedAt }}</p>
+        <p class="c-legal__updated">Última actualización: {{ legal.privacyUpdatedAt }}</p>
       </div>
     </header>
 
@@ -33,7 +33,7 @@
     <h2 id="responsable">1. Quién es el responsable</h2>
     <ul>
       <li><strong>Responsable:</strong> {{ legal.ownerName }}</li>
-      <li><strong>Email de contacto:</strong> <a [href]="mailto">{{ legal.contactEmail }}</a></li>
+      <li><strong>Email de contacto:</strong>&ngsp;<a [href]="mailto">{{ legal.contactEmail }}</a></li>
     </ul>
     <p>
       {{ legal.siteName }} es un proyecto personal e independiente. No está respaldado por Riot Games ni afiliado a
@@ -187,7 +187,8 @@
       <li><strong>Suspensiones:</strong> hasta que terminan.</li>
       <li><strong>Contadores contra abusos:</strong> 2 días.</li>
       <li><strong>Aceptación de los términos:</strong> mientras tengas cuenta.</li>
-      <li><strong>Registros técnicos y copias de seguridad</strong> de nuestros proveedores: según sus propios plazos, normalmente unos días o semanas.</li>
+      <li><strong>Copias de seguridad:</strong> nuestro plan de Supabase (el gratuito) no incluye copias de seguridad automáticas de la base de datos, así que lo que borramos no queda guardado en copias que se puedan restaurar. Si pasamos a un plan de pago, Supabase guarda cada copia diaria 7 días: lo borrado desaparecería de las copias en ese plazo. Lo indicaremos aquí antes del cambio.</li>
+      <li><strong>Registros técnicos</strong> de nuestros proveedores: según sus propios plazos, normalmente unos días o semanas.</li>
     </ul>
 
     <h2 id="destinatarios">8. Con quién los compartimos</h2>

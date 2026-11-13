@@ -1,6 +1,6 @@
 ---
 tags: [premadegg, riot, privacidad, procedimiento]
-actualizado: 2026-11-09
+actualizado: 2026-11-13
 ---
 
 # Procedimiento: solicitudes de borrado que reenvía Riot
@@ -128,7 +128,10 @@ Anota cada solicitud (fecha de llegada, fecha de borrado, cuántos identificador
 
 ### 7. Copias de seguridad
 
-Las copias de seguridad de Supabase conservan los datos borrados hasta que caducan. No se restauran para otra cosa que recuperar el servicio; si alguna vez se restaura una, repetir este procedimiento con las solicitudes atendidas desde la fecha de la copia. [PENDIENTE: comprobar en el panel de Supabase cuántos días guarda las copias el plan actual y ponerlo en la política de privacidad.]
+Comprobado el 2026-11-13: la organización de Supabase está en el plan **Free**, y según la documentación de Supabase (Database Backups) solo los planes Pro, Team y Enterprise tienen copias diarias automáticas (7, 14 y 30 días). Hoy no hay copias de la base de datos que restaurar, así que lo borrado en el paso 2 no sobrevive en ninguna copia. Las imágenes de Storage tampoco entran en las copias de Supabase en ningún plan.
+
+- **No guardar volcados propios** (`supabase db dump`, `pg_dump`) de producción. Si se hace uno para una migración, borrarlo al terminar y no subirlo al repositorio.
+- **Si se pasa a un plan de pago:** las copias diarias se guardan 7 días (Pro). Antes del cambio hay que actualizar la política de privacidad (apartado 7) y este paso. Con copias, lo borrado desaparece de ellas en ese plazo; si alguna vez se restaura una, repetir este procedimiento con las solicitudes atendidas desde la fecha de la copia.
 
 ## Si se pierde el acceso a la API de Riot
 
