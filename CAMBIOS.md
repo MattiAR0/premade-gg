@@ -4,6 +4,21 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-17 · Publicación del arreglo de Ajustes de cuenta y de las capturas
+
+**Commit:** este commit (publica `0cab8c6`)
+
+**Qué y por qué:** llevar a producción el margen corregido de los textos de ayuda en Ajustes de cuenta, con la confirmación de la titular. Las capturas van en el mismo push.
+
+**Cambios:**
+- Git: push de `migrate-supabase` y avance rápido de `main` a `0cab8c6`; Vercel desplegó la web. Sin cambios en Supabase.
+
+**Verificación:** el chunk de Ajustes de cuenta servido en producción tiene `.c-account__hint{margin-top:.5rem}` y la regla `.c-account__form .c-account__hint{margin-top:-.5rem}`. La página necesita sesión y no se ha visto en producción; en local se comprobó con medidas del DOM.
+
+**Pendiente:** que la titular abra Ajustes de cuenta en producción con su cuenta y confirme que la sección Riot ID ya no tiene textos montados.
+
+---
+
 ## 2026-11-17 · Capturas con sesión para Riot y textos solapados en Ajustes de cuenta
 
 **Commit:** este commit (sin publicar)
