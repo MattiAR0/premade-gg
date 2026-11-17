@@ -4,6 +4,35 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-17 · Capturas con sesión para Riot y textos solapados en Ajustes de cuenta
+
+**Commit:** este commit (sin publicar)
+
+**Qué y por qué:** faltaban las cinco capturas con sesión de la lista de `RIOT-REGISTRO.md`. Al hacerlas apareció un fallo en Ajustes de cuenta: en la sección Riot ID, los textos de ayuda se montaban 8 px sobre el texto y el botón de encima.
+
+**Cambios:**
+- Docker Desktop no arrancaba ni después de reiniciar el PC: "remove ...\Docker\run\dockerInference: The file cannot be accessed by the system". Se renombró la carpeta `%LOCALAPPDATA%\Docker\run` a `run.roto-20261117` (Docker la vuelve a crear) y arrancó. Ya se había hecho otras veces (`run.old-*`). Es un archivo de socket roto, no un bloqueo, así que reiniciar no lo arregla.
+- Capturas nuevas en `screenshots/`, en local con el seed, 1440 px y tema oscuro:
+  - `2026-11-valoracion.png`: TestUser2 valora a TestUser3 con 4 y un comentario.
+  - `2026-11-denuncia.png`: diálogo de denuncia del perfil de TestUser3 por spam en la biografía.
+  - `2026-11-moderacion-cola.png`: TestUser1, como moderador, retira la biografía con el motivo escrito.
+  - `2026-11-decision-moderacion.png`: lo que ve TestUser3, con el motivo, el contenido revisado y el formulario de recurso.
+  - `2026-11-ajustes-cuenta.png`: Riot ID sin verificar, desvincular y borrar cuenta.
+  - `2026-11-onboarding.png`: la cuenta Borrame desvincula su Riot ID y llega al onboarding con el aviso de datos públicos.
+- Datos solo en la base local, para poder hacer las capturas: aceptación de términos, parejas de juego confirmadas (TestUser1 con TestUser2 y TestUser2 con TestUser3), TestUser1 como moderador y una biografía con spam para TestUser3. `npx supabase db reset` lo deja todo como en el seed.
+- `account-settings.component.scss`: `.c-account__hint` tiene ahora `margin-top` de `$spacing-sm`. El `-0.5rem` solo se aplica dentro de `.c-account__form`, donde el aviso va pegado al campo.
+- `RIOT-REGISTRO.md`: las 10 capturas con su archivo.
+
+**Verificación:**
+- Las seis capturas revisadas una a una.
+- Navegador en local, con medidas del DOM a 1024 px: en la sección Riot ID cada texto empieza 8 px por debajo de lo anterior (antes, 8 px por encima). En el formulario de email, el aviso sigue a 8 px del campo.
+
+**Pendiente:**
+- Publicar el arreglo del margen (push a `migrate-supabase` y `main`) con la confirmación de la titular.
+- Las capturas del README que necesitan sesión (mensajes, notificaciones, editar perfil y equipos) siguen siendo de la versión 1.0.
+
+---
+
 ## 2026-11-13 · Publicación de la privacidad con el buzón y de los documentos del RGPD
 
 **Commit:** este commit (publica `a627c17` y `e83884d`)

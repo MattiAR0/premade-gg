@@ -103,9 +103,14 @@
   }
 
   &__hint {
-    margin-top: -0.5rem;
+    margin-top: v.$spacing-sm;
     font-size: v.$font-size-xs;
     color: v.$color-text-subtle;
+
+    // Dentro de un formulario va pegado al campo de encima (el hueco del flex es mayor)
+    .c-account__form & {
+      margin-top: -0.5rem;
+    }
   }
 
   &__error,

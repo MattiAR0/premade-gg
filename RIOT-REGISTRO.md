@@ -11,7 +11,7 @@ Vuelta al [[INDICE]]. Contexto en [[BACKLOG]] y [[AUDITORIA-2026-11-05]].
 
 **Qué falta antes de enviar**
 
-- Capturas de pantalla (lista al final): hechas la 1 a 4 y la 10; faltan las cinco que necesitan sesión (las hace la titular).
+- Capturas de pantalla (lista al final): hechas las 10 (las que necesitan sesión, en local con el seed).
 - Procedimiento para solicitudes de borrado reenviadas por Riot: escrito en [[PROCEDIMIENTO-BORRADO-RIOT]] (probado en local). Falta confirmar con Riot qué identificador mandan para VALORANT (no guardamos `accountId`).
 - La política de privacidad y los términos son un borrador sin revisar por un abogado (`client/src/app/legal/legal-info.ts`). Riot puede leerlos.
 - Los términos `2026-11-09` se publicaron sin los 15 días de aviso (BACKLOG). No lo he mencionado en el texto para Riot.
@@ -182,17 +182,17 @@ The site and legal pages are currently in Spanish only. The footer shows, in Eng
 
 ## Screenshots to attach
 
-[Nota interna: las capturas 1 a 4 y 10 están en `screenshots/` (producción, 2026-11-13, 1440 px, tema oscuro). Las 5 a 9 necesitan sesión y las hace la titular; instrucciones en la entrada de CAMBIOS del 2026-11-13. La 10 se rehízo tras publicar la política del 13 de noviembre.]
+[Nota interna: todas están en `screenshots/` (1440 px, tema oscuro). Las 1 a 4 y la 10 son de producción (2026-11-13). Las 5 a 9 necesitan sesión y se hicieron en local con los usuarios de prueba del seed (2026-11-17), con la misma web que producción. Si Riot pide capturas de producción, rehacerlas con tu cuenta.]
 
 1. Home page with the footer showing the Riot disclaimer. (`2026-11-inicio.png`, `2026-11-inicio-pie.png`)
 2. LFG board with filters. (`2026-11-tablon-lfg.png`)
 3. Player list. (`2026-11-jugadores.png`)
 4. Public profile with karma, rank icon and the "Copy Riot ID" button. (`2026-11-perfil-publico.png`)
-5. Rating form with comment. [PENDIENTE]
-6. Report dialog with reasons. [PENDIENTE]
-7. Moderation decision page shown to the affected user (with the appeal option). [PENDIENTE]
-8. Onboarding with the public-data warning. [PENDIENTE]
-9. Account Settings with "Unlink Riot ID" and "Delete account". [PENDIENTE]
+5. Rating form with comment. (`2026-11-valoracion.png`)
+6. Report dialog with reasons. (`2026-11-denuncia.png`; the moderator's queue is in `2026-11-moderacion-cola.png`)
+7. Moderation decision page shown to the affected user (with the appeal option). (`2026-11-decision-moderacion.png`)
+8. Onboarding with the public-data warning. (`2026-11-onboarding.png`)
+9. Account Settings with "Unlink Riot ID" and "Delete account". (`2026-11-ajustes-cuenta.png`)
 10. Privacy policy. (`2026-11-privacidad.png`)
 
 ## Sin verificar
