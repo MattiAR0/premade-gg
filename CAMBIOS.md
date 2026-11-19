@@ -4,6 +4,21 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-19 · Se acepta por ahora el plan gratuito de Vercel sin DPA
+
+**Commit:** este commit
+
+**Qué y por qué:** la titular decide mantener el plan Hobby de Vercel, sin DPA, mientras el proyecto no tenga ingresos. Es de riesgo bajo: solo archivos estáticos y registros con IP.
+
+**Cambios:**
+- `REGISTRO-ACTIVIDADES.md`: el pendiente de Vercel pasa a ser una decisión escrita, que se revisará al poner anuncios.
+
+**Verificación:** solo documentación.
+
+**Pendiente:** pasar a Vercel Pro antes de poner anuncios (ya está en `BACKLOG.md`).
+
+---
+
 ## 2026-11-19 · DPA de Supabase y Vercel comprobados
 
 **Commit:** este commit
