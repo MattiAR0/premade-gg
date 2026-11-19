@@ -4,6 +4,41 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-19 · Repaso final del registro en Riot antes de enviarlo
+
+**Commit:** este commit
+
+**Qué y por qué:** repasar `RIOT-REGISTRO.md` antes de que la titular envíe la solicitud de clave de producción, con datos comprobados hoy y una revisión de `redactor-riot`.
+
+**Cambios en `RIOT-REGISTRO.md`:**
+- Notas internas: lo que ya está hecho; cómo es hoy el registro según el portal (Register Product, formulario, verificar el producto y revisión por mensajes); y la regla "You may not maintain a public product with a development API key", que PremadeGG incumple hoy.
+- Texto en inglés:
+  - "Current status" reconoce que el registro está abierto con una clave de desarrollo y ofrece cerrarlo hasta la aprobación;
+  - "consent" en vez de "opt-in", y se dice que hoy se puede vincular un Riot ID ajeno y que la verificación es opcional;
+  - HenrikDev cita la política de Riot sobre servicios de datos y pregunta si se acepta mientras tanto;
+  - karma ajustado con la fórmula y números reales (una valoración de 1 deja una cuenta nueva en 2,88, por debajo de 3) en vez de "a single rating cannot make or break a player", que era falso;
+  - valorar: 15 minutos en el mismo grupo o equipo, sin comprobar partidas;
+  - 10 valoraciones por usuario y día;
+  - moderación hecha por una persona (hoy, la titular);
+  - excepción del hash del PUUID en los datos de Riot, y el borrado total la incluye;
+  - monetización solo en "Current status" y con estado Approved o Acknowledged;
+  - traducción al inglés del aviso del onboarding;
+  - nota de que las capturas 5 a 9 son de una versión local con cuentas de prueba;
+  - "Data protection" sin las copias de seguridad, el art. 30 ni las brechas, y sin repetir el refresco de 1 hora.
+- "Sin verificar": quedan resueltos el límite de valoraciones, el motivo de trampas, el aviso a quien denuncia, el pie en producción y los textos de Ajustes de cuenta.
+
+**Verificación:**
+- Producción: 3 cuentas vinculadas (MattZ#Hana, Valar Morghulis#NyX y OTP Trebor#EUW) y 1 moderadora; `/`, `/privacidad`, `/terminos`, `/aviso-legal`, `/cookies`, `robots.txt` y `sitemap.xml` responden 200.
+- Código: `trust_karma` en `20261025000003` (C = 3, m = 3,5); `rl_check(v_key, 'review', 10, 86400)`; aviso "Hemos revisado tu denuncia" en `20261107000002`; aviso del onboarding en `onboarding.component.html`.
+- Leídas hoy https://developer.riotgames.com/docs/portal (y, por `redactor-riot`, /docs/valorant y /policies/general).
+
+**Pendiente:**
+- La titular envía la solicitud.
+- Decidir si se ofrece a Riot dejar HenrikDev hasta tener la clave (sin rango, nivel ni tarjeta mientras tanto).
+- Cómo es la verificación del producto: se sabrá al enviar.
+
+---
+
 ## 2026-11-19 · Cuenta de prueba borrada y clave de Riot renovada en producción
 
 **Commit:** este commit
