@@ -4,6 +4,25 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-19 · Solicitud enviada a Riot y verificación con riot.txt
+
+**Commit:** este commit
+
+**Qué y por qué:** la titular envió la solicitud de clave de producción en el Riot Developer Portal. Para revisarla, Riot pide verificar el producto con un archivo `riot.txt` que contenga solo el código que da el portal, accesible en https://premade-gg.vercel.app/riot.txt.
+
+**Cambios:**
+- `client/public/riot.txt` (nuevo): solo el código de verificación, sin salto de línea. El código no es secreto: Riot lo lee de la web pública. `vercel.json` no reescribe los `.txt` a `index.html`, igual que `robots.txt`.
+
+**Verificación:** `npm --prefix client run build -- --configuration=production` sin errores y `dist/premadegg/browser/riot.txt` con el código exacto (comprobado con `od -c`).
+
+**Pendiente:**
+- Comprobar el archivo en producción después del despliegue.
+- Que la titular pulse "Verify URL" en el portal.
+- Esperar la revisión de Riot, que responde por mensajes del portal.
+- No borrar `riot.txt` mientras dure la revisión, y probablemente tampoco después.
+
+---
+
 ## 2026-11-19 · Repaso final del registro en Riot antes de enviarlo
 
 **Commit:** este commit
