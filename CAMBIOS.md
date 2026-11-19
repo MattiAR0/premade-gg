@@ -4,6 +4,21 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-19 · Primera moderadora en producción
+
+**Commit:** este commit
+
+**Qué y por qué:** no había ningún moderador en producción, así que nadie podía revisar las denuncias. La titular pidió que su cuenta lo sea.
+
+**Cambios:**
+- Producción (MCP de Supabase, `execute_sql`): `insert into public.moderators (user_id) select id from public.profiles where riot_id = 'MattZ#Hana' on conflict do nothing;`.
+
+**Verificación:** `public.moderators` tiene una fila y es MattZ#Hana. Antes había 0.
+
+**Pendiente:** que la titular recargue la web y compruebe que le aparece Moderación (`/moderacion`).
+
+---
+
 ## 2026-11-17 · Publicación del arreglo de Ajustes de cuenta y de las capturas
 
 **Commit:** este commit (publica `0cab8c6`)
