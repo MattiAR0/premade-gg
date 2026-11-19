@@ -4,6 +4,24 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-19 · DPA de Supabase y Vercel comprobados
+
+**Commit:** este commit
+
+**Qué y por qué:** en `REGISTRO-ACTIVIDADES.md` quedaba pendiente comprobar el acuerdo de tratamiento de datos (DPA) de los dos proveedores principales.
+
+**Cambios:**
+- `REGISTRO-ACTIVIDADES.md`:
+  - **Supabase:** su DPA forma parte de las condiciones del servicio e incluye las cláusulas contractuales tipo; aceptar las condiciones equivale a firmarlas (cláusula 12.2). No hay que firmar nada.
+  - **Vercel:** su DPA dice que se aplica a los planes Pro y Enterprise. El plan gratuito (Hobby) queda sin DPA y sus condiciones lo limitan a uso personal y no comercial. Se anota como hueco conocido de riesgo bajo (solo archivos estáticos y registros con IP), con las tres salidas posibles.
+- `BACKLOG.md`: antes de poner anuncios hay que pasar Vercel a Pro.
+
+**Verificación:** leídos supabase.com/legal/dpa y vercel.com/legal/dpa el 2026-11-19. Que el plan Hobby quede fuera se deduce del alcance del DPA ("Pro and Enterprise"): Vercel no lo excluye con una frase expresa.
+
+**Pendiente:** que la titular confirme en qué plan está Vercel y decida qué hacer con el hueco.
+
+---
+
 ## 2026-11-19 · Publicación de la privacidad con Gmail como envío de emails
 
 **Commit:** este commit (publica `906fac3`, `6ccaedb` y `a8485af`)
