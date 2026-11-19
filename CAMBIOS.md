@@ -4,6 +4,22 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-19 · Cuenta de prueba borrada y clave de Riot renovada en producción
+
+**Commit:** este commit
+
+**Qué y por qué:** cerrar dos pendientes del día. Borrar la cuenta creada para probar el email de confirmación, y comprobar la clave de desarrollo de Riot, que la titular cambió en el panel de Supabase (Edge Functions → Secrets → `RIOT_API_KEY`). Las claves de desarrollo caducan cada 24 horas.
+
+**Cambios:** ninguno en el código. La titular borró la cuenta de prueba y cambió el secreto.
+
+**Verificación:**
+- Base de producción: 3 cuentas, 3 perfiles y 3 identidades de Riot, como antes de la prueba. Sin historial de karma, sin hashes de Riot ID y sin aceptaciones de términos huérfanas.
+- `riot-validate` con MattZ#Hana responde 200 (`valid: true`, `taken: true`): la clave nueva funciona.
+
+**Pendiente:** la clave de desarrollo caduca en 24 horas; hasta tener la de producción hay que renovarla para que funcione vincular Riot ID.
+
+---
+
 ## 2026-11-19 · Se acepta por ahora el plan gratuito de Vercel sin DPA
 
 **Commit:** este commit
