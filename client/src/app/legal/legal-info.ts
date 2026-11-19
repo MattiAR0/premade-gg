@@ -16,5 +16,5 @@ export const LEGAL = {
   /** Fecha de la última actualización, tal como se muestra en las páginas */
   updatedAt: '9 de noviembre de 2026',
   /** Última actualización de la política de privacidad, si cambia sin cambiar los términos */
-  privacyUpdatedAt: '13 de noviembre de 2026',
+  privacyUpdatedAt: '19 de noviembre de 2026',
 } as const;

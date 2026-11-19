@@ -4,6 +4,25 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-19 · Gmail como envío de los emails de la cuenta en la privacidad
+
+**Commit:** este commit (sin publicar)
+
+**Qué y por qué:** la titular comprobó en el panel de Supabase (Authentication → SMTP Settings) que los emails de la cuenta salen por Gmail: SMTP propio activado, `smtp.gmail.com:587`, remitente `premagegg.app@gmail.com`. La política decía solo "el proveedor configurado en Supabase", sin nombrarlo.
+
+**Cambios:**
+- `privacy.component.html`, apartado 8: Google LLC (Gmail) figura como buzón de contacto y como envío de los emails de la cuenta. Se quita la línea genérica del proveedor de emails.
+- `legal-info.ts`: `privacyUpdatedAt` pasa al 19 de noviembre. Los términos no cambian (`2026-11-09`).
+- `REGISTRO-ACTIVIDADES.md`: el encargado E es Google (Gmail) como SMTP. Se anota el aviso de Supabase sobre la entrega y el límite diario de Gmail.
+
+**Verificación:** navegador en local: `/privacidad` lista Supabase, Vercel y Google LLC con los dos usos, y ya no aparece "configurado en Supabase".
+
+**Pendiente:**
+- Publicar con la confirmación de la titular.
+- Registro de prueba en producción con un email de fuera para confirmar que el correo de confirmación llega. La contraseña de aplicación de Gmail puede haber dejado de valer al activar la verificación en dos pasos.
+
+---
+
 ## 2026-11-19 · Primera moderadora en producción
 
 **Commit:** este commit
