@@ -4,6 +4,20 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-19 · Comprobado el email de confirmación en producción
+
+**Commit:** este commit
+
+**Qué y por qué:** quedaba pendiente confirmar que el SMTP de Gmail sigue enviando después de activar la verificación en dos pasos. Si no, nadie de fuera (tampoco Riot) podría confirmar su cuenta.
+
+**Cambios:** ninguno en el código.
+
+**Verificación:** la titular se registró en producción con un email distinto de `premagegg.app@gmail.com` y le llegó el correo de confirmación.
+
+**Pendiente:** borrar esa cuenta de prueba (Ajustes de cuenta → Borrar cuenta) para que no quede una cuenta falsa en producción.
+
+---
+
 ## 2026-11-19 · Gmail como envío de los emails de la cuenta en la privacidad
 
 **Commit:** este commit (sin publicar)
