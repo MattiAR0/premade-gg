@@ -4,6 +4,19 @@ Cambios del proyecto, del más reciente al más antiguo. Las normas para mantene
 
 ---
 
+## 2026-11-19 · Publicación de la privacidad con Gmail como envío de emails
+
+**Commit:** este commit (publica `906fac3`, `6ccaedb` y `a8485af`)
+
+**Qué y por qué:** llevar a producción la política de privacidad que nombra a Gmail como envío de los emails de la cuenta, junto con los registros de la moderadora y de la prueba del email, con la confirmación de la titular.
+
+**Cambios:**
+- Git: push de `migrate-supabase` y avance rápido de `main` a `a8485af`; Vercel desplegó la web. Sin cambios en Supabase.
+
+**Verificación:** en producción, con Edge sin interfaz, `/privacidad` muestra "Última actualización: 19 de noviembre de 2026" y Google LLC con el envío de los emails de la cuenta, y ya no aparece "configurado en Supabase".
+
+---
+
 ## 2026-11-19 · Comprobado el email de confirmación en producción
 
 **Commit:** este commit
